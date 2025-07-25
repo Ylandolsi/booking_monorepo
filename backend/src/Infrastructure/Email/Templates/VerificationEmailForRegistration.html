@@ -1,0 +1,84 @@
+Verify Your Email Address for Our Service
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your Email Address</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #444;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            color: #2c3e50;
+            border-bottom: 2px solid #f1f1f1;
+            padding-bottom: 10px;
+        }
+
+        .verification-box {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .manual-link {
+            word-break: break-all;
+            font-size: 13px;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Complete Your Registration</h2>
+    </div>
+
+    <p>Welcome to {{APP_NAME}}! Please verify your email address to activate your account.</p>
+
+    <div class="verification-box">
+        <p>Click the button below to verify your email address:</p>
+        <a href="{{VERIFICATION_LINK}}" class="button">Verify Email Address</a>
+    </div>
+
+    <p>If the button doesn't work, copy and paste this link into your browser:</p>
+    <p class="manual-link">{{VERIFICATION_LINK}}</p>
+
+    <p style="color: #e74c3c; font-weight: bold;">
+        ⚠️ For your security, never share this link with anyone.
+    </p>
+
+    <div class="footer">
+        <p>
+            Thank you,<br>
+            <strong>The {{APP_NAME}} Team</strong>
+        </p>
+        <p>Need help? <a href="{{SUPPORT_LINK}}">Contact support</a></p>
+        <p>Didn't create an account? <a href="{{SECURITY_LINK}}">Let us know</a></p>
+    </div>
+</body>
+</html>
