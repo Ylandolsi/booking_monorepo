@@ -1,0 +1,35 @@
+import { paths } from '@/config/paths';
+import { VerificationEmail } from '@/features/auth/email-verification/components/email-verification';
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+
+export const Route = createFileRoute('/auth/email-verification/email-verification')({
+  component: VerificationEmailPage,
+  validateSearch: (search) => ({
+    redirectTo: search.redirectTo as string | undefined,
+    token: search.token as string | undefined,
+    email: search.email as string | undefined,
+  }),
+});
+
+function VerificationEmailPage() {
+  const navigate = useNavigate();
+  const { redirectTo, token, email } = Route.useSearch();
+
+  return (
+    <>
+      <AuthLayout>
+        <VerificationEmail
+          onSuccess={() => {
+            navigate({
+              to: redirectTo ? redirectTo : paths.auth.emailVerified.getHref(),
+              replace: true,
+            });
+          }}
+          token={token}
+          email={email}
+        />
+      </AuthLayout>
+    </>
+  );
+}
