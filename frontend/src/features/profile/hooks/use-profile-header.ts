@@ -1,4 +1,4 @@
-import { useUser } from '@/features/auth/hooks/use-user';
+import { useUser } from '@/features/auth';
 import { useRequiredParam } from '@/hooks';
 import { useProfile } from '@/features/profile';
 

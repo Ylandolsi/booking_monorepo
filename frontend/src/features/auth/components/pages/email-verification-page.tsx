@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
-import { CardContent, CardDescription, CardFooter  , Link , Spinner} from '@/components/ui';
-import { verifyEmail } from '../../api/auth-api';
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  Link,
+  Spinner,
+} from '@/components/ui';
+import { verifyEmail } from '../../api/verify-email';
 
 type EmailVerificationPageProps = {
   onSuccess: () => void;
@@ -39,7 +45,7 @@ export const EmailVerificationPage = ({
         }
       }
     };
-    
+
     if (!isCancelled) verify();
 
     return () => {
@@ -54,7 +60,8 @@ export const EmailVerificationPage = ({
           Verify Your Email
         </h2>
         <p className="text-muted-foreground mx-2 mt-2">
-          We sent a verification email to your account. Please check your inbox and click the link to confirm.
+          We sent a verification email to your account. Please check your inbox
+          and click the link to confirm.
         </p>
         {loading && <Spinner />}
         {error && <p className="mt-4 text-red-500">{error}</p>}
