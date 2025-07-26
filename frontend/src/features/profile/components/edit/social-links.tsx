@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { socialLinksSchema, type SocialLinksFormValues } from '../../schemas';
 import { useUpdateSocialLinks, type SocialLinksType } from '@/features/profile';
 import { Spinner } from '@/components';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { AlertTriangle, ExternalLink } from 'lucide-react';
 
 interface SocialField {

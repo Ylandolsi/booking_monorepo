@@ -6,10 +6,7 @@ import {
   MultiSelect,
   Spinner,
 } from '@/components/ui';
-import {
-  useAllExpertises,
-  useUpdateExpertises,
-} from '@/features/profile/hooks';
+import { useAllExpertises, useUpdateExpertises } from '@/features/profile';
 import { useProfileEditStore } from '@/features/profile/stores';
 import type { User } from '@/types/api';
 import { Terminal } from 'lucide-react';
@@ -30,9 +27,9 @@ interface ExpertiseOption {
 export function Expertise({ userData }: ExpertiseProps) {
   const { setSelectedExpertise, selectedExpertise } = useProfileEditStore();
   const { data: allExpertiseOptions, isLoading, error } = useAllExpertises();
-  const updateExpertiseMutation = useUpdateExpertises();
-
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  const updateExpertiseMutation = useUpdateExpertises();
 
   const expertiseOptions: ExpertiseOption[] = useMemo(() => {
     return (allExpertiseOptions ?? []).map((expertise) => ({

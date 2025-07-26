@@ -1,6 +1,6 @@
 import { useUser } from '@/features/auth/hooks/use-user';
 import { useRequiredParam } from '@/hooks';
-import { useProfile } from './use-profile';
+import { useProfile } from '@/features/profile';
 
 export function useProfileHeader() {
   const { data: currentUser, error, isLoading } = useUser();

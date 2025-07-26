@@ -1,7 +1,7 @@
 import { api } from '@/lib';
 import { useMutation } from '@tanstack/react-query';
 import * as Endpoints from '@/lib/endpoints.ts';
-import type { BasicInfoType } from '../types';
+import type { BasicInfoType } from '../../types';
 
 async function updateBasicInfo(data: BasicInfoType): Promise<void> {
   await api.put<void>(Endpoints.UpdateBasicInfo, data);

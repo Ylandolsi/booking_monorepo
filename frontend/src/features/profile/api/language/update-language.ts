@@ -1,12 +1,10 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { allLanguages, updateLanguage } from '@/features/profile';
+import { api } from '@/lib';
+import * as Endpoints from '@/lib/endpoints';
+import { useMutation } from '@tanstack/react-query';
 
-export function useAllLanguages() {
-  return useQuery({
-    queryKey: ['all-languages'],
-    queryFn: allLanguages,
-  });
-}
+export const updateLanguage = async (languageIds: number[]) => {
+  return await api.put<void>(Endpoints.UpdateUserLanguages, { languageIds });
+};
 
 export function useUpdateLanguages() {
   return useMutation({

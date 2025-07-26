@@ -16,11 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui';
-import {
-  useAddEducation,
-  useDeleteEducation,
-  useUpdateEducation,
-} from '@/features/profile/hooks';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useMemo } from 'react';
@@ -28,7 +24,12 @@ import {
   educationSchema,
   type EducationInput,
 } from '@/features/profile/schemas/career';
-import type { EducationType } from '@/features/profile';
+import {
+  useAddEducation,
+  useDeleteEducation,
+  useUpdateEducation,
+  type EducationType,
+} from '@/features/profile';
 
 interface EducationFormProps {
   education?: EducationType;

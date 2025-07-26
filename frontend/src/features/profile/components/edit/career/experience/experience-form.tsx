@@ -21,7 +21,7 @@ import {
   useAddExperience,
   useDeleteExperience,
   useUpdateExperience,
-} from '@/features/profile/hooks';
+} from '@/features/profile';
 import {
   experienceSchema,
   type experienceInput,

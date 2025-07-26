@@ -29,7 +29,7 @@ import {
 } from '@/features/profile';
 import { useUser } from '@/features/auth';
 import { Spinner } from '@/components/ui';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 const GENDER_OPTIONS = [

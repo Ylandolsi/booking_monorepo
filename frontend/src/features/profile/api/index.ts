@@ -1,4 +1,5 @@
-export * from './experience-api';
-export * from './expertise-api';
-export * from './education-api';
-export * from './language-api';
+export * from './experience';
+export * from './expertise';
+export * from './education ';
+export * from './language';
+export * from './profile';
