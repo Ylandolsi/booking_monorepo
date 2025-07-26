@@ -29,8 +29,8 @@ interface ExpertiseOption {
 
 export function Expertise({ userData }: ExpertiseProps) {
   const { setSelectedExpertise, selectedExpertise } = useProfileEditStore();
-  const updateExpertiseMutation = useUpdateExpertises();
   const { data: allExpertiseOptions, isLoading, error } = useAllExpertises();
+  const updateExpertiseMutation = useUpdateExpertises();
 
   const [validationError, setValidationError] = useState<string | null>(null);
 
