@@ -1,11 +1,13 @@
-import { UserDataWrapper } from '@/features/auth';
 import { Expertise } from './expertise/expertise';
 import { Experience } from './experience/experience';
 import { Education } from './education/education';
+import { QueryWrapper } from '@/components';
+import { useUser } from '@/features/auth';
 
 export function Career() {
+  const userQuery = useUser();
   return (
-    <UserDataWrapper>
+    <QueryWrapper query={userQuery}>
       {(userData) => (
         <div className="space-y-4">
           <Expertise userData={userData} />
@@ -13,6 +15,6 @@ export function Career() {
           <Education userData={userData} />
         </div>
       )}
-    </UserDataWrapper>
+    </QueryWrapper>
   );
 }

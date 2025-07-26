@@ -13,7 +13,7 @@ import {
 import { useProfileEditStore } from '@/features/profile/stores';
 import type { User } from '@/types/api';
 import { Terminal } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export function Expertise({ userData }: { userData: User }) {
   const { setSelectedExpertise, selectedExpertise } = useProfileEditStore();
@@ -22,6 +22,13 @@ export function Expertise({ userData }: { userData: User }) {
   const { data: allExpertiseOptions, isLoading, error } = useAllExpertises();
 
   const [errorUpdate, setErrorUpdate] = useState<string | null>(null);
+
+  const expertiseOptions = useMemo(() => {
+    return (allExpertiseOptions ?? []).map((expertise) => ({
+      value: expertise.id.toString(),
+      label: expertise.name,
+    }));
+  }, [allExpertiseOptions]);
 
   // sync expertisestate with userExpertise
   useEffect(() => {
@@ -42,12 +49,6 @@ export function Expertise({ userData }: { userData: User }) {
       </div>
     );
   }
-
-  const expertiseOptions =
-    allExpertiseOptions?.map((expertise) => ({
-      value: expertise.id.toString(),
-      label: expertise.name,
-    })) || [];
 
   const syncStateWithChoosenValues = (values: string[]) => {
     console.log(values);

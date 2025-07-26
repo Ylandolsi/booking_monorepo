@@ -14,9 +14,11 @@ export const basicInfoSchema = z
   })
   .refine(
     (data) => {
+      console.log(data.gender);
       if (!['Female', 'Male'].includes(data.gender)) {
         return false;
       }
+      return true;
     },
     {
       message: 'Gender must be either Male or Female',

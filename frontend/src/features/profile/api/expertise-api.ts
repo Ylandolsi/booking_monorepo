@@ -1,6 +1,6 @@
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints.ts';
-import type { Expertise } from '../types';
+import type { ExpertiseType } from '../types';
 
 export const updateExpertise = async (expertises: number[]) => {
   return await api.put<void>(Endpoints.UpdateUserExpertise, {
@@ -8,11 +8,11 @@ export const updateExpertise = async (expertises: number[]) => {
   });
 };
 export const getExpertises = async (userSlug: string) => {
-  return await api.get<Expertise[]>(
+  return await api.get<ExpertiseType[]>(
     Endpoints.GetUserExpertises.replace('{userSlug}', userSlug),
   );
 };
 
 export const allExpertises = async () => {
-  return await api.get<Expertise[]>(Endpoints.GetAllExpertises);
+  return await api.get<ExpertiseType[]>(Endpoints.GetAllExpertises);
 };

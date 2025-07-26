@@ -8,11 +8,12 @@ import {
   FormMessage,
   Input,
 } from '@/components/ui';
-import { UserDataWrapper } from '@/features/auth';
+import { useUser } from '@/features/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { socialLinksSchema, type SocialLinksFormValues } from '../../schemas';
 import type { SocialLinksType } from '@/features/profile';
+import { QueryWrapper } from '@/components';
 
 const SOCIAL_FIELDS = [
   { key: 'linkedIn', label: 'LinkedIn', placeholder: 'Enter LinkedIn URL' },
@@ -24,8 +25,9 @@ const SOCIAL_FIELDS = [
 ];
 
 export function SocialLinksForm() {
+  const userQuery = useUser();
   return (
-    <UserDataWrapper>
+    <QueryWrapper query={userQuery}>
       {(userData) => {
         const socialLinks: SocialLinksType = userData?.socialLinks ?? {};
 
@@ -94,6 +96,6 @@ export function SocialLinksForm() {
           </Form>
         );
       }}
-    </UserDataWrapper>
+    </QueryWrapper>
   );
 }

@@ -5,8 +5,7 @@ export function useAllExpertises() {
   return useQuery({
     queryKey: ['all-expertises'],
     queryFn: allExpertises,
-    staleTime: 240 * 60 * 1000, // 4 hours
-    gcTime: 240 * 60 * 1000, // 4 hours (previously cacheTime)
+    staleTime: Infinity, // default values to select from
     refetchOnWindowFocus: false, // Don't refetch on window focus
     refetchOnMount: false, // Don't refetch on mount if data exists
   });

@@ -1,15 +1,16 @@
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints.ts';
-import type { Education } from '../types';
+import type { EducationType } from '../types';
+
 export const getEducations = async () => {
-  return await api.get<Array<Education>>(Endpoints.GetUserEducations);
+  return await api.get<Array<EducationType>>(Endpoints.GetUserEducations);
 };
-export const addEducation = async (education: Education) => {
+export const addEducation = async (education: EducationType) => {
   return await api.post<number>(Endpoints.AddEducation, education);
 };
 export const updateEducation = async (
   educationId: Number,
-  education: Education,
+  education: EducationType,
 ) => {
   await api.put<void>(
     Endpoints.UpdateEducation.replace('{educationId}', String(educationId)),

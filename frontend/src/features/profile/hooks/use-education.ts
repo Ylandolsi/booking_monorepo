@@ -3,12 +3,12 @@ import {
   addEducation,
   deleteEducation,
   updateEducation,
+  type EducationType,
 } from '@/features/profile';
-import type { Education } from '../types';
 
 export function useAddEducation() {
   return useMutation({
-    mutationFn: ({ education }: { education: Education }) =>
+    mutationFn: ({ education }: { education: EducationType }) =>
       addEducation(education),
     meta: {
       invalidatesQuery: [['educations'], ['user']],
@@ -20,7 +20,7 @@ export function useAddEducation() {
 
 export function useUpdateEducation() {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Education }) =>
+    mutationFn: ({ id, data }: { id: number; data: EducationType }) =>
       updateEducation(id, data),
     meta: {
       invalidatesQuery: [['educations'], ['user']],

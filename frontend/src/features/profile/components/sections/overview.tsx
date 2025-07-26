@@ -18,7 +18,6 @@ export function Overview() {
     isLoading: userLoading,
   } = useProfile(userSlug);
 
-  // Use Zustand store instead of context
   const { openDialog, setDefaultSection } = useProfileEditStore();
 
   if (userError) return <MainErrorFallback />;
@@ -155,15 +154,6 @@ export function Overview() {
           </div>
         )}
       </div>
-      <MultiSelect
-        options={[...EXPERTISE_OPTIONS]}
-        onValueChange={(values: string[]) => {
-          console.log(values);
-          // setSelectedExpertise(values as Experience[]);
-        }}
-        placeholder="Select up to 4 expertise areas"
-        maxCount={4}
-      />
     </div>
   );
 }

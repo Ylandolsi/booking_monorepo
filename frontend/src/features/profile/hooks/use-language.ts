@@ -1,9 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  allLanguages,
-  updateLanguage,
-  type LanguageType,
-} from '@/features/profile';
+import { allLanguages, updateLanguage } from '@/features/profile';
 
 export function useAllLanguages() {
   return useQuery({
@@ -14,8 +10,9 @@ export function useAllLanguages() {
 
 export function useUpdateLanguages() {
   return useMutation({
-    mutationFn: ({ languages }: { languages: LanguageType[] }) =>
+    mutationFn: ({ languages }: { languages: number[] }) =>
       updateLanguage(languages),
+
     meta: {
       invalidatesQuery: [['languages']],
       successMessage: 'Languages updated successfully',

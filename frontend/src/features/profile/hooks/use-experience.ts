@@ -3,12 +3,12 @@ import {
   addExperience,
   deleteExperience,
   updateExperience,
+  type ExperienceType,
 } from '@/features/profile';
-import type { Experience } from '../types';
 
 export function useAddExperience() {
   return useMutation({
-    mutationFn: ({ experience }: { experience: Experience }) =>
+    mutationFn: ({ experience }: { experience: ExperienceType }) =>
       addExperience(experience),
     meta: {
       invalidatesQuery: [['experiences'], ['users']],
@@ -20,7 +20,7 @@ export function useAddExperience() {
 
 export function useUpdateExperience() {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Experience }) =>
+    mutationFn: ({ id, data }: { id: number; data: ExperienceType }) =>
       updateExperience(id, data),
     meta: {
       invalidatesQuery: [['experiences'], ['users']],

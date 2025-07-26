@@ -15,147 +15,193 @@ import {
   SelectValue,
   Textarea,
 } from '@/components/ui';
-import { LANGUAGES_OPTIONS } from '../../constants';
-import { UserDataWrapper } from '@/features/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { basicInfoSchema, type BasicInfoFormValues } from '@/features/profile';
+import {
+  basicInfoSchema,
+  useAllLanguages,
+  useUpdateLanguages,
+  type BasicInfoFormValues,
+} from '@/features/profile';
+import { useUser } from '@/features/auth';
+import { QueryWrapper } from '@/components';
+import { useMemo } from 'react';
 
 export function BasicInfoForm() {
-  const FIELDS = [
-    {
-      key: 'firstName',
-      label: 'First Name',
-      type: 'text',
-      placeholder: 'Enter your first name',
-    },
-    {
-      key: 'lastName',
-      label: 'Second Name',
-      type: 'text',
-      placeholder: 'Enter your second name',
-    },
-    {
-      key: 'gender',
-      label: 'Gender',
-      type: 'select',
-      options: [
-        { value: 'Male', label: 'Male' },
-        { value: 'Female', label: 'Female' },
-      ],
-      placeholder: 'Select a gender',
-    },
-    {
-      key: 'languages',
-      label: 'Languages',
-      type: 'multiselect',
-      options: LANGUAGES_OPTIONS,
-      placeholder: 'Select up to 4 languages',
-      maxCount: 4,
-      animation: 2,
-    },
-    {
-      key: 'bio',
-      label: 'Bio',
-      type: 'textarea',
-      placeholder: 'Write a short bio',
-    },
-  ];
-  return (
-    <UserDataWrapper>
-      {(userData) => {
-        const form = useForm<BasicInfoFormValues>({
-          resolver: zodResolver(basicInfoSchema),
-          defaultValues: {
-            firstName: userData?.firstName ?? '',
-            lastName: userData?.lastName ?? '',
-            gender: userData?.gender ?? '',
-            languages: userData?.languages?.map((ld) => ld.name) ?? [],
-            bio: userData?.bio ?? '',
-          },
-        });
+  const userQuery = useUser();
 
-        const onSubmit = async (data: BasicInfoFormValues) => {
-          console.log('Submitted basic info:', data);
-        };
+  return (
+    <QueryWrapper query={userQuery}>
+      {(userData) => {
+        const allLanguageQuery = useAllLanguages();
 
         return (
-          <Form {...form}>
-            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-              {FIELDS.map((fieldConfig) => (
-                <FormField
-                  key={fieldConfig.key}
-                  control={form.control}
-                  name={fieldConfig.key as keyof BasicInfoFormValues}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium">
-                        {fieldConfig.label}
-                      </FormLabel>
-                      <FormControl>
-                        {fieldConfig.type === 'text' && (
-                          <Input
-                            {...field}
-                            type="text"
-                            placeholder={fieldConfig.placeholder}
-                          />
-                        )}
-                        {fieldConfig.type === 'select' && (
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue
-                                placeholder={fieldConfig.placeholder}
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {fieldConfig.options?.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  {option.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                        {fieldConfig.type === 'multiselect' && (
-                          <MultiSelect
-                            options={fieldConfig.options!}
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            placeholder={fieldConfig.placeholder}
-                            animation={fieldConfig.animation}
-                            maxCount={fieldConfig.maxCount}
-                          />
-                        )}
-                        {fieldConfig.type === 'textarea' && (
-                          <Textarea
-                            {...field}
-                            placeholder={fieldConfig.placeholder}
-                          />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              ))}
-              <Button
-                className="w-full"
-                type="submit"
-                disabled={!form.formState.isDirty || form.formState.isLoading}
-              >
-                {form.formState.isLoading ? 'Saving ...' : 'Save informations'}
-              </Button>
-            </form>
-          </Form>
+          <QueryWrapper query={allLanguageQuery}>
+            {(languages) => {
+              const updateLanguageMutate = useUpdateLanguages();
+
+              const languageOptions = useMemo(() => {
+                return (languages ?? []).map((language) => ({
+                  value: language.id.toString(),
+                  label: language.name,
+                }));
+              }, [languages]);
+
+              const form = useForm<BasicInfoFormValues>({
+                resolver: zodResolver(basicInfoSchema),
+                defaultValues: {
+                  firstName: userData?.firstName ?? '',
+                  lastName: userData?.lastName ?? '',
+                  gender: userData?.gender ?? '',
+                  languages:
+                    userData?.languages?.map((ld) => ld.id.toString()) ?? [],
+                  bio: userData?.bio ?? '',
+                },
+              });
+
+              const watchLangs = form.watch('languages');
+
+              const onSubmit = async (data: BasicInfoFormValues) => {
+                console.log('Submitted basic info:', data);
+                console.log(watchLangs);
+                updateLanguageMutate.mutate({
+                  languages: data.languages.map((lg) => Number(lg)),
+                });
+              };
+
+              return (
+                <Form {...form}>
+                  <form
+                    className="space-y-4"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                  >
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            First Name
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="text"
+                              placeholder="Enter your first name"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Last Name
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type="text"
+                              placeholder="Enter your last name"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="gender"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Gender
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a gender" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Male">Male</SelectItem>
+                                <SelectItem value="Female">Female</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="languages"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Languages
+                          </FormLabel>
+                          <FormControl>
+                            <MultiSelect
+                              options={languageOptions}
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              placeholder="Select up to 4 languages"
+                              animation={2}
+                              maxCount={4}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="bio"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-medium">
+                            Bio
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              placeholder="Write a short bio"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      className="w-full"
+                      type="submit"
+                      disabled={
+                        !form.formState.isDirty || form.formState.isSubmitting
+                      }
+                    >
+                      {form.formState.isSubmitting
+                        ? 'Saving...'
+                        : 'Save Information'}
+                    </Button>
+                  </form>
+                </Form>
+              );
+            }}
+          </QueryWrapper>
         );
       }}
-    </UserDataWrapper>
+    </QueryWrapper>
   );
 }

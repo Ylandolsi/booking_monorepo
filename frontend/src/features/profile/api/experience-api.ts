@@ -1,18 +1,18 @@
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints.ts';
-import type { Experience } from '../types';
+import type { ExperienceType } from '../types';
 
 export const getExperiences = async (userSlug: string) => {
-  return await api.get<Array<Experience>>(
+  return await api.get<Array<ExperienceType>>(
     Endpoints.GetUserExperiences.replace('{userSlug}', userSlug),
   );
 };
-export const addExperience = async (experience: Experience) => {
+export const addExperience = async (experience: ExperienceType) => {
   return await api.post<number>(Endpoints.AddExperience, experience);
 };
 export const updateExperience = async (
   experienceId: Number,
-  experience: Experience,
+  experience: ExperienceType,
 ) => {
   await api.put<void>(
     Endpoints.UpdateExperience.replace('{experienceId}', String(experienceId)),
