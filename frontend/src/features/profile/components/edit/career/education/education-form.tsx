@@ -130,7 +130,7 @@ export function EducationForm({
                 <FormControl>
                   <Input
                     {...field}
-                    className="text-foreground/70"
+                    className="text-foreground"
                     placeholder="Eg: University of Tunis"
                   />
                 </FormControl>
@@ -150,7 +150,7 @@ export function EducationForm({
                 <FormControl>
                   <Input
                     {...field}
-                    className="text-foreground/70"
+                    className="text-foreground"
                     placeholder="Eg: Bachelor in Computer Science"
                   />
                 </FormControl>

@@ -20,8 +20,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   basicInfoSchema,
   useAllLanguages,
+  useUpdateBasicInfo,
   useUpdateLanguages,
   type BasicInfoFormValues,
+  type BasicInfoType,
 } from '@/features/profile';
 import { useUser } from '@/features/auth';
 import { QueryWrapper } from '@/components';
@@ -39,6 +41,7 @@ export function BasicInfoForm() {
           <QueryWrapper query={allLanguageQuery}>
             {(languages) => {
               const updateLanguageMutate = useUpdateLanguages();
+              const updateBasicInfoMutate = useUpdateBasicInfo();
 
               const languageOptions = useMemo(() => {
                 return (languages ?? []).map((language) => ({
@@ -62,10 +65,15 @@ export function BasicInfoForm() {
               const watchLangs = form.watch('languages');
 
               const onSubmit = async (data: BasicInfoFormValues) => {
+                const { languages, ...basicInfoData } = data;
+
                 console.log('Submitted basic info:', data);
                 console.log(watchLangs);
-                updateLanguageMutate.mutate({
-                  languages: data.languages.map((lg) => Number(lg)),
+                await updateLanguageMutate.mutateAsync({
+                  languages: languages.map((lg) => Number(lg)),
+                });
+                await updateBasicInfoMutate.mutateAsync({
+                  data: basicInfoData as BasicInfoType,
                 });
               };
 

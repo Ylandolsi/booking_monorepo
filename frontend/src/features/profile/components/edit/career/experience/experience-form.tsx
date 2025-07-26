@@ -129,7 +129,7 @@ export function ExperienceForm({
                 <FormControl>
                   <Input
                     {...field}
-                    className="text-foreground/70"
+                    className="text-foreground"
                     placeholder="Eg: Senior Software Enginner"
                   />
                 </FormControl>
@@ -149,7 +149,7 @@ export function ExperienceForm({
                 <FormControl>
                   <Input
                     {...field}
-                    className="text-foreground/70"
+                    className="text-foreground"
                     placeholder="Eg: Google"
                   />
                 </FormControl>

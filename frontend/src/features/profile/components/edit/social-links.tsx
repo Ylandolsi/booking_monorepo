@@ -12,7 +12,7 @@ import { useUser } from '@/features/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { socialLinksSchema, type SocialLinksFormValues } from '../../schemas';
-import type { SocialLinksType } from '@/features/profile';
+import { useUpdateSocialLinks, type SocialLinksType } from '@/features/profile';
 import { QueryWrapper } from '@/components';
 
 const SOCIAL_FIELDS = [
@@ -29,6 +29,7 @@ export function SocialLinksForm() {
   return (
     <QueryWrapper query={userQuery}>
       {(userData) => {
+        const updateSocialLinksMutate = useUpdateSocialLinks();
         const socialLinks: SocialLinksType = userData?.socialLinks ?? {};
 
         const form = useForm<SocialLinksFormValues>({
@@ -45,6 +46,9 @@ export function SocialLinksForm() {
 
         const onSubmit = async (data: SocialLinksFormValues) => {
           console.log('Submitted social links:', data);
+          await updateSocialLinksMutate.mutateAsync({
+            data: data as SocialLinksType,
+          });
         };
 
         const sortedFields = [...SOCIAL_FIELDS].sort((a, b) => {
@@ -70,7 +74,7 @@ export function SocialLinksForm() {
                         <Input
                           {...field}
                           type="url"
-                          className="text-foreground/70"
+                          className="text-foreground"
                           placeholder={placeholder}
                           defaultValue={
                             socialLinks[key as keyof SocialLinksType] ?? ''
