@@ -1,5 +1,5 @@
 using Application.Abstractions.Messaging;
 
-namespace Application.Users.Expertise.Get;
+namespace Application.Users.Expertise.All;
 
-public sealed record GetAllExpertiseQuery() : IQuery<List<Domain.Users.Entities.Expertise>>;
+public record GetAllExpertiseQuery() : IQuery<List<ExpertiseResponse>>;

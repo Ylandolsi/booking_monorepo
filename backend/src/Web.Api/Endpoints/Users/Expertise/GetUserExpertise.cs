@@ -1,4 +1,5 @@
 using Application.Abstractions.Messaging;
+using Application.Users.Expertise;
 using Application.Users.Expertise.Get;
 using SharedKernel;
 using Web.Api.Extensions;
@@ -12,11 +13,11 @@ internal sealed class GetUserExpertise : IEndpoint
     {
         app.MapGet(UsersEndpoints.GetUserExpertises, async (
             string userSlug,
-            IQueryHandler<GetUserExpertisesQuery, List<Domain.Users.Entities.Expertise>> handler,
+            IQueryHandler<GetUserExpertisesQuery, List<ExpertiseResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetUserExpertisesQuery(userSlug);
-            Result<List<Domain.Users.Entities.Expertise>> result = await handler.Handle(query, cancellationToken);
+            Result<List<ExpertiseResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

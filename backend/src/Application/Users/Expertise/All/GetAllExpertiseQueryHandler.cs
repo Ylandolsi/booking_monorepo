@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SharedKernel;
 
-namespace Application.Users.Expertise.Get;
+namespace Application.Users.Expertise.All;
 
 internal sealed class GetAllExpertiseQueryHandler(
     IApplicationDbContext context,
-    ILogger<GetAllExpertiseQueryHandler> logger) : IQueryHandler<GetAllExpertiseQuery, List<Domain.Users.Entities.Expertise>>
+    ILogger<GetAllExpertiseQueryHandler> logger) : IQueryHandler<GetAllExpertiseQuery, List<ExpertiseResponse>>
+
 {
-    public async Task<Result<List<Domain.Users.Entities.Expertise>>> Handle(GetAllExpertiseQuery query, CancellationToken cancellationToken)
+    public async Task<Result<List<ExpertiseResponse>>> Handle(GetAllExpertiseQuery query, CancellationToken cancellationToken)
     {
         logger.LogInformation("Handling GetAllExpertiseQuery");
 
-        var expertises = await context.Expertises
-            .AsNoTracking()
+        var expertises = await context.Expertises.Select( e => new  ExpertiseResponse ( e.Id ,e.Name,e.Description ) ) 
             .ToListAsync(cancellationToken);
 
         return Result.Success(expertises);
