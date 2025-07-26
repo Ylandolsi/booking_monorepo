@@ -23,5 +23,3 @@ for port in "${ports[@]}"; do
     echo "✅ Port $port is free."
   fi
 done
-echo "🚀 Starting docker compose..."
-docker compose up -d
