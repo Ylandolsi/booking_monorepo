@@ -1,4 +1,4 @@
-export type SocialLinks = {
+export type SocialLinksType = {
   linkedIn?: string;
   twitter?: string;
   github?: string;

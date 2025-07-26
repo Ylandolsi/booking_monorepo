@@ -3,12 +3,12 @@
 // with the backend instead of manually writing them out
 
 import type {
-  Education,
-  Experience,
-  Expertise,
-  Language,
-  ProfilePicture,
-  SocialLinks,
+  EducationType,
+  ExperienceType,
+  ExpertiseType,
+  LanguageType,
+  ProfilePictureType,
+  SocialLinksType,
 } from '@/features/profile';
 
 export type BaseEntity = {
@@ -31,15 +31,15 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  profilePicture: ProfilePicture;
+  profilePicture: ProfilePictureType;
   status: Status;
   gender: 'Male' | 'Female';
-  socialLinks: SocialLinks;
+  socialLinks: SocialLinksType;
   bio: string;
-  experiences: Experience[];
-  educations: Education[];
-  expertises: Expertise[];
-  languages: Language[];
+  experiences: ExperienceType[];
+  educations: EducationType[];
+  expertises: ExpertiseType[];
+  languages: LanguageType[];
   profileCompletionStatus: number;
   // TODO  : add country !! country: string;
 };

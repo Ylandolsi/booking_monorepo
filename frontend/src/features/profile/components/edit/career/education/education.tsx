@@ -1,10 +1,10 @@
 import { Button, Label } from '@/components/ui';
 import type { User } from '@/types/api';
-import type { Education as EducationType } from '@/features/profile/types';
 import { formatDate } from '@/utils';
 import { useState } from 'react';
 import { FaBookReader } from 'react-icons/fa';
 import { EducationForm } from './education-form';
+import type { EducationType } from '@/features/profile';
 
 export function Education({ userData }: { userData: User }) {
   const [editingEducationId, setEditingEducationId] = useState<number | null>(

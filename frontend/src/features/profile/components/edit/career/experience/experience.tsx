@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui';
-import type { Experience as ExperienceType } from '@/features/profile/types';
+import type { ExperienceType } from '@/features/profile';
 import type { User } from '@/types/api';
 import { formatDate } from '@/utils';
 import { useState } from 'react';

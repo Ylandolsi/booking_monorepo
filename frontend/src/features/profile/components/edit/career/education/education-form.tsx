@@ -23,12 +23,12 @@ import {
 } from '@/features/profile/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import type { Education as EducationType } from '@/features/profile/types';
 import { useMemo } from 'react';
 import {
   educationSchema,
   type EducationInput,
-} from '@/features/profile/schemas';
+} from '@/features/profile/schemas/career';
+import type { EducationType } from '@/features/profile';
 
 interface EducationFormProps {
   education?: EducationType;

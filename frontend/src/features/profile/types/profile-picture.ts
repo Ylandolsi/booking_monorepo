@@ -1,4 +1,4 @@
-export type ProfilePicture = {
+export type ProfilePictureType = {
   profilePictureUrl: string;
   thumbnailUrl: string;
 };

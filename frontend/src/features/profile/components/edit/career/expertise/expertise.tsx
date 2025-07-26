@@ -25,7 +25,7 @@ export function Expertise({ userData }: { userData: User }) {
 
   // sync expertisestate with userExpertise
   useEffect(() => {
-    setSelectedExpertise(userData.expertises.map((exp) => exp.id.toString()));
+    setSelectedExpertise(userData.expertises.map((exp) => exp.id));
   }, []);
 
   if (isLoading) {

@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui';
+import type { ExperienceType } from '@/features/profile';
 import {
   useAddExperience,
   useDeleteExperience,
@@ -24,8 +25,7 @@ import {
 import {
   experienceSchema,
   type experienceInput,
-} from '@/features/profile/schemas';
-import type { Experience as ExperienceType } from '@/features/profile/types';
+} from '@/features/profile/schemas/career';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
