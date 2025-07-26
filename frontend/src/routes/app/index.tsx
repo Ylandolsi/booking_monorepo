@@ -6,7 +6,6 @@ export const Route = createFileRoute('/app/')({
 });
 
 function RouteComponent() {
-
   return (
     <ContentLayout>
       <div className="flex h-screen p-4 bg-amber-100/20">

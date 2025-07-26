@@ -1,24 +1,22 @@
-# version: "2.4"
-
 services:
-  web:
-    depends_on:
-      web-api:
-        condition: service_started # todo : make it service_healthy and add health check to web api
-    build: ./frontend
-    ports:
-      - 3000:3000
-    environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
-    develop:
-      watch:
-        - path: ./frontend/package.json
-          action: rebuild
-        - path: ./frontend/package-lock.json
-          action: rebuild
-        - path: ./frontend
-          target: /app
-          action: sync
+  # web:
+  #   depends_on:
+  #     web-api:
+  #       condition: service_started # todo : make it service_healthy and add health check to web api
+  #   build: ./frontend
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+  #   develop:
+  #     watch:
+  #       - path: ./frontend/package.json
+  #         action: rebuild
+  #       - path: ./frontend/package-lock.json
+  #         action: rebuild
+  #       - path: ./frontend
+  #         target: /app
+  #         action: sync
   web-api:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
