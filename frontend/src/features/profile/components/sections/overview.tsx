@@ -2,7 +2,7 @@ import { MainErrorFallback } from '@/components';
 import { Spinner } from '@/components';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
-import { useProfile } from '@/features/profile';
+import { useProfileBySlug } from '@/features/profile';
 import { Button } from '@/components/ui';
 import { useRequiredParam } from '@/hooks';
 import { formatDate } from '@/utils';
@@ -12,16 +12,12 @@ export function Overview() {
   const userSlug = useRequiredParam('userSlug');
   const { openDialog, setDefaultSection } = useProfileEditStore();
 
-  const {
-    data: user,
-    error: userError,
-    isLoading: userLoading,
-  } = useProfile(userSlug || '');
+  const { user, error, isLoading, isSlugCurrent } = useProfileBySlug();
 
   if (userSlug == undefined || userSlug == '') return null;
 
-  if (userError) return <MainErrorFallback />;
-  if (userLoading) return <Spinner />;
+  if (error) return <MainErrorFallback />;
+  if (isLoading) return <Spinner />;
   if (!user) return null;
 
   return (
@@ -44,15 +40,17 @@ export function Overview() {
               <h2 className="text-xl font-semibold mb-4 text-foreground">
                 Languages
               </h2>
-              <Button
-                onClick={() => {
-                  setDefaultSection('Basic Info');
-                  openDialog();
-                }}
-                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-              >
-                <MdEdit className="text-primary w-4 h-4" />
-              </Button>
+              {isSlugCurrent && (
+                <Button
+                  onClick={() => {
+                    setDefaultSection('Basic Info');
+                    openDialog();
+                  }}
+                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+                >
+                  <MdEdit className="text-primary w-4 h-4" />
+                </Button>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -75,15 +73,17 @@ export function Overview() {
               <h2 className="text-xl font-semibold text-foreground">
                 Experience
               </h2>
-              <Button
-                onClick={() => {
-                  setDefaultSection('Career');
-                  openDialog();
-                }}
-                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-              >
-                <MdEdit className="text-primary w-4 h-4" />
-              </Button>
+              {isSlugCurrent && (
+                <Button
+                  onClick={() => {
+                    setDefaultSection('Career');
+                    openDialog();
+                  }}
+                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+                >
+                  <MdEdit className="text-primary w-4 h-4" />
+                </Button>
+              )}
             </div>
             <div className="space-y-4">
               {user.experiences.map((experience, index) => (
@@ -118,15 +118,17 @@ export function Overview() {
               <h2 className="text-xl font-semibold text-foreground">
                 Education
               </h2>
-              <Button
-                onClick={() => {
-                  setDefaultSection('Career');
-                  openDialog();
-                }}
-                className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
-              >
-                <MdEdit className="text-primary w-4 h-4" />
-              </Button>
+              {isSlugCurrent && (
+                <Button
+                  onClick={() => {
+                    setDefaultSection('Career');
+                    openDialog();
+                  }}
+                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors"
+                >
+                  <MdEdit className="text-primary w-4 h-4" />
+                </Button>
+              )}
             </div>
             <div className="space-y-4">
               {user.educations.map((education, index) => (

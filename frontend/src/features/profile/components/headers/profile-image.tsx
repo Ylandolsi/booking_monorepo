@@ -5,9 +5,14 @@ import { cn } from '@/lib/utils';
 interface ProfileImageProps {
   className?: string;
   size?: 'sm' | 'lg';
+  isCurrentUser: boolean;
 }
 
-export function ProfileImage({ className, size = 'lg' }: ProfileImageProps) {
+export function ProfileImage({
+  className,
+  size = 'lg',
+  isCurrentUser = false,
+}: ProfileImageProps) {
   const sizeClasses = {
     sm: 'w-24 h-24',
     lg: 'w-28 h-28',
@@ -29,9 +34,13 @@ export function ProfileImage({ className, size = 'lg' }: ProfileImageProps) {
           sizeClasses[size],
         )}
       />
-      <div className="absolute -top-2 -right-2 rounded-full bg-primary p-2 shadow-lg hover:bg-primary/90 transition-colors cursor-pointer">
-        <MdEdit className={cn('text-primary-foreground', editIconSize[size])} />
-      </div>
+      {isCurrentUser && (
+        <div className="absolute -top-2 -right-2 rounded-full bg-primary p-2 shadow-lg hover:bg-primary/90 transition-colors cursor-pointer">
+          <MdEdit
+            className={cn('text-primary-foreground', editIconSize[size])}
+          />
+        </div>
+      )}
     </div>
   );
 }

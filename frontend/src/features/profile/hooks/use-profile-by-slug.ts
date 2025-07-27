@@ -2,7 +2,7 @@ import { useUser } from '@/features/auth';
 import { useRequiredParam } from '@/hooks';
 import { useProfile } from '@/features/profile';
 
-export function useProfileHeader() {
+export function useProfileBySlug() {
   const { data: currentUser, error, isLoading } = useUser();
   const userSlug = useRequiredParam('userSlug');
 

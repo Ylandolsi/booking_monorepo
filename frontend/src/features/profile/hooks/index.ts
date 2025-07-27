@@ -1,1 +1,1 @@
-export * from './use-profile-header';
+export * from './use-profile-by-slug';

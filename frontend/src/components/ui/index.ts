@@ -18,3 +18,7 @@ export * from './popover';
 export * from './command';
 export * from './multi-select';
 export * from './checkbox';
+export * from './sheet';
+export * from './sidebar';
+export * from './tooltip';
+export * from './skeleton';

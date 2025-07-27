@@ -1,15 +1,16 @@
+import type { User } from '@/types/api';
 import { cn } from '@/utils';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
 interface ProfileInfoProps {
-  currentUser: any;
+  user?: User;
   titleSize?: 'sm' | 'lg';
   className?: string;
 }
 
 export function ProfileInfo({
-  currentUser,
+  user,
   titleSize = 'lg',
   className,
 }: ProfileInfoProps) {
@@ -29,7 +30,7 @@ export function ProfileInfo({
         <h1
           className={cn('font-bold text-foreground', titleClasses[titleSize])}
         >
-          {currentUser?.firstName} {currentUser?.lastName}
+          {user?.firstName} {user?.lastName}
         </h1>
         <MdVerified
           className={cn('text-primary', verifiedIconSize[titleSize])}

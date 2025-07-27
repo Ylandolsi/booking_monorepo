@@ -3,10 +3,10 @@ import { Spinner } from '@/components';
 import { ProfileInfo } from './profile-info';
 import { ProfileImage } from './profile-image';
 import { ProfileActions } from './profile-actions';
-import { useProfileHeader } from '../../hooks/use-profile-header';
+import { useProfileBySlug } from '@/features/profile';
 
 export function MobileHeader() {
-  const { currentUser, error, isLoading, isSlugCurrent } = useProfileHeader();
+  const { user, error, isLoading, isSlugCurrent } = useProfileBySlug();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <Spinner />;
@@ -15,7 +15,7 @@ export function MobileHeader() {
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-6">
       <div className="space-y-6">
         <div className="flex justify-between items-start">
-          <ProfileImage size="sm" />
+          <ProfileImage size="sm" isCurrentUser={isSlugCurrent} />
           <ProfileActions
             isSlugCurrent={isSlugCurrent}
             variant="vertical"
@@ -23,7 +23,7 @@ export function MobileHeader() {
           />
         </div>
 
-        <ProfileInfo currentUser={currentUser} titleSize="sm" />
+        <ProfileInfo user={user} titleSize="sm" />
       </div>
     </div>
   );
