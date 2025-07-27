@@ -22,7 +22,6 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
-import { Route as AppUsersUserIdRouteImport } from './routes/app/users/$userId'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -91,11 +90,6 @@ const AuthEmailVerificationVerifiedRoute =
     path: '/auth/email-verification/verified',
     getParentRoute: () => rootRouteImport,
   } as any)
-const AppUsersUserIdRoute = AppUsersUserIdRouteImport.update({
-  id: '/users/$userId',
-  path: '/users/$userId',
-  getParentRoute: () => AppRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -108,7 +102,6 @@ export interface FileRoutesByFullPath {
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
-  '/app/users/$userId': typeof AppUsersUserIdRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
@@ -123,7 +116,6 @@ export interface FileRoutesByTo {
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
-  '/app/users/$userId': typeof AppUsersUserIdRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
@@ -140,7 +132,6 @@ export interface FileRoutesById {
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
-  '/app/users/$userId': typeof AppUsersUserIdRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug/': typeof ProfileUserSlugIndexRoute
@@ -158,7 +149,6 @@ export interface FileRouteTypes {
     | '/profile/me'
     | '/test/img'
     | '/app/'
-    | '/app/users/$userId'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
@@ -173,7 +163,6 @@ export interface FileRouteTypes {
     | '/profile/me'
     | '/test/img'
     | '/app'
-    | '/app/users/$userId'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
@@ -189,7 +178,6 @@ export interface FileRouteTypes {
     | '/profile/me'
     | '/test/img'
     | '/app/'
-    | '/app/users/$userId'
     | '/auth/email-verification/verified'
     | '/auth/email-verification/'
     | '/profile/$userSlug/'
@@ -303,24 +291,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationVerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/users/$userId': {
-      id: '/app/users/$userId'
-      path: '/users/$userId'
-      fullPath: '/app/users/$userId'
-      preLoaderRoute: typeof AppUsersUserIdRouteImport
-      parentRoute: typeof AppRoute
-    }
   }
 }
 
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
-  AppUsersUserIdRoute: typeof AppUsersUserIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
-  AppUsersUserIdRoute: AppUsersUserIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
