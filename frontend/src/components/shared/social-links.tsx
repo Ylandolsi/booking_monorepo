@@ -20,7 +20,7 @@ export interface SocialLink {
 }
 
 export type SocialLinksObject = {
-  [key: string]: string | null ;
+  [key: string]: string | null;
 };
 
 interface SocialLinksProps {
@@ -93,7 +93,6 @@ export function SocialLinks({
   size = 'md',
   className = '',
 }: SocialLinksProps) {
-  
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
@@ -111,7 +110,7 @@ export function SocialLinks({
       <div className={cn('flex gap-2', className)}>
         {Object.entries(links).map(([key, url], index) => {
           const platform = socialPlatforms[key as keyof typeof socialPlatforms];
-          if (!platform || url == null || url == undefined ) return null;
+          if (!platform || url == null || url == undefined) return null;
 
           const Icon = platform.icon;
 
@@ -140,7 +139,7 @@ export function SocialLinks({
     <div className={cn('space-y-2', className)}>
       {Object.entries(links).map(([key, url], index) => {
         const platform = socialPlatforms[key as keyof typeof socialPlatforms];
-          if (!platform || url == null || url == undefined ) return null;
+        if (!platform || url == null || url == undefined) return null;
 
         const Icon = platform.icon;
 

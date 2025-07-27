@@ -1,7 +1,6 @@
-import { Button } from '@/components/ui';
+import { Button } from '@/components';
 import { cn } from '@/utils';
-import { useProfileEditStore } from '../../stores/profile-edit-store';
-
+import { useProfileEditStore } from '@/features/profile';
 interface ProfileActionsProps {
   isSlugCurrent: boolean;
   variant?: 'horizontal' | 'vertical';

@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints.ts';
 
-export const deleteEducation = async (educationId: Number) => {
+export const deleteEducation = async (educationId: number) => {
   await api.delete<void>(
     Endpoints.DeleteEducation.replace('{educationId}', String(educationId)),
   );

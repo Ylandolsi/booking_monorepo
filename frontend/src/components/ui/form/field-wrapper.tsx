@@ -3,8 +3,6 @@ import { type FieldError } from 'react-hook-form';
 
 import { Error } from './error';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '../textarea';
-import { Input } from '../input';
 
 type FieldWrapperProps = {
   label?: string;

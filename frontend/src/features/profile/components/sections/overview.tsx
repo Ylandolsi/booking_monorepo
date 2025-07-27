@@ -1,24 +1,24 @@
-import { MainErrorFallback } from '@/components/errors/main';
+import { MainErrorFallback } from '@/components';
 import { Spinner } from '@/components/ui/spinner';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
-import { EXPERTISE_OPTIONS, useProfile } from '@/features/profile';
-import { Button, MultiSelect } from '@/components/ui';
+import { useProfile } from '@/features/profile';
+import { Button } from '@/components/ui';
 import { useRequiredParam } from '@/hooks';
 import { formatDate } from '@/utils';
 import { useProfileEditStore } from '@/features/profile';
 
 export function Overview() {
   const userSlug = useRequiredParam('userSlug');
-  if (userSlug == undefined || userSlug == '') return null;
+  const { openDialog, setDefaultSection } = useProfileEditStore();
 
   const {
     data: user,
     error: userError,
     isLoading: userLoading,
-  } = useProfile(userSlug);
+  } = useProfile(userSlug || '');
 
-  const { openDialog, setDefaultSection } = useProfileEditStore();
+  if (userSlug == undefined || userSlug == '') return null;
 
   if (userError) return <MainErrorFallback />;
   if (userLoading) return <Spinner />;

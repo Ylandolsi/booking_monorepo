@@ -1,14 +1,19 @@
-import  { useState, useEffect, useRef } from 'react';
-
+import { useState, useEffect, useRef } from 'react';
 
 interface LazyImageProps {
-  src : string 
-  placeholder : string 
-  alt : string 
-  className? : string | null 
-  onClick? : () => void 
+  src: string;
+  placeholder: string;
+  alt: string;
+  className?: string | null;
+  onClick?: () => void;
 }
-export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : LazyImageProps) => {
+export const LazyImage = ({
+  src,
+  placeholder,
+  alt,
+  className = '',
+  onClick,
+}: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
@@ -21,7 +26,7 @@ export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : 
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (imgRef.current) {
@@ -36,22 +41,24 @@ export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : 
   };
 
   return (
-    <div 
+    <div
       ref={imgRef}
       className={`relative overflow-hidden ${className}`}
       style={{
         backgroundImage: `url(${placeholder})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
       }}
       onClick={onClick}
     >
       {/* Pulsing animation overlay */}
-      <div className={`absolute inset-0 bg-white transition-opacity duration-1000 ${
-        isLoaded ? 'opacity-0' : 'opacity-30 animate-pulse'
-      }`} />
-      
+      <div
+        className={`absolute inset-0 bg-white transition-opacity duration-1000 ${
+          isLoaded ? 'opacity-0' : 'opacity-30 animate-pulse'
+        }`}
+      />
+
       {/* Main image */}
       {isInView && (
         <img
@@ -68,8 +75,7 @@ export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : 
   );
 };
 
-
-// Demo 
+// Demo
 // const LazyImageDemo = () => {
 //   const images = [
 //     {
@@ -119,7 +125,7 @@ export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : 
 //         <p className="text-gray-600 text-center mb-8">
 //           Scroll down to see the lazy loading effect with blurred placeholders
 //         </p>
-        
+
 //         {/* Grid layout */}
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 //           {images.map((image) => (
@@ -159,7 +165,7 @@ export const LazyImage = ({ src, placeholder, alt, className = "" , onClick } : 
 //                 <div className="p-4">
 //                   <h3 className="font-semibold text-lg mb-2">{image.alt}</h3>
 //                   <p className="text-gray-600">
-//                     This image uses advanced lazy loading with a blurred placeholder 
+//                     This image uses advanced lazy loading with a blurred placeholder
 //                     that smoothly transitions to the full image once loaded.
 //                   </p>
 //                 </div>

@@ -4,6 +4,9 @@ import * as Endpoints from '@/lib/endpoints';
 import { useQuery } from '@tanstack/react-query';
 
 export const userInfo = async (userSlug: string) => {
+  if (userSlug === undefined || userSlug === '') {
+    throw new Error('userSlug is required');
+  }
   return await api.get<User>(Endpoints.GetUser.replace('{userSlug}', userSlug));
 };
 

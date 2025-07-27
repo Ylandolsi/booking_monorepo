@@ -5,7 +5,7 @@ import {
   Search,
   UserSearch,
 } from 'lucide-react';
-import { Badge } from '../ui/badge';
+import { Badge } from '@/components/ui';
 import { useNavigate } from '@tanstack/react-router';
 
 export function BottomNav() {

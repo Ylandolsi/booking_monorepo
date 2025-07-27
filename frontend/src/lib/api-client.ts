@@ -145,16 +145,16 @@ export const api = {
   },
 };
 
-interface ValidationError {
+type ValidationError = {
   code: string;
   description: string;
   type: number;
-}
+};
 
-interface ErrorType {
+type ErrorType = {
   type: string;
   title: string;
   status: number;
   detail: string;
   error: ValidationError[] | null;
-}
+};

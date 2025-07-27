@@ -1,9 +1,7 @@
 import { create } from 'zustand';
-import type { Expertise, Language } from '../types';
-
 type Section = 'Basic Info' | 'Career' | 'Social Links';
 
-interface ProfileEditState {
+type ProfileEditState = {
   isOpen: boolean;
   defaultSection: Section;
   selectedGender?: string;
@@ -23,7 +21,7 @@ interface ProfileEditState {
   setSelectedExpertise: (expertise: number[]) => void;
   setSelectedLanguages: (languages: number[]) => void;
   resetForm: () => void;
-}
+};
 
 export const useProfileEditStore = create<ProfileEditState>((set) => ({
   isOpen: false,

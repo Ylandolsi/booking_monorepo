@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 // usage :
 // const isTablet = useMediaQuery("(max-width: 768px)");
@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState<boolean>(
-    () => window.matchMedia(query).matches
+    () => window.matchMedia(query).matches,
   );
 
   useEffect(() => {
@@ -18,10 +18,10 @@ function useMediaQuery(query: string): boolean {
     // Initial check
     setMatches(mediaQueryList.matches);
 
-    mediaQueryList.addEventListener("change", handleChange);
+    mediaQueryList.addEventListener('change', handleChange);
 
     return () => {
-      mediaQueryList.removeEventListener("change", handleChange);
+      mediaQueryList.removeEventListener('change', handleChange);
     };
   }, [query]);
 
@@ -30,13 +30,12 @@ function useMediaQuery(query: string): boolean {
 
 export default useMediaQuery;
 
-
 export const useBreakpoint = () => {
-  const isSm = useMediaQuery("(min-width: 640px)");
-  const isMd = useMediaQuery("(min-width: 768px)");
-  const isLg = useMediaQuery("(min-width: 1024px)");
-  const isXl = useMediaQuery("(min-width: 1280px)");
-  const is2Xl = useMediaQuery("(min-width: 1536px)");
+  const isSm = useMediaQuery('(min-width: 640px)');
+  const isMd = useMediaQuery('(min-width: 768px)');
+  const isLg = useMediaQuery('(min-width: 1024px)');
+  const isXl = useMediaQuery('(min-width: 1280px)');
+  const is2Xl = useMediaQuery('(min-width: 1536px)');
 
   return {
     isSm,
@@ -49,6 +48,7 @@ export const useBreakpoint = () => {
     isDesktop: isLg, // lg and above
   };
 };
-export const useIsMobile = () => useMediaQuery("(max-width: 639px)");
-export const useIsTablet = () => useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
-export const useIsDesktop = () => useMediaQuery("(min-width: 1024px)");
+export const useIsMobile = () => useMediaQuery('(max-width: 639px)');
+export const useIsTablet = () =>
+  useMediaQuery('(min-width: 640px) and (max-width: 1023px)');
+export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)');

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AuthLayout ,LoginForm } from '@/features/auth';
+import { AuthLayout, LoginForm } from '@/features/auth';
 import { paths } from '@/config/paths';
 
 export const Route = createFileRoute('/auth/login')({
@@ -22,12 +22,12 @@ function LoginPage() {
 
   return (
     <AuthLayout>
-        <LoginForm
-          onSuccess={() => {
-            const targetPath = redirectTo || paths.app.root.getHref();
-            navigate({ to: targetPath, replace: true });
-          }}
-        />
+      <LoginForm
+        onSuccess={() => {
+          const targetPath = redirectTo || paths.app.root.getHref();
+          navigate({ to: targetPath, replace: true });
+        }}
+      />
     </AuthLayout>
   );
 }

@@ -2,7 +2,7 @@ import { MainErrorFallback } from '@/components/errors/main';
 import { Spinner } from '@/components/ui/spinner';
 import { ProfileActions } from './profile-actions';
 import { ProfileInfo } from './profile-info';
-import { useProfileHeader } from '../../hooks/use-profile-header';
+import { useProfileHeader } from '@/features/profile';
 import { ProfileImage } from './profile-image';
 
 export function DesktopHeader() {

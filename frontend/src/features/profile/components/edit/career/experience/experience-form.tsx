@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   Input,
@@ -24,9 +25,8 @@ import {
 } from '@/features/profile';
 import {
   experienceSchema,
-  type experienceInput,
+  type ExperienceInput,
 } from '@/features/profile/schemas/career';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -46,7 +46,7 @@ export function ExperienceForm({
   const deleteExperienceMutation = useDeleteExperience();
   const updateExperienceMutation = useUpdateExperience();
 
-  const form = useForm<experienceInput>({
+  const form = useForm<ExperienceInput>({
     resolver: zodResolver(experienceSchema),
     defaultValues: {
       title: experience?.title || '',
@@ -75,7 +75,7 @@ export function ExperienceForm({
 
   const watchToPresent = form.watch('toPresent');
 
-  const onSubmit = async (data: experienceInput) => {
+  const onSubmit = async (data: ExperienceInput) => {
     const experienceData: ExperienceType = {
       title: data.title,
       company: data.company,

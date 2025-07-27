@@ -1,4 +1,9 @@
-import { CardContent, CardDescription, CardFooter , Link} from '@/components/ui';
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  Link,
+} from '@/components/ui';
 
 type ConfirmEmailPageProps = {
   onSuccess: () => void;
@@ -12,7 +17,8 @@ export const ConfirmEmailPage = ({ onSuccess }: ConfirmEmailPageProps) => {
           Check Your Email
         </h2>
         <p className="text-muted-foreground mx-2 mt-2">
-          We have sent a verification email to your account. Please check your email and click the verification link.
+          We have sent a verification email to your account. Please check your
+          email and click the verification link.
         </p>
       </CardDescription>
       <CardContent></CardContent>

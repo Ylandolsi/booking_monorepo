@@ -4,7 +4,7 @@ import type { ExperienceType } from '../../types';
 import { useMutation } from '@tanstack/react-query';
 
 export const updateExperience = async (
-  experienceId: Number,
+  experienceId: number,
   experience: ExperienceType,
 ) => {
   await api.put<void>(

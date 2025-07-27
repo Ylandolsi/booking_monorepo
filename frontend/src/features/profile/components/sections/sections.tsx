@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Overview } from './overview';
 
-type sectonsType = 'Overview' | 'Mentors' | 'Calendar';
+type SectionType = 'Overview' | 'Mentors' | 'Calendar';
 
 export function Sections() {
-  let sections = ['Overview', 'Mentors', 'Calendar'];
+  const sections = ['Overview', 'Mentors', 'Calendar'];
   const [sectionSelected, setSectionSelected] =
-    useState<sectonsType>('Overview');
+    useState<SectionType>('Overview');
 
-  const handleSectionClick = (section: sectonsType) => {
+  const handleSectionClick = (section: SectionType) => {
     setSectionSelected(section);
   };
 
@@ -51,7 +51,7 @@ export function Sections() {
                   ? 'text-primary border-b-2 border-primary bg-background/50'
                   : 'text-muted-foreground hover:text-foreground hover:bg-background/30'
               }`}
-              onClick={() => handleSectionClick(item as sectonsType)}
+              onClick={() => handleSectionClick(item as SectionType)}
             >
               {item}
             </button>

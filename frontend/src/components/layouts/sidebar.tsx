@@ -9,27 +9,26 @@ import {
   User as UserIcon,
   Calendar,
   Search,
-  Menu,
   ChevronRight,
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 
-import { Link , Button , Badge , Separator} from '@/components/ui' ;
-import {  } from '../ui/separator';
+import { Link, Button, Badge, Separator } from '@/components/ui';
+import {} from '../ui/separator';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '../errors/main';
 import { Spinner } from '../ui';
 
-interface SidebarProps {
+type SidebarProps = {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-}
+};
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const { user, error, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
   if (error) return <MainErrorFallback />;
   if (isLoading) return <Spinner />;
-  const navigate = useNavigate();
 
   const navigationItems = [
     {

@@ -34,6 +34,6 @@ export const experienceSchema = z
     },
   );
 
-export type experienceInput = z.infer<typeof experienceSchema>;
+export type ExperienceInput = z.infer<typeof experienceSchema>;
 
 export function ExperienceForm() {}

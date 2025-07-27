@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
   Input,
@@ -17,7 +18,6 @@ import {
   FormMessage,
 } from '@/components/ui';
 
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useMemo } from 'react';
 import {
@@ -31,12 +31,12 @@ import {
   type EducationType,
 } from '@/features/profile';
 
-interface EducationFormProps {
+type EducationFormProps = {
   education?: EducationType;
   onSuccess: () => void;
   onCancel: () => void;
   isEditing?: boolean;
-}
+};
 
 export function EducationForm({
   education,

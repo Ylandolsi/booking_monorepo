@@ -9,16 +9,11 @@ export function GlobalProfileEditDialog() {
 
   const [sectionSelected, setSectionSelected] = useState(defaultSection);
 
-  // Reset section when dialog opens or defaultSection changes
   useEffect(() => {
     if (isOpen) {
       setSectionSelected(defaultSection);
     }
   }, [isOpen, defaultSection]);
-
-  const handleSubmit = (section: string) => {
-    console.log(`Submitting ${section}`, {});
-  };
 
   const renderSectionContent = () => {
     switch (sectionSelected) {

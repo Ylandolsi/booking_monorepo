@@ -1,16 +1,7 @@
-import { useBreakpoint } from '@/hooks/use-media-query';
-import { MobileHeader } from './mobile-header';
-import { DesktopHeader } from './desktop-header';
+import { useBreakpoint } from '@/hooks';
+import { MobileHeader, DesktopHeader } from '@/features/profile';
 
 export function Header() {
   const { isMobile } = useBreakpoint();
-  return (
-    <>
-      {isMobile ? (
-        <MobileHeader/>
-      ) : (
-        <DesktopHeader/>
-      )}
-    </>
-  );
+  return <>{isMobile ? <MobileHeader /> : <DesktopHeader />}</>;
 }

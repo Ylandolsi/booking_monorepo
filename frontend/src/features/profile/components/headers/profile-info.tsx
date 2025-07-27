@@ -1,6 +1,6 @@
-import { cn } from "@/utils";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import { MdVerified } from "react-icons/md";
+import { cn } from '@/utils';
+import { FaMapMarkerAlt } from 'react-icons/fa';
+import { MdVerified } from 'react-icons/md';
 
 interface ProfileInfoProps {
   currentUser: any;
@@ -8,7 +8,11 @@ interface ProfileInfoProps {
   className?: string;
 }
 
-export function ProfileInfo({ currentUser, titleSize = 'lg', className }: ProfileInfoProps) {
+export function ProfileInfo({
+  currentUser,
+  titleSize = 'lg',
+  className,
+}: ProfileInfoProps) {
   const titleClasses = {
     sm: 'text-2xl',
     lg: 'text-3xl',
@@ -22,19 +26,25 @@ export function ProfileInfo({ currentUser, titleSize = 'lg', className }: Profil
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2">
-        <h1 className={cn('font-bold text-foreground', titleClasses[titleSize])}>
+        <h1
+          className={cn('font-bold text-foreground', titleClasses[titleSize])}
+        >
           {currentUser?.firstName} {currentUser?.lastName}
         </h1>
-        <MdVerified className={cn('text-primary', verifiedIconSize[titleSize])} />
+        <MdVerified
+          className={cn('text-primary', verifiedIconSize[titleSize])}
+        />
       </div>
-      
+
       <div className="flex items-center gap-2 text-muted-foreground">
         <FaMapMarkerAlt className="w-4 h-4" />
-        <span className={cn('font-medium', titleSize === 'sm' ? 'text-sm' : '')}>
+        <span
+          className={cn('font-medium', titleSize === 'sm' ? 'text-sm' : '')}
+        >
           Software Engineer Student at Issat Sousse
         </span>
       </div>
-      
+
       <div className="flex items-center gap-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
           <span className="font-semibold text-foreground">156</span>

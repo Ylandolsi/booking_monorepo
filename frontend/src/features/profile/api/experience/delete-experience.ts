@@ -2,7 +2,7 @@ import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints';
 import { useMutation } from '@tanstack/react-query';
 
-export const deleteExperience = async (experienceId: Number) => {
+export const deleteExperience = async (experienceId: number) => {
   await api.delete<void>(
     Endpoints.DeleteExperience.replace('{experienceId}', String(experienceId)),
   );

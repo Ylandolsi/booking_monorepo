@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useNavigate, useSearch, useLocation } from '@tanstack/react-router';
-import { paths } from '@/config/paths';
+import { useSearch } from '@tanstack/react-router';
 import { Logo } from '../../../components/logo';
-import { Card, CardHeader  , Link} from '@/components/ui/index';
+import { Card, CardHeader, Link } from '@/components/ui/index';
 import { AuthGuard } from './auth-guard';
 
 type LayoutProps = {
@@ -11,8 +10,8 @@ type LayoutProps = {
 
 export const AuthLayout = ({ children }: LayoutProps) => {
   // const user = useUser();
-  const navigate = useNavigate();
-  const location = useLocation();
+  // const navigate = useNavigate();
+  // const location = useLocation();
   const search = useSearch({ strict: false });
   const redirectTo = (search.redirectTo as string) || './app';
 
@@ -31,10 +30,7 @@ export const AuthLayout = ({ children }: LayoutProps) => {
         <Card className="mx-auto w-full max-w-md border-none shadow-lg">
           <CardHeader>
             <div className="flex justify-center">
-              <Link
-                className="flex items-center text-white"
-                to={paths.home.getHref()}
-              >
+              <Link className="flex items-center text-white" to="/">
                 <Logo />
               </Link>
             </div>

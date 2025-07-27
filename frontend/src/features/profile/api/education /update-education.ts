@@ -4,7 +4,7 @@ import type { EducationType } from '@/features/profile';
 import { useMutation } from '@tanstack/react-query';
 
 export const updateEducation = async (
-  educationId: Number,
+  educationId: number,
   education: EducationType,
 ) => {
   await api.put<void>(
