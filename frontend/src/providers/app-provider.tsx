@@ -9,7 +9,7 @@ import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { HelmetProvider } from 'react-helmet-async';
 import { MainErrorFallback } from '@/components/errors/main';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/components';
 import type { DefaultOptions } from '@tanstack/react-query';
 import { toast, Toaster } from 'sonner';
 

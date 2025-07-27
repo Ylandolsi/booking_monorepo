@@ -1,7 +1,14 @@
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui';
 import { cn } from '@/utils/cn';
 
-export type UserStatus = 'online' | 'offline' | 'away' | 'busy' | 'available' | 'mentor' | 'student';
+export type UserStatus =
+  | 'online'
+  | 'offline'
+  | 'away'
+  | 'busy'
+  | 'available'
+  | 'mentor'
+  | 'student';
 
 interface StatusBadgeProps {
   status: UserStatus;
@@ -54,18 +61,15 @@ const statusConfig = {
   },
 };
 
-export function StatusBadge({ 
-  status, 
-  className = '', 
-  showIcon = false 
+export function StatusBadge({
+  status,
+  className = '',
+  showIcon = false,
 }: StatusBadgeProps) {
   const config = statusConfig[status];
-  
+
   return (
-    <Badge 
-      variant={config.variant} 
-      className={cn('text-xs', className)}
-    >
+    <Badge variant={config.variant} className={cn('text-xs', className)}>
       {showIcon && <span className="mr-1">{config.icon}</span>}
       {config.label}
     </Badge>
@@ -73,18 +77,21 @@ export function StatusBadge({
 }
 
 // Online status indicator (just the dot)
-export function OnlineStatusDot({ 
-  status, 
-  className = '' 
-}: { status: UserStatus; className?: string }) {
+export function OnlineStatusDot({
+  status,
+  className = '',
+}: {
+  status: UserStatus;
+  className?: string;
+}) {
   const config = statusConfig[status];
-  
+
   return (
-    <div 
+    <div
       className={cn(
         'w-3 h-3 rounded-full border-2 border-background',
         config.color,
-        className
+        className,
       )}
       title={config.label}
     />

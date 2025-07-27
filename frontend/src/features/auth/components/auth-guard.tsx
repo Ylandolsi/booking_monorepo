@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from '@tanstack/react-router';
 import { useUser } from '@/features/auth';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/components/ui';
 import type { ReactNode } from 'react';
 
 interface AuthGuardProps {
@@ -14,6 +14,7 @@ interface AuthGuardProps {
 export const AuthGuard = ({
   children,
   requireAuth = false,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requireAdmin = false,
   authPage = false,
   redirectTo = '/auth/login',

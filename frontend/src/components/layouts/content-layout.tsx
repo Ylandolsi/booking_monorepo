@@ -1,4 +1,4 @@
-import { AuthGuard } from '@/features/auth/components/auth-guard';
+import { AuthGuard } from '@/features/auth';
 import { Logo } from '@/components/logo';
 import Sidebar from './sidebar';
 import { Button, Badge, Spinner } from '@/components/ui/index';

@@ -19,8 +19,7 @@ import {
   FormMessage,
   Button,
 } from '@/components/ui';
-import {} from '@/components/ui/link';
-import { PasswordInput } from '@/components/ui/form/password-input';
+import { PasswordInput } from '@/components/ui';
 
 type ResetPasswordPageProps = {
   onSuccess: () => void;

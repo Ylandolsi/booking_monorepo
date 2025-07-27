@@ -1,5 +1,5 @@
 import { LazyImage } from '@/utils/lazy-image';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui';
 import { cn } from '@/utils/cn';
 import { MdEdit } from 'react-icons/md';
 import type { User } from '@/types/api';

@@ -1,5 +1,5 @@
 import { MainErrorFallback } from '@/components';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/components';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
 import { useProfile } from '@/features/profile';

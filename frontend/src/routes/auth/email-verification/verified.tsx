@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { AuthLayout } from '@/features/auth/components/auth-layout';
+import { AuthLayout } from '@/features/auth';
 import { CardDescription, CardFooter, Link } from '@/components/ui';
 
 export const Route = createFileRoute('/auth/email-verification/verified')({

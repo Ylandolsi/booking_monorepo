@@ -35,7 +35,7 @@ export const EmailVerificationPage = ({
         if (!isCancelled) {
           onSuccess();
         }
-      } catch (err) {
+      } catch (_) {
         if (!isCancelled) {
           setError('Verification failed. Please try again.');
         }
