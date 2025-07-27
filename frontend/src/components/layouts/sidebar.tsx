@@ -11,15 +11,27 @@ import {
   Search,
   ChevronRight,
   ChevronLeft,
-  Menu,
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 
 import { Link, Button, Badge, Separator } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
-import { Spinner } from '@/components';
+import { Spinner, useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
+
+export type Item = {
+  name:
+    | 'Home'
+    | 'Profile'
+    | 'Bookings'
+    | 'Search'
+    | 'Notifications'
+    | 'Settings';
+  icon: JSX.Element;
+  click: () => void;
+  badge?: string;
+};
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -34,42 +46,39 @@ const Sidebar = ({
   collapsed = false,
   setCollapsed,
 }: SidebarProps) => {
-  const { user, error, isLoading, logout } = useAuth();
+  const { currentUser, error, isLoading, logout } = useAuth();
+  const { itemActive, setItemActive } = useSideBar();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <Spinner />;
 
-  const navigationItems = [
+  const navigationItems: Item[] = [
     {
       name: 'Home',
       icon: <Home size={20} />,
       click: () => navigate({ to: '/app' }),
-      active: true,
     },
     {
       name: 'Profile',
       icon: <UserIcon size={20} />,
-      click: () => navigate({ to: `/members/${user?.id}` }),
-      active: false,
+      click: () => navigate({ to: `/profile/${currentUser?.slug}` }),
     },
     {
       name: 'Bookings',
       icon: <Calendar size={20} />,
       click: () => {},
-      active: false,
       badge: '3',
     },
     {
       name: 'Search',
       icon: <Search size={20} />,
       click: () => {},
-      active: false,
     },
   ];
 
-  const accountItems = [
+  const accountItems: Item[] = [
     {
       name: 'Notifications',
       icon: <Bell size={20} />,
@@ -81,15 +90,10 @@ const Sidebar = ({
       icon: <Settings size={20} />,
       click: () => {},
     },
-    {
-      name: 'Support',
-      icon: <MessageCircleQuestion size={20} />,
-      click: () => {},
-    },
   ];
-
-  const handleItemClick = (itemClick: () => void) => {
-    itemClick();
+  const handleItemClick = (item: Item) => {
+    setItemActive(item.name);
+    item.click();
     // Only close sidebar on mobile
     if (isMobile) {
       setSidebarOpen(false);
@@ -129,12 +133,12 @@ const Sidebar = ({
             <LazyImage
               className="w-8 h-8 rounded-full ring-2 ring-primary/20 object-cover"
               src={
-                user?.profilePictureUrl ||
+                currentUser?.profilePictureUrl ||
                 'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
               }
               alt="profile-pic"
               placeholder={
-                user?.profilePictureUrl ||
+                currentUser?.profilePictureUrl ||
                 'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
               }
             />
@@ -144,21 +148,21 @@ const Sidebar = ({
                 <LazyImage
                   className="w-12 h-auto rounded-full ring-2 ring-primary/20 object-cover"
                   src={
-                    user?.profilePictureUrl ||
+                    currentUser?.profilePictureUrl ||
                     'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                   }
                   alt="profile-pic"
                   placeholder={
-                    user?.profilePictureUrl ||
+                    currentUser?.profilePictureUrl ||
                     'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                   }
                 />
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-foreground truncate">
-                    {user?.firstName} {user?.lastName}
+                    {currentUser?.firstName} {currentUser?.lastName}
                   </div>
                   <Link
-                    to={`/members/${user?.id}`}
+                    to={`/members/${currentUser?.id}`}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     View profile
@@ -189,12 +193,12 @@ const Sidebar = ({
               {navigationItems.map((item) => (
                 <button
                   key={item.name}
-                  onClick={() => handleItemClick(item.click)}
+                  onClick={() => handleItemClick(item)}
                   className={`
                     w-full flex items-center rounded-lg text-left transition-all duration-200 group relative
                     ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
-                      item.active
+                      itemActive == item.name
                         ? 'bg-primary text-primary-foreground shadow-md'
                         : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                     }
@@ -202,7 +206,7 @@ const Sidebar = ({
                   title={collapsed ? item.name : undefined}
                 >
                   <span
-                    className={`${item.active ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                    className={`${itemActive == item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
                   >
                     {item.icon}
                   </span>
