@@ -1,5 +1,5 @@
 import { MainErrorFallback } from '@/components/errors/main';
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from '@/components/ui';
 import { ProfileActions } from './profile-actions';
 import { ProfileInfo } from './profile-info';
 import { useProfileHeader } from '@/features/profile';

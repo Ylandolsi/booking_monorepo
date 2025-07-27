@@ -2,7 +2,7 @@ import * as React from 'react';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 import { cn } from '@/utils/cn';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui';
 
 export interface PasswordInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {}
