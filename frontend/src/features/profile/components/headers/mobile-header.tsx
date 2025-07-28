@@ -6,7 +6,7 @@ import { ProfileActions } from './profile-actions';
 import { useProfileBySlug } from '@/features/profile';
 
 export function MobileHeader() {
-  const { user, error, isLoading, isSlugCurrent } = useProfileBySlug();
+  const { error, isLoading } = useProfileBySlug();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <Spinner />;
@@ -15,15 +15,11 @@ export function MobileHeader() {
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-6">
       <div className="space-y-6">
         <div className="flex justify-between items-start">
-          <ProfileImage size="sm" isCurrentUser={isSlugCurrent} />
-          <ProfileActions
-            isSlugCurrent={isSlugCurrent}
-            variant="vertical"
-            className="flex flex-col gap-2"
-          />
+          <ProfileImage size="sm" />
+          <ProfileActions variant="vertical" className="flex flex-col gap-2" />
         </div>
 
-        <ProfileInfo user={user} titleSize="sm" />
+        <ProfileInfo titleSize="sm" />
       </div>
     </div>
   );

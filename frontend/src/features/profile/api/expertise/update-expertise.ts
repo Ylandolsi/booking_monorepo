@@ -1,3 +1,4 @@
+import { authQueryKeys } from '@/features/auth';
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints';
 import { useMutation } from '@tanstack/react-query';
@@ -13,7 +14,7 @@ export function useUpdateExpertises() {
     mutationFn: ({ expertises }: { expertises: number[] }) =>
       updateExpertise(expertises),
     meta: {
-      invalidatesQuery: [['user']],
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Expertises updated successfully',
       errorMessage: 'Failed to update expertises',
     },

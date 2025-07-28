@@ -8,8 +8,7 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createRootRoute } from '@tanstack/react-router'
-
+import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,8 +24,6 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
-
-const rootRouteImport = createRootRoute()
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',

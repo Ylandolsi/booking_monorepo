@@ -3,7 +3,7 @@ import type { User } from '@/types/api';
 import { toast } from 'sonner';
 import { api } from '@/lib/api-client';
 import * as Endpoints from '@/lib/endpoints.ts';
-import type { LoginInput } from '@/features/auth';
+import { authQueryKeys, type LoginInput } from '@/features/auth';
 
 export const loginWithEmailAndPassword = async (
   data: LoginInput,
@@ -24,7 +24,7 @@ export const useLogin = ({
   return useMutation({
     mutationFn: loginWithEmailAndPassword,
     onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data);
+      queryClient.setQueryData(authQueryKeys.currentUser(), data);
       toast.success('Login successful!');
       onSuccess?.(data);
     },

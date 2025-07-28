@@ -2,6 +2,7 @@ import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints.ts';
 import type { EducationType } from '@/features/profile';
 import { useMutation } from '@tanstack/react-query';
+import { authQueryKeys } from '@/features/auth';
 
 export const updateEducation = async (
   educationId: number,
@@ -18,7 +19,7 @@ export function useUpdateEducation() {
     mutationFn: ({ id, data }: { id: number; data: EducationType }) =>
       updateEducation(id, data),
     meta: {
-      invalidatesQuery: [['user']],
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Education updated successfully',
       errorMessage: 'Failed to update education',
     },

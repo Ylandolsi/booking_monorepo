@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api-client';
 import * as Endpoints from '@/lib/endpoints.ts';
+import { authQueryKeys } from '@/features/auth';
 
 const logout = async (): Promise<void> => await api.post(Endpoints.Logout);
 
@@ -15,7 +16,7 @@ export const useLogout = ({
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ['user'] });
+      queryClient.removeQueries({ queryKey: authQueryKeys.currentUser() });
       // queryClient.clear(); // clear all : todo check this
 
       toast.success('Logged out successfully!');

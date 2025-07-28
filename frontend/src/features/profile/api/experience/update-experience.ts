@@ -2,6 +2,7 @@ import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints';
 import type { ExperienceType } from '../../types';
 import { useMutation } from '@tanstack/react-query';
+import { authQueryKeys } from '@/features/auth';
 
 export const updateExperience = async (
   experienceId: number,
@@ -18,7 +19,7 @@ export function useUpdateExperience() {
     mutationFn: ({ id, data }: { id: number; data: ExperienceType }) =>
       updateExperience(id, data),
     meta: {
-      invalidatesQuery: [['users']],
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Experience updated successfully',
       errorMessage: 'Failed to update experience',
     },

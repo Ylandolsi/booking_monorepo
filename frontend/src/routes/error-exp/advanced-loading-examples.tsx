@@ -24,6 +24,7 @@ import {
   Unauthorized,
 } from '@/components/errors';
 import { Button, Card, Badge } from '@/components/ui';
+import { authQueryKeys } from '@/features/auth';
 
 // ============================================================================
 // MOCK API FUNCTIONS
@@ -307,7 +308,7 @@ export const FormSubmissionExample = () => {
   const submitMutation = useMutation({
     mutationFn: mockApi.submitForm,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: authQueryKeys.currentUser() });
     },
   });
 

@@ -1,18 +1,19 @@
 ## 🎯 **Basic Loading States**
 
+````typescript
 export const useUserData = (userSlug?: string) => {
-const { data: user, isLoading: userLoading } = useQuery(getUserQueryOptions(userSlug));
-const { data: experiences, isLoading: experiencesLoading } = useQuery(getUserExperiencesQueryOptions(userSlug));
-const { data: educations, isLoading: educationsLoading } = useQuery(getUserEducationsQueryOptions(userSlug));
+    const { data: user, isLoading: userLoading } = useQuery(getUserQueryOptions(userSlug));
+    const { data: experiences, isLoading: experiencesLoading } = useQuery(getUserExperiencesQueryOptions(userSlug));
+    const { data: educations, isLoading: educationsLoading } = useQuery(getUserEducationsQueryOptions(userSlug));
 
-return {
-user,
-experiences,
-educations,
-isLoading: userLoading || experiencesLoading || educationsLoading,
+    return {
+      user,
+      experiences,
+      educations,
+      isLoading: userLoading || experiencesLoading || educationsLoading,
+    };
 };
-};
-
+`
 ### **1. Loading State Types**
 
 ```typescript
@@ -77,7 +78,7 @@ import { MainErrorFallback, NetworkError, NotFound, Unauthorized } from '@/compo
   showLoginButton={true}
   showHomeButton={true}
 />
-```
+````
 
 ### **2. Specialized Loading Components**
 

@@ -1,22 +1,23 @@
 import { useUser } from '@/features/auth';
+import { useProfile } from '@/features/profile/api';
 import { useRequiredParam } from '@/hooks';
-import { useProfile } from '@/features/profile';
 
 export function useProfileBySlug() {
   const { data: currentUser, error, isLoading } = useUser();
   const userSlug = useRequiredParam('userSlug');
 
+  const isSlugCurrent = userSlug === currentUser?.slug;
+
   const {
     data: user,
     error: userError,
     isLoading: userLoading,
-  } = useProfile(userSlug!);
-
-  const isSlugCurrent = user?.slug === currentUser?.slug;
+  } = useProfile(userSlug!, {
+    enabled: !isSlugCurrent,
+  });
 
   return {
-    currentUser,
-    user,
+    user: isSlugCurrent ? currentUser : user,
     error: error || userError,
     isLoading: isLoading || userLoading,
     isSlugCurrent,

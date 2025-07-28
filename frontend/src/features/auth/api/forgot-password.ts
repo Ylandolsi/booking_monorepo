@@ -18,7 +18,7 @@ export const useForgotPassword = ({
   return useMutation({
     mutationFn: forgotPassword,
     meta: {
-      invalidatesQuery: [authQueryKeys.currentUser],
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'A reset link is sent to your mail',
       successAction: () => onSuccess(),
       errorMessage: 'Failed to send reset link. Please try again.',

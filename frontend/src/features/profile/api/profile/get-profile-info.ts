@@ -1,7 +1,8 @@
 import { api } from '@/lib';
 import type { User } from '@/types/api';
 import * as Endpoints from '@/lib/endpoints';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { profileQueryKeys } from '@/features/profile';
 
 export const userInfo = async (userSlug: string) => {
   if (userSlug === undefined || userSlug === '') {
@@ -10,10 +11,14 @@ export const userInfo = async (userSlug: string) => {
   return await api.get<User>(Endpoints.GetUser.replace('{userSlug}', userSlug));
 };
 
-export function useProfile(userSlug: string) {
+export function useProfile(
+  userSlug: string,
+  overrides?: Partial<UseQueryOptions<any, unknown, any>>,
+) {
   return useQuery({
-    queryKey: ['profile', userSlug],
+    queryKey: profileQueryKeys.slug(userSlug),
     queryFn: () => userInfo(userSlug),
     enabled: !!userSlug,
+    ...overrides,
   });
 }

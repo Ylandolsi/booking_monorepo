@@ -86,10 +86,19 @@ export function BasicInfoForm() {
   const handleSubmit = async (data: BasicInfoFormValues) => {
     try {
       const { languages, ...basicInfoData } = data;
+      const userLanguages =
+        userQuery.data?.languages?.map((lang) => lang.id.toString()) ?? [];
 
-      await updateLanguageMutation.mutateAsync({
-        languages: languages.map(Number),
-      });
+      const sortedLanguages = [...languages].sort();
+      const sortedUserLanguages = [...userLanguages].sort();
+
+      if (
+        JSON.stringify(sortedLanguages) !== JSON.stringify(sortedUserLanguages)
+      ) {
+        await updateLanguageMutation.mutateAsync({
+          languages: languages.map(Number),
+        });
+      }
 
       await updateBasicInfoMutation.mutateAsync({
         data: basicInfoData as BasicInfoType,

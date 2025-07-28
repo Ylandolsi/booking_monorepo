@@ -1,3 +1,4 @@
+import { authQueryKeys } from '@/features/auth';
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints';
 import { useMutation } from '@tanstack/react-query';
@@ -12,7 +13,7 @@ export function useDeleteExperience() {
   return useMutation({
     mutationFn: ({ id }: { id: number }) => deleteExperience(id),
     meta: {
-      invalidatesQuery: [['users']],
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Experience deleted successfully',
       errorMessage: 'Failed to delete experience',
     },
