@@ -1,4 +1,4 @@
 export type ProfilePictureType = {
-  profilePictureUrl: string;
-  thumbnailUrl: string;
+  profilePictureLink: string;
+  thumbnailUrlPictureLink: string;
 };

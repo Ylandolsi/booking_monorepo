@@ -1,17 +1,17 @@
 import { Button } from '@/components';
 import { cn } from '@/utils';
-import { useProfileEditStore } from '@/features/profile';
+import { useProfileBySlug, useProfileEditStore } from '@/features/profile';
 interface ProfileActionsProps {
-  isSlugCurrent: boolean;
   variant?: 'horizontal' | 'vertical';
   className?: string;
 }
 
 export function ProfileActions({
-  isSlugCurrent,
   variant = 'vertical',
   className,
 }: ProfileActionsProps) {
+  const { isSlugCurrent } = useProfileBySlug();
+
   const containerClasses = {
     horizontal: 'flex items-center gap-3',
     vertical: 'flex flex-col items-center gap-3',

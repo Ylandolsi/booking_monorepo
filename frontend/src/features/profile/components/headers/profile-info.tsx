@@ -1,19 +1,16 @@
-import type { User } from '@/types/api';
+import { useProfileBySlug } from '@/features/profile/hooks';
 import { cn } from '@/utils';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
 interface ProfileInfoProps {
-  user?: User;
   titleSize?: 'sm' | 'lg';
   className?: string;
 }
 
-export function ProfileInfo({
-  user,
-  titleSize = 'lg',
-  className,
-}: ProfileInfoProps) {
+export function ProfileInfo({ titleSize = 'lg', className }: ProfileInfoProps) {
+  const { user } = useProfileBySlug();
+
   const titleClasses = {
     sm: 'text-2xl',
     lg: 'text-3xl',

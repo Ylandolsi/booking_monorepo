@@ -100,6 +100,8 @@ const Sidebar = ({
     }
   };
 
+  console.log(currentUser);
+
   return (
     <>
       {/* Mobile overlay */}
@@ -133,12 +135,12 @@ const Sidebar = ({
             <LazyImage
               className="w-8 h-8 rounded-full ring-2 ring-primary/20 object-cover"
               src={
-                currentUser?.profilePictureUrl ||
+                currentUser?.profilePicture.profilePictureLink ||
                 'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
               }
               alt="profile-pic"
               placeholder={
-                currentUser?.profilePictureUrl ||
+                currentUser?.profilePicture.thumbnailUrlPictureLink should be != empty ||
                 'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
               }
             />
@@ -148,12 +150,12 @@ const Sidebar = ({
                 <LazyImage
                   className="w-12 h-auto rounded-full ring-2 ring-primary/20 object-cover"
                   src={
-                    currentUser?.profilePictureUrl ||
+                    currentUser?.profilePicture.profilePictureLink ||
                     'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                   }
                   alt="profile-pic"
                   placeholder={
-                    currentUser?.profilePictureUrl ||
+                    currentUser?.profilePicture.thumbnailUrlPictureLink ||
                     'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                   }
                 />
@@ -191,7 +193,8 @@ const Sidebar = ({
             )}
             <nav className="space-y-1">
               {navigationItems.map((item) => (
-                <button
+                <Button
+                  variant={'ghost'}
                   key={item.name}
                   onClick={() => handleItemClick(item)}
                   className={`
@@ -234,7 +237,7 @@ const Sidebar = ({
                       </Badge>
                     </div>
                   )}
-                </button>
+                </Button>
               ))}
             </nav>
           </div>
@@ -250,16 +253,24 @@ const Sidebar = ({
             )}
             <nav className="space-y-1">
               {accountItems.map((item) => (
-                <button
+                <Button
+                  variant={'ghost'}
                   key={item.name}
-                  onClick={() => handleItemClick(item.click)}
+                  onClick={() => handleItemClick(item)}
                   className={`
                     w-full flex items-center rounded-lg text-left transition-all duration-200 group hover:bg-muted text-muted-foreground hover:text-foreground relative
                     ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
+                    ${
+                      itemActive == item.name
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    }
                   `}
                   title={collapsed ? item.name : undefined}
                 >
-                  <span className="text-muted-foreground group-hover:text-foreground">
+                  <span
+                    className={`${itemActive == item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                  >
                     {item.icon}
                   </span>
                   {!collapsed && (
@@ -287,7 +298,7 @@ const Sidebar = ({
                       </Badge>
                     </div>
                   )}
-                </button>
+                </Button>
               ))}
             </nav>
           </div>
@@ -315,7 +326,7 @@ const Sidebar = ({
           </Button>
 
           {setCollapsed && (
-            <div className="hidden mt-5 lg:flex justify-start items-center">
+            <div className="flex mt-5 justify-start items-center">
               <Button
                 variant="outline"
                 size="sm"

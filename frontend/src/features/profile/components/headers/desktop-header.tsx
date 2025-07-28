@@ -6,7 +6,7 @@ import { ProfileImage } from './profile-image';
 import { useProfileBySlug } from '@/features/profile/hooks';
 
 export function DesktopHeader() {
-  const { user, error, isLoading, isSlugCurrent } = useProfileBySlug();
+  const { error, isLoading } = useProfileBySlug();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <Spinner />;
@@ -15,11 +15,11 @@ export function DesktopHeader() {
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-8">
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-6">
-          <ProfileImage size="lg" isCurrentUser={isSlugCurrent} />
-          <ProfileInfo user={user} titleSize="lg" />
+          <ProfileImage size="lg" />
+          <ProfileInfo titleSize="lg" />
         </div>
 
-        <ProfileActions isSlugCurrent={isSlugCurrent} variant="vertical" />
+        <ProfileActions variant="vertical" />
       </div>
     </div>
   );
