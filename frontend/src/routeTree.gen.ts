@@ -8,13 +8,16 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
+import { createRootRoute } from '@tanstack/react-router'
+
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as ProfileMeRouteImport } from './routes/profile/me'
+import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
+import { Route as ErrorExpAdvancedLoadingExamplesRouteImport } from './routes/error-exp/advanced-loading-examples'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -22,6 +25,8 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
+
+const rootRouteImport = createRootRoute()
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -53,6 +58,18 @@ const ProfileMeRoute = ProfileMeRouteImport.update({
   path: '/profile/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ErrorExpSimpleLoadingDemoRoute =
+  ErrorExpSimpleLoadingDemoRouteImport.update({
+    id: '/error-exp/simple-loading-demo',
+    path: '/error-exp/simple-loading-demo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ErrorExpAdvancedLoadingExamplesRoute =
+  ErrorExpAdvancedLoadingExamplesRouteImport.update({
+    id: '/error-exp/advanced-loading-examples',
+    path: '/error-exp/advanced-loading-examples',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/auth/reset-password',
   path: '/auth/reset-password',
@@ -99,6 +116,8 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
+  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
@@ -113,6 +132,8 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
+  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
@@ -129,6 +150,8 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
+  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
@@ -146,6 +169,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/error-exp/advanced-loading-examples'
+    | '/error-exp/simple-loading-demo'
     | '/profile/me'
     | '/test/img'
     | '/app/'
@@ -160,6 +185,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/error-exp/advanced-loading-examples'
+    | '/error-exp/simple-loading-demo'
     | '/profile/me'
     | '/test/img'
     | '/app'
@@ -175,6 +202,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/error-exp/advanced-loading-examples'
+    | '/error-exp/simple-loading-demo'
     | '/profile/me'
     | '/test/img'
     | '/app/'
@@ -191,6 +220,8 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  ErrorExpAdvancedLoadingExamplesRoute: typeof ErrorExpAdvancedLoadingExamplesRoute
+  ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   ProfileMeRoute: typeof ProfileMeRoute
   TestImgRoute: typeof TestImgRoute
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
@@ -240,6 +271,20 @@ declare module '@tanstack/react-router' {
       path: '/profile/me'
       fullPath: '/profile/me'
       preLoaderRoute: typeof ProfileMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error-exp/simple-loading-demo': {
+      id: '/error-exp/simple-loading-demo'
+      path: '/error-exp/simple-loading-demo'
+      fullPath: '/error-exp/simple-loading-demo'
+      preLoaderRoute: typeof ErrorExpSimpleLoadingDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/error-exp/advanced-loading-examples': {
+      id: '/error-exp/advanced-loading-examples'
+      path: '/error-exp/advanced-loading-examples'
+      fullPath: '/error-exp/advanced-loading-examples'
+      preLoaderRoute: typeof ErrorExpAdvancedLoadingExamplesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
@@ -312,6 +357,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  ErrorExpAdvancedLoadingExamplesRoute: ErrorExpAdvancedLoadingExamplesRoute,
+  ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   ProfileMeRoute: ProfileMeRoute,
   TestImgRoute: TestImgRoute,
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,

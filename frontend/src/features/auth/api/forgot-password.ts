@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import * as Endpoints from '@/lib/endpoints.ts';
 import type { ForgotPasswordInput } from '@/features/auth';
+import { authQueryKeys } from '@/features/auth';
 
 // Forgot Password
 const forgotPassword = async (data: ForgotPasswordInput): Promise<void> => {
@@ -17,7 +18,7 @@ export const useForgotPassword = ({
   return useMutation({
     mutationFn: forgotPassword,
     meta: {
-      invalidatesQuery: [['user']],
+      invalidatesQuery: [authQueryKeys.currentUser],
       successMessage: 'A reset link is sent to your mail',
       successAction: () => onSuccess(),
       errorMessage: 'Failed to send reset link. Please try again.',

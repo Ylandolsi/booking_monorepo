@@ -18,7 +18,7 @@ export function useUpdateExperience() {
     mutationFn: ({ id, data }: { id: number; data: ExperienceType }) =>
       updateExperience(id, data),
     meta: {
-      invalidatesQuery: [['experiences'], ['users']],
+      invalidatesQuery: [['users']],
       successMessage: 'Experience updated successfully',
       errorMessage: 'Failed to update experience',
     },

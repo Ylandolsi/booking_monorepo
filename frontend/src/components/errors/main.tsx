@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui';
 import { AlertCircle, RefreshCw, Home, ArrowLeft } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
+import { paths } from '@/config';
 
 interface ErrorFallbackProps {
   error?: Error;
@@ -28,7 +29,7 @@ export const MainErrorFallback = ({
   };
 
   const handleGoHome = () => {
-    navigate({ to: '/app' });
+    navigate({ to: paths.app.root.getHref() });
   };
 
   const handleGoBack = () => {

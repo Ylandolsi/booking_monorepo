@@ -12,7 +12,7 @@ export function useDeleteEducation() {
   return useMutation({
     mutationFn: ({ id }: { id: number }) => deleteEducation(id),
     meta: {
-      invalidatesQuery: [['educations'], ['user']],
+      invalidatesQuery: [['user']],
       successMessage: 'Education deleted successfully',
       errorMessage: 'Failed to delete education',
     },

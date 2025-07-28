@@ -12,7 +12,7 @@ export function useAddExperience() {
     mutationFn: ({ experience }: { experience: ExperienceType }) =>
       addExperience(experience),
     meta: {
-      invalidatesQuery: [['experiences'], ['users']],
+      invalidatesQuery: [['users']],
       successMessage: 'Experience added successfully',
       errorMessage: 'Failed to add experience',
     },

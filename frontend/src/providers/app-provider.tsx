@@ -70,13 +70,6 @@ const queryClient = new QueryClient({
   }),
 });
 export const AppProvider = ({ children }: AppProviderProps) => {
-  // const [queryClient] = React.useState(
-  //   () =>
-  //     new QueryClient({
-  //       defaultOptions: queryConfig,
-  //     }),
-  // );
-
   return (
     <React.Suspense
       fallback={

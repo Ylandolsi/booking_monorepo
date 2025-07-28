@@ -22,3 +22,4 @@ export * from './sheet';
 export * from './sidebar';
 export * from './tooltip';
 export * from './skeleton';
+export * from './loading-state';

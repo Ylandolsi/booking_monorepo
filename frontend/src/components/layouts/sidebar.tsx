@@ -3,7 +3,6 @@ import {
   X,
   Settings,
   LogOut,
-  MessageCircleQuestion,
   Bell,
   Home,
   User as UserIcon,
@@ -14,7 +13,7 @@ import {
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 
-import { Link, Button, Badge, Separator } from '@/components/ui';
+import { Button, Badge, Separator } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
 import { Spinner, useSideBar } from '@/components';
@@ -140,7 +139,7 @@ const Sidebar = ({
               }
               alt="profile-pic"
               placeholder={
-                currentUser?.profilePicture.thumbnailUrlPictureLink should be != empty ||
+                currentUser?.profilePicture.thumbnailUrlPictureLink ||
                 'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
               }
             />
@@ -163,12 +162,14 @@ const Sidebar = ({
                   <div className="font-semibold text-foreground truncate">
                     {currentUser?.firstName} {currentUser?.lastName}
                   </div>
-                  <Link
-                    to={`/members/${currentUser?.id}`}
+                  <button
+                    onClick={() =>
+                      navigate({ to: `/profile/${currentUser?.slug}` })
+                    }
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     View profile
-                  </Link>
+                  </button>
                 </div>
               </div>
               <Button
@@ -222,7 +223,7 @@ const Sidebar = ({
                         </Badge>
                       )}
                       <ChevronRight
-                        className={`w-4 h-4 transition-transform ${item.active ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                        className={`w-4 h-4 transition-transform ${itemActive === item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
                       />
                     </>
                   )}
@@ -308,7 +309,7 @@ const Sidebar = ({
           {/* Logout Button */}
           <Button
             variant="ghost"
-            onClick={logout}
+            onClick={() => logout()}
             className={`
               w-full text-destructive hover:text-destructive hover:bg-destructive/10 h-auto
               ${collapsed ? 'justify-center p-2' : 'justify-start gap-3 px-3 py-2.5'}

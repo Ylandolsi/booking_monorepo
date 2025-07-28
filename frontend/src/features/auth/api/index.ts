@@ -6,3 +6,4 @@ export * from './logout';
 export * from './forgot-password';
 export * from './reset-password';
 export * from './user';
+export * from './auth-keys';

@@ -243,7 +243,6 @@ export default tseslint.config(
 
       // Enable prettier integration
       // 'prettier/prettier': ['error', {}, { usePrettierrc: true }],
-
       'check-file/filename-naming-convention': [
         'error',
         {
@@ -251,6 +250,7 @@ export default tseslint.config(
         },
         {
           ignoreMiddleExtensions: true,
+          ignore: ['**/_*.*'], // ignore any file starting with _
         },
       ],
     },

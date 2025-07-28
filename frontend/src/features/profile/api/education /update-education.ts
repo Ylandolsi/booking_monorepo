@@ -18,7 +18,7 @@ export function useUpdateEducation() {
     mutationFn: ({ id, data }: { id: number; data: EducationType }) =>
       updateEducation(id, data),
     meta: {
-      invalidatesQuery: [['educations'], ['user']],
+      invalidatesQuery: [['user']],
       successMessage: 'Education updated successfully',
       errorMessage: 'Failed to update education',
     },

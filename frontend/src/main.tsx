@@ -3,8 +3,9 @@ import './index.css';
 import { AppProvider } from './providers/app-provider';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
+import { notFoundRoute } from '@/routes/__root';
 
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, notFoundRoute });
 
 declare module '@tanstack/react-router' {
   interface Register {

@@ -10,7 +10,7 @@ import { BottomNav } from '../navigation/bottom-nav';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '../errors/main';
 import { useIsMobile } from '@/hooks';
-import { useSideBar } from '@/components/stores';
+import { useSideBar } from '@/stores';
 
 export function ContentLayout({ children }: { children: React.ReactNode }) {
   const { sidebarOpen, setSidebarOpen, collapsed, setCollapsed } = useSideBar();

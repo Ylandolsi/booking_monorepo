@@ -12,7 +12,7 @@ export function useDeleteExperience() {
   return useMutation({
     mutationFn: ({ id }: { id: number }) => deleteExperience(id),
     meta: {
-      invalidatesQuery: [['experiences'], ['users']],
+      invalidatesQuery: [['users']],
       successMessage: 'Experience deleted successfully',
       errorMessage: 'Failed to delete experience',
     },

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui';
 import { Search, Home, ArrowLeft } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
+import { paths } from '@/config';
 
 interface NotFoundProps {
   title?: string;
@@ -18,7 +19,7 @@ export const NotFound = ({
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    navigate({ to: '/app' });
+    navigate({ to: paths.app.root.getHref() });
   };
 
   const handleGoBack = () => {
@@ -61,11 +62,11 @@ export const NotFound = ({
         </div>
 
         {/* Helpful Links */}
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground flex flex-col justify-center items-center">
           <p>You might want to check these pages instead:</p>
           <div className="mt-2 space-y-1">
             <button
-              onClick={() => navigate({ to: '/app' })}
+              onClick={() => navigate({ to: paths.app.root.getHref() })}
               className="block text-primary hover:underline"
             >
               Dashboard

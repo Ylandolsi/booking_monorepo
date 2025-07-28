@@ -6,4 +6,4 @@ export * from './seo';
 export * from './wrappers';
 export * from './shared';
 export * from './ui';
-export * from './stores';
+export * from '../stores';

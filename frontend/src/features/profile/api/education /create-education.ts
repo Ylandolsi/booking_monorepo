@@ -12,7 +12,7 @@ export function useAddEducation() {
     mutationFn: ({ education }: { education: EducationType }) =>
       addEducation(education),
     meta: {
-      invalidatesQuery: [['educations'], ['user']],
+      invalidatesQuery: [['user']],
       successMessage: 'Education added successfully',
       errorMessage: 'Failed to add education',
     },
