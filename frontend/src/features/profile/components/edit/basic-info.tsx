@@ -26,6 +26,7 @@ import {
   useUpdateLanguages,
   type BasicInfoFormValues,
   type BasicInfoType,
+  type LanguageType,
 } from '@/features/profile';
 import { useUser } from '@/features/auth';
 import { Spinner } from '@/components/ui';
@@ -52,7 +53,7 @@ export function BasicInfoForm() {
 
   const languageOptions: LanguageOption[] = useMemo(() => {
     if (!allLanguageQuery.data) return [];
-    return allLanguageQuery.data.map((language) => ({
+    return allLanguageQuery.data.map((language: LanguageType) => ({
       value: language.id.toString(),
       label: language.name,
     }));

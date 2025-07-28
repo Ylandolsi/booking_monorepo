@@ -1,5 +1,5 @@
 import { MainErrorFallback } from '@/components/errors/main';
-import { Spinner } from '@/components/ui';
+import { ContentLoading, Spinner } from '@/components/ui';
 import { ProfileActions } from './profile-actions';
 import { ProfileInfo } from './profile-info';
 import { ProfileImage } from './profile-image';
@@ -9,7 +9,7 @@ export function DesktopHeader() {
   const { error, isLoading } = useProfileBySlug();
 
   if (error) return <MainErrorFallback />;
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <ContentLoading />;
 
   return (
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-8">

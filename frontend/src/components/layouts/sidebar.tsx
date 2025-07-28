@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 
-import { Button, Badge, Separator } from '@/components/ui';
+import { Button, Badge, Separator, PageLoading } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
 import { Spinner, useSideBar } from '@/components';
@@ -51,8 +51,7 @@ const Sidebar = ({
   const navigate = useNavigate();
 
   if (error) return <MainErrorFallback />;
-  if (isLoading) return <Spinner />;
-
+  if (isLoading) return <PageLoading />;
   const navigationItems: Item[] = [
     {
       name: 'Home',

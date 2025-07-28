@@ -32,8 +32,8 @@ import { LoadingState } from '@/components/ui';
 // Specialized loading states
 <PageLoading />
 <ContentLoading />
-<CardLoading />
-<ListLoading count={3} />
+<CardSkelton />
+<ListSkelton count={3} />
 
 
 function MyComponent() {
@@ -83,7 +83,7 @@ import { MainErrorFallback, NetworkError, NotFound, Unauthorized } from '@/compo
 ### **2. Specialized Loading Components**
 
 ```typescript
-import { PageLoading, ContentLoading, CardLoading, ListLoading } from '@/components/ui';
+import { PageLoading, ContentLoading, CardSkelton, ListSkelton } from '@/components/ui';
 
 // Basic skeleton
 <Skeleton className="w-full h-32" />
@@ -95,10 +95,10 @@ import { PageLoading, ContentLoading, CardLoading, ListLoading } from '@/compone
 <ContentLoading />
 
 // Card loading
-<CardLoading />
+<CardSkelton />
 
 // List loading with custom count
-<ListLoading count={5} />
+<ListSkelton count={5} />
 
 // List skeleton with custom count
 <ListSkeleton count={5} />

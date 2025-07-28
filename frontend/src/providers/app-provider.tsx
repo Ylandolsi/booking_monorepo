@@ -9,7 +9,7 @@ import * as React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { HelmetProvider } from 'react-helmet-async';
 import { MainErrorFallback } from '@/components/errors/main';
-import { Spinner } from '@/components';
+import { PageLoading } from '@/components';
 import type { DefaultOptions } from '@tanstack/react-query';
 import { toast, Toaster } from 'sonner';
 
@@ -71,13 +71,7 @@ const queryClient = new QueryClient({
 });
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
-    <React.Suspense
-      fallback={
-        <div className="flex h-screen w-screen items-center justify-center">
-          <Spinner size="xl" />
-        </div>
-      }
-    >
+    <React.Suspense fallback={<PageLoading />}>
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>

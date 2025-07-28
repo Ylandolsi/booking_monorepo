@@ -1,7 +1,7 @@
 import { AuthGuard } from '@/features/auth';
 import { Logo } from '@/components/logo';
 import Sidebar from './sidebar';
-import { Button, Badge, Spinner } from '@/components/ui/index';
+import { Button, Badge, Spinner, PageLoading } from '@/components/ui/index';
 import { LazyImage } from '@/utils/lazy-image';
 import { Menu, Bell } from 'lucide-react';
 import { useState } from 'react';
@@ -19,7 +19,7 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
   if (error) return <MainErrorFallback />;
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <PageLoading />;
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/auth/login">

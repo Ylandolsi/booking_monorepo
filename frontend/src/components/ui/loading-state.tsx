@@ -59,26 +59,34 @@ export const LoadingState = ({
   );
 };
 
-// Specialized loading states
+// Loader in the center of the page and height on the full screen
 export const PageLoading = () => (
   <div className="min-h-screen flex items-center justify-center">
     <LoadingState type="spinner" size="lg" message="Loading page..." />
   </div>
 );
-
+// height = height of the content : we need to specify it
 export const ContentLoading = () => (
   <div className="flex items-center justify-center p-8">
     <LoadingState type="spinner" size="md" message="Loading content..." />
   </div>
 );
 
-export const CardLoading = () => (
+// can be used after clicking on load more !
+export const DotsContent = () => {
+  <div className="flex justify-center p-4">
+    <LoadingState type="dots" message="Loading more..." />
+  </div>;
+};
+
+// skelton of rectangle : width filling the parent !
+export const CardSkelton = () => (
   <div className="p-6">
     <Skeleton className="w-full h-32" />
   </div>
 );
 
-export const ListLoading = ({ count = 3 }: { count?: number }) => (
+export const ListSkelton = ({ count = 3 }: { count?: number }) => (
   <div className="space-y-3">
     {Array.from({ length: count }).map((_, i) => (
       <div key={i} className="flex items-center space-x-4 p-4">

@@ -14,7 +14,6 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
-import { Route as ProfileMeRouteImport } from './routes/profile/me'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as ErrorExpAdvancedLoadingExamplesRouteImport } from './routes/error-exp/advanced-loading-examples'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
@@ -48,11 +47,6 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
   path: '/test/img',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileMeRoute = ProfileMeRouteImport.update({
-  id: '/profile/me',
-  path: '/profile/me',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ErrorExpSimpleLoadingDemoRoute =
@@ -115,7 +109,6 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -131,7 +124,6 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -149,7 +141,6 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/profile/me': typeof ProfileMeRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -168,7 +159,6 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
-    | '/profile/me'
     | '/test/img'
     | '/app/'
     | '/auth/email-verification/verified'
@@ -184,7 +174,6 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
-    | '/profile/me'
     | '/test/img'
     | '/app'
     | '/auth/email-verification/verified'
@@ -201,7 +190,6 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
-    | '/profile/me'
     | '/test/img'
     | '/app/'
     | '/auth/email-verification/verified'
@@ -219,7 +207,6 @@ export interface RootRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   ErrorExpAdvancedLoadingExamplesRoute: typeof ErrorExpAdvancedLoadingExamplesRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
-  ProfileMeRoute: typeof ProfileMeRoute
   TestImgRoute: typeof TestImgRoute
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
@@ -261,13 +248,6 @@ declare module '@tanstack/react-router' {
       path: '/test/img'
       fullPath: '/test/img'
       preLoaderRoute: typeof TestImgRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile/me': {
-      id: '/profile/me'
-      path: '/profile/me'
-      fullPath: '/profile/me'
-      preLoaderRoute: typeof ProfileMeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/error-exp/simple-loading-demo': {
@@ -356,7 +336,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   ErrorExpAdvancedLoadingExamplesRoute: ErrorExpAdvancedLoadingExamplesRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
-  ProfileMeRoute: ProfileMeRoute,
   TestImgRoute: TestImgRoute,
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,

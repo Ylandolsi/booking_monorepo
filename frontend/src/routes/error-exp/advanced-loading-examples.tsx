@@ -12,8 +12,8 @@ import {
   LoadingState,
   PageLoading,
   ContentLoading,
-  CardLoading,
-  ListLoading,
+  CardSkelton,
+  ListSkelton,
   Skeleton,
   Spinner,
 } from '@/components/ui';

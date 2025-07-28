@@ -1,9 +1,8 @@
 import { MainErrorFallback } from '@/components';
-import { Spinner } from '@/components';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
-import { useProfileBySlug } from '@/features/profile';
-import { Button } from '@/components/ui';
+import { useProfileBySlug, type LanguageType } from '@/features/profile';
+import { Button, PageLoading } from '@/components/ui';
 import { useRequiredParam } from '@/hooks';
 import { formatDate } from '@/utils';
 import { useProfileEditStore } from '@/features/profile';
@@ -17,7 +16,7 @@ export function Overview() {
   if (userSlug == undefined || userSlug == '') return null;
 
   if (error) return <MainErrorFallback />;
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <PageLoading />;
   if (!user) return null;
 
   return (
@@ -54,7 +53,7 @@ export function Overview() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              {user.languages.map((language, index) => (
+              {user.languages.map((language: LanguageType, index: number) => (
                 <span
                   key={language.id || index}
                   className="px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-medium"
