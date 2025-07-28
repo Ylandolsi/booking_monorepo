@@ -1,16 +1,19 @@
 import { api } from '@/lib';
 import * as Endpoints from '@/lib/endpoints';
 import type { LanguageType } from '../../types';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { profileQueryKeys } from '@/features/profile';
 
 export const allLanguages = async () => {
   return await api.get<Array<LanguageType>>(Endpoints.GetAllLanguages);
 };
 
-export function useAllLanguages() {
+export function useAllLanguages(
+  overrides?: Partial<UseQueryOptions<any, unknown, any>>,
+) {
   return useQuery({
     queryKey: profileQueryKeys.allLanguages(),
     queryFn: allLanguages,
+    ...overrides,
   });
 }
