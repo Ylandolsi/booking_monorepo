@@ -19,12 +19,11 @@ export const useLogin = ({
   onSuccess?: (user: User) => void;
   onError?: (error: Error) => void;
 } = {}) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: loginWithEmailAndPassword,
     onSuccess: (data) => {
-      queryClient.setQueryData(authQueryKeys.currentUser(), data);
       toast.success('Login successful!');
       onSuccess?.(data);
     },

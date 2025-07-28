@@ -1,5 +1,5 @@
 import { MainErrorFallback } from '@/components/errors/main';
-import { ContentLoading, Spinner } from '@/components/ui';
+import { ContentLoading } from '@/components/ui';
 import { ProfileActions } from './profile-actions';
 import { ProfileInfo } from './profile-info';
 import { ProfileImage } from './profile-image';

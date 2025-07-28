@@ -16,7 +16,7 @@ import { LazyImage } from '@/utils/lazy-image';
 import { Button, Badge, Separator, PageLoading } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
-import { Spinner, useSideBar } from '@/components';
+import { useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
 
 export type Item = {
