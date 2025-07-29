@@ -8,6 +8,7 @@ using SharedKernel;
 using System.Security.Claims;
 using Application.Abstractions.Authentication;
 using Application.Abstractions.Data;
+using Application.Users.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Users.Authentication.Google;

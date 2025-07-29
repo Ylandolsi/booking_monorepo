@@ -1,6 +1,7 @@
 using Application.Abstractions.Messaging;
 using Application.Users.Authentication.Utils;
 using Application.Users.Login;
+using Application.Users.Utils;
 using SharedKernel;
 using Web.Api.Extensions;
 using Web.Api.Infrastructure;

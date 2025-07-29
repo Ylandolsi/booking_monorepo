@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
+using Application.Users.Utils;
 
 namespace IntegrationsTests.Abstractions;
 

@@ -4,6 +4,7 @@ using Application.Abstractions.Messaging;
 using Application.Options;
 using Application.Users.Authentication;
 using Application.Users.Authentication.Utils;
+using Application.Users.Utils;
 using Domain.Users;
 using Domain.Users.Entities;
 using Microsoft.AspNetCore.Http;

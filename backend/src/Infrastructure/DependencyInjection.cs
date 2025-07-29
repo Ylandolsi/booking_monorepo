@@ -67,8 +67,8 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, AwsSesEmailService>();
         services.AddSingleton<IEmailTemplateProvider, EmailTemplateProvider>();
         // AWS UPLOAD
-        // services.AddScoped<IS3ImageProcessingService , S3ImageProcessingService>();
-        services.AddScoped<IS3ImageProcessingService, LocalFileImageProcessingService>();
+        services.AddScoped<IS3ImageProcessingService , S3ImageProcessingService>();
+        // services.AddScoped<IS3ImageProcessingService, LocalFileImageProcessingService>();
 
         services.AddScoped<ISlugGenerator, SlugGenerator.SlugGenerator>();
 

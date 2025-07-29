@@ -1,4 +1,4 @@
-namespace Application.Users.Authentication.Utils;
+namespace Application.Users.Utils;
 
 public sealed record LoginResponse(string UserSlug,
                                    string FirstName,

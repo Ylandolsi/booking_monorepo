@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Application.Users.Authentication.Utils;
+using Application.Users.Utils;
 using IntegrationsTests.Abstractions;
 using LanguageE = Domain.Users.Entities.Language;
 

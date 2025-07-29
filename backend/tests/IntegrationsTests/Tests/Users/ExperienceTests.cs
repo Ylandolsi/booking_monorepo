@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Application.Users.Authentication.Utils;
+using Application.Users.Utils;
 using IntegrationsTests.Abstractions;
 using ExperienceE = Domain.Users.Entities.Experience;
 namespace IntegrationsTests.Tests.Users.Experience;

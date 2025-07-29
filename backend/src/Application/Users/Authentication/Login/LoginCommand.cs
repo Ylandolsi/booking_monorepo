@@ -1,5 +1,6 @@
 using Application.Abstractions.Messaging;
 using Application.Users.Authentication.Utils;
+using Application.Users.Utils;
 
 namespace Application.Users.Login;
 
