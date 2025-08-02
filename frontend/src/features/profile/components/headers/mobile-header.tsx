@@ -2,7 +2,7 @@ import { MainErrorFallback } from '@/components/errors/main';
 import { ContentLoading } from '@/components';
 import { ProfileInfo } from './profile-info';
 import { ProfileActions } from './profile-actions';
-import { useProfileBySlug } from '@/features/profile';
+import { ProfileImage, useProfileBySlug } from '@/features/profile';
 
 export function MobileHeader() {
   const { error, isLoading } = useProfileBySlug();
