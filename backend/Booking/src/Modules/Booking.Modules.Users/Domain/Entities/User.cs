@@ -2,6 +2,8 @@
 using System.Text.Json.Serialization;
 using Booking.Common.Domain.DomainEvent;
 using Booking.Common.Domain.Entity;
+using Booking.Common.Results;
+using Booking.Modules.Users.Domain.Events;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
@@ -81,6 +83,17 @@ public sealed class User : IdentityUser<int>, IEntity
     public void UpdateName(string firstName, string lastName)
     {
         Name = new Name(firstName, lastName);
+    }
+
+    public Result RemoveExpertise(int expertiseId)
+    {
+        var expertise = UserExpertises.FirstOrDefault(ue => ue.ExpertiseId == expertiseId);
+        if (expertise == null)
+            return Result.Failure(Error.Problem("FK" , "FKFD"));
+
+        UserExpertises.Remove(expertise);
+        Raise(new UserExpertiseRemovedDomainEvent(Id, expertiseId));
+        return Result.Success();
     }
 
     // TODO : configure these one to many as readonly 
