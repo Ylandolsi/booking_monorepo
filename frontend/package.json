@@ -46,6 +46,7 @@
     "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.57.0",
     "react-icons": "^5.5.0",
+    "react-image-crop": "^11.0.10",
     "react-query-auth": "^2.4.3",
     "shadcn": "^2.9.3",
     "sidebar": "^1.0.2",

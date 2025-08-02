@@ -13,18 +13,17 @@ internal sealed class GetUser : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GetUser,
-            async (
-                string userSlug,
-                IQueryHandler<GetUserQuery, UserResponse?> handler, UserContext userContext,
-                CancellationToken cancellationToken) =>
-            {
-                int userId = userContext.UserId;
-                var query = new GetUserQuery(userSlug);
+                async (
+                    string userSlug,
+                    IQueryHandler<GetUserQuery, UserResponse?> handler, UserContext userContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    var query = new GetUserQuery(userSlug);
+                    Result<UserResponse> result = await handler.Handle(query, cancellationToken);
 
-                Result<UserResponse> result = await handler.Handle(query, cancellationToken);
-
-                return result.Match(Results.Ok,
-                                    CustomResults.Problem);
-            });
+                    return result.Match(Results.Ok,
+                        CustomResults.Problem);
+                })
+            .WithTags(Tags.Profile);
     }
 }

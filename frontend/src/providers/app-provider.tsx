@@ -22,8 +22,10 @@ declare module '@tanstack/react-query' {
     mutationMeta: {
       invalidatesQuery?: QueryKey | QueryKey[];
       successMessage?: string;
-      successAction?: () => void;
       errorMessage?: string;
+
+      successAction?: (data: any) => void;
+      errorAction?: (data: any) => void;
     };
   }
 }
@@ -43,17 +45,20 @@ const queryConfig = {
 const queryClient = new QueryClient({
   defaultOptions: queryConfig,
   mutationCache: new MutationCache({
-    onSuccess: (_data, _variables, _context, mutation) => {
+    onSuccess: (data, _variables, _context, mutation) => {
       if (mutation.meta?.successMessage) {
         toast.success(mutation.meta.successMessage);
       }
       if (mutation.meta?.successAction) {
-        mutation.meta.successAction();
+        mutation.meta.successAction(data);
       }
     },
-    onError: (_error, _variables, _context, mutation) => {
+    onError: (error, _variables, _context, mutation) => {
       if (mutation.meta?.errorMessage) {
         toast.error(mutation.meta.errorMessage);
+      }
+      if (mutation.meta?.errorAction) {
+        mutation.meta.errorAction(error);
       }
     },
     onSettled: (_data, _error, _variables, _context, mutation) => {
@@ -62,7 +67,7 @@ const queryClient = new QueryClient({
           ? mutation.meta.invalidatesQuery
           : [mutation.meta.invalidatesQuery];
 
-        keys.forEach((key: QueryKey) => {
+        keys.forEach((key) => {
           queryClient.invalidateQueries({ queryKey: key });
         });
       }

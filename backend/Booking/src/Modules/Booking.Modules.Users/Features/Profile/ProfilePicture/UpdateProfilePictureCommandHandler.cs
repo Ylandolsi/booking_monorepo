@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Profile.ProfilePicture;
+// DTO for returning both original and thumbnail URLs
 
 internal sealed class UpdateProfilePictureCommandHandler(UserManager<User> userManager,
                                                          S3ImageProcessingService imageProcessingService,
-                                                         ILogger<UpdateProfilePictureCommandHandler> logger) : ICommandHandler<UpdateProfilePictureCommand, string>
+                                                         ILogger<UpdateProfilePictureCommandHandler> logger) : ICommandHandler<UpdateProfilePictureCommand, ProfilePictureRespone>
 {
-    public async Task<Result<string>> Handle(UpdateProfilePictureCommand command, CancellationToken cancellationToken)
+    public async Task<Result<ProfilePictureRespone>> Handle(UpdateProfilePictureCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating profile picture for user {UserId}", command.UserId);
 
@@ -20,7 +21,7 @@ internal sealed class UpdateProfilePictureCommandHandler(UserManager<User> userM
         if (user == null)
         {
             logger.LogWarning("User with ID {UserId} not found", command.UserId);
-            return Result.Failure<string>(UserErrors.NotFoundById(command.UserId));
+            return Result.Failure<ProfilePictureRespone>(UserErrors.NotFoundById(command.UserId));
         }
 
         var fileName = $"profile_{command.UserId}_{DateTime.UtcNow:yyyyMMddHHmmss}";
@@ -35,10 +36,12 @@ internal sealed class UpdateProfilePictureCommandHandler(UserManager<User> userM
         {
             logger.LogWarning("Failed to update profile picture for user {UserId}. Errors: {Errors}",
                 command.UserId, string.Join(", ", result.Errors.Select(e => e.Description)));
-            return Result.Failure<string>(Error.Problem("User.UpdateFailed", "Failed to update profile picture"));
+            return Result.Failure<ProfilePictureRespone>(Error.Problem("User.UpdateFailed", "Failed to update profile picture"));
         }
 
         logger.LogInformation("Successfully updated profile picture for user {UserId}", command.UserId);
-        return Result.Success(imageResult.OriginalUrl);
+        // return both original and thumbnail URLs
+        var dto = new ProfilePictureRespone(imageResult.OriginalUrl, imageResult.ThumbnailUrl);
+        return Result.Success(dto);
     }
 }

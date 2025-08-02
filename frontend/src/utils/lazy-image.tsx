@@ -19,6 +19,10 @@ export const LazyImage = ({
   const imgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setIsLoaded(false); // Reset the loaded state when `src` changes
+  }, [src]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

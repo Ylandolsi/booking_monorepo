@@ -78,12 +78,12 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
                     <LazyImage
                       className="w-7 h-7 rounded-full ring-2 ring-primary/20 object-cover"
                       src={
-                        currentUser?.profilePictureUrl ||
+                        currentUser?.profilePicture.profilePictureLink ||
                         'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                       }
                       alt="profile-pic"
                       placeholder={
-                        currentUser?.profilePictureUrl ||
+                        currentUser?.profilePicture.thumbnailUrlPictureLink ||
                         'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
                       }
                     />

@@ -40,14 +40,23 @@ async function fetchApi<T>(
 
   const fullUrl = buildUrlWithParams(`${env.API_URL}/${url}`, params);
 
+  // Handle FormData bodies (e.g., file uploads) by letting the browser set multipart headers
+  const isFormData = body instanceof FormData;
+  const fetchHeaders: Record<string, string> = {
+    Accept: 'application/json',
+    // Only set JSON content type for non-FormData bodies
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+    ...headers,
+  };
+  const requestBody = isFormData
+    ? body
+    : body
+      ? JSON.stringify(body)
+      : undefined;
   const response = await fetch(fullUrl, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...headers,
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers: fetchHeaders,
+    body: requestBody,
     credentials: 'include',
     cache,
   });
@@ -102,12 +111,16 @@ async function fetchApi<T>(
         // TODO :
         // access data.error for validation errors
         // Example: if (data.error) { ... }
-      } catch {}
+      } catch {
+        /* ignore */
+      }
     } else {
       try {
         const text = await response.text();
         if (text) message = text;
-      } catch {}
+      } catch {
+        /* ignore */
+      }
     }
 
     // Show toast error notification

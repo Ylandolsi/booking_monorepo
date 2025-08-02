@@ -1,7 +1,6 @@
 import { MainErrorFallback } from '@/components/errors/main';
 import { ContentLoading } from '@/components';
 import { ProfileInfo } from './profile-info';
-import { ProfileImage } from './profile-image';
 import { ProfileActions } from './profile-actions';
 import { useProfileBySlug } from '@/features/profile';
 

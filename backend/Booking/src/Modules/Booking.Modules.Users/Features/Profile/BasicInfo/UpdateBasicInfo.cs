@@ -19,26 +19,26 @@ internal sealed class UpdateBasicInfo : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("users/profile/basic-info", async (
-            Request request,
-UserContext userContext,
-            ICommandHandler<UpdateBasicInfoCommand> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int userId = userContext.UserId;
-     
+                Request request,
+                UserContext userContext,
+                ICommandHandler<UpdateBasicInfoCommand> handler,
+                CancellationToken cancellationToken) =>
+            {
+                int userId = userContext.UserId;
 
-            var command = new UpdateBasicInfoCommand(
-                userId,
-                request.FirstName,
-                request.LastName,
-                request.Gender,
-                request.Bio);
 
-            Result result = await handler.Handle(command, cancellationToken);
+                var command = new UpdateBasicInfoCommand(
+                    userId,
+                    request.FirstName,
+                    request.LastName,
+                    request.Gender,
+                    request.Bio);
 
-            return result.Match(Results.NoContent, CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Profile);
+                Result result = await handler.Handle(command, cancellationToken);
+
+                return result.Match(Results.NoContent, CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Profile);
     }
 }
