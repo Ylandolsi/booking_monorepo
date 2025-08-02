@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Booking.Common.Domain.DomainEvent;
 using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
-using Booking.Modules.Users.Domain.Events;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
@@ -61,14 +60,12 @@ public sealed class User : IdentityUser<int>, IEntity
 
         return user;
     }
-
     public Result UpdateSocialLinks(SocialLinks links)
     {
         if (links == null)
             return Result.Failure(UserErrors.InvalidSocialLinks);
 
         SocialLinks = links;
-        Raise(new UserProfileUpdatedDomainEvent(Id));
         return Result.Success();
     }
 
@@ -79,9 +76,7 @@ public sealed class User : IdentityUser<int>, IEntity
         
         var oldBio = Bio;
         Bio = bio?.Trim() ?? string.Empty;
-        
-        if (oldBio != Bio)
-            Raise(new UserProfileUpdatedDomainEvent(Id));
+
         
         return Result.Success();
     }
@@ -93,10 +88,7 @@ public sealed class User : IdentityUser<int>, IEntity
 
         var oldGender = Gender;
         Gender = gender;
-        
-        if (oldGender != Gender)
-            Raise(new UserProfileUpdatedDomainEvent(Id));
-        
+
         return Result.Success();
     }
 
@@ -106,9 +98,6 @@ public sealed class User : IdentityUser<int>, IEntity
         {
             var oldName = Name;
             Name = new Name(firstName, lastName);
-            
-            if (oldName.FirstName != Name.FirstName || oldName.LastName != Name.LastName)
-                Raise(new UserProfileUpdatedDomainEvent(Id));
             
             return Result.Success();
         }
@@ -121,6 +110,45 @@ public sealed class User : IdentityUser<int>, IEntity
     public void UpdateProfileCompletion()
     {
         ProfileCompletionStatus.UpdateCompletionStatus(this);
+    }
+    
+    public Result CanBecomeMentor()
+    {
+        var profileCompletion = ProfileCompletionStatus.GetCompletionPercentage();
+        
+        if (profileCompletion < 80)
+        {
+            return Result.Failure(Error.Problem(
+                "User.InsufficientProfileCompletion", 
+                "Profile must be at least 80% complete to become a mentor"));
+        }
+
+        if (!Experiences.Any())
+        {
+            return Result.Failure(Error.Problem(
+                "User.NoExperience", 
+                "User must have at least one experience to become a mentor"));
+        }
+
+        if (!UserExpertises.Any())
+        {
+            return Result.Failure(Error.Problem(
+                "User.NoExpertise", 
+                "User must have at least one expertise to become a mentor"));
+        }
+
+        return Result.Success();
+    }
+
+    public Result BecomeMentor()
+    {
+        Result isPossible = CanBecomeMentor();
+        if (isPossible.IsFailure)
+        {
+            return isPossible;
+        }
+
+        return Status.BecomeMentor();
     }
     
 
