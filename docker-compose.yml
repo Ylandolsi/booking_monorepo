@@ -21,8 +21,8 @@ services:
     image: ${DOCKER_REGISTRY-}webapi
     container_name: web-api
     build:
-      context: ./backend
-      dockerfile: src/Web.Api/Dockerfile
+      context: ./Booking/backend
+      dockerfile: src/Api/Booking.Api/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
