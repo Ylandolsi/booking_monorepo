@@ -12,24 +12,60 @@ public class Status : ValueObject
 
     public Status(bool isMentor)
     {
-
         IsMentor = isMentor;
         IsActive = isMentor;
     }
 
-    public void BecomeMentor()
+    public static Status CreateMentee()
     {
-        IsMentor = true;
+        return new Status(false);
     }
 
+    public static Status CreateMentor()
+    {
+        return new Status(true);
+    }
 
-    public Result ToggleActivate()
+    public Result BecomeMentor()
+    {
+        if (IsMentor)
+            return Result.Failure(StatusErrors.AlreadyMentor);
+
+        IsMentor = true;
+        IsActive = true;
+        return Result.Success();
+    }
+
+    public Result ToggleActivation()
     {
         if (!IsMentor)
-        {
-            throw new InvalidOperationException("Only mentors can be activated or deactivated.");
-        }
+            return Result.Failure(StatusErrors.OnlyMentorsCanToggleActivation);
+
         IsActive = !IsActive;
+        return Result.Success();
+    }
+
+    public Result Activate()
+    {
+        if (!IsMentor)
+            return Result.Failure(StatusErrors.OnlyMentorsCanToggleActivation);
+
+        if (IsActive)
+            return Result.Failure(StatusErrors.AlreadyActive);
+
+        IsActive = true;
+        return Result.Success();
+    }
+
+    public Result Deactivate()
+    {
+        if (!IsMentor)
+            return Result.Failure(StatusErrors.OnlyMentorsCanToggleActivation);
+
+        if (!IsActive)
+            return Result.Failure(StatusErrors.AlreadyInactive);
+
+        IsActive = false;
         return Result.Success();
     }
 
@@ -43,4 +79,23 @@ public class Status : ValueObject
     {
         return $"Mentor: {IsMentor}, Active: {IsActive}";
     }
+}
+
+public static class StatusErrors
+{
+    public static readonly Error AlreadyMentor = Error.Problem(
+        "Status.AlreadyMentor", 
+        "User is already a mentor");
+        
+    public static readonly Error OnlyMentorsCanToggleActivation = Error.Problem(
+        "Status.OnlyMentorsCanToggleActivation", 
+        "Only mentors can be activated or deactivated");
+        
+    public static readonly Error AlreadyActive = Error.Problem(
+        "Status.AlreadyActive", 
+        "User is already active");
+        
+    public static readonly Error AlreadyInactive = Error.Problem(
+        "Status.AlreadyInactive", 
+        "User is already inactive");
 }

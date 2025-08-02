@@ -1,4 +1,3 @@
-/*
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.Events;
@@ -38,15 +37,11 @@ public class UserDomainService
         
         var completionPercentage = user.ProfileCompletionStatus.GetCompletionPercentage();
         
-        // Raise domain event if profile completion reaches certain milestones
         if (completionPercentage >= 100)
         {
             user.Raise(new ProfileCompletedDomainEvent(user.Id));
         }
-        else if (completionPercentage >= 50)
-        {
-            user.Raise(new ProfileHalfCompletedDomainEvent(user.Id));
-        }
+
     }
 
     public Result<ProfilePicture> ValidateAndCreateProfilePicture(string imageUrl, string? thumbnailUrl = null)
@@ -64,7 +59,6 @@ public class UserDomainService
 
     public Result CanBecomeMentor(User user)
     {
-        // Business rules for becoming a mentor
         var profileCompletion = user.ProfileCompletionStatus.GetCompletionPercentage();
         
         if (profileCompletion < 80)
@@ -91,4 +85,3 @@ public class UserDomainService
         return Result.Success();
     }
 }
-*/

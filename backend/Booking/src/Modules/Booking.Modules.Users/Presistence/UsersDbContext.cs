@@ -14,23 +14,25 @@ using Newtonsoft.Json;
 namespace Booking.Modules.Users.Presistence;
 
 public sealed class UsersDbContext
-    : IdentityDbContext<User, IdentityRole<int>, int> 
+    : IdentityDbContext<User, IdentityRole<int>, int>
 {
     private readonly DomainEventsDispatcher _domainEventsDispatcher;
 
     public UsersDbContext(DbContextOptions<UsersDbContext> options,
-                                DomainEventsDispatcher omainEventsDispatcher) : base(options)
+        DomainEventsDispatcher omainEventsDispatcher) : base(options)
     {
         _domainEventsDispatcher = omainEventsDispatcher;
-
     }
+
     // Users Modules : 
     public DbSet<User> Users { get; set; }
     public DbSet<Language> Languages { get; set; }
     public DbSet<Expertise> Expertises { get; set; }
     public DbSet<Education> Educations { get; set; }
     public DbSet<Experience> Experiences { get; set; }
+
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     // join tables 
     public DbSet<UserLanguage> UserLanguages { get; set; }
     public DbSet<UserExpertise> UserExpertises { get; set; }
@@ -49,11 +51,12 @@ public sealed class UsersDbContext
         optionsBuilder.ConfigureWarnings(warnings =>
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UsersDbContext).Assembly);
-        
+
 
         modelBuilder.HasDefaultSchema(Schemas.Users);
         SeedData.Seed(modelBuilder);
@@ -66,7 +69,6 @@ public sealed class UsersDbContext
     // }
 
 
-
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await ConvertDomainEventsToOutboxMessages();
@@ -77,50 +79,28 @@ public sealed class UsersDbContext
 
     private async Task ConvertDomainEventsToOutboxMessages()
     {
-        // var domainEvents = ChangeTracker
-        //     .Entries<Entity>()
-        //     .Select(entry => entry.Entity)
-        //     .SelectMany(entity =>
-        //     {
-        //         List<IDomainEvent> events = entity.DomainEvents;
-        //         entity.ClearDomainEvents();
-        //         return events;
-        //     })
-        //     .ToList();
+       
 
-        // var userDomainEvents = ChangeTracker
-        //     .Entries<User>()
-        //     .Select(entry => entry.Entity)
-        //     .SelectMany(user =>
-        //     {
-        //         List<IDomainEvent> events = user.DomainEvents;
-        //         user.ClearDomainEvents();
-        //         return events;
-        //     })
-        //     .ToList();
+        var domainEvents = new List<IDomainEvent>();
 
-        // domainEvents.AddRange(userDomainEvents);
+        // domain events from all entities that implement IEntity (including User)
+        var entityEntries = ChangeTracker
+            .Entries()
+            .Where(entry => entry.Entity is IEntity)
+            .Select(entry => entry.Entity as IEntity)
+            .Where(entity => entity != null)
+            .ToList();
 
-    var domainEvents = new List<IDomainEvent>();
+        foreach (var entity in entityEntries)
+        {
+            domainEvents.AddRange(entity.DomainEvents);
+            entity.ClearDomainEvents();
+        }
 
-    // Get domain events from all entities that implement IEntity (including User)
-    var entityEntries = ChangeTracker
-        .Entries()
-        .Where(entry => entry.Entity is IEntity)
-        .Select(entry => entry.Entity as IEntity)
-        .Where(entity => entity != null)
-        .ToList();
-
-    foreach (var entity in entityEntries)
-    {
-        domainEvents.AddRange(entity.DomainEvents);
-        entity.ClearDomainEvents();
-    }
-
-    if (!domainEvents.Any())
-    {
-        return;
-    }
+        if (!domainEvents.Any())
+        {
+            return;
+        }
 
 
         // TODO : check this approach instead of jsonConvert : 
@@ -151,5 +131,4 @@ public sealed class UsersDbContext
 
         await OutboxMessages.AddRangeAsync(outboxMessages);
     }
-
 }

@@ -62,39 +62,67 @@ public sealed class User : IdentityUser<int>, IEntity
         return user;
     }
 
-    public void UpdateSocialLinks(SocialLinks links)
+    public Result UpdateSocialLinks(SocialLinks links)
     {
+        if (links == null)
+            return Result.Failure(UserErrors.InvalidSocialLinks);
+
         SocialLinks = links;
-    }
-    public void UpdateBio(string bio)
-    {
-        if (bio?.Length > UserConstraints.MaxBioLength)
-            throw new ArgumentException($"Bio cannot exceed {UserConstraints.MaxBioLength} characters");
-        Bio = bio?.Trim() ?? string.Empty;
-    }
-
-    public void UpdateGender(string gender)
-    {
-        if (!Genders.IsValid(gender))
-            throw new ArgumentException("Invalid gender");
-        Gender = gender;
-    }
-
-    public void UpdateName(string firstName, string lastName)
-    {
-        Name = new Name(firstName, lastName);
-    }
-
-    public Result RemoveExpertise(int expertiseId)
-    {
-        var expertise = UserExpertises.FirstOrDefault(ue => ue.ExpertiseId == expertiseId);
-        if (expertise == null)
-            return Result.Failure(Error.Problem("FK" , "FKFD"));
-
-        UserExpertises.Remove(expertise);
-        Raise(new UserExpertiseRemovedDomainEvent(Id, expertiseId));
+        Raise(new UserProfileUpdatedDomainEvent(Id));
         return Result.Success();
     }
+
+    public Result UpdateBio(string bio)
+    {
+        if (bio?.Length > UserConstraints.MaxBioLength)
+            return Result.Failure(UserErrors.BioTooLong);
+        
+        var oldBio = Bio;
+        Bio = bio?.Trim() ?? string.Empty;
+        
+        if (oldBio != Bio)
+            Raise(new UserProfileUpdatedDomainEvent(Id));
+        
+        return Result.Success();
+    }
+
+    public Result UpdateGender(string gender)
+    {
+        if (!Genders.IsValid(gender))
+            return Result.Failure(UserErrors.InvalidGender);
+
+        var oldGender = Gender;
+        Gender = gender;
+        
+        if (oldGender != Gender)
+            Raise(new UserProfileUpdatedDomainEvent(Id));
+        
+        return Result.Success();
+    }
+
+    public Result UpdateName(string firstName, string lastName)
+    {
+        try
+        {
+            var oldName = Name;
+            Name = new Name(firstName, lastName);
+            
+            if (oldName.FirstName != Name.FirstName || oldName.LastName != Name.LastName)
+                Raise(new UserProfileUpdatedDomainEvent(Id));
+            
+            return Result.Success();
+        }
+        catch (ArgumentException ex)
+        {
+            return Result.Failure(Error.Problem("User.InvalidName", ex.Message));
+        }
+    }
+    
+    public void UpdateProfileCompletion()
+    {
+        ProfileCompletionStatus.UpdateCompletionStatus(this);
+    }
+    
 
     // TODO : configure these one to many as readonly 
     //builder.Navigation(o => o.Items)

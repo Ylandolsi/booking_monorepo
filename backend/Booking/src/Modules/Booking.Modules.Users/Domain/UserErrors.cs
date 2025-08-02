@@ -1,4 +1,5 @@
 ﻿using Booking.Common.Results;
+using Booking.Modules.Users.Domain.Entities;
 
 namespace Booking.Modules.Users.Domain;
 
@@ -41,4 +42,32 @@ public static class UserErrors
     Error.Problem("User.LanguageLimitExceeded",
         $"User Languages should not exceed {UserConstraints.MaxLanguages}");
 
+    // New validation errors
+    public static readonly Error InvalidGender = Error.Problem(
+        "User.InvalidGender",
+        $"Gender must be one of: {string.Join(", ", Genders.ValidGenders)}");
+
+    public static readonly Error BioTooLong = Error.Problem(
+        "User.BioTooLong",
+        $"Bio cannot exceed {UserConstraints.MaxBioLength} characters");
+
+    public static readonly Error InvalidSocialLinks = Error.Problem(
+        "User.InvalidSocialLinks",
+        "Social links cannot be null");
+
+    public static readonly Error ExpertiseAlreadyExists = Error.Problem(
+        "User.ExpertiseAlreadyExists",
+        "User already has this expertise");
+
+    public static readonly Error ExpertiseNotFound = Error.Problem(
+        "User.ExpertiseNotFound",
+        "User does not have this expertise");
+
+    public static readonly Error LanguageAlreadyExists = Error.Problem(
+        "User.LanguageAlreadyExists",
+        "User already has this language");
+
+    public static readonly Error LanguageNotFound = Error.Problem(
+        "User.LanguageNotFound",
+        "User does not have this language");
 }
