@@ -29,13 +29,23 @@ internal sealed class GetUserQueryHandler(
            .Include(u => u.UserLanguages)
            .Include(u => u.Experiences)
            //.AsSplitQuery()
-           .Select(u =>
-               new UserResponse(
-                   u.Slug, u.Name.FirstName, u.Name.LastName, u.Status, u.ProfilePictureUrl, u.Gender, u.SocialLinks,
-                   u.Bio,
-                   u.Experiences.ToList(), u.Educations.ToList(), u.UserExpertises.Select(ue => ue.Expertise).ToList(),
-                   u.UserLanguages.Select(ul => ul.Language).ToList()
-               )).FirstOrDefaultAsync(cancellationToken);
+            .Select(u => new UserResponse
+            {
+                Slug = u.Slug,
+                FirstName = u.Name.FirstName,
+                LastName = u.Name.LastName,
+                Status = u.Status,
+                ProfilePicture = u.ProfilePictureUrl,
+                Gender = u.Gender,
+                SocialLinks = u.SocialLinks,
+                Bio = u.Bio,
+                Experiences = u.Experiences.ToList(),
+                Educations = u.Educations.ToList(),
+                Expertises = u.UserExpertises.Select(ue => ue.Expertise).ToList(),
+                Languages = u.UserLanguages.Select(ul => ul.Language).ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
 
         if (user is null)
         {
