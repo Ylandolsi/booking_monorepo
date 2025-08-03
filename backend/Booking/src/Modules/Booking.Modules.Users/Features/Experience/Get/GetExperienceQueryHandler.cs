@@ -30,15 +30,6 @@ internal sealed class GetExperienceQueryHandler(
         var experiences = await context.Experiences
             .AsNoTracking()
             .Where(x => x.UserId == userId)
-            /*.Select(x => new GetExperienceResponse(
-                x.Id,
-                x.Title,
-                x.Company,
-                x.StartDate,
-                x.EndDate,
-                x.Description,
-                x.ToPresent)
-            )*/
             .Select( x =>  new GetExperienceResponse
             {
                 Id = x.Id,
