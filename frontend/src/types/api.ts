@@ -10,6 +10,7 @@ import type {
   ProfilePictureType,
   SocialLinksType,
 } from '@/features/profile';
+import type { ProfileCompletionStatusType } from '@/features/profile/types/profile-completetion';
 
 export type BaseEntity = {
   id: string;
@@ -40,7 +41,7 @@ export type User = {
   educations: EducationType[];
   expertises: ExpertiseType[];
   languages: LanguageType[];
-  profileCompletionStatus: number;
+  profileCompletionStatus: ProfileCompletionStatusType;
   // TODO  : add country !! country: string;
 };
 

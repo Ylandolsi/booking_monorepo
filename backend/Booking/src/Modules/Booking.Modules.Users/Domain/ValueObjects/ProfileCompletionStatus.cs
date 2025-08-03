@@ -15,6 +15,8 @@ public class ProfileCompletionStatus : ValueObject
     public bool HasEducation { get; private set; }
     public bool HasLanguages { get; private set; }
     public bool HasExpertise { get; private set; }
+    public int CompletionStatus { get; private set; } = 0; 
+    public int TotalFields { get; private set; } = 9;
 
     public void UpdateCompletionStatus(User user)
     {
@@ -29,11 +31,13 @@ public class ProfileCompletionStatus : ValueObject
         HasEducation = user.Educations.Any();
         HasLanguages = user.UserLanguages.Any();
         HasExpertise = user.UserExpertises.Any();
+
+        CompletionStatus = GetCompletion(); 
+ 
     }
 
-    public double GetCompletionPercentage()
+    public int GetCompletion()
     {
-        int totalFields = 9;
         int completedFields = 0;
 
         if (HasName) completedFields++;
@@ -47,7 +51,15 @@ public class ProfileCompletionStatus : ValueObject
         if (HasLanguages) completedFields++;
         if (HasExpertise) completedFields++;
 
-        return (double)completedFields / totalFields * 100;
+        CompletionStatus = completedFields;
+        
+        return completedFields; 
+
+    }
+
+    public double GetCompletionPercentage()
+    {
+        return (double)GetCompletion() / TotalFields * 100;
     }
 
     protected override IEnumerable<object> GetEqualityComponents()
