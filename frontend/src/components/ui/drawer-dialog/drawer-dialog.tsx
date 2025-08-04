@@ -16,6 +16,7 @@ import {
   DrawerTrigger,
 } from './drawer';
 import useMediaQuery from '@/hooks/use-media-query';
+import { useEffect } from 'react';
 
 interface DrawerDialogProps {
   children: React.ReactNode;
@@ -46,7 +47,7 @@ export function DrawerDialog({
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const onOpenChange = controlledOnOpenChange || setInternalOpen;
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Create a function to handle wheel events on the dialog/drawer content
     const handleWheel = (e: WheelEvent) => {
       if (hasOpenPopover) {
