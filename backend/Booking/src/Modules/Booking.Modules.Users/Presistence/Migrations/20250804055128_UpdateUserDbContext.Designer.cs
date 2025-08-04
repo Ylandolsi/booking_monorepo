@@ -3,6 +3,7 @@ using System;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Users.Presistence.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    partial class UsersDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250804055128_UpdateUserDbContext")]
+    partial class UpdateUserDbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1043,17 +1046,25 @@ namespace Booking.Modules.Users.Presistence.Migrations
                                 .HasColumnType("boolean")
                                 .HasColumnName("profile_completion_status_has_education");
 
-                            b1.Property<bool>("HasExperience")
+                            b1.Property<bool>("HasEmail")
                                 .HasColumnType("boolean")
-                                .HasColumnName("profile_completion_status_has_experience");
+                                .HasColumnName("profile_completion_status_has_email");
 
                             b1.Property<bool>("HasExpertise")
                                 .HasColumnType("boolean")
                                 .HasColumnName("profile_completion_status_has_expertise");
 
+                            b1.Property<bool>("HasGender")
+                                .HasColumnType("boolean")
+                                .HasColumnName("profile_completion_status_has_gender");
+
                             b1.Property<bool>("HasLanguages")
                                 .HasColumnType("boolean")
                                 .HasColumnName("profile_completion_status_has_languages");
+
+                            b1.Property<bool>("HasName")
+                                .HasColumnType("boolean")
+                                .HasColumnName("profile_completion_status_has_name");
 
                             b1.Property<bool>("HasProfilePicture")
                                 .HasColumnType("boolean")

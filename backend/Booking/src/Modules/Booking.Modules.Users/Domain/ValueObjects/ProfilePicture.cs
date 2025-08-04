@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common;
 using Booking.Common.Results;
 
@@ -5,58 +6,50 @@ namespace Booking.Modules.Users.Domain.ValueObjects;
 
 public class ProfilePicture : ValueObject
 {
-    const string DefaultProfilePictureUrl = "https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png";
     public string ProfilePictureLink { get; private set; }
-    public string ThumbnailUrlPictureLink { get; private set; } = DefaultProfilePictureUrl;
+    public string ThumbnailUrlPictureLink { get; private set; }
 
     public ProfilePicture(string profilePictureLink = "", string thumbnailUrlPictureLink = "")
     {
-        if (string.IsNullOrWhiteSpace(profilePictureLink))
+        if (!isProfilePictureLinkValid(profilePictureLink) && !isProfilePictureLinkValid(thumbnailUrlPictureLink))
         {
-            profilePictureLink = DefaultProfilePictureUrl;
+            ResetToDefaultProfilePicture();
         }
-
-        if (!IsValidUrl(profilePictureLink!))
+        else
         {
-            throw new ArgumentException("Invalid profile picture URL", nameof(profilePictureLink));
+            ProfilePictureLink = profilePictureLink;
+            ThumbnailUrlPictureLink = thumbnailUrlPictureLink;
         }
-        if (!string.IsNullOrWhiteSpace(thumbnailUrlPictureLink) && !IsValidUrl(thumbnailUrlPictureLink))
-        {
-            throw new ArgumentException("Invalid thumbnail URL", nameof(thumbnailUrlPictureLink));
-        }
-
-        ProfilePictureLink = profilePictureLink;
-        ThumbnailUrlPictureLink = thumbnailUrlPictureLink;
     }
 
 
     public Result UpdateProfilePicture(string profilePictureLink, string thumbnailUrlPictureLink = "")
     {
-        if (string.IsNullOrEmpty(profilePictureLink))
-        {
-            return ResetToDefaultProfilePicture();
-        }
-        if (!IsValidUrl(profilePictureLink))
-        {
-            return Result.Failure(ProfilePictureErrors.InvalidProfilePictureUrl);
-        }
-        if (!string.IsNullOrWhiteSpace(thumbnailUrlPictureLink) && !IsValidUrl(thumbnailUrlPictureLink))
+        if (!isProfilePictureLinkValid(profilePictureLink) && !isProfilePictureLinkValid(thumbnailUrlPictureLink))
         {
             return Result.Failure(ProfilePictureErrors.InvalidProfilePictureUrl);
         }
 
         ProfilePictureLink = profilePictureLink;
         ThumbnailUrlPictureLink = thumbnailUrlPictureLink;
+
         return Result.Success();
     }
 
+    public string GetDefaultProfilePicture()
+    {
+        return "https://www.pngarts.com/files/10/Default-Profile-Picture-PNG-Download-Image.png";
+    }
 
     public Result ResetToDefaultProfilePicture()
     {
-        ProfilePictureLink = DefaultProfilePictureUrl;
-        ThumbnailUrlPictureLink = DefaultProfilePictureUrl;
+        ProfilePictureLink = GetDefaultProfilePicture();
+        ThumbnailUrlPictureLink = GetDefaultProfilePicture();
         return Result.Success();
     }
+
+    private bool isProfilePictureLinkValid(string Link) => !string.IsNullOrWhiteSpace(Link) &&
+                                                           IsValidUrl(Link); 
 
     private static bool IsValidUrl(string profilePictureLink)
     {
@@ -64,13 +57,12 @@ public class ProfilePicture : ValueObject
                && (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);
     }
 
+
     protected override IEnumerable<Object> GetEqualityComponents()
     {
         yield return ProfilePictureLink;
     }
 }
-
-
 
 public static class ProfilePictureErrors
 {

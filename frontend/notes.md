@@ -73,3 +73,141 @@ const registerPopover = React.useCallback((isOpen: boolean) => {
 
 - **Purpose:** Updates the state to track if a popover is open.
 - **Usage:** Used to control scroll behavior in dialogs/drawers.
+
+# Explanation of the DrawerDialog & MultiSelect Scrolling Fix Approach
+
+The approach used to fix the scrolling issue between `DrawerDialog` and `MultiSelect` is a **context-based event coordination system**. Here's how it works:
+
+## The Problem
+
+When a `MultiSelect` dropdown is opened inside a `DrawerDialog`, the parent container's scroll handler was capturing wheel events before they could reach the dropdown's scrollable content, preventing proper scrolling within the dropdown.
+
+## The Solution Approach
+
+### 1. **Context Provider Pattern**
+
+```tsx
+// In drawer-dialog.tsx
+const PopoverContext = React.createContext({
+  registerPopover: (isOpen: boolean) => {},
+});
+```
+
+The `DrawerDialog` creates a context to communicate with child components about popover states.
+
+### 2. **Child Registration System**
+
+```tsx
+// In multi-select.tsx
+const popoverContext = usePopoverContext?.();
+
+React.useEffect(() => {
+  if (popoverContext?.registerPopover) {
+    popoverContext.registerPopover(isPopoverOpen);
+  }
+}, [isPopoverOpen, popoverContext]);
+```
+
+The `MultiSelect` component registers its popover state with the parent `DrawerDialog` whenever it opens/closes.
+
+### 3. **State Tracking in Parent**
+
+```tsx
+// In drawer-dialog.tsx
+const [hasOpenPopover, setHasOpenPopover] = React.useState(false);
+
+const registerPopover = React.useCallback((isOpen: boolean) => {
+  setHasOpenPopover(isOpen);
+}, []);
+```
+
+The `DrawerDialog` tracks whether any child popover is currently open.
+
+### 4. **Selective Event Handling**
+
+```tsx
+// In drawer-dialog.tsx
+React.useEffect(() => {
+  const handleWheel = (e: WheelEvent) => {
+    if (hasOpenPopover) {
+      const target = e.target as HTMLElement;
+      const popoverElement = target.closest('[data-state="open"]');
+      const isCommandContent =
+        popoverElement &&
+        popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target);
+
+      if (isCommandContent) {
+        e.stopPropagation(); // Let the dropdown handle its own scrolling
+      }
+    }
+  };
+
+  if (open) {
+    document.addEventListener('wheel', handleWheel, { capture: true });
+  }
+
+  return () => {
+    document.removeEventListener('wheel', handleWheel, { capture: true });
+  };
+}, [open, hasOpenPopover]);
+```
+
+The `DrawerDialog` only intervenes with wheel events when:
+
+- A child popover is open (`hasOpenPopover` is true)
+- The scroll event originates from within a dropdown's scrollable area
+
+## How It Works Step by Step
+
+1. **Initial State**: `DrawerDialog` opens, `hasOpenPopover` is `false`
+2. **MultiSelect Opens**: `MultiSelect` calls `registerPopover(true)`, setting `hasOpenPopover` to `true`
+3. **Event Interception**: `DrawerDialog` starts monitoring wheel events with capture phase
+4. **Selective Handling**: When a wheel event occurs:
+   - If it's inside the dropdown's scrollable area (`.max-h-[200px]`), stop propagation
+   - If it's outside, let the event bubble normally
+5. **Cleanup**: When `MultiSelect` closes, it calls `registerPopover(false)`, stopping the intervention
+
+## Key Technical Details
+
+### Event Capture vs Bubble
+
+```tsx
+document.addEventListener('wheel', handleWheel, { capture: true });
+```
+
+Uses **capture phase** to intercept events before they reach their target, allowing the parent to decide whether to let the child handle the event.
+
+### DOM Navigation
+
+```tsx
+const popoverElement = target.closest('[data-state="open"]');
+const isCommandContent = popoverElement
+  ?.querySelector('.max-h-\\[200px\\]')
+  ?.contains(target);
+```
+
+- `closest()` finds the nearest open popover ancestor
+- `querySelector()` locates the scrollable content within that popover
+- `contains()` checks if the event target is within the scrollable area
+
+### Context Wrapping
+
+```tsx
+const wrappedChildren = (
+  <PopoverContext.Provider value={{ registerPopover }}>
+    {children}
+  </PopoverContext.Provider>
+);
+```
+
+All children are wrapped in the context provider, making the registration function available to any nested `MultiSelect` components.
+
+## Benefits of This Approach
+
+1. **Non-intrusive**: Works without modifying the core `MultiSelect` logic
+2. **Scalable**: Can handle multiple nested popovers
+3. **Performance**: Only adds event listeners when needed
+4. **Flexible**: Works with any popover-based component that uses the context
+5. **Clean**: Automatically cleans up event listeners and state
+
+This approach elegantly solves the scroll conflict by creating a communication channel between parent and child components, allowing them to coordinate their event handling behavior.

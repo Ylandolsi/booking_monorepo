@@ -22,11 +22,11 @@ public sealed class User : IdentityUser<int>, IEntity
 {
 
     public string Slug { get; private set; } = string.Empty;
-    public Name Name { get; private set; } = default!;
-    public Status Status { get; private set; } = default!;
-    public ProfilePicture ProfilePictureUrl { get; private set; } = default!;
+    public Name Name { get; private set; } = null!;
+    public Status Status { get; private set; } = null!;
+    public ProfilePicture ProfilePictureUrl { get; private set; } = null!;
     public string Gender { get; private set; } = "Male";
-    public SocialLinks SocialLinks { get; private set; } = default!;
+    public SocialLinks SocialLinks { get; private set; } = null!;
     public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
 
     public string Bio { get; private set; } = string.Empty;

@@ -41,11 +41,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.OwnsOne(u => u.ProfileCompletionStatus, profileCompletion =>
         {
-            profileCompletion.Property(p => p.HasName);
-            profileCompletion.Property(p => p.HasEmail);
             profileCompletion.Property(p => p.HasProfilePicture);
             profileCompletion.Property(p => p.HasBio);
-            profileCompletion.Property(p => p.HasGender);
             profileCompletion.Property(p => p.HasSocialLinks);
             profileCompletion.Property(p => p.HasEducation);
             profileCompletion.Property(p => p.HasLanguages);

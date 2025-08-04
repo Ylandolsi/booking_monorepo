@@ -48,7 +48,6 @@ builder.Services.AddUsersModule(builder.Configuration);
 
 
 WebApplication app = builder.Build();
-
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     //     need to handle seeding langugaes and expertise in a better way!
