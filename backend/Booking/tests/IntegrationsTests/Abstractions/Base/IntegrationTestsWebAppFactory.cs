@@ -11,6 +11,7 @@ using Respawn;
 using System.Data.Common;
 using Booking.Api;
 using Booking.Modules.Users.Presistence;
+using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Testcontainers.PostgreSql;
 
@@ -55,6 +56,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+      
         builder.ConfigureAppConfiguration((context, config) =>
         {
             // Add dummy Google auth settings that will be used during registration
@@ -89,6 +91,22 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                     })
                 .UseSnakeCaseNamingConvention());
 
+            // Add MentorshipsDbContext for testing
+            var mentorshipsDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<MentorshipsDbContext>));
+            if (mentorshipsDescriptor != null)
+            {
+                services.Remove(mentorshipsDescriptor);
+            }
+            
+            services.AddDbContext<MentorshipsDbContext>((sp, options) => options
+                .UseNpgsql(_connectionString,
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "mentorships");
+                    })
+                .UseSnakeCaseNamingConvention());
+
             descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IAmazonSimpleEmailService));
             if (descriptor != null)
             {
@@ -103,6 +121,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
 
 
         });
+      
 
 
     }
@@ -112,9 +131,12 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         await _dbContainer.StartAsync();
         using (var scope = Services.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-            await dbContext.Database.MigrateAsync();
-            await SeedData.Initialize(dbContext);
+            var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+            await usersDbContext.Database.MigrateAsync();
+            await SeedData.Initialize(usersDbContext);
+            
+            var mentorshipsDbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+            await mentorshipsDbContext.Database.MigrateAsync();
         }
         await InitializeDbRespawner();
     }
@@ -142,8 +164,8 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         await _respawner.ResetAsync(_dbConnection);
         using (var scope = Services.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-            await SeedData.Initialize(dbContext);
+            var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+            await SeedData.Initialize(usersDbContext);
         }
     }
 
@@ -160,7 +182,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             // and the schema to be reset is public 
             DbAdapter = DbAdapter.Postgres,
             // TODO : add more schemas if needed
-            SchemasToInclude = new[] { "users" }
+            SchemasToInclude = new[] { "users", "mentorships" }
         });
     }
 

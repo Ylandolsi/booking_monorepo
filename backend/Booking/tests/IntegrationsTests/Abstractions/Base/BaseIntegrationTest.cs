@@ -1,0 +1,173 @@
+﻿using System.Net.Http.Json;
+using System.Text.RegularExpressions;
+using Amazon.SimpleEmail.Model;
+using Bogus;
+using Booking.Modules.Users.BackgroundJobs;
+using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Utils;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace IntegrationsTests.Abstractions;
+
+[Collection(nameof(IntegrationTestsCollection))]
+public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
+{
+    protected readonly Faker Fake = new();
+    protected readonly IServiceScope _scope;
+    protected readonly IntegrationTestsWebAppFactory Factory;
+    protected List<SendEmailRequest> EmailCapturer => Factory.CapturedEmails;
+    
+    protected readonly CookieManager CookieManager;
+    protected readonly TestHttpClientFactory ClientFactory;
+    
+    // Default clients (backward compatibility)
+    protected HttpClient ArrangeClient => ClientFactory.GetArrangeClient("default");
+    protected HttpClient ActClient => ClientFactory.GetActClient("default");
+
+    
+
+    // authentications purpose
+    // users claims wihtout really creating a user ( not persisted in the database )
+    // for endpoints that require authentication and authorization
+    protected readonly Guid _verifiedUserId = Guid.NewGuid();
+    protected readonly string _verifiedUserEmail = "verified.user@example.com";
+    protected readonly HttpClient _client;
+    protected readonly HttpClient _authenticatedVerifiedUserClient;
+    private readonly Func<Task> _resetDatabase;
+
+    protected async Task TriggerOutboxProcess()
+    {
+        var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
+        await outboxProcessor.ExecuteAsync(null);
+    }
+
+    public BaseIntegrationTest(IntegrationTestsWebAppFactory factory)
+    {
+        Factory = factory;
+        _scope = Factory.Services.CreateScope();
+        _resetDatabase = factory.ResetDatabase;
+        EmailCapturer?.Clear();
+        
+        _client = Factory.CreateClient();
+        
+        CookieManager = new CookieManager();
+        ClientFactory = new TestHttpClientFactory(factory, CookieManager);
+    }
+
+    protected bool IsSucceed(int statusCode) // Change parameter type to int
+    {
+        return statusCode == StatusCodes.Status200OK ||
+               statusCode == StatusCodes.Status201Created ||
+               statusCode == StatusCodes.Status204NoContent;
+    }
+
+    protected void CheckSuccess(HttpResponseMessage response) => Assert.True(IsSucceed((int)response.StatusCode), "The response status code does not indicate success.");
+
+
+    public async Task InitializeAsync()
+    {
+        await _resetDatabase();
+        EmailCapturer?.Clear();
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
+    
+    
+    #region User Management Methods
+
+    /// <summary>
+    /// Creates multiple users for testing scenarios
+    /// Usage: var users = CreateUsers("mentor", "mentee", "admin");
+    /// Then: await users["mentor"].arrange.PostAsync(...);
+    /// </summary>
+    protected Dictionary<string, (HttpClient arrange, HttpClient act)> CreateUsers(params string[] userIds)
+    {
+        return ClientFactory.CreateUsers(userIds);
+    }
+
+    /// <summary>
+    /// Gets HTTP clients for a specific user
+    /// </summary>
+    protected (HttpClient arrange, HttpClient act) GetClientsForUser(string userId)
+    {
+        return ClientFactory.GetBothClients(userId);
+    }
+
+    /// <summary>
+    /// Clears cookies for a specific user or all users
+    /// </summary>
+    protected void ClearCookies(string? userId = null)
+    {
+        CookieManager.ClearCookies(userId);
+    }
+
+    /// <summary>
+    /// Gets all cookies for a user
+    /// </summary>
+    protected Dictionary<string, string> GetCookies(string userId = "default")
+    {
+        return CookieManager.GetAllCookies(userId);
+    }
+
+    /// <summary>
+    /// Checks if a user has authentication cookies
+    /// </summary>
+    protected bool IsUserAuthenticated(string userId = "default")
+    {
+        return CookieManager.HasCookies(userId);
+    }
+
+    #endregion
+
+   
+    #region Reset and Cleanup Methods
+
+    /// <summary>
+    /// Resets state before each test (similar to resetBeforeEach in Node.js)
+    /// </summary>
+    protected virtual void ResetBeforeEach()
+    {
+        ClearCookies(); // Clear all cookies
+        ClientFactory.ClearAllClients(); // Dispose and recreate clients
+    }
+
+    /// <summary>
+    /// Cleanup method called after each test
+    /// </summary>
+    public virtual void Dispose()
+    {
+        ClientFactory.ClearAllClients();
+        CookieManager.ClearCookies();
+        
+        _scope.Dispose();
+        GC.SuppressFinalize(this);
+    }
+    #endregion
+    
+    protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
+    {
+
+        var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
+        if (sentEmail is null) return (null, null);
+
+        var match = Regex.Match(
+            sentEmail.Message.Body.Html.Data,
+            @"href=['""](?<url>https?://[^'""]+\?token=[^&]+&email=[^'""]+)['""]",
+            RegexOptions.IgnoreCase);
+
+        if (!match.Success) return (null, null);
+
+        var url = match.Groups["url"].Value;
+        var uri = new Uri(url);
+
+        // Use QueryHelpers to parse and decode the query string
+        var queryParams = QueryHelpers.ParseQuery(uri.Query);
+
+        queryParams.TryGetValue("token", out var token);
+        queryParams.TryGetValue("email", out var email);
+
+        return (token.ToString(), email.ToString());
+    }
+}

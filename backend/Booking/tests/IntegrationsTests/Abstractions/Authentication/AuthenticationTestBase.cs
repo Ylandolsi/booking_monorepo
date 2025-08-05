@@ -17,12 +17,13 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
     }
 
+
     protected async Task TriggerOutboxProcess()
     {
         var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
         await outboxProcessor.ExecuteAsync(null);
     }
-
+    /*
     protected async Task<LoginResponse> LoginUser(string email, string password)
     {
         var loginPayload = new
@@ -78,6 +79,79 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
         return await LoginUser(email, DefaultPassword);
 
     }
+
+    */
+    
+     #region Authentication Helper Methods
+
+    /// <summary>
+    /// Registers and verifies a user, then logs them in
+    /// Returns the login response and sets up cookies for the specified userId
+    /// </summary>
+    protected async Task<LoginResponse> CreateUserAndLogin(string? email = null, string? password = null ,  HttpClient? arrangeClient = null)
+    {
+        arrangeClient ??= ArrangeClient; 
+        
+        email ??= Fake.Internet.Email();
+        password ??= "SecurePassword123!";
+
+        await RegisterAndVerifyUser(email, password, true , arrangeClient);
+        return await LoginUser(email, password, arrangeClient);
+    }
+
+    /// <summary>
+    /// Registers and verifies a user using the specified client
+    /// </summary>
+    protected async Task RegisterAndVerifyUser(string email, string password, bool verify = true ,  HttpClient? arrangeClient = null)
+    {
+        arrangeClient ??= ArrangeClient;
+
+        var registerPayload = new
+        {
+            Email = email,
+            Password = password,
+            FirstName = "Test",
+            LastName = "User"
+        };
+
+        var registerResponse = await arrangeClient.PostAsJsonAsync("/users/register", registerPayload);
+        if (!verify) return; 
+        await TriggerOutboxProcess();
+
+        await Task.Delay(TimeSpan.FromSeconds(2));
+
+
+        var (token, parsedEmail) = ExtractTokenAndEmailFromEmail(email);
+
+        Assert.NotNull(token);
+        Assert.NotNull(parsedEmail);
+
+        var verificationPayload = new { Email = parsedEmail, Token = token };
+        var verifyResponse = await arrangeClient.PostAsJsonAsync(UsersEndpoints.VerifyEmail, verificationPayload);
+        verifyResponse.EnsureSuccessStatusCode();
+    }
+
+    /// <summary>
+    /// Logs in a user using the specified client
+    /// </summary>
+    protected async Task<LoginResponse> LoginUser(string email, string password, HttpClient? arrangeClient = null)
+    {
+        arrangeClient ??= ArrangeClient;
+
+        var loginPayload = new
+        {
+            Email = email,
+            Password = password
+        };
+
+        var loginResponse = await arrangeClient.PostAsJsonAsync("/users/login", loginPayload);
+        loginResponse.EnsureSuccessStatusCode();
+
+        var loginData = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
+        return loginData ?? throw new InvalidOperationException("Failed to deserialize login response");
+    }
+
+    #endregion
 
     protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
     {
