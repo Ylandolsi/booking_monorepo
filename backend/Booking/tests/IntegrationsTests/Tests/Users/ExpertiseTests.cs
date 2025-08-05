@@ -14,7 +14,7 @@ public class ExpertiseTests : AuthenticationTestBase
     public async Task GetAllExpertises_ShouldReturnExpertises_WhenUserIsUnAuthenticated()
     {
 
-        var response = await _client.GetAsync(UsersEndpoints.GetAllExpertises);
+        var response = await ActClient.GetAsync(UsersEndpoints.GetAllExpertises);
 
         response.EnsureSuccessStatusCode();
         var expertises = await response.Content.ReadFromJsonAsync<List<Expertise>>();
@@ -27,7 +27,7 @@ public class ExpertiseTests : AuthenticationTestBase
     {
         var userData = await CreateUserAndLogin();
 
-        var response = await _client.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
 
         response.EnsureSuccessStatusCode();
         var expertises = await response.Content.ReadFromJsonAsync<List<Expertise>>();
@@ -39,7 +39,7 @@ public class ExpertiseTests : AuthenticationTestBase
         var userData = await CreateUserAndLogin();
         var useData2 = await CreateUserAndLogin();
 
-        var response = await _client.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
 
         response.EnsureSuccessStatusCode();
         var expertises = await response.Content.ReadFromJsonAsync<List<Expertise>>();
@@ -53,7 +53,7 @@ public class ExpertiseTests : AuthenticationTestBase
 
 
         // Get all available expertises
-        var expertisesResponse = await _client.GetAsync(UsersEndpoints.GetAllExpertises);
+        var expertisesResponse = await ActClient.GetAsync(UsersEndpoints.GetAllExpertises);
         expertisesResponse.EnsureSuccessStatusCode();
 
         List<Expertise>? allExpertises = await expertisesResponse.Content.ReadFromJsonAsync<List<Expertise>>();
@@ -63,11 +63,11 @@ public class ExpertiseTests : AuthenticationTestBase
 
         var updatePayload = new { ExpertiseIds = new List<int> { allExpertises[0].Id, allExpertises[1].Id } };
 
-        var response = await _client.PutAsJsonAsync(UsersEndpoints.UpdateUserExpertise, updatePayload);
+        var response = await ActClient.PutAsJsonAsync(UsersEndpoints.UpdateUserExpertise, updatePayload);
 
         response.EnsureSuccessStatusCode();
 
-        var userExpertisesResponse = await _client.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
+        var userExpertisesResponse = await ActClient.GetAsync(UsersEndpoints.GetUserExpertises.Replace("{userSlug}", userData.UserSlug.ToString()));
 
         userExpertisesResponse.EnsureSuccessStatusCode();
         var userExpertises = await userExpertisesResponse.Content.ReadFromJsonAsync<List<Expertise>>();

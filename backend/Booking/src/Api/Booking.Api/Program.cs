@@ -2,6 +2,7 @@ using System.Reflection;
 using Booking.Api.DependencyInjection;
 using Booking.Api.Extensions;
 using Booking.Common;
+using Booking.Modules.Mentorships;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence.Seed.Users;
@@ -25,7 +26,8 @@ builder.Services.AddSwaggerDocumentation();
 
 Assembly[] moduleApplicationAssemblies =
 [
-    Booking.Modules.Users.AssemblyReference.Assembly
+    Booking.Modules.Mentorships.AssemblyReference.Assembly ,
+    Booking.Modules.Users.AssemblyReference.Assembly 
 ];
 
 
@@ -44,6 +46,7 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Configuration.AddModuleConfiguration(["users"]);
 
 builder.Services.AddUsersModule(builder.Configuration);
+builder.Services.AddMentorshipsModule(builder.Configuration);
 
 
 

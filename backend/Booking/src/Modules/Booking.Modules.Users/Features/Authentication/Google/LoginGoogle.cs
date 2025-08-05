@@ -42,6 +42,9 @@ internal sealed class LoginGoogle : IEndpoint
                                                                                                       callbackEndpoint);
 
             properties.SetParameter("prompt", "select_account");
+            properties.SetParameter("access_type", "offline");
+            properties.SetParameter("grant_type", "authorization_code"); 
+
             // send a request to google with the properties ( including scope , state  , clientid ..... ) 
             // to get the code 
             return Results.Challenge(properties, new[] { "Google" });

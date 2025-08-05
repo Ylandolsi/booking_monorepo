@@ -19,7 +19,7 @@ public class LanguageTests : AuthenticationTestBase
     {
         //UserData userData = await CreateUserAndLogin(); 
 
-        var response = await _client.GetAsync(UsersEndpoints.GetAllLanguages);
+        var response = await ActClient.GetAsync(UsersEndpoints.GetAllLanguages);
 
         response.EnsureSuccessStatusCode();
         List<Language> languages = await response.Content.ReadFromJsonAsync<List<Language>>();
@@ -33,7 +33,7 @@ public class LanguageTests : AuthenticationTestBase
     {
         LoginResponse loginResponse = await CreateUserAndLogin();
 
-        var response = await _client.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
 
         response.EnsureSuccessStatusCode();
         var languages = await response.Content.ReadFromJsonAsync<List<Language>>();
@@ -45,7 +45,7 @@ public class LanguageTests : AuthenticationTestBase
         LoginResponse loginResponse = await CreateUserAndLogin();
         LoginResponse otherUserrData = await CreateUserAndLogin();
 
-        var response = await _client.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
 
         response.EnsureSuccessStatusCode();
         var languages = await response.Content.ReadFromJsonAsync<List<Language>>();
@@ -57,7 +57,7 @@ public class LanguageTests : AuthenticationTestBase
     {
         LoginResponse loginResponse = await CreateUserAndLogin();
 
-        var languagesResponse = await _client.GetAsync(UsersEndpoints.GetAllLanguages);
+        var languagesResponse = await ActClient.GetAsync(UsersEndpoints.GetAllLanguages);
         languagesResponse.EnsureSuccessStatusCode();
 
         var allLanguages = await languagesResponse.Content.ReadFromJsonAsync<List<Language>>();
@@ -68,12 +68,12 @@ public class LanguageTests : AuthenticationTestBase
 
 
         var updatePayload = new { LanguageIds = new List<int> { allLanguages[0].Id, allLanguages[1].Id } };
-        var response = await _client.PutAsJsonAsync(UsersEndpoints.UpdateUserLanguages, updatePayload);
+        var response = await ActClient.PutAsJsonAsync(UsersEndpoints.UpdateUserLanguages, updatePayload);
 
         response.EnsureSuccessStatusCode();
 
         // Verify the user now has these languages
-        var userLanguagesResponse = await _client.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
+        var userLanguagesResponse = await ActClient.GetAsync(UsersEndpoints.GetUserLanguages.Replace("{userSlug}", loginResponse.UserSlug.ToString()));
 
         userLanguagesResponse.EnsureSuccessStatusCode();
         var userLanguages = await userLanguagesResponse.Content.ReadFromJsonAsync<List<Language>>();

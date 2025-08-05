@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Booking.Modules.Users;
+namespace Booking.Modules.Mentorships;
 
 public static class AssemblyReference
 {

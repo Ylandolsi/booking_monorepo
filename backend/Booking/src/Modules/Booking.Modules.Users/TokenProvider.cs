@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography;
+using Booking.Common.Authentication;
 using Booking.Modules.Users.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -40,8 +41,10 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
                 Subject = new ClaimsIdentity(
                 [
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                    new Claim(ClaimsIdentifiers.Email, user.Email!),
+                    new Claim(ClaimsIdentifiers.IsEmailVerified, user.EmailConfirmed.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimsIdentifiers.UserSlug, user.Slug) ,
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationInMinutes),
                 SigningCredentials = credentials,

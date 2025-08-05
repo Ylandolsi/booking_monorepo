@@ -18,7 +18,14 @@ public sealed class UserContext
             .User
             .GetUserId() ??
         throw new UnauthException("User context is unavailable");
-
+    
+    public string UserSlug =>
+        _httpContextAccessor
+            .HttpContext?
+            .User
+            .GetUserSlug() ??
+        throw new UnauthException("User context is unavailable");
+    
 
 
     public string? RefreshToken =>

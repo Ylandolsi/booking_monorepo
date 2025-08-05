@@ -25,7 +25,7 @@ public class ChangePasswordTests : AuthenticationTestBase
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync(UsersEndpoints.ChangePassword, request);
+        var response = await ActClient.PutAsJsonAsync(UsersEndpoints.ChangePassword, request);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -46,7 +46,7 @@ public class ChangePasswordTests : AuthenticationTestBase
         };
         // cookies are sent automatically
 
-        var response = await _client.PutAsJsonAsync(UsersEndpoints.ChangePassword, request);
+        var response = await ActClient.PutAsJsonAsync(UsersEndpoints.ChangePassword, request);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

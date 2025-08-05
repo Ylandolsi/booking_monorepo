@@ -26,7 +26,7 @@ public class ExperienceTests : AuthenticationTestBase
             Description = "Developed web applications using .NET Core"
         };
 
-        var response = await _client.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
+        var response = await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
 
         response.EnsureSuccessStatusCode();
 
@@ -46,12 +46,12 @@ public class ExperienceTests : AuthenticationTestBase
             EndDate = DateTime.UtcNow.AddMonths(-3),
             Description = "Developed web applications using .NET Core"
         };
-        await _client.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
+        await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
 
         var otherUserData = await CreateUserAndLogin();
 
         // Act
-        var response = await _client.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -76,7 +76,7 @@ public class ExperienceTests : AuthenticationTestBase
             Description = "Developed web applications using .NET Core"
         };
 
-        var createResponse = await _client.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
+        var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
         createResponse.EnsureSuccessStatusCode();
 
         var experienceId = await createResponse.Content.ReadFromJsonAsync<int>();
@@ -92,7 +92,7 @@ public class ExperienceTests : AuthenticationTestBase
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync(
+        var response = await ActClient.PutAsJsonAsync(
             UsersEndpoints.UpdateExperience.Replace("{experienceId}", experienceId.ToString()),
             updatePayload);
 
@@ -115,21 +115,21 @@ public class ExperienceTests : AuthenticationTestBase
             Description = "Developed web applications using .NET Core"
         };
         
-        var createResponse = await _client.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
+        var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
         createResponse.EnsureSuccessStatusCode();
 
         var experienceId = await createResponse.Content.ReadFromJsonAsync<int>();
 
 
         // Act
-        var response = await _client.DeleteAsync(
+        var response = await ActClient.DeleteAsync(
             UsersEndpoints.DeleteExperience.Replace("{experienceId}", experienceId.ToString()));
 
         // Assert
         response.EnsureSuccessStatusCode();
 
         // Verify it's deleted
-        var getResponse = await _client.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
+        var getResponse = await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
         getResponse.EnsureSuccessStatusCode();
         var experiences = await getResponse.Content.ReadFromJsonAsync<List<object>>();
         Assert.Empty(experiences);

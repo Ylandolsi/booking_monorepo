@@ -17,70 +17,11 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
     }
 
-
     protected async Task TriggerOutboxProcess()
     {
         var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
         await outboxProcessor.ExecuteAsync(null);
     }
-    /*
-    protected async Task<LoginResponse> LoginUser(string email, string password)
-    {
-        var loginPayload = new
-        {
-            Email = email,
-            Password = password
-        };
-
-        var response = await _client.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
-        response.EnsureSuccessStatusCode();
-
-        var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        Assert.NotNull(loginResponse);
-        return loginResponse;
-    }
-
-    protected async Task RegisterAndVerifyUser(string email, string password, bool verify = true)
-    {
-        var registrationPayload = new
-        {
-            FirstName = "Test",
-            LastName = "User",
-            Email = email,
-            Password = password,
-            ProfilePictureSource = ""
-        };
-
-        var registerResponse = await _client.PostAsJsonAsync(UsersEndpoints.Register, registrationPayload);
-        registerResponse.EnsureSuccessStatusCode();
-
-
-        await TriggerOutboxProcess();
-
-        await Task.Delay(TimeSpan.FromSeconds(2));
-        if (!verify) return;
-
-
-        var (token, parsedEmail) = ExtractTokenAndEmailFromEmail(email);
-
-        Assert.NotNull(token);
-        Assert.NotNull(parsedEmail);
-
-        var verificationPayload = new { Email = parsedEmail, Token = token };
-        var verifyResponse = await _client.PostAsJsonAsync(UsersEndpoints.VerifyEmail, verificationPayload);
-
-        //verifyResponse.EnsureSuccessStatusCode();
-        CheckSuccess(verifyResponse);
-    }
-    protected async Task<LoginResponse> CreateUserAndLogin()
-    {
-        string? email = Fake.Internet.Email();
-        await RegisterAndVerifyUser(email, DefaultPassword, true);
-        return await LoginUser(email, DefaultPassword);
-
-    }
-
-    */
     
      #region Authentication Helper Methods
 
@@ -115,8 +56,8 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
         };
 
         var registerResponse = await arrangeClient.PostAsJsonAsync("/users/register", registerPayload);
-        if (!verify) return; 
         await TriggerOutboxProcess();
+        if (!verify) return; 
 
         await Task.Delay(TimeSpan.FromSeconds(2));
 

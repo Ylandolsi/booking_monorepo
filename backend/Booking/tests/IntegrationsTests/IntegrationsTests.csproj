@@ -35,6 +35,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\Modules\Booking.Modules.Users\Booking.Modules.Users.csproj" />
+      <ProjectReference Include="..\..\src\Modules\Booking.Modules.Mentorships\Booking.Modules.Mentorships.csproj" />
         <ProjectReference Include="..\..\src\Api\Booking.Api\Booking.Api.csproj" />
 
     </ItemGroup>

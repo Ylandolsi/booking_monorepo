@@ -28,13 +28,13 @@
 //         };
 
 //         // Act
-//         var response = await _client.PutAsJsonAsync(UsersEndpoints.UpdateBasicInfo, updatePayload);
+//         var response = await ActClient.PutAsJsonAsync(UsersEndpoints.UpdateBasicInfo, updatePayload);
 
 //         // Assert
 //         response.EnsureSuccessStatusCode();
 
 //         // Verify the profile was updated by getting the current user
-//         var userResponse = await _client.GetAsync(UsersEndpoints.GetCurrentUser);
+//         var userResponse = await ActClient.GetAsync(UsersEndpoints.GetCurrentUser);
 //         userResponse.EnsureSuccessStatusCode();
 //         var user = await userResponse.Content.ReadFromJsonAsync<dynamic>();
 //         Assert.NotNull(user);
@@ -60,13 +60,13 @@
 //         };
 
 //         // Act
-//         var response = await _client.PutAsJsonAsync(UsersEndpoints.UpdateSocialLinks, updatePayload);
+//         var response = await ActClient.PutAsJsonAsync(UsersEndpoints.UpdateSocialLinks, updatePayload);
 
 //         // Assert
 //         response.EnsureSuccessStatusCode();
 
 //         // Verify the social links were updated by getting the current user
-//         var userResponse = await _client.GetAsync(UsersEndpoints.GetCurrentUser);
+//         var userResponse = await ActClient.GetAsync(UsersEndpoints.GetCurrentUser);
 //         userResponse.EnsureSuccessStatusCode();
 //         var user = await userResponse.Content.ReadFromJsonAsync<dynamic>();
 //         Assert.NotNull(user);
@@ -81,7 +81,7 @@
 //         var userEmail = Fake.Internet.Email();
 //         await RegisterAndVerifyUser(userEmail, DefaultPassword);
 //         var userData = await LoginUser(userEmail, DefaultPassword);
-//         _client.DefaultRequestHeaders.Authorization = new("Bearer", userData.Token);
+//         ActClient.DefaultRequestHeaders.Authorization = new("Bearer", userData.Token);
 
 //         // Create a test image file
 //         byte[] imageData = new byte[100]; // Dummy image data
@@ -94,7 +94,7 @@
 //         content.Add(imageContent, "file", "test-image.jpg");
 
 //         // Act
-//         var response = await _client.PutAsync(UsersEndpoints.UpdateProfilePicture, content);
+//         var response = await ActClient.PutAsync(UsersEndpoints.UpdateProfilePicture, content);
 
 //         // Assert
 //         response.EnsureSuccessStatusCode();
@@ -113,7 +113,7 @@
 //         };
 
 //         // Act
-//         var response = await _client.PutAsJsonAsync(UsersEndpoints.UpdateBasicInfo, updatePayload);
+//         var response = await ActClient.PutAsJsonAsync(UsersEndpoints.UpdateBasicInfo, updatePayload);
 
 //         // Assert
 //         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

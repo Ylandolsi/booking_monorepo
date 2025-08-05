@@ -24,6 +24,21 @@ internal static class ClaimsPrincipalExtensions
             parsedUserId :
             null;
     }
+
+    public static string? GetUserSlug(this ClaimsPrincipal? principal)
+    {
+
+        string? userSlug = principal?.FindFirstValue(ClaimsIdentifiers.UserSlug); 
+
+
+        if (string.IsNullOrEmpty("slug"))
+        {
+
+            return null;
+        }
+
+        return userSlug; 
+    }
 }
 
 

@@ -25,7 +25,7 @@ public class EducationTests : AuthenticationTestBase
             Description = "Bachelor's degree in Computer Science"
         };
 
-        var response = await _client.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
+        var response = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
 
         response.EnsureSuccessStatusCode();
 
@@ -45,10 +45,10 @@ public class EducationTests : AuthenticationTestBase
             EndDate = DateTime.UtcNow.AddYears(-1),
             Description = "Bachelor's degree in Computer Science"
         };
-        await _client.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
+        await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
 
         // Act
-        var response = await _client.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
+        var response = await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -71,7 +71,7 @@ public class EducationTests : AuthenticationTestBase
             EndDate = DateTime.UtcNow.AddYears(-1),
             Description = "Bachelor's degree in Computer Science"
         };
-        var createResponse = await _client.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
+        var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
         createResponse.EnsureSuccessStatusCode();
         
         var educationId = await createResponse.Content.ReadFromJsonAsync<int>();
@@ -87,7 +87,7 @@ public class EducationTests : AuthenticationTestBase
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync(
+        var response = await ActClient.PutAsJsonAsync(
             UsersEndpoints.UpdateEducation.Replace("{educationId}", educationId.ToString()), 
             updatePayload);
 
@@ -109,20 +109,20 @@ public class EducationTests : AuthenticationTestBase
             EndDate = DateTime.UtcNow.AddYears(-1),
             Description = "Bachelor's degree in Computer Science"
         };
-        var createResponse = await _client.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
+        var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
         createResponse.EnsureSuccessStatusCode();
 
         var educationId = await createResponse.Content.ReadFromJsonAsync<int>();    
 
         // Act
-        var response = await _client.DeleteAsync(
+        var response = await ActClient.DeleteAsync(
             UsersEndpoints.DeleteEducation.Replace("{educationId}", educationId.ToString()));
 
         // Assert
         response.EnsureSuccessStatusCode();
 
         // Verify it's deleted
-        var getResponse = await _client.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
+        var getResponse = await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
         getResponse.EnsureSuccessStatusCode();
         var educations = await getResponse.Content.ReadFromJsonAsync<List<object>>();
         Assert.Empty(educations);

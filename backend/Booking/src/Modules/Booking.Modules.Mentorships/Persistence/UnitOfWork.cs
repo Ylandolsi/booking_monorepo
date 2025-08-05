@@ -1,14 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Booking.Modules.Users.Presistence
+namespace Booking.Modules.Mentorships.Persistence
 {
     internal sealed class UnitOfWork : IUnitOfWork, IDisposable
     {
         private readonly DbContext _context;
         private IDbContextTransaction? _transaction;
 
-        public UnitOfWork(UsersDbContext context)
+        public UnitOfWork(MentorshipsDbContext context)
         {
             _context = (DbContext)context;
         }

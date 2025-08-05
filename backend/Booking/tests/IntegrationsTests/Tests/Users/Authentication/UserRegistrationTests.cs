@@ -26,7 +26,7 @@ public class UserRegistrationTests : AuthenticationTestBase
         };
 
         // Act
-        HttpResponseMessage response = await _client.PostAsJsonAsync(UsersEndpoints.Register, registrationPayload);
+        HttpResponseMessage response = await ActClient.PostAsJsonAsync(UsersEndpoints.Register, registrationPayload);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -53,10 +53,10 @@ public class UserRegistrationTests : AuthenticationTestBase
             Password = "Password123!",
             ProfilePictureSource = ""
         };
-        await _client.PostAsJsonAsync(UsersEndpoints.Register, payload);
+        await ActClient.PostAsJsonAsync(UsersEndpoints.Register, payload);
 
         // Act
-        var secondResponse = await _client.PostAsJsonAsync(UsersEndpoints.Register, payload);
+        var secondResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.Register, payload);
 
         // Assert
         Assert.NotEqual(HttpStatusCode.OK, secondResponse.StatusCode);
@@ -75,7 +75,7 @@ public class UserRegistrationTests : AuthenticationTestBase
             ProfilePictureSource = ""
         };
 
-        var response = await _client.PostAsJsonAsync(UsersEndpoints.Register, payload);
+        var response = await ActClient.PostAsJsonAsync(UsersEndpoints.Register, payload);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

@@ -126,7 +126,7 @@ export function UploadPictureDialog({
             Cancel
           </Button>
         ) : (
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-2 w-full mt-2">
             <Button
               onClick={handleBackToSelect}
               variant="outline"
@@ -141,7 +141,7 @@ export function UploadPictureDialog({
               disabled={
                 !croppedImageUrl || updateProfilePictureMutation.isPending
               }
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1 "
             >
               {updateProfilePictureMutation.isPending ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />

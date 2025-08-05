@@ -22,7 +22,7 @@ public class UserLoginTests : AuthenticationTestBase
 
         // Act
         var loginPayload = new { Email = userEmail, Password = userPassword };
-        var loginResponse = await _client.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
+        var loginResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
 
         // Assert
         loginResponse.EnsureSuccessStatusCode();
@@ -35,7 +35,7 @@ public class UserLoginTests : AuthenticationTestBase
     {
         var userData = await CreateUserAndLogin();
 
-        var currentUserResponse = await _client.GetAsync(UsersEndpoints.GetCurrentUser);
+        var currentUserResponse = await ActClient.GetAsync(UsersEndpoints.GetCurrentUser);
         Assert.NotNull(currentUserResponse);
         Assert.Equal(HttpStatusCode.OK, currentUserResponse.StatusCode);
         Assert.Equal(userData.Email, userData.Email);
@@ -51,7 +51,7 @@ public class UserLoginTests : AuthenticationTestBase
 
         // Act
         var loginPayload = new { Email = userEmail, Password = "WrongPassword!" };
-        var loginResponse = await _client.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
+        var loginResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
 
         // Assert
         Assert.NotEqual(HttpStatusCode.OK, loginResponse.StatusCode);
@@ -66,7 +66,7 @@ public class UserLoginTests : AuthenticationTestBase
 
         // Act
         var loginPayload = new { Email = userEmail, Password = userPassword };
-        var loginResponse = await _client.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
+        var loginResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, loginResponse.StatusCode);

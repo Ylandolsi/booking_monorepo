@@ -1,4 +1,5 @@
-﻿using Booking.Modules.Users.Presistence;
+﻿using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Api.Extensions;
@@ -10,6 +11,8 @@ public static class MigrationExtensions
         using IServiceScope scope = app.ApplicationServices.CreateScope();
 
         ApplyMigration<UsersDbContext>(scope);
+        ApplyMigration<MentorshipsDbContext>(scope);
+
         //ApplyMigration<SessionsDbContext>(scope);
     }
 

@@ -76,17 +76,16 @@ public static class AuthenticationExtensions
                 options.ClientId = googleOptions.ClientId!;
                 options.ClientSecret = googleOptions.ClientSecret!;
 
-                options.AccessType = "offline";
-
                 options.SaveTokens = true;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
+                options.Scope.Add("https://www.googleapis.com/auth/calendar");
+                
 
                 options.ClaimActions.MapJsonKey("picture", "picture");
                 options.ClaimActions.MapJsonKey("given_name", "given_name");
                 options.ClaimActions.MapJsonKey("family_name", "family_name");
 
-                //options.CallbackPath = "http://localhost:5000/auth/login/google/callback"; 
                 options.ReturnUrlParameter = "/auth/login/google/callback";
             });
 

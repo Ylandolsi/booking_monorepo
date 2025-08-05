@@ -16,12 +16,8 @@ namespace Booking.Modules.Users.Presistence;
 public sealed class UsersDbContext
     : IdentityDbContext<User, IdentityRole<int>, int>
 {
-    private readonly DomainEventsDispatcher _domainEventsDispatcher;
-
-    public UsersDbContext(DbContextOptions<UsersDbContext> options,
-        DomainEventsDispatcher omainEventsDispatcher) : base(options)
+    public UsersDbContext(DbContextOptions<UsersDbContext> options) : base(options)
     {
-        _domainEventsDispatcher = omainEventsDispatcher;
     }
 
     // Users Modules : 
@@ -79,8 +75,6 @@ public sealed class UsersDbContext
 
     private async Task ConvertDomainEventsToOutboxMessages()
     {
-       
-
         var domainEvents = new List<IDomainEvent>();
 
         // domain events from all entities that implement IEntity (including User)

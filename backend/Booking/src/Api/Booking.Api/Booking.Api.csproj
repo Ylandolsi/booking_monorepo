@@ -85,7 +85,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Common\Booking.Common\Booking.Common.csproj" />
-      <ProjectReference Include="..\..\Modules\Booking.Modules.Users\Booking.Modules.Users.csproj" />
+        <ProjectReference Include="..\..\Modules\Booking.Modules.Mentorships\Booking.Modules.Mentorships.csproj" />
+        <ProjectReference Include="..\..\Modules\Booking.Modules.Users\Booking.Modules.Users.csproj" />
     </ItemGroup>
 
 </Project>

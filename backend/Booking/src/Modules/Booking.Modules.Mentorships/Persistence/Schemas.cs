@@ -1,6 +1,6 @@
-﻿namespace Booking.Modules.Users.Presistence;
+﻿namespace Booking.Modules.Mentorships.Persistence;
 
 internal static class Schemas
 {
-    public const string Users = "users";
+    public const string Mentorships = "mentorships";
 }

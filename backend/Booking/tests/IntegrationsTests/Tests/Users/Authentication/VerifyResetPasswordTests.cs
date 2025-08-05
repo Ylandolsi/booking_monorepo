@@ -23,7 +23,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
         EmailCapturer.Clear();  // delete the confirmation email from the registration process
 
         var resetRequestPayload = new { Email = userEmail };
-        var resetResponse = await _client.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
+        var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
         await Task.Delay(2000);  // wait for the email to be sent
@@ -44,7 +44,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
             Password = newPassword,
             ConfirmPassword = newPassword
         };
-        var verifyResponse = await _client.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
+        var verifyResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
 
         verifyResponse.EnsureSuccessStatusCode();
 
@@ -63,7 +63,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
         EmailCapturer.Clear(); // delete the confirmation email from the registration process
 
         var resetRequestPayload = new { Email = userEmail };
-        var resetResponse = await _client.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
+        var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
         await Task.Delay(2000);  // wait for the email to be sent
@@ -84,7 +84,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
             Password = newPassword,
             ConfirmPassword = newPassword
         };
-        var verifyResponse = await _client.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
+        var verifyResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
 
         verifyResponse.EnsureSuccessStatusCode();
 
@@ -108,7 +108,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
 
 
         var resetRequestPayload = new { Email = userEmail };
-        var resetResponse = await _client.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
+        var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
 
@@ -129,7 +129,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
             Password = "NewPassword123!",
             ConfirmPassword = "DifferentPassword123!"
         };
-        var verifyResponse = await _client.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
+        var verifyResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
 
         Assert.Equal(HttpStatusCode.BadRequest, verifyResponse.StatusCode);
     }
@@ -149,7 +149,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
             Password = newPassword,
             ConfirmPassword = newPassword
         };
-        var verifyResponse = await _client.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
+        var verifyResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ResetPassword, verifyPayload);
 
         Assert.Equal(HttpStatusCode.BadRequest, verifyResponse.StatusCode);
     }

@@ -10,59 +10,54 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Users.Features.Authentication.Google;
 
-
 internal sealed class LoginGoogleCallback : IEndpoint
 {
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GoogleLoginCallback, async (
-            [FromQuery] string returnUrl,
-            ICommandHandler<CreateOrLoginCommand, LoginResponse> createOrLoginCommandHandler,
-            IHttpContextAccessor httpContextAccessor) =>
-        {
-
-            // exchange the code with tokens 
-            // result.principal => claims
-            // and result.ticket includes tokens and other stuff 
-            AuthenticateResult result = httpContextAccessor.HttpContext != null
-                ? await httpContextAccessor.HttpContext.AuthenticateAsync("Google")
-                : AuthenticateResult.Fail("");
-
-            if (!result.Succeeded)
+                [FromQuery] string? returnUrl,
+                ICommandHandler<CreateOrLoginCommand, LoginResponse> createOrLoginCommandHandler,
+                IHttpContextAccessor httpContextAccessor) =>
             {
-                Results.Problem(
-                    statusCode: StatusCodes.Status401Unauthorized,
-                    title: "Google login failed",
-                    detail: "Authentication with Google was not successful. Please try again."
-                );
-            }
+                // the echange is happening ineternally by the .net identity
+                // in the callback signin-google
+                
+                // exchange the code with tokens 
+                // result.principal => claims
+                // and result.ticket includes tokens and other stuff 
+                AuthenticateResult result = httpContextAccessor.HttpContext != null
+                    ? await httpContextAccessor.HttpContext.AuthenticateAsync("Google")
+                    : AuthenticateResult.Fail("");
+
+                if (!result.Succeeded)
+                {
+                    Results.Problem(
+                        statusCode: StatusCodes.Status401Unauthorized,
+                        title: "Google login failed",
+                        detail: "Authentication with Google was not successful. Please try again."
+                    );
+                }
 
 
-            var command = new CreateOrLoginCommand(result.Principal!);
-            Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
+                var command = new CreateOrLoginCommand(result.Principal!);
+                Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
 
-            if (!loginResponseResult.IsSuccess)
-            {
-                Results.Problem(
-                    statusCode: StatusCodes.Status401Unauthorized,
-                    title: "Google login failed",
-                    detail: "Authentication with Google was not successful. Please try again."
-                );
-            }
-
-
-            
-            return Results.Redirect(returnUrl);
+                if (!loginResponseResult.IsSuccess)
+                {
+                    Results.Problem(
+                        statusCode: StatusCodes.Status401Unauthorized,
+                        title: "Google login failed",
+                        detail: "Authentication with Google was not successful. Please try again."
+                    );
+                }
 
 
-        })
-        .WithTags(Tags.Users)
-        .WithName(UsersEndpoints.GoogleLoginCallback);
-
+                return Results.Redirect(returnUrl);
+            })
+            .WithTags(Tags.Users)
+            .WithName(UsersEndpoints.GoogleLoginCallback);
     }
 }
-
 
 
 //private async Task<GoogleTokenResponse> RefreshGoogleTokens(string refreshToken)
