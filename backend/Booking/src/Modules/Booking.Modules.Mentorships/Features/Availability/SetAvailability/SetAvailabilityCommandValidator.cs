@@ -28,5 +28,13 @@ internal sealed class SetAvailabilityCommandValidator : AbstractValidator<SetAva
             .Must(c => c.EndTime.Hour - c.StartTime.Hour >= 1 || 
                       (c.EndTime.Hour - c.StartTime.Hour == 0 && c.EndTime.Minute - c.StartTime.Minute >= 30))
             .WithMessage("Availability must be at least 30 minutes long.");
+
+        RuleFor(c => c)
+            .Must(c => (c.EndTime - c.StartTime).TotalMinutes % 30 == 0)
+            .WithMessage("Time range must be in 30-minute increments.");
+
+        RuleFor(c => c.BufferTimeMinutes)
+            .Must(bufferTime => !bufferTime.HasValue || (bufferTime.Value >= 0 && bufferTime.Value <= 480 && bufferTime.Value % 15 == 0))
+            .WithMessage("Buffer time must be in 15-minute increments and between 0 and 480 minutes.");
     }
 }

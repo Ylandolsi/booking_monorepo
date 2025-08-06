@@ -9,13 +9,9 @@ internal sealed class MentorConfiguration : IEntityTypeConfiguration<Mentor>
     public void Configure(EntityTypeBuilder<Mentor> builder)
     {
         builder.HasKey(m => m.Id);
-
-        builder.HasIndex(m => m.UserId).IsUnique();
-
-        builder.Property(m => m.UserId)
-            .IsRequired();
         
         builder.Property(m => m.UserSlug)
+            .HasMaxLength(100)
             .IsRequired();
 
         builder.OwnsOne(m => m.HourlyRate, hourlyRate =>
@@ -31,6 +27,13 @@ internal sealed class MentorConfiguration : IEntityTypeConfiguration<Mentor>
                 .IsRequired();
         });
 
+        builder.OwnsOne(m => m.BufferTime, bufferTime =>
+        {
+            bufferTime.Property(bt => bt.Minutes)
+                .HasColumnName("buffer_time_minutes")
+                .IsRequired();
+        });
+
         builder.Property(m => m.IsActive)
             .IsRequired();
 
@@ -39,6 +42,8 @@ internal sealed class MentorConfiguration : IEntityTypeConfiguration<Mentor>
 
         builder.Property(m => m.LastActiveAt)
             .IsRequired(false);
+        
+        
 
         // Relationships
         builder.HasMany(m => m.Sessions)

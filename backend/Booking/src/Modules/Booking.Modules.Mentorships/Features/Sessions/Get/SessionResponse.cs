@@ -1,7 +1,7 @@
 using Booking.Modules.Mentorships.Domain.Enums;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Get;
-
+// TODO : change id to slug !! 
 public sealed record SessionResponse(
     int Id,
     int MentorId,

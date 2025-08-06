@@ -11,10 +11,12 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 internal sealed class BecomeMentor : IEndpoint
 {
     public sealed record Request(
-        decimal HourlyRate); 
+        decimal HourlyRate,
+        int BufferTimeMinutes = 30);
+
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipsEndpoints.BecomeMentor, async (
+        app.MapPost(MentorshipEndpoints.Mentors.Become, async (
                 Request request,
                 UserContext userContext,
                 ICommandHandler<BecomeMentorCommand, int> handler,
@@ -25,8 +27,9 @@ internal sealed class BecomeMentor : IEndpoint
 
                 var command = new BecomeMentorCommand(
                     userId,
-                    userSlug, 
-                    request.HourlyRate
+                    userSlug,
+                    request.HourlyRate,
+                    request.BufferTimeMinutes
                 );
 
                 Result<int> result = await handler.Handle(command, cancellationToken);

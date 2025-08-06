@@ -19,7 +19,7 @@ internal sealed class SetAvailabilityCommandHandler(
 
         // Check if mentor exists
         Domain.Entities.Mentor? mentor = await context.Mentors
-            .FirstOrDefaultAsync(m => m.UserId == command.UserId, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id == command.UserId, cancellationToken);
 
         if (mentor == null)
         {
@@ -33,27 +33,48 @@ internal sealed class SetAvailabilityCommandHandler(
             return Result.Failure<int>(Error.Problem("Mentor.NotActive", "Mentor is not active"));
         }
 
-        // Check for overlapping availability
+        // Validate time range is in 30-minute increments
+        var totalMinutes = (command.EndTime - command.StartTime).TotalMinutes;
+        if (totalMinutes % 30 != 0)
+        {
+            logger.LogWarning("Time range must be in 30-minute increments: {StartTime} to {EndTime}",
+                command.StartTime, command.EndTime);
+            return Result.Failure<int>(Error.Problem("Availability.InvalidTimeRange",
+                "Time range must be in 30-minute increments"));
+        }
+
+        // Update buffer time if provided
+        if (command.BufferTimeMinutes.HasValue)
+        {
+            var bufferTimeResult = mentor.UpdateBufferTime(command.BufferTimeMinutes.Value);
+            if (bufferTimeResult.IsFailure)
+            {
+                logger.LogWarning("Invalid buffer time: {BufferTimeMinutes}", command.BufferTimeMinutes.Value);
+                return Result.Failure<int>(bufferTimeResult.Error);
+            }
+        }
+
         bool hasOverlappingAvailability = await context.Availabilities
-            .AnyAsync(a => a.MentorId == command.UserId &&
-                          a.DayOfWeek == command.DayOfWeek &&
-                          ((a.TimeRange.StartTime <= command.StartTime && a.TimeRange.EndTime > command.StartTime) ||
-                           (a.TimeRange.StartTime < command.EndTime && a.TimeRange.EndTime >= command.EndTime) ||
-                           (a.TimeRange.StartTime >= command.StartTime && a.TimeRange.EndTime <= command.EndTime)),
-                     cancellationToken);
+            .AnyAsync(a =>
+                    a.MentorId == command.UserId &&
+                    a.DayOfWeek == command.DayOfWeek &&
+                    a.TimeRange.StartHour < command.EndTime.Hour &&
+                    a.TimeRange.EndHour > command.StartTime.Hour,
+                cancellationToken);
+
 
         if (hasOverlappingAvailability)
         {
-            logger.LogWarning("Overlapping availability found for mentor {MentorId} on {DayOfWeek}", 
+            logger.LogWarning("Overlapping availability found for mentor {MentorId} on {DayOfWeek}",
                 mentor.Id, command.DayOfWeek);
-            return Result.Failure<int>(Error.Problem("Availability.Overlap", 
+            return Result.Failure<int>(Error.Problem("Availability.Overlap",
                 "Availability overlaps with existing time slot"));
         }
 
         var timeRange = TimeRange.Create(command.StartTime, command.EndTime);
         if (timeRange.IsFailure)
         {
-            logger.LogWarning("Invalid time range: {StartTime} to {EndTime}", 
+            logger.LogWarning("Invalid time range: {StartTime} to {EndTime}",
                 command.StartTime, command.EndTime);
             return Result.Failure<int>(timeRange.Error);
         }
@@ -70,7 +91,7 @@ internal sealed class SetAvailabilityCommandHandler(
 
             logger.LogInformation("Successfully set availability {AvailabilityId} for mentor {MentorId}",
                 availability.Id, mentor.Id);
-            
+
             return Result.Success(availability.Id);
         }
         catch (Exception ex)

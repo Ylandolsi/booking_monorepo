@@ -11,7 +11,7 @@ internal sealed class GetMentorReviews : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipsEndpoints.GetMentorReviews, async (
+        app.MapGet(MentorshipEndpoints.Reviews.GetMentorReviews, async (
             string mentorSlug,
             IQueryHandler<GetMentorReviewsQuery, List<ReviewResponse>> handler,
             CancellationToken cancellationToken) =>

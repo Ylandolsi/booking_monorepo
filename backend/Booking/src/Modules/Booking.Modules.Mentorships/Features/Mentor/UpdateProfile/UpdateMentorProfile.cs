@@ -11,11 +11,12 @@ namespace Booking.Modules.Mentorships.Features.Mentor.UpdateProfile;
 internal sealed class UpdateMentorProfile : IEndpoint
 {
     public sealed record Request(
-        decimal HourlyRate);
+        decimal HourlyRate,
+        int? BufferTimeMinutes = null);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut(MentorshipsEndpoints.UpdateMentorProfile, async (
+        app.MapPut(MentorshipEndpoints.Mentors.UpdateProfile, async (
             Request request,
             UserContext userContext,
             ICommandHandler<UpdateMentorProfileCommand> handler,
@@ -25,7 +26,8 @@ internal sealed class UpdateMentorProfile : IEndpoint
 
             var command = new UpdateMentorProfileCommand(
                 mentorId,
-                request.HourlyRate);
+                request.HourlyRate,
+                request.BufferTimeMinutes);
 
             Result result = await handler.Handle(command, cancellationToken);
 

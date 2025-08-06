@@ -17,7 +17,7 @@ internal sealed class SetAvailability : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipsEndpoints.SetAvailability, async (
+        app.MapPost(MentorshipEndpoints.Availability.Set, async (
             Request request,
             UserContext userContext,
             ICommandHandler<SetAvailabilityCommand, int> handler,

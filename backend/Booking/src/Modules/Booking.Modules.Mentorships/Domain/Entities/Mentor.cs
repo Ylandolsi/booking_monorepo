@@ -7,14 +7,11 @@ namespace Booking.Modules.Mentorships.Domain.Entities;
 
 public class Mentor : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
-
-    public int UserId { get; private set; }
-
+    
     public string UserSlug { get; private set; } = string.Empty;
     public HourlyRate HourlyRate { get; private set; } = null!;
-
+    public Duration BufferTime { get; private set; } = new Duration(15); // Default 15 minutes
 
     public bool IsActive { get; private set; }
 
@@ -35,12 +32,19 @@ public class Mentor : Entity
     {
     }
 
-    public static Mentor Create(int userId, decimal hourlyRateAmount, string userSlug, string currency = "USD")
+    public static Mentor Create(int userId, decimal hourlyRateAmount, string userSlug, int bufferTimeMinutes = 10, string currency = "USD")
     {
+        var bufferTimeResult = Duration.Create(bufferTimeMinutes);
+        if (bufferTimeResult.IsFailure)
+        {
+            throw new ArgumentException(MentorErrors.InvalidBufferTime.Description);
+        }
+
         var mentor = new Mentor
         {
-            UserId = userId,
+            Id = userId,
             HourlyRate = new HourlyRate(hourlyRateAmount, currency),
+            BufferTime = bufferTimeResult.Value,
             UserSlug = userSlug, 
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
@@ -59,6 +63,18 @@ public class Mentor : Entity
         }
 
         HourlyRate = new HourlyRate(amount, currency);
+        return Result.Success();
+    }
+
+    public Result UpdateBufferTime(int bufferTimeMinutes)
+    {
+        var bufferTimeResult = Duration.Create(bufferTimeMinutes);
+        if (bufferTimeResult.IsFailure)
+        {
+            return Result.Failure(MentorErrors.InvalidBufferTime);
+        }
+
+        BufferTime = bufferTimeResult.Value;
         return Result.Success();
     }
 
@@ -97,6 +113,10 @@ public static class MentorErrors
     public static readonly Error InvalidHourlyRate = Error.Problem(
         "Mentor.InvalidHourlyRate",
         "Hourly rate must be greater than zero");
+
+    public static readonly Error InvalidBufferTime = Error.Problem(
+        "Mentor.InvalidBufferTime",
+        "Buffer time must be in 15-minute increments and between 0 and 480 minutes");
 
     public static readonly Error AlreadyActive = Error.Problem(
         "Mentor.AlreadyActive",

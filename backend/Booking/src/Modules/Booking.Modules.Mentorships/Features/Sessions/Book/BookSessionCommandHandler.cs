@@ -15,16 +15,16 @@ internal sealed class BookSessionCommandHandler(
 {
     public async Task<Result<int>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Booking session for mentor {MentorId} and mentee {MenteeId} at {StartDateTime}",
-            command.MentorId, command.MenteeId, command.StartDateTime);
+        logger.LogInformation("Booking session for mentor {MentorSlug} and mentee {MenteeId} at {StartDateTime}",
+            command.MentorSlug, command.MenteeId, command.StartDateTime);
 
         // Check if mentor exists and is active
         Domain.Entities.Mentor? mentor = await context.Mentors
-            .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
+            .FirstOrDefaultAsync(m => m.UserSlug == command.MentorSlug && m.IsActive, cancellationToken);
 
         if (mentor == null)
         {
-            logger.LogWarning("Active mentor with ID {MentorId} not found", command.MentorId);
+            logger.LogWarning("Active mentor with SLUG {MentorId} not found", command.MentorSlug);
             return Result.Failure<int>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
 
@@ -34,7 +34,7 @@ internal sealed class BookSessionCommandHandler(
         var endTime = requestedTime.AddMinutes(command.DurationMinutes);
 
         bool mentorAvailable = await context.Availabilities
-            .AnyAsync(a => a.MentorId == command.MentorId &&
+            .AnyAsync(a => a.MentorId == mentor.Id &&
                           a.DayOfWeek == requestedDay &&
                           a.IsActive &&
                           a.TimeRange.StartTime <= requestedTime &&
@@ -44,14 +44,14 @@ internal sealed class BookSessionCommandHandler(
         if (!mentorAvailable)
         {
             logger.LogWarning("Mentor {MentorId} is not available at {StartDateTime}", 
-                command.MentorId, command.StartDateTime);
+                mentor.Id, command.StartDateTime);
             return Result.Failure<int>(Error.Problem("Session.MentorNotAvailable", 
                 "Mentor is not available at the requested time"));
         }
 
         // Check for conflicting sessions
         bool hasConflict = await context.Sessions
-            .Where(s => s.MentorId == command.MentorId &&
+            .Where(s => s.MentorId == mentor.Id &&
                        s.Status != SessionStatus.Cancelled &&
                        s.Status != SessionStatus.NoShow)
             .AnyAsync(s => command.StartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
@@ -61,7 +61,7 @@ internal sealed class BookSessionCommandHandler(
         if (hasConflict)
         {
             logger.LogWarning("Session conflict detected for mentor {MentorId} at {StartDateTime}", 
-                command.MentorId, command.StartDateTime);
+                mentor.Id, command.StartDateTime);
             return Result.Failure<int>(Error.Problem("Session.TimeConflict", 
                 "The requested time slot conflicts with an existing session"));
         }
@@ -84,7 +84,7 @@ internal sealed class BookSessionCommandHandler(
         try
         {
             var session = Session.Create(
-                command.MentorId,
+                mentor.Id,
                 command.MenteeId,
                 command.StartDateTime,
                 duration.Value,
@@ -95,14 +95,14 @@ internal sealed class BookSessionCommandHandler(
             await context.SaveChangesAsync(cancellationToken);
 
             logger.LogInformation("Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId}",
-                session.Id, command.MentorId, command.MenteeId);
+                session.Id, mentor.Id, command.MenteeId);
 
             return Result.Success(session.Id);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to book session for mentor {MentorId} and mentee {MenteeId}",
-                command.MentorId, command.MenteeId);
+                mentor.Id, command.MenteeId);
             return Result.Failure<int>(Error.Problem("Session.BookingFailed", "Failed to book session"));
         }
     }

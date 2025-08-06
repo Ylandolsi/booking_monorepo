@@ -11,14 +11,14 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Book;
 internal sealed class BookSession : IEndpoint
 {
     public sealed record Request(
-        int MentorId,
+        string  MentorSlug,
         DateTime StartDateTime,
         int DurationMinutes,
         string? Note);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipsEndpoints.BookSession, async (
+        app.MapPost(MentorshipEndpoints.Sessions.Book, async (
             Request request,
             UserContext userContext,
             ICommandHandler<BookSessionCommand, int> handler,
@@ -27,7 +27,7 @@ internal sealed class BookSession : IEndpoint
             int menteeId = userContext.UserId;
 
             var command = new BookSessionCommand(
-                request.MentorId,
+                request.MentorSlug,
                 menteeId,
                 request.StartDateTime,
                 request.DurationMinutes,

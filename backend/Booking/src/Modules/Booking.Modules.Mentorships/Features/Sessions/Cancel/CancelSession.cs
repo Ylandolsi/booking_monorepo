@@ -14,7 +14,7 @@ internal sealed class CancelSession : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut(MentorshipsEndpoints.CancelSession, async (
+        app.MapPut(MentorshipEndpoints.Sessions.Cancel, async (
             int sessionId,
             Request request,
             UserContext userContext,

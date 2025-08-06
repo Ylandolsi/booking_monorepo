@@ -121,21 +121,14 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_active_at");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
                     b.Property<string>("UserSlug")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
                         .HasColumnName("user_slug");
 
                     b.HasKey("Id")
                         .HasName("pk_mentors");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_mentors_user_id");
 
                     b.ToTable("mentors", "mentorships");
                 });
@@ -368,6 +361,25 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
 
             modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Mentor", b =>
                 {
+                    b.OwnsOne("Booking.Modules.Mentorships.Domain.ValueObjects.Duration", "BufferTime", b1 =>
+                        {
+                            b1.Property<int>("MentorId")
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("Minutes")
+                                .HasColumnType("integer")
+                                .HasColumnName("buffer_time_minutes");
+
+                            b1.HasKey("MentorId");
+
+                            b1.ToTable("mentors", "mentorships");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MentorId")
+                                .HasConstraintName("fk_mentors_mentors_id");
+                        });
+
                     b.OwnsOne("Booking.Modules.Mentorships.Domain.ValueObjects.HourlyRate", "HourlyRate", b1 =>
                         {
                             b1.Property<int>("MentorId")
@@ -392,6 +404,9 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                                 .HasForeignKey("MentorId")
                                 .HasConstraintName("fk_mentors_mentors_id");
                         });
+
+                    b.Navigation("BufferTime")
+                        .IsRequired();
 
                     b.Navigation("HourlyRate")
                         .IsRequired();

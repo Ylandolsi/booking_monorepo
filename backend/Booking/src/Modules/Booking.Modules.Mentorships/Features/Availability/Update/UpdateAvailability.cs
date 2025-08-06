@@ -17,7 +17,7 @@ internal sealed class UpdateAvailability : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut(MentorshipsEndpoints.UpdateAvailability, async (
+        app.MapPut(MentorshipEndpoints.Availability.Update, async (
             int availabilityId,
             Request request,
             UserContext userContext,

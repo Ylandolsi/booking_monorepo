@@ -8,18 +8,18 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Get;
 
-internal sealed class GetMenteeSessions : IEndpoint
+internal sealed class GeyMySessions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipsEndpoints.GetMenteeSessions, async (
+        app.MapGet(MentorshipEndpoints.Sessions.GetMySessions, async (
             UserContext userContext,
-            IQueryHandler<GetMenteeSessionsQuery, List<SessionResponse>> handler,
+            IQueryHandler<GetMySessionsQuery, List<SessionResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             int menteeId = userContext.UserId;
             
-            var query = new GetMenteeSessionsQuery(menteeId);
+            var query = new GetMySessionsQuery(menteeId);
             Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(

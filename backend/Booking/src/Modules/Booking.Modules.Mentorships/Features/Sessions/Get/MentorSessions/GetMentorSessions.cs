@@ -12,7 +12,7 @@ internal sealed class GetMentorSessions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipsEndpoints.GetMentorSessions, async (
+        app.MapGet(MentorshipEndpoints.Sessions.GetMentorSessions, async (
             UserContext userContext,
             IQueryHandler<GetMentorSessionsQuery, List<SessionResponse>> handler,
             CancellationToken cancellationToken) =>

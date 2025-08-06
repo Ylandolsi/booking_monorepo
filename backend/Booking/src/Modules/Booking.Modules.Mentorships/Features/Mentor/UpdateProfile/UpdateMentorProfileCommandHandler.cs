@@ -34,9 +34,21 @@ internal sealed class UpdateMentorProfileCommandHandler(
         try
         {
             mentor.UpdateHourlyRate(hourlyRate.Value.Amount);
+            
+            // Update buffer time if provided
+            if (command.BufferTimeMinutes.HasValue)
+            {
+                var bufferTimeResult = mentor.UpdateBufferTime(command.BufferTimeMinutes.Value);
+                if (bufferTimeResult.IsFailure)
+                {
+                    return Result.Failure(bufferTimeResult.Error);
+                }
+            }
+
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Successfully updated mentor profile for mentor {MentorId}", command.MentorId);
+            logger.LogInformation("Successfully updated mentor profile for mentor {MentorId} with hourly rate {HourlyRate} and buffer time {BufferTime}", 
+                command.MentorId, command.HourlyRate, command.BufferTimeMinutes ?? mentor.BufferTime.Minutes);
             return Result.Success();
         }
         catch (Exception ex)

@@ -16,7 +16,7 @@ public sealed class BecomeMentorCommandHandler(
     {
         // Check if user is already a mentor
         bool isMentorAlready = await context.Mentors
-            .AnyAsync(m => m.UserId == command.UserId && m.UserSlug == command.UserSlug, cancellationToken);
+            .AnyAsync(m => m.Id == command.UserId && m.UserSlug == command.UserSlug, cancellationToken);
 
         if (isMentorAlready)
         {
@@ -37,13 +37,14 @@ public sealed class BecomeMentorCommandHandler(
             var mentor = Domain.Entities.Mentor.Create(
                 command.UserId,
                 command.HourlyRate,
-                command.UserSlug);
+                command.UserSlug,
+                command.BufferTimeMinutes);
 
             context.Mentors.Add(mentor);
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("User {UserId} became a mentor with ID {MentorId}", 
-                command.UserId, mentor.Id);
+            logger.LogInformation("User {UserId} became a mentor with ID {MentorId} and buffer time {BufferTime} minutes", 
+                command.UserId, mentor.Id, mentor.BufferTime.Minutes);
 
             return Result.Success(mentor.Id);
         }

@@ -19,7 +19,7 @@ internal sealed class UpdateAvailabilityCommandHandler(
         
         // Check if mentor exists
         Domain.Entities.Mentor? mentor = await context.Mentors
-            .FirstOrDefaultAsync(m => m.UserId == command.UserId, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id == command.UserId, cancellationToken);
 
         if (mentor == null)
         {

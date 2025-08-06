@@ -6,4 +6,5 @@ public sealed record SetAvailabilityCommand(
     int UserId,
     DayOfWeek DayOfWeek,
     TimeOnly StartTime,
-    TimeOnly EndTime) : ICommand<int>;
+    TimeOnly EndTime,
+    int? BufferTimeMinutes = null) : ICommand<int>;

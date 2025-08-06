@@ -17,7 +17,7 @@ internal sealed class AddReview : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipsEndpoints.AddReview, async (
+        app.MapPost(MentorshipEndpoints.Reviews.Submit, async (
             Request request,
             UserContext userContext,
             ICommandHandler<AddReviewCommand, int> handler,

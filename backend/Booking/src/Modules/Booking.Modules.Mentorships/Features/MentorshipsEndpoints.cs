@@ -1,37 +1,53 @@
 namespace Booking.Modules.Mentorships.Features;
 
-public static class MentorshipsEndpoints
+public static class MentorshipEndpoints
 {
-    // Mentor Profile Management
-    public const string BecomeMentor = "mentorships/become-mentor";
-    public const string UpdateMentorProfile = "mentorships/mentor/profile";
-    public const string DeactivateMentor = "mentorships/mentor/deactivate";
-    public const string GetMentorProfile = "mentorships/mentor/{mentorSlug}";
-
-    // Availability Management
-    public const string SetAvailability = "mentorships/availability";
-    public const string UpdateAvailability = "mentorships/availability/{availabilityId}";
-    public const string DeleteAvailability = "mentorships/availability/{availabilityId}";
-    public const string GetMentorAvailability = "mentorships/availability/{mentorSlug}";
-
-    // Session Management
-    public const string BookSession = "mentorships/sessions/book";
-    public const string CancelSession = "mentorships/sessions/{sessionId}/cancel";
-    public const string ConfirmSession = "mentorships/sessions/{sessionId}/confirm";
-    public const string GetSession = "mentorships/sessions/{sessionId}";
-    public const string GetMentorSessions = "mentorships/sessions/mentor";
-    public const string GetMenteeSessions = "mentorships/sessions/mentee";
-
-    // Review Management
-    public const string AddReview = "mentorships/reviews";
-    public const string UpdateReview = "mentorships/reviews/{reviewId}";
-    public const string DeleteReview = "mentorships/reviews/{reviewId}";
-    public const string GetMentorReviews = "mentorships/reviews/{mentorSlug}";
-
-    // Mentorship Relationship
-    public const string RequestMentorship = "mentorships/relationships/request";
-    public const string AcceptMentorship = "mentorships/relationships/{relationshipId}/accept";
-    public const string RejectMentorship = "mentorships/relationships/{relationshipId}/reject";
-    public const string EndMentorship = "mentorships/relationships/{relationshipId}/end";
-    public const string GetMentorshipRelationships = "mentorships/relationships";
+    private const string Base = "/mentorships";
+    
+    public static class Availability
+    {
+        public const string Set = $"{Base}/availability";
+        public const string SetBulk = $"{Base}/availability/bulk"; 
+        public const string Remove = $"{Base}/availability/{{availabilityId}}";
+        public const string Update = $"{Base}/availability/{{availabilityId}}";
+        public const string ToggleAvailability = $"{Base}/availability/{{availabilityId}}/toggle"; 
+        public const string ToggleDay = $"{Base}/availability/day/toggle"; // Query: dayOfWeek
+        public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
+        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month
+        
+    }
+    
+    public static class Sessions
+    {
+        public const string Book = $"{Base}/sessions";
+        public const string Cancel = $"{Base}/sessions/{{sessionId}}/cancel";
+        public const string GetDetails = $"{Base}/sessions/{{sessionId}}";
+        public const string GetMySessions = $"{Base}/sessions/me";
+        public const string GetMentorSessions = $"{Base}/sessions/mentor";
+    }
+    
+    public static class Relationships
+    {
+        public const string Request = $"{Base}/relationships";
+        public const string Accept = $"{Base}/relationships/{{relationshipId}}/accept";
+        public const string Reject = $"{Base}/relationships/{{relationshipId}}/reject";
+        public const string End = $"{Base}/relationships/{{relationshipId}}/end";
+        public const string GetMine = $"{Base}/relationships/me";
+        public const string GetMentorRelationships = $"{Base}/relationships/mentor";
+    }
+    
+    public static class Reviews
+    {
+        public const string Submit = $"{Base}/reviews";
+        public const string GetMentorReviews = $"{Base}/reviews/{{userSlug}}";
+        //public const string GetDetails = $"{Base}/reviews/{{reviewId}}";
+    }
+    
+    public static class Mentors
+    {
+        public const string Become = $"{Base}/mentors/become";
+        public const string UpdateProfile = $"{Base}/mentors/profile";
+        //public const string GetProfile = $"{Base}/mentors/{{mentorSlug}}";
+        //public const string Search = $"{Base}/mentors/search";
+    }
 }

@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Get;
 
-internal sealed class GetMenteeSessionsQueryHandler(
+internal sealed class GetMySessionsQueryHandler(
     MentorshipsDbContext context,
-    ILogger<GetMenteeSessionsQueryHandler> logger) : IQueryHandler<GetMenteeSessionsQuery, List<SessionResponse>>
+    ILogger<GetMySessionsQueryHandler> logger) : IQueryHandler<GetMySessionsQuery, List<SessionResponse>>
 {
-    public async Task<Result<List<SessionResponse>>> Handle(GetMenteeSessionsQuery query, CancellationToken cancellationToken)
+    public async Task<Result<List<SessionResponse>>> Handle(GetMySessionsQuery query, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting sessions for mentee {MenteeId}", query.MenteeId);
 

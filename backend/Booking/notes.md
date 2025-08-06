@@ -68,3 +68,5 @@ dotnet build 2>&1 | grep -E "(error|Error)" | head -10
 cd /path/to/mentorships/module
 dotnet ef migrations add InitialMentorshipsMigration --startup-project ../Api/Booking.Api
 ```
+
+            $"{Base}/availability/month?mentorSlug={Uri.EscapeDataString(mentorSlug)}&year={year}&month={month}";
