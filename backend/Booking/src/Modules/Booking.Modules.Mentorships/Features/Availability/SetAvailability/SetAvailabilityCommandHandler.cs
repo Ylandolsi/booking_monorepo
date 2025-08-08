@@ -42,7 +42,7 @@ internal sealed class SetAvailabilityCommandHandler(
             return Result.Failure<int>(Error.Problem("Availability.InvalidTimeRange",
                 "Time range must be in 30-minute increments"));
         }*/
-        
+
         // start and ending time should either be :00 or :30 
         if (command.StartTime.Minute != 0 && command.StartTime.Minute != 30)
         {
@@ -51,6 +51,7 @@ internal sealed class SetAvailabilityCommandHandler(
             return Result.Failure<int>(Error.Problem("Availability.InvalidStartTime",
                 "Start time must be on the hour or half-hour"));
         }
+
         if (command.EndTime.Minute != 0 && command.EndTime.Minute != 30)
         {
             logger.LogWarning("End time must be on the hour or half-hour: {EndTime}",
@@ -74,8 +75,12 @@ internal sealed class SetAvailabilityCommandHandler(
             .AnyAsync(a =>
                     a.MentorId == command.UserId &&
                     a.DayOfWeek == command.DayOfWeek &&
-                    a.TimeRange.StartHour < command.EndTime.Hour &&
-                    a.TimeRange.EndHour > command.StartTime.Hour,
+                    (
+                        (a.TimeRange.StartHour * 60 + a.TimeRange.StartMinute <
+                         command.EndTime.Hour * 60 + command.EndTime.Minute) &&
+                        (a.TimeRange.EndHour * 60 + a.TimeRange.EndMinute >
+                         command.StartTime.Hour * 60 + command.StartTime.Minute)
+                    ),
                 cancellationToken);
 
 

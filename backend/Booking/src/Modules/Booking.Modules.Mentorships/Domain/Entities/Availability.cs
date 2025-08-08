@@ -24,27 +24,7 @@ public class Availability : Entity
     public Mentor Mentor { get; set; } = default!;
 
     private Availability() { }
-
-    public static Result<Availability> Create(int mentorId, DayOfWeek dayOfWeek, int startHour, int endHour)
-    {
-        var timeRangeResult = TimeRange.Create(startHour, endHour);
-        if (timeRangeResult.IsFailure)
-        {
-            return Result.Failure<Availability>(timeRangeResult.Error);
-        }
-
-        var availability = new Availability
-        {
-            MentorId = mentorId,
-            DayOfWeek = dayOfWeek,
-            TimeRange = timeRangeResult.Value,
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        return Result.Success(availability);
-    }
-
+    
     public static Availability Create(int mentorId, DayOfWeek dayOfWeek, TimeRange timeRange)
     {
         var availability = new Availability
@@ -59,9 +39,9 @@ public class Availability : Entity
         return availability;
     }
 
-    public Result UpdateTimeRange(int startHour, int endHour)
+    public Result UpdateTimeRange(int startHour, int endHour , int startMinute , int endMinute )
     {
-        var timeRangeResult = TimeRange.Create(startHour, endHour);
+        var timeRangeResult = TimeRange.Create(startHour, endHour ,startMinute , endMinute );
         if (timeRangeResult.IsFailure)
         {
             return Result.Failure(timeRangeResult.Error);

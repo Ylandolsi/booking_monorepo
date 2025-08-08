@@ -2,6 +2,11 @@ Yasminelandolsi: fix this notes
 
 GitHub Copilot: To fix the notes, correct typos, formatting, and code block usage for clarity and accuracy.
 
+```bash
+  dotnet tool install --global dotnet-ef
+````
+
+
 ````
 ```bash
 dotnet ef migrations add Initial \
