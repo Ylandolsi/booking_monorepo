@@ -18,6 +18,7 @@ export function useUpdateProfilePicture() {
   return useMutation({
     mutationFn: ({ data }: { data: FormData }) => updateProfilePicture(data),
     meta: {
+      invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Profile picture updated successfully',
       errorMessage: 'Failed to update profile picture',
       successAction: (data: ProfilePictureType) => {
