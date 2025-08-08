@@ -1,5 +1,5 @@
 import { buildUrlWithParams } from '../../../lib/api-client';
-import * as Endpoints from '@/lib/endpoints.ts';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import { env } from '@/config/env';
 import { paths } from '@/config/paths';
 

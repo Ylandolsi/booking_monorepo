@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api-client';
-import * as Endpoints from '@/lib/endpoints.ts';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import type { RegisterInput } from '@/features/auth';
 
 const registerUser = async (data: RegisterInput): Promise<void> =>

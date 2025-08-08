@@ -52,6 +52,7 @@ public class SendResetTokenTests : AuthenticationTestBase
 
         var sentEmail = EmailCapturer.FirstOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
         Assert.NotNull(sentEmail);
+        
         Assert.Contains("Password Reset Request", sentEmail.Message.Body.Html.Data);
     }
 

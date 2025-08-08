@@ -19,7 +19,7 @@ internal sealed class BecomeMentor : IEndpoint
         app.MapPost(MentorshipEndpoints.Mentors.Become, async (
                 Request request,
                 UserContext userContext,
-                ICommandHandler<BecomeMentorCommand, int> handler,
+                ICommandHandler<BecomeMentorCommand> handler,
                 CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
@@ -32,10 +32,10 @@ internal sealed class BecomeMentor : IEndpoint
                     request.BufferTimeMinutes
                 );
 
-                Result<int> result = await handler.Handle(command, cancellationToken);
+                Result result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
-                    mentorId => Results.Ok(new { MentorId = mentorId }),
+                    () => Results.Ok() ,
                     CustomResults.Problem);
             })
             .RequireAuthorization()

@@ -15,5 +15,5 @@ public record MeData(
     List<Domain.Entities.Education> Educations,
     List<Domain.Entities.Expertise> Expertises,
     List<Domain.Entities.Language> Languages,
-    int ProfileCompletionStatus);
+    ProfileCompletionStatus ProfileCompletionStatus);
     

@@ -14,19 +14,15 @@ public sealed class MeQueryHandler(
     public async Task<Result<MeData>> Handle(MeQuery query, CancellationToken cancellationToken)
     {
         logger.LogInformation("Handling MeQuery for user ID: {UserId}", query.Id);
-        var user = await context.Users.AsNoTracking().Where(u => u.Id == query.Id).Include(u => u.Experiences)
+        var user = await context.Users.AsNoTracking()
+            .Where(u => u.Id == query.Id)
+            .Include(u => u.Experiences)
             .Include(u => u.Educations)
             .Include(u => u.UserExpertises)
+            .ThenInclude(ue => ue.Expertise)
             .Include(u => u.UserLanguages)
-            .Include(u => u.Experiences)
-            .Select(u =>
-                new MeData(
-                    u.Slug, u.Name.FirstName, u.Name.LastName, u.Status, u.ProfilePictureUrl, u.Gender, u.SocialLinks,
-                    u.Bio,
-                    u.Experiences.ToList(), u.Educations.ToList(), u.UserExpertises.Select(ue => ue.Expertise).ToList(),
-                    u.UserLanguages.Select(ul => ul.Language).ToList(),
-                    (int)u.ProfileCompletionStatus.GetCompletionPercentage()
-                )).FirstOrDefaultAsync(cancellationToken);
+            .ThenInclude(ul => ul.Language)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null)
         {
@@ -34,6 +30,21 @@ public sealed class MeQueryHandler(
             return Result.Failure<MeData>(UserErrors.NotFoundById(query.Id));
         }
 
-        return Result.Success(user);
+        user.UpdateProfileCompletion();
+        return Result.Success(new MeData
+        (
+            user.Slug,
+            user.Name.FirstName,
+            user.Name.LastName,
+            user.Status,
+            user.ProfilePictureUrl,
+            user.Gender,
+            user.SocialLinks,
+            user.Bio,
+            user.Experiences.ToList(), user.Educations.ToList(),
+            user.UserExpertises.Select(ue => ue.Expertise).ToList(),
+            user.UserLanguages.Select(ul => ul.Language).ToList(),
+            user.ProfileCompletionStatus
+        ));
     }
 }

@@ -1,5 +1,5 @@
 import { api } from '@/lib/api-client';
-import * as Endpoints from '@/lib/endpoints.ts';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import type { VerifyEmailInput } from '@/features/auth';
 import { verifyEmailSchema } from '@/features/auth';
 

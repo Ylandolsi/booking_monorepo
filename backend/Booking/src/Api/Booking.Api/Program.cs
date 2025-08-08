@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Booking.Api.DependencyInjection;
 using Booking.Api.Extensions;
 using Booking.Common;
@@ -17,6 +18,12 @@ using Serilog;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    // ignore circular references in JSON serialization 
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();

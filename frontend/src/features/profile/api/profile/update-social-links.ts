@@ -1,6 +1,6 @@
 import { api } from '@/lib';
 import { useMutation } from '@tanstack/react-query';
-import * as Endpoints from '@/lib/endpoints.ts';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import type { SocialLinksType } from '@/features/profile';
 import { authQueryKeys } from '@/features/auth';
 

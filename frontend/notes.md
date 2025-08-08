@@ -201,13 +201,22 @@ const wrappedChildren = (
 ```
 
 All children are wrapped in the context provider, making the registration function available to any nested `MultiSelect` components.
+```ts
+Item['name'])
 
-## Benefits of This Approach
 
-1. **Non-intrusive**: Works without modifying the core `MultiSelect` logic
-2. **Scalable**: Can handle multiple nested popovers
-3. **Performance**: Only adds event listeners when needed
-4. **Flexible**: Works with any popover-based component that uses the context
-5. **Clean**: Automatically cleans up event listeners and state
+export type Item = {
+  name:
+    | 'Home'
+    | 'Profile'
+    | 'Bookings'
+    | 'Search'
+    | 'Notifications'
+    | 'Settings'
+    | 'Become Mentor';
+  icon: JSX.Element;
+  click: () => void;
+  badge?: string;
+};
 
-This approach elegantly solves the scroll conflict by creating a communication channel between parent and child components, allowing them to coordinate their event handling behavior.
+```

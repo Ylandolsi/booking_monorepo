@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
-import * as Endpoints from '@/lib/endpoints.ts';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import type { ForgotPasswordInput } from '@/features/auth';
 import { authQueryKeys } from '@/features/auth';
 

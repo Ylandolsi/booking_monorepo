@@ -8,7 +8,7 @@ export const Route = createFileRoute('/app/')({
 function RouteComponent() {
   return (
     <ContentLayout>
-      <div className="flex h-screen p-4 bg-amber-100/20">
+      <div className="flex h-screen p-4 ">
         <h1 className="text-2xl font-bold">Welcome 💫 </h1>
       </div>
     </ContentLayout>

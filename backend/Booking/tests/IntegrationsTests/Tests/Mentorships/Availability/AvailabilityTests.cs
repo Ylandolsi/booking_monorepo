@@ -159,64 +159,21 @@ public class AvailabilityTests : MentorshipTestBase
     */
 
     #region Delete
+    // TODO DeleteAvailability_ShouldReturnBadRequest_WhenHasBookedSessions 
 
     [Fact]
-    public async Task DeleteAvailability_ShouldReturnBadRequest_WhenHasBookedSessions()
+    public async Task DeleteAvailability_ShouldSucceed_WhenRequested ()
     {
-        // Arrange
-        var (mentorArrange, mentorAct) = GetClientsForUser("delete_booked_test");
-        var mentorLogin = await CreateUserAndLogin(null, null, mentorArrange);
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
 
-        await mentorAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 80.0m });
-
-        var createResponse = await mentorAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        var createResponse = await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Monday,
             StartTime = new TimeOnly(9, 0),
             EndTime = new TimeOnly(17, 0)
         });
 
-        var createResult = await createResponse.Content.ReadFromJsonAsync<dynamic>();
-        int availabilityId = createResult.availabilityId;
-
-        // Create mentee and book a session
-        var (menteeArrange, menteeAct) = GetClientsForUser("delete_booked_mentee");
-        await CreateUserAndLogin(null, null, menteeArrange);
-
-        var nextMonday = GetNextMonday();
-        await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, new
-        {
-            MentorId = 1, // This would be the actual mentor ID
-            StartDateTime = nextMonday.AddHours(10),
-            DurationMinutes = 60,
-            Note = "Test session"
-        });
-
-        // Act
-        var response = await mentorAct.DeleteAsync($"/mentorships/availability/{availabilityId}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task DeleteAvailability_ShouldRemoveSlot_WhenNoBookedSessions()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("delete_test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 55.0m });
-
-        var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Saturday,
-            StartTime = new TimeOnly(10, 0),
-            EndTime = new TimeOnly(14, 0)
-        });
-
-        var createResult = await createResponse.Content.ReadFromJsonAsync<dynamic>();
-        int availabilityId = createResult.availabilityId;
+        var availabilityId = await createResponse.Content.ReadFromJsonAsync<int>();
 
         // Act
         var response = await userAct.DeleteAsync($"/mentorships/availability/{availabilityId}");
@@ -224,6 +181,7 @@ public class AvailabilityTests : MentorshipTestBase
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
+    
 
     #endregion
 

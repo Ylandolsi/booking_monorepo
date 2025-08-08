@@ -94,7 +94,7 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-auto pb-20 lg:pb-4">{children}</main>
+          <main className="flex-1 overflow-auto pb-20 lg:pb-4 min-h-screen bg-gradient-to-br from-background to-muted ">{children}</main>
 
           {/* Bottom Navigation - Mobile Only */}
           <BottomNav />

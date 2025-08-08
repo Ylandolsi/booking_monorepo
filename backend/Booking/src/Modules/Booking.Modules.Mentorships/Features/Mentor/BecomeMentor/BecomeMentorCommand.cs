@@ -6,4 +6,4 @@ public sealed record BecomeMentorCommand(
     int UserId,
     string UserSlug,
     decimal HourlyRate,
-    int BufferTimeMinutes) : ICommand<int>;
+    int BufferTimeMinutes) : ICommand;

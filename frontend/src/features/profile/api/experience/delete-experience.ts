@@ -1,6 +1,6 @@
 import { authQueryKeys } from '@/features/auth';
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/endpoints';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import { useMutation } from '@tanstack/react-query';
 
 export const deleteExperience = async (experienceId: number) => {

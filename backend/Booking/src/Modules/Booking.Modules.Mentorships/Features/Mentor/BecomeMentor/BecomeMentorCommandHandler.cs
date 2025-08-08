@@ -10,9 +10,9 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 
 public sealed class BecomeMentorCommandHandler(
     MentorshipsDbContext context,
-    ILogger<BecomeMentorCommandHandler> logger) : ICommandHandler<BecomeMentorCommand, int>
+    ILogger<BecomeMentorCommandHandler> logger) : ICommandHandler<BecomeMentorCommand>
 {
-    public async Task<Result<int>> Handle(BecomeMentorCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(BecomeMentorCommand command, CancellationToken cancellationToken)
     {
         // Check if user is already a mentor
         bool isMentorAlready = await context.Mentors
@@ -46,7 +46,7 @@ public sealed class BecomeMentorCommandHandler(
             logger.LogInformation("User {UserId} became a mentor with ID {MentorId} and buffer time {BufferTime} minutes", 
                 command.UserId, mentor.Id, mentor.BufferTime.Minutes);
 
-            return Result.Success(mentor.Id);
+            return Result.Success();
         }
         catch (Exception ex)
         {

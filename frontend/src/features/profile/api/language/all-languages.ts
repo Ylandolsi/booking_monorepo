@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/endpoints';
+import * as Endpoints from '@/lib/user-endpoints.ts';
 import type { LanguageType } from '../../types';
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { profileQueryKeys } from '@/features/profile';

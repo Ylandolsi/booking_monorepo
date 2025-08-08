@@ -110,6 +110,8 @@ public sealed class User : IdentityUser<int>, IEntity
     public void UpdateProfileCompletion()
     {
         ProfileCompletionStatus.UpdateCompletionStatus(this);
+        
+        
     }
     
     public Result CanBecomeMentor()
