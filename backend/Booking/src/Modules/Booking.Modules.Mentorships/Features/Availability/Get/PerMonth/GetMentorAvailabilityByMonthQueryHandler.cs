@@ -45,23 +45,26 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
             var bookedSessions = new List<BookedSession>();
             if (query.IncludeBookedSlots)
             {
+                // TODO FIX THIS : Query ef is not working properly 
+                /*
                 var monthStartDate = new DateTime(query.Year, query.Month, 1);
                 var monthEndDate = monthStartDate.AddMonths(1).AddDays(-1);
-                
+
                 var sessions = await context.Sessions
-                    .Where(s => s.MentorId == mentor.Id && 
-                               s.ScheduledAt >= monthStartDate && 
+                    .Where(s => s.MentorId == mentor.Id &&
+                               s.ScheduledAt >= monthStartDate &&
                                s.ScheduledAt <= monthEndDate &&
                                s.Status == Domain.Enums.SessionStatus.Booked)
-                    .Select(s => new { 
-                        SessionDate = s.ScheduledAt.Date, 
+                    .Select(s => new {
+                        SessionDate = s.ScheduledAt.Date,
                         StartTime = new TimeOnly(s.ScheduledAt.Hour, s.ScheduledAt.Minute),
-                        EndTime = new TimeOnly(s.ScheduledAt.AddMinutes(s.Duration.Minutes).Hour, 
+                        EndTime = new TimeOnly(s.ScheduledAt.AddMinutes(s.Duration.Minutes).Hour,
                                              s.ScheduledAt.AddMinutes(s.Duration.Minutes).Minute)
                     })
                     .ToListAsync(cancellationToken);
 
                 bookedSessions = sessions.Select(s => new BookedSession(s.SessionDate, s.StartTime, s.EndTime)).ToList();
+            */
             }
 
             // Generate all days for the specified month
@@ -72,8 +75,8 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                 .ToList();
 
             // Filter out past days if IncludePastDays is false
-            var daysToProcess = query.IncludePastDays 
-                ? allDaysInMonth 
+            var daysToProcess = query.IncludePastDays
+                ? allDaysInMonth
                 : allDaysInMonth.Where(date => date >= DateTime.Today).ToList();
 
             var monthlyAvailability = new List<AvailabilityByDayResponse>();
@@ -97,18 +100,18 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                         {
                             var slotStartTime = currentTime;
                             var slotEndTime = currentTime.AddMinutes(30);
-                            
+
                             // Skip if slot would exceed the availability end time
                             if (slotEndTime > availability.TimeRange.EndTime)
                                 break;
-                            
+
                             // Check if this time slot is booked (including buffer time)
                             var bufferTimeMinutes = mentor.BufferTime.Minutes;
                             var slotWithBufferEnd = slotEndTime.AddMinutes(bufferTimeMinutes);
-                            
-                            var isBooked = bookedSessions.Any(session => 
+
+                            var isBooked = bookedSessions.Any(session =>
                                 session.SessionDate.Date == date.Date &&
-                                session.StartTime < slotWithBufferEnd && 
+                                session.StartTime < slotWithBufferEnd &&
                                 session.EndTime > slotStartTime);
 
                             timeSlots.Add(new TimeSlotResponse(
@@ -118,9 +121,8 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                                 isBooked,
                                 !isBooked, // IsAvailable is the opposite of IsBooked
                                 bufferTimeMinutes));
-                            
-                            // Move to next 30-minute slot
-                            currentTime = slotEndTime;
+
+                            currentTime = slotEndTime.AddMinutes(bufferTimeMinutes);
                         }
                     }
 

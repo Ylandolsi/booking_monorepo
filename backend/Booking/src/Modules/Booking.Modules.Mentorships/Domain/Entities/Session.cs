@@ -65,7 +65,7 @@ public class Session : Entity
             Note = note?.Trim() ?? string.Empty,
             Status = SessionStatus.Booked,
             CreatedAt = DateTime.UtcNow,
-            ScheduledAt = scheduledAt,
+            ScheduledAt = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Utc) , 
             RescheduleRequested = false,
             MentorshipRelationshipId = mentorshipRelationshipId
         };

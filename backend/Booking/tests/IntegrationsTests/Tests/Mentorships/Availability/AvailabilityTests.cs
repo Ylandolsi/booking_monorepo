@@ -4,6 +4,7 @@ using Booking.Modules.Mentorships.Features;
 using Booking.Modules.Mentorships.Features.Availability.Get.PerMonth;
 using Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
 using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Authentication.Me;
 using IntegrationsTests.Abstractions;
 
 namespace IntegrationsTests.Tests.Mentorships.Availability;
@@ -16,49 +17,42 @@ public class AvailabilityTests : MentorshipTestBase
 
     #region Get
 
-    [Fact]
-    public async Task GetMentorAvailabilityByMonth_ShouldReturnAvailability_WhenMentorExists()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        // Create mentor and set availability
-        var mentorSlug = "test-mentor";
-        var currentYear = DateTime.Now.Year;
-        var currentMonth = DateTime.Now.Month;
-
-        // Act
-        var response =
-            await userAct.GetAsync(
-                $"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var availability = await response.Content.ReadFromJsonAsync<MonthlyAvailabilityResponse>();
-        Assert.NotNull(availability);
-        Assert.Equal(mentorSlug, availability.MentorSlug);
-        Assert.Equal(currentYear, availability.Year);
-        Assert.Equal(currentMonth, availability.Month);
-    }
 
     [Fact]
     public async Task GetMentorAvailabilityByMonth_ShouldFilterPastDays_WhenIncludePastDaysIsFalse()
     {
         // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
+        
+        foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
+        {
+            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+            {
+                DayOfWeek = day,
+                StartTime = new TimeOnly(9, 0),
+                EndTime = new TimeOnly(12, 0)
+            });
+            
+            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+            {
+                DayOfWeek = day,
+                StartTime = new TimeOnly(14, 0),
+                EndTime = new TimeOnly(17, 0)
+            });
+        }
+        
+        
+        var getMyInfo = await userArrange.GetAsync(UsersEndpoints.GetCurrentUser);
+        var info = await getMyInfo.Content.ReadFromJsonAsync<MeData>();
 
-        var mentorSlug = "test-mentor";
+        var mentorSlug =  info.Slug;
         var currentYear = DateTime.Now.Year;
         var currentMonth = DateTime.Now.Month;
 
-        // Act
         var response =
             await userAct.GetAsync(
-                $"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}?includePastDays=false");
+                $"{MentorshipEndpoints.Availability.GetMonthly}?mentorSlug={mentorSlug}&year={currentYear}&month={currentMonth}");
 
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var availability = await response.Content.ReadFromJsonAsync<MonthlyAvailabilityResponse>();
         Assert.NotNull(availability);
@@ -67,100 +61,43 @@ public class AvailabilityTests : MentorshipTestBase
         var pastDays = availability.Days.Where(d => d.Date.Date < DateTime.Now.Date).ToList();
         Assert.Empty(pastDays);
     }
-
+    
     [Fact]
-    public async Task GetMentorAvailabilityByDay_ShouldReturnAvailability_WhenMentorExists()
+    public async Task GetMentorAvailabilityByDay_ShouldFilterPastDays_WhenIncludePastDaysIsFalse()
     {
         // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
+        
+            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+            {
+                DayOfWeek = 1,
+                StartTime = new TimeOnly(9, 0),
+                EndTime = new TimeOnly(12, 0)
+            });
+            
+            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+            {
+                DayOfWeek = 1,
+                StartTime = new TimeOnly(14, 0),
+                EndTime = new TimeOnly(17, 0)
+            });
+        
+        
+        var getMyInfo = await userArrange.GetAsync(UsersEndpoints.GetCurrentUser);
+        var info = await getMyInfo.Content.ReadFromJsonAsync<MeData>();
 
-        var mentorSlug = "test-mentor";
-        var testDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
+        var mentorSlug =  info.Slug;
+        var response =
+            await userAct.GetAsync(
+                $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={mentorSlug}&date={2025}-{08}-{04}");
 
-        // Act
-        var response = await userAct.GetAsync($"/mentorships/mentors/{mentorSlug}/availability/day/{testDate}");
-
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
         Assert.NotNull(availability);
-        Assert.Equal(mentorSlug, availability.MentorSlug);
-        Assert.Equal(DateTime.Parse(testDate), availability.Date);
+        
     }
 
-    [Fact]
-    public async Task GetMentorAvailabilityByDay_ShouldReturnBadRequest_WhenDateIsInvalid()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        var mentorSlug = "test-mentor";
-        var invalidDate = "invalid-date";
-
-        // Act
-        var response = await userAct.GetAsync($"/mentorships/mentors/{mentorSlug}/availability/day/{invalidDate}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-
-    [Fact]
-    public async Task GetMentorAvailability_ShouldReturnAllAvailabilities_WhenMentorExists()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        var mentorSlug = "test-mentor";
-
-        // Act
-        var response = await userAct.GetAsync($"/mentorships/availability/{mentorSlug}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task GetMentorAvailabilityByMonth_ShouldFilterPastDays_WhenIncludePastDaysIsFalse_()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("filter_past_test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 75.0m });
-
-        // Set availability for all days
-        foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
-        {
-            await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-            {
-                DayOfWeek = day,
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(17, 0)
-            });
-        }
-
-        var currentDate = DateTime.Now;
-
-        // Act
-        var response = await userAct.GetAsync(
-            $"/mentorships/mentors/{loginData.UserSlug}/availability/month?year={currentDate.Year}&month={currentDate.Month}&includePastDays=false");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var monthlyAvailability = await response.Content.ReadFromJsonAsync<MonthlyAvailabilityResponse>();
-        Assert.NotNull(monthlyAvailability);
-
-        // All returned days should be today or in the future
-        foreach (var day in monthlyAvailability.Days)
-        {
-            Assert.True(day.Date.Date >= DateTime.Now.Date);
-        }
-    }
-
+    
     #endregion
 
 

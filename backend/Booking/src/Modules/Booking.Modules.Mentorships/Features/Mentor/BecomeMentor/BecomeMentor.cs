@@ -12,7 +12,7 @@ internal sealed class BecomeMentor : IEndpoint
 {
     public sealed record Request(
         decimal HourlyRate,
-        int BufferTimeMinutes = 30);
+        int BufferTimeMinutes = 15 );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

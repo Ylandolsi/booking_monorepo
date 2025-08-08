@@ -22,7 +22,8 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     /// </summary>
     protected async Task<(HttpClient arrange, HttpClient act)> CreateMentor(
         string userId = "mentor1", 
-        decimal hourlyRate = 75.0m, 
+        decimal hourlyRate = 75.0m,
+        int bufferTimeMinutes = 15 , 
         string? email = null)
     {
         var (arrange, act) = GetClientsForUser(userId);
@@ -33,7 +34,8 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
         // Become mentor
         var becomeMentorPayload = new
         {
-            HourlyRate = hourlyRate
+            HourlyRate = hourlyRate , 
+            BufferTimeMinutes = bufferTimeMinutes,
         };
 
         var response = await arrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, becomeMentorPayload);

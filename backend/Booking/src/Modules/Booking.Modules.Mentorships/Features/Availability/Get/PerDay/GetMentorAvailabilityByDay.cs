@@ -22,6 +22,7 @@ internal sealed class GetMentorAvailabilityByDay : IEndpoint
                 {
                     return Results.BadRequest("Invalid date format. Use YYYY-MM-DD.");
                 }
+                parsedDate = DateTime.SpecifyKind(parsedDate.Date, DateTimeKind.Utc);
 
                 var query = new GetMentorAvailabilityByDayQuery(mentorSlug, parsedDate.Date);
                 Result<DailyAvailabilityResponse> result = await handler.Handle(query, cancellationToken);

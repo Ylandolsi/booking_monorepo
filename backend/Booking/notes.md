@@ -4,8 +4,14 @@ GitHub Copilot: To fix the notes, correct typos, formatting, and code block usag
 
 ```bash
   dotnet tool install --global dotnet-ef
-````
+```
 
+PostgreSQL's timestamp with time zone requires UTC DateTime values.
+
+```
+ensure UTC
+parsedDate = DateTime.SpecifyKind(parsedDate.Date, DateTimeKind.Utc);
+```
 
 ````
 ```bash
@@ -15,11 +21,11 @@ dotnet ef migrations add Initial \
   --context UsersDbContext \
   --configuration Debug \
   --output-dir Persistence/Migrations
-  
-  
+
+
    dotnet ef migrations add MentorInitial     --project src/Modules/Booking.Modules.Mentorships/Booking.Modules.Mentorships.csproj     --startup-project src/Api/Booking.Api/Booking.Api.csproj     --context MentorshipsDbContext     --configuration Debug     --output-dir Persistence/Migrations
-  
-  
+
+
 ````
 
 - The `--project` parameter specifies where to put the migration files (Users module).
