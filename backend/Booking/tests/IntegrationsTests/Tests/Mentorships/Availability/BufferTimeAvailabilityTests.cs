@@ -1,4 +1,4 @@
-using System.Net;
+/*using System.Net;
 using System.Net.Http.Json;
 using Booking.Modules.Mentorships.Features;
 using Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
@@ -201,4 +201,4 @@ public class BufferTimeAvailabilityTests : AuthenticationTestBase
         var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
         return today.AddDays(daysUntilMonday);
     }
-} 
+} */

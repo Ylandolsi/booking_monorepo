@@ -6,9 +6,11 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
 {
     public BookSessionCommandValidator()
     {
-        RuleFor(c => c.MentorId)
-            .GreaterThan(0)
-            .WithMessage("Mentor ID must be a positive integer.");
+        RuleFor(c => c.MentorSlug)
+            .NotEmpty()
+            .WithMessage("Mentor slug is required.")
+            .MaximumLength(100)
+            .WithMessage("Mentor slug cannot exceed 100 characters.");
 
         RuleFor(c => c.MenteeId)
             .GreaterThan(0)
@@ -31,9 +33,5 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
         RuleFor(c => c.Note)
             .MaximumLength(1000)
             .WithMessage("Note cannot exceed 1000 characters.");
-
-        RuleFor(c => c)
-            .Must(c => c.MentorId != c.MenteeId)
-            .WithMessage("Mentor and mentee cannot be the same person.");
     }
 }

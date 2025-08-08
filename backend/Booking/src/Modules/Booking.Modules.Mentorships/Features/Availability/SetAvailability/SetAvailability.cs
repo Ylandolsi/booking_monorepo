@@ -36,7 +36,7 @@ internal sealed class SetAvailability : IEndpoint
             Result<int> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
-                availabilityId => Results.Ok(new { AvailabilityId = availabilityId }),
+                Results.Ok , 
                 CustomResults.Problem);
         })
         .RequireAuthorization()

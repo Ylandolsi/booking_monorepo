@@ -33,14 +33,30 @@ internal sealed class SetAvailabilityCommandHandler(
             return Result.Failure<int>(Error.Problem("Mentor.NotActive", "Mentor is not active"));
         }
 
-        // Validate time range is in 30-minute increments
-        var totalMinutes = (command.EndTime - command.StartTime).TotalMinutes;
+        // time range is in 30-minute increments : 14:00 to 14:30, 14:30 to 15:00, etc.
+        /* var totalMinutes = (command.EndTime - command.StartTime).TotalMinutes;
         if (totalMinutes % 30 != 0)
         {
             logger.LogWarning("Time range must be in 30-minute increments: {StartTime} to {EndTime}",
                 command.StartTime, command.EndTime);
             return Result.Failure<int>(Error.Problem("Availability.InvalidTimeRange",
                 "Time range must be in 30-minute increments"));
+        }*/
+        
+        // start and ending time should either be :00 or :30 
+        if (command.StartTime.Minute != 0 && command.StartTime.Minute != 30)
+        {
+            logger.LogWarning("Start time must be on the hour or half-hour: {StartTime}",
+                command.StartTime);
+            return Result.Failure<int>(Error.Problem("Availability.InvalidStartTime",
+                "Start time must be on the hour or half-hour"));
+        }
+        if (command.EndTime.Minute != 0 && command.EndTime.Minute != 30)
+        {
+            logger.LogWarning("End time must be on the hour or half-hour: {EndTime}",
+                command.EndTime);
+            return Result.Failure<int>(Error.Problem("Availability.InvalidEndTime",
+                "End time must be on the hour or half-hour"));
         }
 
         // Update buffer time if provided

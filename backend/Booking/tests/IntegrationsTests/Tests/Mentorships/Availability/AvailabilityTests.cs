@@ -8,11 +8,13 @@ using IntegrationsTests.Abstractions;
 
 namespace IntegrationsTests.Tests.Mentorships.Availability;
 
-public class AvailabilityTests : AuthenticationTestBase
+public class AvailabilityTests : MentorshipTestBase
 {
     public AvailabilityTests(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
+
+    #region Get
 
     [Fact]
     public async Task GetMentorAvailabilityByMonth_ShouldReturnAvailability_WhenMentorExists()
@@ -20,14 +22,16 @@ public class AvailabilityTests : AuthenticationTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("test");
         var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+
         // Create mentor and set availability
         var mentorSlug = "test-mentor";
         var currentYear = DateTime.Now.Year;
         var currentMonth = DateTime.Now.Month;
 
         // Act
-        var response = await userAct.GetAsync($"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}");
+        var response =
+            await userAct.GetAsync(
+                $"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -44,19 +48,21 @@ public class AvailabilityTests : AuthenticationTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("test");
         var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+
         var mentorSlug = "test-mentor";
         var currentYear = DateTime.Now.Year;
         var currentMonth = DateTime.Now.Month;
 
         // Act
-        var response = await userAct.GetAsync($"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}?includePastDays=false");
+        var response =
+            await userAct.GetAsync(
+                $"/mentorships/mentors/{mentorSlug}/availability/month/{currentYear}/{currentMonth}?includePastDays=false");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var availability = await response.Content.ReadFromJsonAsync<MonthlyAvailabilityResponse>();
         Assert.NotNull(availability);
-        
+
         // Verify no past days are included
         var pastDays = availability.Days.Where(d => d.Date.Date < DateTime.Now.Date).ToList();
         Assert.Empty(pastDays);
@@ -68,7 +74,7 @@ public class AvailabilityTests : AuthenticationTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("test");
         var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+
         var mentorSlug = "test-mentor";
         var testDate = DateTime.Now.Date.ToString("yyyy-MM-dd");
 
@@ -89,7 +95,7 @@ public class AvailabilityTests : AuthenticationTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("test");
         var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+
         var mentorSlug = "test-mentor";
         var invalidDate = "invalid-date";
 
@@ -100,13 +106,337 @@ public class AvailabilityTests : AuthenticationTestBase
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+
     [Fact]
-    public async Task SetAvailability_ShouldCreateAvailability_WhenValidDataProvided()
+    public async Task GetMentorAvailability_ShouldReturnAllAvailabilities_WhenMentorExists()
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("test");
         var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+
+        var mentorSlug = "test-mentor";
+
+        // Act
+        var response = await userAct.GetAsync($"/mentorships/availability/{mentorSlug}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetMentorAvailabilityByMonth_ShouldFilterPastDays_WhenIncludePastDaysIsFalse_()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("filter_past_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 75.0m });
+
+        // Set availability for all days
+        foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
+        {
+            await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+            {
+                DayOfWeek = day,
+                StartTime = new TimeOnly(9, 0),
+                EndTime = new TimeOnly(17, 0)
+            });
+        }
+
+        var currentDate = DateTime.Now;
+
+        // Act
+        var response = await userAct.GetAsync(
+            $"/mentorships/mentors/{loginData.UserSlug}/availability/month?year={currentDate.Year}&month={currentDate.Month}&includePastDays=false");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var monthlyAvailability = await response.Content.ReadFromJsonAsync<MonthlyAvailabilityResponse>();
+        Assert.NotNull(monthlyAvailability);
+
+        // All returned days should be today or in the future
+        foreach (var day in monthlyAvailability.Days)
+        {
+            Assert.True(day.Date.Date >= DateTime.Now.Date);
+        }
+    }
+
+    #endregion
+
+    [Fact]
+    public async Task Availability_ShouldConsiderBufferTime_WhenMentorHasBufferTimeSet()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        // Create mentor with 45-minute buffer time
+        var mentorData = new
+        {
+            HourlyRate = 75.0m,
+            BufferTimeMinutes = 45
+        };
+
+        var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, mentorData);
+        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+
+        // Set availability
+        var availabilityData = new
+        {
+            DayOfWeek = DayOfWeek.Monday,
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(17, 0)
+        };
+
+        var availabilityResponse =
+            await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
+        Assert.Equal(HttpStatusCode.OK, availabilityResponse.StatusCode);
+
+        // Check that availability shows buffer time consideration
+        var today = DateTime.Now.Date;
+        while (today.DayOfWeek != DayOfWeek.Monday)
+        {
+            today = today.AddDays(1);
+        }
+
+        // Act
+        var response = await userAct.GetAsync($"/mentorships/mentors/test/availability/day/{today:yyyy-MM-dd}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
+        Assert.NotNull(availability);
+        Assert.True(availability.Summary.TotalSlots > 0);
+    }
+
+
+    [Fact]
+    public async Task UpdateAvailability_ShouldUpdateSlot_WhenValidData()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("update_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 85.0m });
+
+        var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Friday,
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(17, 0)
+        });
+
+        var createResult = await createResponse.Content.ReadFromJsonAsync<dynamic>();
+        int availabilityId = createResult.availabilityId;
+
+        var updateData = new
+        {
+            DayOfWeek = DayOfWeek.Friday,
+            StartTime = new TimeOnly(10, 0),
+            EndTime = new TimeOnly(16, 0)
+        };
+
+        // Act
+        var response = await userAct.PutAsJsonAsync($"/mentorships/availability/{availabilityId}", updateData);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+
+    [Fact]
+    public async Task Availability_ShouldHandleTimeZoneCorrectly_WhenQueryingByDate()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("timezone_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 90.0m });
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Sunday,
+            StartTime = new TimeOnly(8, 0),
+            EndTime = new TimeOnly(20, 0)
+        });
+
+        var nextSunday = GetNextSunday();
+
+        // Act
+        var response = await userAct.GetAsync(
+            $"/mentorships/mentors/{loginData.UserSlug}/availability/day?date={nextSunday:yyyy-MM-dd}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
+        Assert.NotNull(availability);
+        Assert.Equal(nextSunday.Date, availability.Date.Date);
+        Assert.True(availability.IsAvailable);
+    }
+
+    #region Delete
+
+    [Fact]
+    public async Task DeleteAvailability_ShouldReturnBadRequest_WhenHasBookedSessions()
+    {
+        // Arrange
+        var (mentorArrange, mentorAct) = GetClientsForUser("delete_booked_test");
+        var mentorLogin = await CreateUserAndLogin(null, null, mentorArrange);
+
+        await mentorAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 80.0m });
+
+        var createResponse = await mentorAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Monday,
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(17, 0)
+        });
+
+        var createResult = await createResponse.Content.ReadFromJsonAsync<dynamic>();
+        int availabilityId = createResult.availabilityId;
+
+        // Create mentee and book a session
+        var (menteeArrange, menteeAct) = GetClientsForUser("delete_booked_mentee");
+        await CreateUserAndLogin(null, null, menteeArrange);
+
+        var nextMonday = GetNextMonday();
+        await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, new
+        {
+            MentorId = 1, // This would be the actual mentor ID
+            StartDateTime = nextMonday.AddHours(10),
+            DurationMinutes = 60,
+            Note = "Test session"
+        });
+
+        // Act
+        var response = await mentorAct.DeleteAsync($"/mentorships/availability/{availabilityId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteAvailability_ShouldRemoveSlot_WhenNoBookedSessions()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("delete_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 55.0m });
+
+        var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Saturday,
+            StartTime = new TimeOnly(10, 0),
+            EndTime = new TimeOnly(14, 0)
+        });
+
+        var createResult = await createResponse.Content.ReadFromJsonAsync<dynamic>();
+        int availabilityId = createResult.availabilityId;
+
+        // Act
+        var response = await userAct.DeleteAsync($"/mentorships/availability/{availabilityId}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    #endregion
+
+    #region SetAvailability
+
+    [Fact]
+    public async Task SetAvailability_ShouldReturnBadRequest_WhenInvalidTimeIncrement()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("increment_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 50.0m });
+
+        var invalidData = new
+        {
+            DayOfWeek = DayOfWeek.Monday,
+            StartTime = new TimeOnly(9, 15), // Not 30-minute increment
+            EndTime = new TimeOnly(10, 45) // Not 30-minute increment
+        };
+
+        // Act
+        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, invalidData);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SetAvailability_ShouldReturnBadRequest_WhenDurationDifferentThan30()
+    {
+        var (userArrange, userAct) = GetClientsForUser("short_duration_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 60.0m });
+
+        var shortDurationData = new
+        {
+            DayOfWeek = DayOfWeek.Tuesday,
+            StartTime = new TimeOnly(10, 0),
+            EndTime = new TimeOnly(10, 15) // Only 15 minutes
+        };
+
+        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, shortDurationData);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SetAvailability_ShouldReturnBadRequest_WhenOverlappingWithExisting()
+    {
+        var (userArrange, userAct) = GetClientsForUser("overlap_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 65.0m });
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Wednesday,
+            StartTime = new TimeOnly(10, 0),
+            EndTime = new TimeOnly(14, 0)
+        });
+
+        var overlappingData = new
+        {
+            DayOfWeek = DayOfWeek.Wednesday,
+            StartTime = new TimeOnly(12, 0),
+            EndTime = new TimeOnly(16, 0)
+        };
+
+        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, overlappingData);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SetAvailability_ShouldReturnBadRequest_WhenEndTimeBeforeStartTime()
+    {
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
+
+        var availabilityData = new
+        {
+            DayOfWeek = 1, // Monday
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(8, 30) // End time before start time
+        };
+
+        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SetAvailability_ShouldCreateAvailabilityAndReturnId_WhenValidDataProvided()
+    {
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
+
         var availabilityData = new
         {
             DayOfWeek = 1, // Monday
@@ -114,19 +444,21 @@ public class AvailabilityTests : AuthenticationTestBase
             EndTime = new TimeOnly(17, 0)
         };
 
-        // Act
         var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var result = await response.Content.ReadFromJsonAsync<int>();
+        Assert.NotNull(result);
     }
 
+    #endregion
+
+    #region SetBulk
+
     [Fact]
-    public async Task SetBulkAvailability_ShouldCreateMultipleAvailabilities_WhenValidDataProvided()
+    public async Task SetBulkAvailability_ShouldCreateMultipleAvailabilities_WhenValidDataProvided_()
     {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
         var bulkAvailabilityData = new
         {
             Availabilities = new[]
@@ -151,8 +483,66 @@ public class AvailabilityTests : AuthenticationTestBase
             }
         };
 
-        // Act
         var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkAvailabilityData);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<List<int>>();
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count); // 2 slots for Monday + 1 slot for Tuesday
+    }
+
+    #endregion
+
+    #region ToggleDay
+
+    [Fact]
+    public async Task ToggleAvailability_ShouldToggleIndividualSlot_WhenValidId()
+    {
+        var (userArrange, userAct) = await CreateMentor("mentorTest");
+
+        var availabilityResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Tuesday,
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(17, 0)
+        });
+
+        var availabilityId = await availabilityResponse.Content.ReadFromJsonAsync<int>();
+
+        var toggleResponse = await userAct.PatchAsync($"/mentorships/availability/{availabilityId}/toggle", null);
+
+
+        Assert.Equal(HttpStatusCode.OK, toggleResponse.StatusCode);
+        var result = await toggleResponse.Content.ReadFromJsonAsync<dynamic>();
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public async Task ToggleDayAvailability_ShouldToggleAllSlotsForDay_WhenValidDay()
+    {
+        // Arrange
+        var (userArrange, userAct) = GetClientsForUser("toggle_day_test");
+        var loginData = await CreateUserAndLogin(null, null, userArrange);
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 70.0m });
+
+        // Set multiple slots for Thursday
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Thursday,
+            StartTime = new TimeOnly(9, 0),
+            EndTime = new TimeOnly(12, 0)
+        });
+
+        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = DayOfWeek.Thursday,
+            StartTime = new TimeOnly(14, 0),
+            EndTime = new TimeOnly(17, 0)
+        });
+
+        // Act
+        var response =
+            await userAct.PatchAsync($"/mentorships/availability/toggle-day?dayOfWeek={DayOfWeek.Thursday}", null);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -160,61 +550,21 @@ public class AvailabilityTests : AuthenticationTestBase
         Assert.NotNull(result);
     }
 
-    [Fact]
-    public async Task GetMentorAvailability_ShouldReturnAllAvailabilities_WhenMentorExists()
+    #endregion
+
+    private DateTime GetNextMonday()
     {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
-        var mentorSlug = "test-mentor";
-
-        // Act
-        var response = await userAct.GetAsync($"/mentorships/availability/{mentorSlug}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var today = DateTime.Now.Date;
+        var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
+        if (daysUntilMonday == 0) daysUntilMonday = 7;
+        return today.AddDays(daysUntilMonday);
     }
 
-    [Fact]
-    public async Task Availability_ShouldConsiderBufferTime_WhenMentorHasBufferTimeSet()
+    private DateTime GetNextSunday()
     {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-        
-        // First, create a mentor with buffer time
-        var mentorData = new
-        {
-            HourlyRate = 50.0m,
-            BufferTimeMinutes = 30
-        };
-
-        var createResponse = await userAct.PostAsJsonAsync(MentorshipsEndpoints.BecomeMentor, mentorData);
-        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
-
-        // Set availability
-        var availabilityData = new
-        {
-            DayOfWeek = 1, // Monday
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(17, 0)
-        };
-
-        var availabilityResponse = await userAct.PostAsJsonAsync(MentorshipsEndpoints.SetAvailability, availabilityData);
-        Assert.Equal(HttpStatusCode.OK, availabilityResponse.StatusCode);
-
-        // Act - Get availability for a specific day
-        var mentorSlug = "test-mentor";
-        var testDate = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd"); // Tomorrow
-        var response = await userAct.GetAsync($"/mentorships/mentors/{mentorSlug}/availability/day/{testDate}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
-        Assert.NotNull(availability);
-        
-        // The availability should account for buffer time between sessions
-        // This would be implemented in the session booking logic
+        var today = DateTime.Now.Date;
+        var daysUntilSunday = ((int)DayOfWeek.Sunday - (int)today.DayOfWeek + 7) % 7;
+        if (daysUntilSunday == 0) daysUntilSunday = 7;
+        return today.AddDays(daysUntilSunday);
     }
-} 
+}

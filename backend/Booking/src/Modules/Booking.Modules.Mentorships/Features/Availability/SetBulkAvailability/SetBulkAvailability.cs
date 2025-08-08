@@ -25,25 +25,25 @@ internal sealed class SetBulkAvailability : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(MentorshipEndpoints.Availability.SetBulk, async (
-            Request request,
-            UserContext userContext,
-            ICommandHandler<SetBulkAvailabilityCommand, List<int>> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int userId = userContext.UserId;
+                Request request,
+                UserContext userContext,
+                ICommandHandler<SetBulkAvailabilityCommand, List<int>> handler,
+                CancellationToken cancellationToken) =>
+            {
+                int userId = userContext.UserId;
 
-            var command = new SetBulkAvailabilityCommand(
-                userId,
-                request.Availabilities,
-                request.BufferTimeMinutes);
+                var command = new SetBulkAvailabilityCommand(
+                    userId,
+                    request.Availabilities,
+                    request.BufferTimeMinutes);
 
-            Result<List<int>> result = await handler.Handle(command, cancellationToken);
+                Result<List<int>> result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(
-                availabilityIds => Results.Ok(new { AvailabilityIds = availabilityIds }),
-                CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Availability);
+                return result.Match(
+                    Results.Ok,
+                    CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Availability);
     }
-} 
+}
