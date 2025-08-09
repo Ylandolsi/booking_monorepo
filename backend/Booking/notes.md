@@ -47,7 +47,8 @@ dotnet ef migrations add SyncModelAndDb --project ../Infrastructure --startup-pr
 
 - `System.Text.Json` is case-insensitive by default, but `Newtonsoft.Json` is case-sensitive.
 
-When you return your EF Core entities directly, `System.Text.Json` will serialize every public getter—mapped or not—so your `DomainEvents` list shows up even though it isn’t a database column.
+When you return your EF Core entities directly, `System.Text.Json` will serialize every public getter—mapped or not—so
+your `DomainEvents` list shows up even though it isn’t a database column.
 
 ```csharp
 [NotMapped] // EF Core will ignore it (optional, since it’s already not mapped)
@@ -81,3 +82,11 @@ dotnet ef migrations add InitialMentorshipsMigration --startup-project ../Api/Bo
 ```
 
             $"{Base}/availability/month?mentorSlug={Uri.EscapeDataString(mentorSlug)}&year={year}&month={month}";
+
+```csharp
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    // ignore circular references in JSON serialization 
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+```

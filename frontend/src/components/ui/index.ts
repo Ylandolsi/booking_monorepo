@@ -23,5 +23,9 @@ export * from './sidebar';
 export * from './tooltip';
 export * from './skeleton';
 export * from './loading-state';
-export * from './progress'
-export * from './checkbox'
+export * from './progress';
+export * from './checkbox';
+export * from './alert';
+
+export * from './avatar';
+export * from './tabs';

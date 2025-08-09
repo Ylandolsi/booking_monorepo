@@ -201,6 +201,7 @@ const wrappedChildren = (
 ```
 
 All children are wrapped in the context provider, making the registration function available to any nested `MultiSelect` components.
+
 ```ts
 Item['name'])
 
@@ -220,3 +221,48 @@ export type Item = {
 };
 
 ```
+
+````tsx
+                <Checkbox
+                  id={key}
+                  checked={isCompleted === true}
+                  disabled
+                  className="data-[state=checked]:bg-green-600"
+                />
+                ```
+````
+
+<!-- const alertIconMap = {
+default: AlertCircle,
+destructive: XCircle,
+success: CheckCircle,
+warning: AlertTriangle,
+info: Info,
+} as const;
+// {React.createElement(alertIconMap['success'])} -->
+
+after each form this is a better way to handle the success/error
+
+<!-- {becomeMentorMutation.isError && (
+<Alert variant={'destructive'}>
+{React.createElement(alertIconMap['destructive'])}
+<AlertTitle>Error</AlertTitle>
+<AlertDescription>
+Failed to register as a mentor. Please try again.
+</AlertDescription>
+</Alert>
+)}
+
+      {becomeMentorMutation.isSuccess && (
+        <Alert variant={'success'}>
+          {React.createElement(alertIconMap['success'])}
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Failed to register as a mentor. Please try again.
+          </AlertDescription>
+        </Alert>
+      )} -->
+
+ctrl + e : search for files
+ctrl + tab : naviagte the open tabs
+ctrl + alt + click : show the file or wher eits called

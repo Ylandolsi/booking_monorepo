@@ -31,7 +31,7 @@ interface SocialLinksProps {
 }
 
 const socialPlatforms = {
-  linkedin: {
+  linkedIn: {
     icon: FaLinkedin,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 hover:bg-blue-100',
@@ -67,7 +67,7 @@ const socialPlatforms = {
     bgColor: 'bg-red-50 hover:bg-red-100',
     name: 'YouTube',
   },
-  website: {
+  portfolio: {
     icon: FaGlobe,
     color: 'text-gray-600',
     bgColor: 'bg-gray-50 hover:bg-gray-100',

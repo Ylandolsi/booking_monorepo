@@ -1,7 +1,11 @@
-import { MainErrorFallback } from '@/components';
+import { MainErrorFallback, SocialLinks } from '@/components';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
-import { useProfileBySlug, type LanguageType } from '@/features/profile';
+import {
+  useProfileBySlug,
+  type ExpertiseType,
+  type LanguageType,
+} from '@/features/profile';
 import { Button, PageLoading } from '@/components/ui';
 import { useRequiredParam } from '@/hooks';
 import { formatDate } from '@/utils';
@@ -29,6 +33,36 @@ export function Overview() {
               About
             </h2>
             <p className="text-muted-foreground leading-relaxed">{user.bio}</p>
+          </div>
+        )}
+        {/* Social Links */}
+        {user?.socialLinks && Object.keys(user.socialLinks).length > 0 && (
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/50">
+            <h2 className="text-xl font-semibold mb-4 text-foreground">
+              Social Links
+            </h2>
+            <SocialLinks links={user.socialLinks ?? {}} variant="icons" />
+          </div>
+        )}
+
+        {/* Expertise Section */}
+        {user.expertises?.length > 0 && (
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/50">
+            <h2 className="text-xl font-semibold mb-4 text-foreground">
+              Expertise
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              {user.expertises.map(
+                (expertise: ExpertiseType, index: number) => (
+                  <span
+                    key={expertise.id || index}
+                    className="px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                  >
+                    {expertise.name}
+                  </span>
+                ),
+              )}
+            </div>
           </div>
         )}
 

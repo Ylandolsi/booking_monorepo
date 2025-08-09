@@ -14,6 +14,8 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
+import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
+import { Route as TestAlreadyRouteImport } from './routes/test/already'
 import { Route as MentorBecomeRouteImport } from './routes/mentor/become'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as ErrorExpAdvancedLoadingExamplesRouteImport } from './routes/error-exp/advanced-loading-examples'
@@ -48,6 +50,16 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
   path: '/test/img',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestDashboardRoute = TestDashboardRouteImport.update({
+  id: '/test/dashboard',
+  path: '/test/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestAlreadyRoute = TestAlreadyRouteImport.update({
+  id: '/test/already',
+  path: '/test/already',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MentorBecomeRoute = MentorBecomeRouteImport.update({
@@ -116,6 +128,8 @@ export interface FileRoutesByFullPath {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/test/already': typeof TestAlreadyRoute
+  '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -132,6 +146,8 @@ export interface FileRoutesByTo {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/test/already': typeof TestAlreadyRoute
+  '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -150,6 +166,8 @@ export interface FileRoutesById {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/test/already': typeof TestAlreadyRoute
+  '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
@@ -169,6 +187,8 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/test/already'
+    | '/test/dashboard'
     | '/test/img'
     | '/app/'
     | '/auth/email-verification/verified'
@@ -185,6 +205,8 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/test/already'
+    | '/test/dashboard'
     | '/test/img'
     | '/app'
     | '/auth/email-verification/verified'
@@ -202,6 +224,8 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/test/already'
+    | '/test/dashboard'
     | '/test/img'
     | '/app/'
     | '/auth/email-verification/verified'
@@ -220,6 +244,8 @@ export interface RootRouteChildren {
   ErrorExpAdvancedLoadingExamplesRoute: typeof ErrorExpAdvancedLoadingExamplesRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   MentorBecomeRoute: typeof MentorBecomeRoute
+  TestAlreadyRoute: typeof TestAlreadyRoute
+  TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
@@ -261,6 +287,20 @@ declare module '@tanstack/react-router' {
       path: '/test/img'
       fullPath: '/test/img'
       preLoaderRoute: typeof TestImgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/dashboard': {
+      id: '/test/dashboard'
+      path: '/test/dashboard'
+      fullPath: '/test/dashboard'
+      preLoaderRoute: typeof TestDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/already': {
+      id: '/test/already'
+      path: '/test/already'
+      fullPath: '/test/already'
+      preLoaderRoute: typeof TestAlreadyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mentor/become': {
@@ -357,6 +397,8 @@ const rootRouteChildren: RootRouteChildren = {
   ErrorExpAdvancedLoadingExamplesRoute: ErrorExpAdvancedLoadingExamplesRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   MentorBecomeRoute: MentorBecomeRoute,
+  TestAlreadyRoute: TestAlreadyRoute,
+  TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
