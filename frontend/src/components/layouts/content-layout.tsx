@@ -1,22 +1,15 @@
 import { AuthGuard } from '@/features/auth';
-import { Logo } from '@/components/logo';
 import Sidebar from './sidebar';
-import { Button, Badge, Spinner, PageLoading } from '@/components/ui/index';
-import { LazyImage } from '@/utils/lazy-image';
-import { Menu, Bell } from 'lucide-react';
-import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { PageLoading } from '@/components/ui/index';
 import { BottomNav } from '../navigation/bottom-nav';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '../errors/main';
-import { useIsMobile } from '@/hooks';
 import { useSideBar } from '@/stores';
+import { Header } from '@/components/headers';
 
 export function ContentLayout({ children }: { children: React.ReactNode }) {
   const { sidebarOpen, setSidebarOpen, collapsed, setCollapsed } = useSideBar();
-  const { currentUser, isLoading, error } = useAuth();
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const { isLoading, error } = useAuth();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <PageLoading />;
@@ -34,67 +27,11 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Header */}
-          <header className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
-            <div className="flex items-center justify-between px-4 py-3">
-              {/* Left side - Logo and Menu (Mobile only) */}
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSidebarOpen(true)}
-                  className="h-10 w-10 p-0 hover:bg-muted lg:hidden"
-                >
-                  <Menu className="w-5 h-5" />
-                </Button>
-                <Logo className="h-8" />
-              </div>
-
-              {/* Right side - Profile and Notifications */}
-              {
-                <div className="flex items-center gap-2 lg:hidden">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-10 w-10 p-0 hover:bg-muted relative"
-                  >
-                    <Bell className="w-5 h-5" />
-                    <Badge
-                      variant="destructive"
-                      className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
-                    >
-                      3
-                    </Badge>
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() =>
-                      navigate({ to: `/members/${currentUser?.id}` })
-                    }
-                    className="h-10 px-2 hover:bg-muted"
-                  >
-                    <LazyImage
-                      className="w-7 h-7 rounded-full ring-2 ring-primary/20 object-cover"
-                      src={
-                        currentUser?.profilePicture.profilePictureLink ||
-                        'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-                      }
-                      alt="profile-pic"
-                      placeholder={
-                        currentUser?.profilePicture.thumbnailUrlPictureLink ||
-                        'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-                      }
-                    />
-                  </Button>
-                </div>
-              }
-            </div>
-          </header>
-
+          <Header />
           {/* Page Content */}
-          <main className="flex-1 overflow-auto pb-20 lg:pb-4 min-h-screen bg-gradient-to-br from-background to-muted ">{children}</main>
+          <main className="flex-1 overflow-auto pb-20 bg-gradient-to-br from-background to-muted">
+            {children}
+          </main>
 
           {/* Bottom Navigation - Mobile Only */}
           <BottomNav />
