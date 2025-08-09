@@ -1,4 +1,4 @@
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities;
@@ -17,6 +17,7 @@ public class GetDetailsQueryHandler(
     {
         logger.LogInformation($"Getting details for Mentor with slug {query.UserSlug}");
         
+        
         var mentor = await context.Mentors
             .FirstOrDefaultAsync(m => m.UserSlug == query.UserSlug, cancellationToken);
         
@@ -31,6 +32,7 @@ public class GetDetailsQueryHandler(
         {
             HourlyRate = mentor.HourlyRate.Amount , 
             BufferTimeMinutes = mentor.BufferTime.Minutes,
+            CreatedAt = mentor.CreatedAt.ToString("yyyy-MM-dd")
         });
         
         

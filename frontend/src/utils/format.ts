@@ -8,5 +8,8 @@ export const formatDate = (date: Date | string): string => {
   return dateObj.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
+    day: 'numeric',
   });
-}
+};
+
+// const formatDate = (dateStr: string | undefined) => {

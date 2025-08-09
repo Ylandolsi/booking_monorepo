@@ -4,8 +4,10 @@ using Booking.Api.DependencyInjection;
 using Booking.Api.Extensions;
 using Booking.Common;
 using Booking.Modules.Mentorships;
+using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
+using Booking.Modules.Users.Presistence;
 using Booking.Modules.Users.Presistence.Seed.Users;
 using Booking.Modules.Users.RecurringJobs;
 using HealthChecks.UI.Client;
@@ -66,10 +68,17 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.UseSwaggerWithUi();
     app.MapOpenApi();
     app.MapScalarApiReference(opt => { opt.WithTitle("Booking API"); });
-    app.ApplyMigrations();
-
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+    var mentorshipsDb = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+    // Drop databases
+    await usersDb.Database.EnsureDeletedAsync();
+    await mentorshipsDb.Database.EnsureDeletedAsync();
+
+    app.ApplyMigrations();
+
 
     // Delete test users only
     var testUsers = await userManager.Users
@@ -80,7 +89,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     foreach (var user in testUsers)
     {
         await userManager.DeleteAsync(user);
+        
     }
+    
 
     var testUser = User.Create("test-user-slg",
         "Test",

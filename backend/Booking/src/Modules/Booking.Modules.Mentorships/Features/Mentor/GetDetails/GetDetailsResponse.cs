@@ -4,5 +4,6 @@ public record GetDetailsResponse
 {
     public decimal HourlyRate { get; init; }
     public int BufferTimeMinutes { get; init;  }
+    public string  CreatedAt { get; init; }
     
 }

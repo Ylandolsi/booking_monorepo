@@ -266,3 +266,42 @@ Failed to register as a mentor. Please try again.
 ctrl + e : search for files
 ctrl + tab : naviagte the open tabs
 ctrl + alt + click : show the file or wher eits called
+ctrl + < + w : to enable multicursor
+ctrl + shift + p : toggle multicursor modfier to return to : ctrl + click open new tab
+
+```ts
+export function useMentorDetails(
+  userSlug?: string | null,
+  overrides?: Partial<UseQueryOptions<any, unknown>>,
+): UseQueryResult<Mentor, unknown> {
+  return useQuery(
+    queryOptions({
+      queryKey: mentorQueryKeys.mentorProfile(userSlug),
+      queryFn: () => mentorDetails(userSlug),
+      enabled: !!userSlug,
+      ...overrides,
+    }),
+  );
+}
+```
+
+card inside dialog is a good idea
+
+`````
+      {/* Current Status Card */}
+      <Card className="mb-8">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <Award className="w-5 h-5 text-blue-600" />
+            Your Mentor Profile
+          </CardTitle>
+
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger>
+              <Button variant="outline" size="sm">
+                <Edit3 className="w-4 h-4 mr-2" />
+                Edit Profile
+              </Button>
+            </DialogTrigger>
+            ````
+`````

@@ -47,7 +47,7 @@ public static class MentorshipEndpoints
     {
         public const string Become = $"{Base}/mentors/become";
         public const string UpdateProfile = $"{Base}/mentors/profile";
-        public const string GetProfile = $"{Base}/mentors/{{mentorSlug}}";
+        public const string GetProfile = $"{Base}/mentors/{{userSlug}}";
         //public const string Search = $"{Base}/mentors/search";
     }
 }

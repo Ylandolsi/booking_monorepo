@@ -7,6 +7,7 @@ namespace Booking.Modules.Mentorships.Domain.Entities;
 
 public class Mentor : Entity
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; private set; }
     
     public string UserSlug { get; private set; } = string.Empty;

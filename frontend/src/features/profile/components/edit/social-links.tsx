@@ -7,17 +7,15 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Alert,
-  AlertDescription,
 } from '@/components/ui';
+import { QueryStateWrapper } from '@/components/wrappers';
 import { useUser } from '@/features/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { socialLinksSchema, type SocialLinksFormValues } from '../../schemas';
 import { useUpdateSocialLinks, type SocialLinksType } from '@/features/profile';
-import { Spinner } from '@/components';
 import { useMemo, useEffect } from 'react';
-import { AlertTriangle, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 interface SocialField {
   key: keyof SocialLinksFormValues;
@@ -67,9 +65,27 @@ const SOCIAL_FIELDS: SocialField[] = [
 
 export function SocialLinksForm() {
   const userQuery = useUser();
+
+  return (
+    <QueryStateWrapper
+      query={userQuery}
+      loadingMessage="Loading social links..."
+      loadingType="spinner"
+      containerClassName="p-0"
+      minHeight="200px"
+    >
+      {(userData) => <SocialLinksFormContent userData={userData} />}
+    </QueryStateWrapper>
+  );
+}
+
+function SocialLinksFormContent({ userData }: { userData: any }) {
   const updateSocialLinksMutation = useUpdateSocialLinks();
 
-  const socialLinks: SocialLinksType = userQuery.data?.socialLinks ?? {};
+  const socialLinks: SocialLinksType = useMemo(
+    () => userData?.socialLinks ?? {},
+    [userData?.socialLinks],
+  );
 
   const form = useForm<SocialLinksFormValues>({
     resolver: zodResolver(socialLinksSchema),
@@ -85,8 +101,8 @@ export function SocialLinksForm() {
 
   // Reset form when user data changes
   useEffect(() => {
-    if (userQuery.data?.socialLinks) {
-      const links = userQuery.data.socialLinks;
+    if (userData?.socialLinks) {
+      const links = userData.socialLinks;
       form.reset({
         linkedIn: links.linkedIn ?? '',
         portfolio: links.portfolio ?? '',
@@ -96,7 +112,7 @@ export function SocialLinksForm() {
         facebook: links.facebook ?? '',
       });
     }
-  }, [userQuery.data?.socialLinks, form]);
+  }, [userData?.socialLinks, form]);
 
   // Sort fields to show filled ones first
   const sortedFields = useMemo(() => {
@@ -138,28 +154,6 @@ export function SocialLinksForm() {
       return false;
     }
   };
-
-  if (userQuery.isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Spinner />
-        <span className="ml-2 text-sm text-gray-600">
-          Loading social links...
-        </span>
-      </div>
-    );
-  }
-
-  if (userQuery.error) {
-    return (
-      <Alert variant="destructive">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load social links. Please refresh the page and try again.
-        </AlertDescription>
-      </Alert>
-    );
-  }
 
   const isSubmitting = updateSocialLinksMutation.isPending;
   const hasChanges = form.formState.isDirty;

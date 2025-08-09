@@ -90,3 +90,114 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 ```
+
+DB :
+psql -h localhost -p 5432 -U postgres -d clean-architecture
+sudo apt update
+sudo apt install postgresql-client
+
+```bash
+
+# ---------------------------
+# Docker Commands to Know
+# ---------------------------
+
+# 1. Check running containers
+docker ps
+
+# 2. Check all containers (including stopped)
+docker ps -a
+
+# 3. Start a container by name or ID
+docker start <container_name_or_id>
+
+# 4. Stop a container by name or ID
+docker stop <container_name_or_id>
+
+# 5. Remove a container by name or ID
+docker rm <container_name_or_id>
+
+# 6. View logs of a container
+docker logs <container_name_or_id>
+
+# 7. Run a Postgres container with port mapping and password set
+docker run -d --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:latest
+
+# 8. Execute an interactive shell inside a running container
+docker exec -it <container_name_or_id> bash
+
+
+# ---------------------------
+# PostgreSQL psql Commands to Know
+# ---------------------------
+
+# 1. Connect to Postgres database (replace user, db, and port accordingly)
+psql -h localhost -p 5432 -U postgres -d clean-architecture
+
+# 2. List all databases
+\l
+
+# 3. Connect to a different database
+\c database_name
+
+# 4. List tables in the current database
+\dt
+
+# 5. Describe table structure
+\d table_name
+
+# 6. Run an SQL query (example)
+SELECT * FROM table_name;
+SELECT * FROM "AspNetUsers";
+
+Why the error?
+SELECT * FROM AspNetUsers;
+is interpreted as:
+
+SELECT * FROM aspnetusers;
+// (which doesn’t exist).
+
+# 7. Exit the psql shell
+\q
+
+
+# ---------------------------
+# Docker Compose Commands
+# ---------------------------
+
+# Build and start services defined in docker-compose.yml
+docker compose up --build
+
+
+# ---------------------------
+# Inspect container names and their published ports
+# ---------------------------
+
+docker inspect -f '{{ .Name }} - {{ range .NetworkSettings.Ports }}{{ println . }}{{ end }}' $(docker ps -q)
+
+
+# ---------------------------
+# Check and free a port (example: port 8081)
+# ---------------------------
+
+# List processes using port 8081
+sudo lsof -i :8081
+
+# Manually kill docker-proxy or other processes blocking port 8081
+sudo kill 50559 50568
+
+# Check again if port is free
+sudo lsof -i :8081
+
+# If still not free, force kill the processes
+sudo kill -9 50559 50568
+
+# Confirm port 8081 is now free (no output means free)
+sudo lsof -i :8081
+
+```
+
+clean-architecture=# SELECT *
+FROM "users"."AspNetUsers"
+WHERE "slug" = 'yassine-landolsi';
+clean-architecture=# 
