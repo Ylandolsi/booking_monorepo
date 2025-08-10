@@ -305,3 +305,41 @@ card inside dialog is a good idea
             </DialogTrigger>
             ````
 `````
+
+Great question! The reason for using `JSON.stringify` and then `JSON.parse` when setting `originalSchedule` is to create a **deep copy** of the `loadedSchedule` array.
+
+### Why not just assign directly?
+
+If you did:
+
+```tsx
+setOriginalSchedule(loadedSchedule);
+```
+
+Both `schedule` and `originalSchedule` would reference the **same array in memory**. Any changes to one would affect the other.
+
+### Why use `JSON.parse(JSON.stringify(...))`?
+
+This technique:
+
+- Converts the object to a JSON string (`JSON.stringify`)
+- Parses it back into a new object (`JSON.parse`)
+- The result is a **completely new copy** with no shared references
+
+### Gotcha
+
+- This method works for simple objects/arrays, but won't copy functions, `Date` objects, or special types.
+
+### Example
+
+```tsx
+const a = [{ x: 1 }];
+const b = JSON.parse(JSON.stringify(a));
+b[0].x = 2; // a[0].x is still 1
+```
+
+### In your code
+
+This ensures that `originalSchedule` is a snapshot of the initial state, so you can compare or reset later without accidental mutation.
+
+Let me know if you want to see alternative deep copy methods!

@@ -11,7 +11,7 @@ type SideBarState = {
 };
 
 export const useSideBar = create<SideBarState>((set) => ({
-  sidebarOpen: true,
+  sidebarOpen: false,
   itemActive: 'Home',
   collapsed: false,
   setCollapsed: (collapsed: boolean) => set({ collapsed: collapsed }),

@@ -289,9 +289,10 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {quickActions.map((action) => (
+            {quickActions.map((action, index) => (
               <Button
-                key={action.to}
+                key={index}
+                // key={action.to}
                 variant="ghost"
                 size="lg"
                 className="flex h-auto p-4 text-left justify-start"

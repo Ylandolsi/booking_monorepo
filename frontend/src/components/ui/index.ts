@@ -29,3 +29,4 @@ export * from './alert';
 
 export * from './avatar';
 export * from './tabs';
+export * from './switch';
