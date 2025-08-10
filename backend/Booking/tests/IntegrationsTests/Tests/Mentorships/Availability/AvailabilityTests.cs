@@ -63,7 +63,7 @@ public class AvailabilityTests : MentorshipTestBase
     }
     
     [Fact]
-    public async Task GetMentorAvailabilityByDay_ShouldFilterPastDays_WhenIncludePastDaysIsFalse()
+    public async Task GetMentorAvailabilityByDay_ShouldFilterPastDays()
     {
         // Arrange
         var (userArrange, userAct) = await CreateMentor("mentorTest");

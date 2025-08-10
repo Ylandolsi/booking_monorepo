@@ -4,7 +4,6 @@ namespace Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
 
 public sealed record DailyAvailabilityResponse(
     DateTime Date,
-    string MentorSlug,
     bool IsAvailable,
     List<TimeSlotResponse> TimeSlots,
     DailySummary Summary);

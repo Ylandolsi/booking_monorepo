@@ -28,8 +28,11 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
         try
         {
+            query = query with { Date = DateTime.SpecifyKind(query.Date, DateTimeKind.Utc) };
             var dayOfWeek = query.Date.DayOfWeek;
 
+
+            
             // Get mentor with buffer time
             var mentor = await context.Mentors
                 .Where(m => m.UserSlug == query.MentorSlug && m.IsActive)
@@ -39,7 +42,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             {
                 return Result.Success(new DailyAvailabilityResponse(
                     query.Date,
-                    query.MentorSlug,
                     false,
                     new List<TimeSlotResponse>(),
                     new DailySummary(0, 0, 0, 0)));
@@ -57,7 +59,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             {
                 return Result.Success(new DailyAvailabilityResponse(
                     query.Date,
-                    query.MentorSlug,
                     false,
                     new List<TimeSlotResponse>(),
                     new DailySummary(0, 0, 0, 0)));
@@ -115,7 +116,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
             var response = new DailyAvailabilityResponse(
                 query.Date,
-                query.MentorSlug,
                 timeSlots.Any(ts => ts.IsAvailable),
                 timeSlots,
                 summary);
