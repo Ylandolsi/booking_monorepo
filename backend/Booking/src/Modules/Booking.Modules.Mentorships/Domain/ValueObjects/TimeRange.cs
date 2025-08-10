@@ -86,11 +86,14 @@ public class TimeRange : ValueObject
         yield return StartHour;
         yield return EndHour;
     }
+    
+    public string ToString() => $"{StartHour:D2}:{StartMinute:D2}-{EndHour:D2}:{EndMinute:D2}";
 
-    public override string ToString()
+    /*public static TimeRange FromString(string timeRangeStr)
     {
-        return $"{StartHour:D2}:00 - {EndHour:D2}:00";
-    }
+        // parse "09:00-17:30" into TimeRange instance
+    }*/
+
 }
 
 public static class TimeRangeErrors
