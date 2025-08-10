@@ -10,6 +10,7 @@ export const MentorshipEndpoints = {
     ToggleDay: '/mentorships/availability/day/toggle', // Query: dayOfWeek
     GetDaily: '/mentorships/availability', // Query: mentorSlug, date
     GetMonthly: '/mentorships/availability/month', // Query: mentorSlug, year, month
+    GetSchedule: '/mentorships/availability/schedule',
   },
 
   Sessions: {

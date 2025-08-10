@@ -4,7 +4,7 @@ import {
   type TimeRange,
   TIME_OPTIONS,
   PREDEFINED_TIME_SLOTS,
-} from '@/features/booking/pages/set-availability/types';
+} from '@/features/booking/pages/set-availability/availability-types';
 import { formatTimeRange } from '@/utils';
 import {
   Separator,

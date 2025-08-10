@@ -14,15 +14,15 @@ import {
   AvatarImage,
   AvatarFallback,
   Spinner,
+  Calendar as BookingCalendar,
 } from '@/components/ui';
-import { Calendar as BookingCalendar } from '../../components/calendar';
 import { TimeSlots } from '../../components/time-slots';
 import { BookingSummaryCard } from '../../components/booking-summary';
 import { useBookSession } from '../../api/book-session-api';
 import {
   useMonthlyAvailability,
   useDailyAvailability,
-} from '../../api/availability-api';
+} from '../set-availability/api/availability-api';
 import { useMentorDetails } from '@/features/mentor/api';
 import type { TimeSlot } from '../../types/availability-types';
 import type { BookingSummary } from '../../types/booking-types';
@@ -209,52 +209,6 @@ export function BookingPage() {
         </div>
 
         {/* How it works */}
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 max-w-4xl mx-auto">
-          <h2 className="text-xl font-semibold text-blue-900 mb-4">
-            How it works:
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-blue-800">
-            <div className="flex items-start gap-2">
-              <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">
-                1
-              </div>
-              <div>
-                <div className="font-medium">Browse the Agenda</div>
-                <div>
-                  View the current month's available dates and switch between
-                  months
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">
-                2
-              </div>
-              <div>
-                <div className="font-medium">Select a Date</div>
-                <div>Click on any date to reveal available time slots</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">
-                3
-              </div>
-              <div>
-                <div className="font-medium">Choose a Time</div>
-                <div>Pick a convenient 30-minute time slot</div>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center text-xs font-medium">
-                4
-              </div>
-              <div>
-                <div className="font-medium">Review & Confirm</div>
-                <div>Check your booking summary and confirm</div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Mentor Profile */}
