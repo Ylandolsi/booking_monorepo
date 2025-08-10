@@ -19,10 +19,6 @@ public class Review : Entity
     
     public string Comment { get; private set; } = string.Empty;
     
-    public DateTime CreatedAt { get; private set; }
-    
-    public DateTime? UpdatedAt { get; private set; }
-
     // Navigation properties
     public Session Session { get; set; } = default!;
 

@@ -17,35 +17,34 @@ public class AvailabilityTests : MentorshipTestBase
 
     #region Get
 
-
     [Fact]
     public async Task GetMentorAvailabilityByMonth_ShouldFilterPastDays_WhenIncludePastDaysIsFalse()
     {
         // Arrange
         var (userArrange, userAct) = await CreateMentor("mentorTest");
-        
+
         foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
         {
             await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
             {
                 DayOfWeek = day,
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(12, 0)
+                StartTime = "09:00",
+                EndTime = "12:00"
             });
-            
+
             await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
             {
                 DayOfWeek = day,
-                StartTime = new TimeOnly(14, 0),
-                EndTime = new TimeOnly(17, 0)
+                StartTime = "14:00",
+                EndTime = "17:00"
             });
         }
-        
-        
+
+
         var getMyInfo = await userArrange.GetAsync(UsersEndpoints.GetCurrentUser);
         var info = await getMyInfo.Content.ReadFromJsonAsync<MeData>();
 
-        var mentorSlug =  info.Slug;
+        var mentorSlug = info.Slug;
         var currentYear = DateTime.Now.Year;
         var currentMonth = DateTime.Now.Month;
 
@@ -61,32 +60,32 @@ public class AvailabilityTests : MentorshipTestBase
         var pastDays = availability.Days.Where(d => d.Date.Date < DateTime.Now.Date).ToList();
         Assert.Empty(pastDays);
     }
-    
+
     [Fact]
     public async Task GetMentorAvailabilityByDay_ShouldFilterPastDays()
     {
         // Arrange
         var (userArrange, userAct) = await CreateMentor("mentorTest");
-        
-            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-            {
-                DayOfWeek = 1,
-                StartTime = new TimeOnly(9, 0),
-                EndTime = new TimeOnly(12, 0)
-            });
-            
-            await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-            {
-                DayOfWeek = 1,
-                StartTime = new TimeOnly(14, 0),
-                EndTime = new TimeOnly(17, 0)
-            });
-        
-        
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = 1,
+            StartTime = "09:00",
+            EndTime = "12:00"
+        });
+
+        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
+        {
+            DayOfWeek = 1,
+            StartTime = "14:00",
+            EndTime = "17:00"
+        });
+
+
         var getMyInfo = await userArrange.GetAsync(UsersEndpoints.GetCurrentUser);
         var info = await getMyInfo.Content.ReadFromJsonAsync<MeData>();
 
-        var mentorSlug =  info.Slug;
+        var mentorSlug = info.Slug;
         var response =
             await userAct.GetAsync(
                 $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={mentorSlug}&date={2025}-{08}-{04}");
@@ -94,10 +93,8 @@ public class AvailabilityTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
         Assert.NotNull(availability);
-        
     }
 
-    
     #endregion
 
 
@@ -110,8 +107,8 @@ public class AvailabilityTests : MentorshipTestBase
         var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Friday,
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(17, 0)
+            StartTime = "09:00",
+            EndTime = "17:00"
         });
 
         var availabilityId = await createResponse.Content.ReadFromJsonAsync<int>();
@@ -119,8 +116,8 @@ public class AvailabilityTests : MentorshipTestBase
         var updateData = new
         {
             DayOfWeek = DayOfWeek.Friday,
-            StartTime = new TimeOnly(10, 0),
-            EndTime = new TimeOnly(16, 0)
+            StartTime = "10:00",
+            EndTime = "16:00"
         };
 
         var response = await userAct.PutAsJsonAsync($"/mentorships/availability/{availabilityId}", updateData);
@@ -159,18 +156,19 @@ public class AvailabilityTests : MentorshipTestBase
     */
 
     #region Delete
+
     // TODO DeleteAvailability_ShouldReturnBadRequest_WhenHasBookedSessions 
 
     [Fact]
-    public async Task DeleteAvailability_ShouldSucceed_WhenRequested ()
+    public async Task DeleteAvailability_ShouldSucceed_WhenRequested()
     {
         var (userArrange, userAct) = await CreateMentor("mentorTest");
 
         var createResponse = await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Monday,
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(17, 0)
+            StartTime = "09:00",
+            EndTime = "17:00"
         });
 
         var availabilityId = await createResponse.Content.ReadFromJsonAsync<int>();
@@ -181,7 +179,6 @@ public class AvailabilityTests : MentorshipTestBase
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
-    
 
     #endregion
 
@@ -199,8 +196,8 @@ public class AvailabilityTests : MentorshipTestBase
         var invalidData = new
         {
             DayOfWeek = DayOfWeek.Monday,
-            StartTime = new TimeOnly(9, 15), // Not 30-minute increment
-            EndTime = new TimeOnly(10, 45) // Not 30-minute increment
+            StartTime = "09:15",
+            EndTime = "10:45", // End time before start time
         };
 
         // Act
@@ -241,15 +238,15 @@ public class AvailabilityTests : MentorshipTestBase
         await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Wednesday,
-            StartTime = new TimeOnly(10, 0),
-            EndTime = new TimeOnly(14, 0)
+            StartTime = "10:00",
+            EndTime = "14:00"
         });
 
         var overlappingData = new
         {
             DayOfWeek = DayOfWeek.Wednesday,
-            StartTime = new TimeOnly(12, 0),
-            EndTime = new TimeOnly(16, 0)
+            StartTime = "12:00",
+            EndTime = "16:00"
         };
 
         var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, overlappingData);
@@ -266,8 +263,8 @@ public class AvailabilityTests : MentorshipTestBase
         var availabilityData = new
         {
             DayOfWeek = 1, // Monday
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(8, 30) // End time before start time
+            StartTime = "09:00",
+            EndTime = "08:30", // End time before start time
         };
 
         var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
@@ -282,8 +279,8 @@ public class AvailabilityTests : MentorshipTestBase
         var availabilityData = new
         {
             DayOfWeek = 1, // Monday
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(17, 0)
+            StartTime = "09:00",
+            EndTime = "17:00",
         };
 
         var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
@@ -310,8 +307,8 @@ public class AvailabilityTests : MentorshipTestBase
                     DayOfWeek = 1, // Monday
                     TimeSlots = new[]
                     {
-                        new { StartTime = new TimeOnly(9, 0), EndTime = new TimeOnly(12, 0) },
-                        new { StartTime = new TimeOnly(14, 0), EndTime = new TimeOnly(17, 0) }
+                        new { StartTime ="09:00", EndTime ="12:00" },
+                        new { StartTime ="14:00", EndTime ="17:00" }, 
                     }
                 },
                 new
@@ -319,7 +316,7 @@ public class AvailabilityTests : MentorshipTestBase
                     DayOfWeek = 2, // Tuesday
                     TimeSlots = new[]
                     {
-                        new { StartTime = new TimeOnly(10, 0), EndTime = new TimeOnly(16, 0) }
+                        new { StartTime ="10:00", EndTime ="17:00" }, 
                     }
                 }
             }
@@ -344,8 +341,8 @@ public class AvailabilityTests : MentorshipTestBase
         var availabilityResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Tuesday,
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(17, 0)
+            StartTime = "09:00",
+            EndTime ="17:00"
         });
 
         var availabilityId = await availabilityResponse.Content.ReadFromJsonAsync<int>();
@@ -366,15 +363,15 @@ public class AvailabilityTests : MentorshipTestBase
         await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Thursday,
-            StartTime = new TimeOnly(9, 0),
-            EndTime = new TimeOnly(12, 0)
+            StartTime = "09:00",
+            EndTime = "12:00"
         });
 
         await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
         {
             DayOfWeek = DayOfWeek.Thursday,
-            StartTime = new TimeOnly(14, 0),
-            EndTime = new TimeOnly(17, 0)
+            StartTime = "14:00",
+            EndTime = "17:00"
         });
 
         // Act

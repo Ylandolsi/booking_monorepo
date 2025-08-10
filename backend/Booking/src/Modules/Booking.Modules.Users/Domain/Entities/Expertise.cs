@@ -24,6 +24,8 @@ public class Expertise : Entity
         Description = description?.Trim() ?? string.Empty;
         if (id != 0)
             Id = id;
+        CreatedAt = DateTime.UtcNow;
+
         //Category = category;
     }
     public ICollection<UserExpertise> UserExpertises { get; private set; } = new List<UserExpertise>();

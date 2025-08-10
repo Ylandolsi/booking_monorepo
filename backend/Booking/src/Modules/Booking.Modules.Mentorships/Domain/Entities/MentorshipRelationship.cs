@@ -9,26 +9,28 @@ public class MentorshipRelationship : Entity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
-    
+
     public int MentorId { get; private set; }
-    
+
     public int MenteeId { get; private set; }
-    
+
     public int SessionCount { get; private set; }
-    
+
     public decimal TotalSpent { get; private set; }
-    
+
     public DateTime StartedAt { get; private set; }
-    
+
     public DateTime? LastSessionAt { get; private set; }
-    
+
     public bool IsActive { get; private set; }
 
     // Navigation properties
     public Mentor Mentor { get; set; } = default!;
     public ICollection<Session> Sessions { get; private set; } = new List<Session>();
 
-    private MentorshipRelationship() { }
+    private MentorshipRelationship()
+    {
+    }
 
     public static MentorshipRelationship Create(int mentorId, int menteeId)
     {
@@ -39,6 +41,7 @@ public class MentorshipRelationship : Entity
             SessionCount = 0,
             TotalSpent = 0,
             StartedAt = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow,
             IsActive = true
         };
 

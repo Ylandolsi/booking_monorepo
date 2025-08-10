@@ -9,8 +9,8 @@ using Microsoft.AspNetCore.Routing;
 namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
 public sealed record TimeSlot(
-    TimeOnly StartTime,
-    TimeOnly EndTime);
+    string StartTime,
+    string EndTime);
 
 public sealed record DayAvailability(
     DayOfWeek DayOfWeek,
@@ -18,9 +18,7 @@ public sealed record DayAvailability(
 
 internal sealed class SetBulkAvailability : IEndpoint
 {
-    public sealed record Request(
-        List<DayAvailability> Availabilities,
-        int? BufferTimeMinutes = null);
+    public sealed record Request( List<DayAvailability> Availabilities );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -34,8 +32,8 @@ internal sealed class SetBulkAvailability : IEndpoint
 
                 var command = new SetBulkAvailabilityCommand(
                     userId,
-                    request.Availabilities,
-                    request.BufferTimeMinutes);
+                    request.Availabilities
+                    );
 
                 Result<List<int>> result = await handler.Handle(command, cancellationToken);
 

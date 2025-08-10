@@ -17,13 +17,11 @@ public class Availability : Entity
     public TimeRange TimeRange { get; private set; } = null!;
     
     public bool IsActive { get; private set; }
-    
-    public DateTime CreatedAt { get; private set; }
 
     // Navigation properties
     public Mentor Mentor { get; set; } = default!;
 
-    private Availability() { }
+    private Availability()  { }
     
     public static Availability Create(int mentorId, DayOfWeek dayOfWeek, TimeRange timeRange)
     {

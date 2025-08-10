@@ -51,6 +51,7 @@ public class Education : Entity
         EndDate = endDate;
         Description = description?.Trim() ?? string.Empty;
         ToPresent = !endDate.HasValue;
+        CreatedAt = DateTime.UtcNow;
 
     }
 

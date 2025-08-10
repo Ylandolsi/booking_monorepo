@@ -20,7 +20,6 @@ public static class Genders
 
 public sealed class User : IdentityUser<int>, IEntity
 {
-
     public string Slug { get; private set; } = string.Empty;
     public Name Name { get; private set; } = null!;
     public Status Status { get; private set; } = null!;
@@ -31,6 +30,8 @@ public sealed class User : IdentityUser<int>, IEntity
 
     public string Bio { get; private set; } = string.Empty;
 
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     private User() { }
 
@@ -56,7 +57,9 @@ public sealed class User : IdentityUser<int>, IEntity
             UserName = emailAddress,
             ProfilePictureUrl = new ProfilePicture(profilePictureSource),
             Slug = slug,
+            CreatedAt = DateTime.UtcNow, 
         };
+
 
         return user;
     }

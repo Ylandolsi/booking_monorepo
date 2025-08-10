@@ -37,6 +37,7 @@ public class Experience : Entity
         Company = company?.Trim() ?? string.Empty;
         UserId = userId;
         ToPresent = !endDate.HasValue;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public void Update(string title,

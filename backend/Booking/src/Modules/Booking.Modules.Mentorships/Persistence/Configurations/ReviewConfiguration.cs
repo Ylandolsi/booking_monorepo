@@ -31,7 +31,7 @@ internal sealed class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .IsRequired();
 
         builder.Property(r => r.UpdatedAt)
-            .IsRequired(false);
+            .IsRequired();
 
         // Relationships
         builder.HasOne(r => r.Session)

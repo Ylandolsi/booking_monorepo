@@ -23,8 +23,6 @@ public class Session : Entity
     
     public SessionStatus Status { get; private set; }
     
-    public DateTime CreatedAt { get; private set; }
-    
     public DateTime ScheduledAt { get; private set; }
     
     public DateTime? ConfirmedAt { get; private set; }

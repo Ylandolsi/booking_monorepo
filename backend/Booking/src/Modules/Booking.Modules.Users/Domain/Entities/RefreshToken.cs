@@ -33,6 +33,7 @@ public class RefreshToken : Entity
         Token = token ?? throw new ArgumentNullException(nameof(token));
         UserId = userId;
         ExpiresOnUtc = expiresOnUtc;
+        CreatedAt = DateTime.UtcNow;
         CreatedOnUtc = DateTime.UtcNow;
         // TODO : uncomment the exceptions
         // the exception are removed for testing purposes ( cuz in memory there is no IP or User-Agent)

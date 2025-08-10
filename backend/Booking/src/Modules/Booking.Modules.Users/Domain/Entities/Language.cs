@@ -19,6 +19,7 @@ public class Language : Entity
                     throw new ArgumentException("name should not be empty or null");
         if (id != 0)
             Id = id;
+        CreatedAt = DateTime.UtcNow;
     }
 
 

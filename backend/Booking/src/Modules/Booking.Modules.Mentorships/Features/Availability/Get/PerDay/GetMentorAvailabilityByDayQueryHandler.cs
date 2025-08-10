@@ -168,7 +168,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             var isAvailable = !isBooked ;
 
             slots.Add(new TimeSlotResponse(
-                availabilityId,
                 currentTime,
                 slotEndTime,
                 isBooked,

@@ -5,5 +5,4 @@ namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
 public sealed record SetBulkAvailabilityCommand(
     int MentorId,
-    List<DayAvailability> Availabilities,
-    int? BufferTimeMinutes = null) : ICommand<List<int>>; 
+    List<DayAvailability> Availabilities ) : ICommand<List<int>>; 

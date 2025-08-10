@@ -15,9 +15,6 @@ public class Mentor : Entity
     public Duration BufferTime { get; private set; } = new Duration(15); // Default 15 minutes
 
     public bool IsActive { get; private set; }
-
-    public DateTime CreatedAt { get; private set; }
-
     public DateTime? LastActiveAt { get; private set; }
 
     // Navigation properties

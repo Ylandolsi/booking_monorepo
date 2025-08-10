@@ -14,12 +14,11 @@ internal sealed class SetBulkAvailabilityCommandHandler(
 {
     public async Task<Result<List<int>>> Handle(SetBulkAvailabilityCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Setting bulk availability for mentor {MentorId} with {Count} day availabilities",
+        logger.LogInformation("Replacing bulk availability for mentor {MentorId} with {Count} day availabilities",
             command.MentorId, command.Availabilities.Count);
 
         try
         {
-            // Verify mentor exists and is active
             var mentor = await context.Mentors
                 .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
 
@@ -28,15 +27,13 @@ internal sealed class SetBulkAvailabilityCommandHandler(
                 return Result.Failure<List<int>>(Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
 
-            // Update buffer time if provided
-            if (command.BufferTimeMinutes.HasValue)
-            {
-                var bufferTimeResult = mentor.UpdateBufferTime(command.BufferTimeMinutes.Value);
-                if (bufferTimeResult.IsFailure)
-                {
-                    return Result.Failure<List<int>>(bufferTimeResult.Error);
-                }
-            }
+            var daysToUpdate = command.Availabilities.Select(a => a.DayOfWeek).Distinct().ToList();
+
+            var oldAvailabilities = await context.Availabilities
+                .Where(a => a.MentorId == command.MentorId && daysToUpdate.Contains(a.DayOfWeek))
+                .ToListAsync(cancellationToken);
+
+            context.Availabilities.RemoveRange(oldAvailabilities);
 
             var availabilityIds = new List<int>();
 
@@ -44,33 +41,25 @@ internal sealed class SetBulkAvailabilityCommandHandler(
             {
                 foreach (var timeSlot in dayAvailability.TimeSlots)
                 {
-                    // Validate time range is in 30-minute increments
-                    var totalMinutes = (timeSlot.EndTime - timeSlot.StartTime).TotalMinutes;
+                    bool isStartValid = TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart);
+                    bool isEndValid = TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd);
+
+                    if (!isStartValid || !isEndValid) continue;
+
+                    var totalMinutes = (timeEnd - timeStart).TotalMinutes;
                     if (totalMinutes % 30 != 0)
                     {
                         return Result.Failure<List<int>>(Error.Problem("Availability.InvalidTimeRange",
                             "Time range must be in 30-minute increments"));
                     }
 
-                    var timeRangeResult = TimeRange.Create(timeSlot.StartTime, timeSlot.EndTime);
+                    var timeRangeResult = TimeRange.Create(timeStart, timeEnd);
                     if (timeRangeResult.IsFailure)
                     {
                         return Result.Failure<List<int>>(timeRangeResult.Error);
                     }
 
                     var timeRangeValue = timeRangeResult.Value;
-
-                    bool hasOverlappingAvailability = await context.Availabilities
-                        .AnyAsync(a =>
-                                a.MentorId == command.MentorId &&
-                                a.DayOfWeek == dayAvailability.DayOfWeek &&
-                                (
-                                    (a.TimeRange.StartHour * 60 + a.TimeRange.StartMinute <
-                                     timeSlot.EndTime.Hour * 60 + timeSlot.EndTime.Minute) &&
-                                    (a.TimeRange.EndHour * 60 + a.TimeRange.EndMinute >
-                                     timeSlot.StartTime.Hour * 60 + timeSlot.StartTime.Minute)
-                                ),
-                            cancellationToken);
 
                     var availability = Booking.Modules.Mentorships.Domain.Entities.Availability.Create(
                         command.MentorId,
@@ -84,14 +73,14 @@ internal sealed class SetBulkAvailabilityCommandHandler(
 
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Successfully created {Count} availability slots for mentor {MentorId}",
+            logger.LogInformation("Successfully replaced availability with {Count} slots for mentor {MentorId}",
                 availabilityIds.Count, command.MentorId);
 
             return Result.Success(availabilityIds);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to set bulk availability for mentor {MentorId}", command.MentorId);
+            logger.LogError(ex, "Failed to replace bulk availability for mentor {MentorId}", command.MentorId);
             return Result.Failure<List<int>>(Error.Problem("Availability.SetBulkFailed",
                 "Failed to set bulk availability"));
         }

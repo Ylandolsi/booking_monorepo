@@ -12,8 +12,8 @@ internal sealed class SetAvailability : IEndpoint
 {
     public sealed record Request(
         DayOfWeek DayOfWeek,
-        TimeOnly StartTime,
-        TimeOnly EndTime);
+        string StartTime , // hh:mm format
+        string EndTime); // hh:mm
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -24,14 +24,23 @@ internal sealed class SetAvailability : IEndpoint
             CancellationToken cancellationToken) =>
         {
             int userId = userContext.UserId;
+            
+            bool isStartValid = TimeOnly.TryParseExact(request.StartTime, "HH:mm", out TimeOnly timeStart);
+            bool isEndValid = TimeOnly.TryParseExact(request.EndTime, "HH:mm", out TimeOnly timeEnd);
+
+            if (!isStartValid || !isEndValid)
+            {
+                return Results.BadRequest("Invalid start/end time.");
+            }
+
 
             // For now, assuming mentorId is the same as userId - we should enhance this
             // to properly get the mentor ID from the user
             var command = new SetAvailabilityCommand(
                 userId, // This should be replaced with actual mentor ID lookup
                 request.DayOfWeek,
-                request.StartTime,
-                request.EndTime);
+                timeStart,
+                timeEnd);
 
             Result<int> result = await handler.Handle(command, cancellationToken);
 
