@@ -17,6 +17,7 @@ import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
 import { Route as TestAlreadyRouteImport } from './routes/test/already'
+import { Route as MentorSetAvailabilityRouteImport } from './routes/mentor/set-availability'
 import { Route as MentorBecomeRouteImport } from './routes/mentor/become'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as ErrorExpAdvancedLoadingExamplesRouteImport } from './routes/error-exp/advanced-loading-examples'
@@ -24,7 +25,6 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-passw
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
-import { Route as AppAvailabilityRouteImport } from './routes/app/availability'
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as BookingMentorSlugIndexRouteImport } from './routes/booking/$mentorSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
@@ -70,6 +70,11 @@ const TestAlreadyRoute = TestAlreadyRouteImport.update({
   path: '/test/already',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MentorSetAvailabilityRoute = MentorSetAvailabilityRouteImport.update({
+  id: '/mentor/set-availability',
+  path: '/mentor/set-availability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MentorBecomeRoute = MentorBecomeRouteImport.update({
   id: '/mentor/become',
   path: '/mentor/become',
@@ -107,11 +112,6 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppAvailabilityRoute = AppAvailabilityRouteImport.update({
-  id: '/availability',
-  path: '/availability',
-  getParentRoute: () => AppRoute,
-} as any)
 const ProfileUserSlugIndexRoute = ProfileUserSlugIndexRouteImport.update({
   id: '/profile/$userSlug/',
   path: '/profile/$userSlug/',
@@ -139,7 +139,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
-  '/app/availability': typeof AppAvailabilityRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -147,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/mentor/set-availability': typeof MentorSetAvailabilityRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
@@ -160,7 +160,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/unauthorized': typeof UnauthorizedRoute
-  '/app/availability': typeof AppAvailabilityRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -168,6 +167,7 @@ export interface FileRoutesByTo {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/mentor/set-availability': typeof MentorSetAvailabilityRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
@@ -183,7 +183,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
-  '/app/availability': typeof AppAvailabilityRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
@@ -191,6 +190,7 @@ export interface FileRoutesById {
   '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
+  '/mentor/set-availability': typeof MentorSetAvailabilityRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
@@ -207,7 +207,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/unauthorized'
-    | '/app/availability'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -215,6 +214,7 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/mentor/set-availability'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
@@ -228,7 +228,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/unauthorized'
-    | '/app/availability'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -236,6 +235,7 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/mentor/set-availability'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
@@ -250,7 +250,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/unauthorized'
-    | '/app/availability'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
@@ -258,6 +257,7 @@ export interface FileRouteTypes {
     | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
+    | '/mentor/set-availability'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
@@ -280,6 +280,7 @@ export interface RootRouteChildren {
   ErrorExpAdvancedLoadingExamplesRoute: typeof ErrorExpAdvancedLoadingExamplesRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   MentorBecomeRoute: typeof MentorBecomeRoute
+  MentorSetAvailabilityRoute: typeof MentorSetAvailabilityRoute
   TestAlreadyRoute: typeof TestAlreadyRoute
   TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
@@ -348,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestAlreadyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mentor/set-availability': {
+      id: '/mentor/set-availability'
+      path: '/mentor/set-availability'
+      fullPath: '/mentor/set-availability'
+      preLoaderRoute: typeof MentorSetAvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mentor/become': {
       id: '/mentor/become'
       path: '/mentor/become'
@@ -397,13 +405,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app/availability': {
-      id: '/app/availability'
-      path: '/availability'
-      fullPath: '/app/availability'
-      preLoaderRoute: typeof AppAvailabilityRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/profile/$userSlug/': {
       id: '/profile/$userSlug/'
       path: '/profile/$userSlug'
@@ -436,12 +437,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
-  AppAvailabilityRoute: typeof AppAvailabilityRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAvailabilityRoute: AppAvailabilityRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -458,6 +457,7 @@ const rootRouteChildren: RootRouteChildren = {
   ErrorExpAdvancedLoadingExamplesRoute: ErrorExpAdvancedLoadingExamplesRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   MentorBecomeRoute: MentorBecomeRoute,
+  MentorSetAvailabilityRoute: MentorSetAvailabilityRoute,
   TestAlreadyRoute: TestAlreadyRoute,
   TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,

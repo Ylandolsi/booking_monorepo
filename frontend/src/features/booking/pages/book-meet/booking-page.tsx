@@ -15,17 +15,17 @@ import {
   AvatarFallback,
   Spinner,
 } from '@/components/ui';
-import { Calendar as BookingCalendar } from '../components/calendar';
-import { TimeSlots } from '../components/time-slots';
-import { BookingSummaryCard } from '../components/booking-summary';
-import { useBookSession } from '../api/book-session-api';
+import { Calendar as BookingCalendar } from '../../components/calendar';
+import { TimeSlots } from '../../components/time-slots';
+import { BookingSummaryCard } from '../../components/booking-summary';
+import { useBookSession } from '../../api/book-session-api';
 import {
   useMonthlyAvailability,
   useDailyAvailability,
-} from '../api/availability-api';
+} from '../../api/availability-api';
 import { useMentorDetails } from '@/features/mentor/api';
-import type { TimeSlot } from '../types/availability-types';
-import type { BookingSummary } from '../types/booking-types';
+import type { TimeSlot } from '../../types/availability-types';
+import type { BookingSummary } from '../../types/booking-types';
 
 export function BookingPage() {
   const { mentorSlug } = useParams({ strict: false }) as {

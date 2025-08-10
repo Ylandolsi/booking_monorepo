@@ -10,6 +10,7 @@ import {
   Search,
   ChevronRight,
   ChevronLeft,
+  Timer,
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 
@@ -28,7 +29,8 @@ export type Item = {
     | 'Search'
     | 'Notifications'
     | 'Settings'
-    | 'Become Mentor';
+    | 'Become Mentor'
+    | 'Set Availability';
   icon: JSX.Element;
   click: () => void;
   badge?: string;
@@ -42,11 +44,11 @@ type SidebarProps = {
 };
 
 const Sidebar = ({
-                   sidebarOpen,
-                   setSidebarOpen,
-                   collapsed = false,
-                   setCollapsed,
-                 }: SidebarProps) => {
+  sidebarOpen,
+  setSidebarOpen,
+  collapsed = false,
+  setCollapsed,
+}: SidebarProps) => {
   const { currentUser, error, isLoading, logout } = useAuth();
   const { itemActive, setItemActive } = useSideBar();
   const isMobile = useIsMobile();
@@ -61,28 +63,30 @@ const Sidebar = ({
       click: () => navigate({ to: '/app' }),
     },
     {
-      name: 'Become Mentor',
-      icon: <GiTeacher size={20} />
-      ,
-      click: () => navigate({ to: '/mentor/become' }),
-    },
-    {
       name: 'Profile',
       icon: <UserIcon size={20} />,
       click: () => navigate({ to: `/profile/${currentUser?.slug}` }),
     },
     {
+      name: 'Become Mentor',
+      icon: <GiTeacher size={20} />,
+      click: () => navigate({ to: '/mentor/become' }),
+    },
+    {
+      name: 'Set Availability',
+      icon: <Timer size={20} />,
+      click: () => navigate({ to: '/mentor/set-availability' }),
+    },
+    {
       name: 'Bookings',
       icon: <Calendar size={20} />,
-      click: () => {
-      },
+      click: () => {},
       badge: '3',
     },
     {
       name: 'Search',
       icon: <Search size={20} />,
-      click: () => {
-      },
+      click: () => {},
     },
   ];
 
@@ -90,15 +94,13 @@ const Sidebar = ({
     {
       name: 'Notifications',
       icon: <Bell size={20} />,
-      click: () => {
-      },
+      click: () => {},
       badge: '5',
     },
     {
       name: 'Settings',
       icon: <Settings size={20} />,
-      click: () => {
-      },
+      click: () => {},
     },
   ];
   const handleItemClick = (item: Item) => {
@@ -213,10 +215,10 @@ const Sidebar = ({
                     w-full flex items-center rounded-lg text-left transition-all duration-200 group relative
                     ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
-                    itemActive == item.name
-                      ? 'bg-primary text-primary-foreground shadow-md'
-                      : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                  }
+                      itemActive == item.name
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    }
                   `}
                   title={collapsed ? item.name : undefined}
                 >
@@ -273,10 +275,10 @@ const Sidebar = ({
                     w-full flex items-center rounded-lg text-left transition-all duration-200 group hover:bg-muted text-muted-foreground hover:text-foreground relative
                     ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
-                    itemActive == item.name
-                      ? 'bg-primary text-primary-foreground shadow-md'
-                      : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                  }
+                      itemActive == item.name
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    }
                   `}
                   title={collapsed ? item.name : undefined}
                 >
