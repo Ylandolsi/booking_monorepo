@@ -13,6 +13,10 @@ internal sealed class AvailabilityConfiguration : IEntityTypeConfiguration<Avail
         builder.Property(a => a.MentorId)
             .IsRequired();
 
+        builder.Property(a => a.DayId)
+            .IsRequired();
+
+
         builder.Property(a => a.DayOfWeek)
             .HasConversion<int>()
             .IsRequired();
@@ -42,9 +46,15 @@ internal sealed class AvailabilityConfiguration : IEntityTypeConfiguration<Avail
             .HasForeignKey(a => a.MentorId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasOne(a => a.Day)
+            .WithMany(d => d.Availabilities)
+            .HasForeignKey(a => a.DayId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         // Indexes
         builder.HasIndex(a => a.MentorId);
         builder.HasIndex(a => a.DayOfWeek);
+        builder.HasIndex(a => a.DayId);
         builder.HasIndex(a => a.IsActive);
 
     }

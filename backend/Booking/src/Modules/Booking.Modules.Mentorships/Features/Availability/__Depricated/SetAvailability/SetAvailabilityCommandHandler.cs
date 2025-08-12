@@ -102,8 +102,14 @@ internal sealed class SetAvailabilityCommandHandler(
 
         try
         {
+            var day = mentor.Days.FirstOrDefault(d => d.DayOfWeek == command.DayOfWeek);
+            if (day == null)
+            {
+                throw new Exception("Mentor should have 7 days when created"); 
+            }
             var availability = Domain.Entities.Availability.Create(
                 command.UserId,
+                day.Id,
                 command.DayOfWeek,
                 timeRange.Value);
 

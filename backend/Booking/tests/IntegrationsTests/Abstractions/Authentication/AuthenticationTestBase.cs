@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
 
 namespace IntegrationsTests.Abstractions;
@@ -21,6 +22,13 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
     {
         var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
         await outboxProcessor.ExecuteAsync(null);
+    }
+
+    protected async Task<MeData> GetCurrenUserInfo( HttpClient? arrangeClient = null)
+    {
+        arrangeClient ??= ArrangeClient;
+        var response = await arrangeClient.GetAsync(UsersEndpoints.GetCurrentUser);
+        return await response.Content.ReadFromJsonAsync<MeData>() ?? throw new InvalidOperationException("Failed to deserialize user info response");
     }
     
      #region Authentication Helper Methods

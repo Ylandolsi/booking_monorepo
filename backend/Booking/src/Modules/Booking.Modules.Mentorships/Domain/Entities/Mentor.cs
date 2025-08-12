@@ -25,6 +25,7 @@ public class Mentor : Entity
 
     public ICollection<Availability> Availabilities { get; private set; } = new List<Availability>();
     public ICollection<Review> Reviews { get; private set; } = new List<Review>();
+    public ICollection<Day> Days { get; private set; } = new List<Day>(); 
 
     private Mentor()
     {
@@ -48,11 +49,20 @@ public class Mentor : Entity
             CreatedAt = DateTime.UtcNow,
             LastActiveAt = DateTime.UtcNow
         };
-
+        mentor.CreateAllDays(); 
         return mentor;
     }
     
-
+    private void CreateAllDays()
+    {
+        var allDaysOfWeek = Enum.GetValues<DayOfWeek>();
+        
+        foreach (var dayOfWeek in allDaysOfWeek)
+        {
+            var day = Day.Create(Id, dayOfWeek, isActive: false); 
+            Days.Add(day);
+        }
+    }
     public Result UpdateHourlyRate(decimal amount, string currency = "USD")
     {
         if (amount <= 0)

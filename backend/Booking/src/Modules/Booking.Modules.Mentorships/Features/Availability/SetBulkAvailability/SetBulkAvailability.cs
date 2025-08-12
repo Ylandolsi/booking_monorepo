@@ -8,37 +8,28 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
-public sealed record TimeSlot(
-    string StartTime,
-    string EndTime);
-
-public sealed record DayAvailability(
-    DayOfWeek DayOfWeek,
-    List<TimeSlot> TimeSlots);
-
 internal sealed class SetBulkAvailability : IEndpoint
 {
-    public sealed record Request( List<DayAvailability> Availabilities );
+    public sealed record Request(List<DayAvailabilityRequest> DayAvailabilities);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(MentorshipEndpoints.Availability.SetBulk, async (
                 Request request,
                 UserContext userContext,
-                ICommandHandler<SetBulkAvailabilityCommand, List<int>> handler,
+                ICommandHandler<SetBulkAvailabilityCommand> handler,
                 CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
 
                 var command = new SetBulkAvailabilityCommand(
                     userId,
-                    request.Availabilities
-                    );
+                    request.DayAvailabilities);
 
-                Result<List<int>> result = await handler.Handle(command, cancellationToken);
+                Result result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
-                    Results.Ok,
+                    () => Results.Ok(),
                     CustomResults.Problem);
             })
             .RequireAuthorization()

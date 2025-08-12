@@ -9,6 +9,7 @@
     <ItemGroup>
       <Folder Include="Domain\Events\" />
       <Folder Include="Exceptions\" />
+      <Folder Include="Features\Availability\__Depricated\" />
       <Folder Include="Persistence\Seed\" />
     </ItemGroup>
 

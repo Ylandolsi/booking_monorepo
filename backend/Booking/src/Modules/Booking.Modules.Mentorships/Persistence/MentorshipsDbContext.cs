@@ -17,6 +17,7 @@ public sealed class MentorshipsDbContext : DbContext
     // Entities
     public DbSet<Mentor> Mentors { get; set; }
     public DbSet<Session> Sessions { get; set; }
+    public DbSet<Day> Days { get; set;  }
     public DbSet<MentorshipRelationship> MentorshipRelationships { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Availability> Availabilities { get; set; }

@@ -6,83 +6,110 @@ using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+
 namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
 internal sealed class SetBulkAvailabilityCommandHandler(
     MentorshipsDbContext context,
-    ILogger<SetBulkAvailabilityCommandHandler> logger) : ICommandHandler<SetBulkAvailabilityCommand, List<int>>
+    ILogger<SetBulkAvailabilityCommandHandler> logger) 
+    : ICommandHandler<SetBulkAvailabilityCommand>
 {
-    public async Task<Result<List<int>>> Handle(SetBulkAvailabilityCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(
+        SetBulkAvailabilityCommand command, 
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Replacing bulk availability for mentor {MentorId} with {Count} day availabilities",
-            command.MentorId, command.Availabilities.Count);
+        logger.LogInformation("Processing bulk availability for mentor {MentorId} with {DayCount} days",
+            command.MentorId, command.DayAvailabilities.Count);
 
         try
         {
             var mentor = await context.Mentors
+                .Include(m => m.Days)
+                .Include(m => m.Availabilities)
                 .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
 
             if (mentor == null)
             {
-                return Result.Failure<List<int>>(Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
+                return Result.Failure(
+                    Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
 
-            var daysToUpdate = command.Availabilities.Select(a => a.DayOfWeek).Distinct().ToList();
+            var createdAvailabilityIds = new List<int>();
 
-            var oldAvailabilities = await context.Availabilities
-                .Where(a => a.MentorId == command.MentorId && daysToUpdate.Contains(a.DayOfWeek))
-                .ToListAsync(cancellationToken);
-
-            context.Availabilities.RemoveRange(oldAvailabilities);
-
-            var availabilityIds = new List<int>();
-
-            foreach (var dayAvailability in command.Availabilities)
+            foreach (var dayRequest in command.DayAvailabilities)
             {
-                foreach (var timeSlot in dayAvailability.TimeSlots)
+                var day = mentor.Days.FirstOrDefault(d => d.DayOfWeek == dayRequest.DayOfWeek);
+                if (day == null)
                 {
-                    bool isStartValid = TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart);
-                    bool isEndValid = TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd);
+                    throw new Exception("Mentor should have 7 days when created"); 
+                }
 
-                    if (!isStartValid || !isEndValid) continue;
+                if (dayRequest.IsActive && !day.IsActive)
+                {
+                    var activateResult = day.Activate();
+                    if (activateResult.IsFailure) continue;
+                }
+                else if (!dayRequest.IsActive && day.IsActive)
+                {
+                    var deactivateResult = day.Deactivate();
+                    if (deactivateResult.IsFailure) continue;
+                }
+
+                // if day is inactive, skip creating time slots
+                if (!dayRequest.IsActive) continue;
+
+                var existingAvailabilities = await context.Availabilities
+                    .Where(a => a.DayId == day.Id)
+                    .ToListAsync(cancellationToken);
+                
+                context.Availabilities.RemoveRange(existingAvailabilities);
+
+                foreach (var timeSlot in dayRequest.TimeSlots)
+                {
+                    if (!TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart) ||
+                        !TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd))
+                    {
+                        logger.LogWarning("Invalid time format for slot {StartTime}-{EndTime}", 
+                            timeSlot.StartTime, timeSlot.EndTime);
+                        continue;
+                    }
 
                     var totalMinutes = (timeEnd - timeStart).TotalMinutes;
                     if (totalMinutes % 30 != 0)
                     {
-                        return Result.Failure<List<int>>(Error.Problem("Availability.InvalidTimeRange",
-                            "Time range must be in 30-minute increments"));
+                        logger.LogWarning("Time range must be in 30-minute increments: {StartTime}-{EndTime}", 
+                            timeSlot.StartTime, timeSlot.EndTime);
+                        continue;
                     }
 
                     var timeRangeResult = TimeRange.Create(timeStart, timeEnd);
                     if (timeRangeResult.IsFailure)
                     {
-                        return Result.Failure<List<int>>(timeRangeResult.Error);
+                        logger.LogWarning("Failed to create time range: {Error}", timeRangeResult.Error.Description);
+                        continue;
                     }
 
-                    var timeRangeValue = timeRangeResult.Value;
-
-                    var availability = Booking.Modules.Mentorships.Domain.Entities.Availability.Create(
+                    var availability = Domain.Entities.Availability.Create(
                         command.MentorId,
-                        dayAvailability.DayOfWeek,
-                        timeRangeValue);
+                        day.Id,
+                        dayRequest.DayOfWeek,
+                        timeRangeResult.Value);
 
                     context.Availabilities.Add(availability);
-                    availabilityIds.Add(availability.Id);
                 }
             }
 
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Successfully replaced availability with {Count} slots for mentor {MentorId}",
-                availabilityIds.Count, command.MentorId);
 
-            return Result.Success(availabilityIds);
+            logger.LogInformation("Successfully processed bulk availability");
+            return Result.Success();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to replace bulk availability for mentor {MentorId}", command.MentorId);
-            return Result.Failure<List<int>>(Error.Problem("Availability.SetBulkFailed",
-                "Failed to set bulk availability"));
+            logger.LogError(ex, "Failed to process bulk availability for mentor {MentorId}", command.MentorId);
+            return Result.Failure(
+                Error.Problem("Availability.BulkSetFailed", "Failed to set bulk availability"));
         }
     }
 }

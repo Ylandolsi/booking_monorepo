@@ -201,3 +201,13 @@ clean-architecture=# SELECT *
 FROM "users"."AspNetUsers"
 WHERE "slug" = 'yassine-landolsi';
 clean-architecture=# 
+
+
+
+
+TimeSlots = new object[0]  : empty object 
+
+var availability = await response.Content.ReadFromJsonAsync<dynamic>();
+Assert.NotNull(availability);
+Assert.True(((JsonElement)availability.GetProperty("isAvailable")).GetBoolean());
+Assert.True(((JsonElement)availability.GetProperty("timeSlots")).GetArrayLength() > 0);

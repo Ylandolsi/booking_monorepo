@@ -11,6 +11,7 @@ public class Availability : Entity
     public int Id { get; private set; }
     
     public int MentorId { get; private set; }
+    public int DayId { get; private set; } // foreign key to Day
     
     public DayOfWeek DayOfWeek { get; private set; } // sunday = 0, monday = 1, ..., saturday = 6
     
@@ -20,14 +21,16 @@ public class Availability : Entity
 
     // Navigation properties
     public Mentor Mentor { get; set; } = default!;
+    public Day Day { get; set; } = default!; 
 
-    private Availability()  { }
+    private Availability() { }
     
-    public static Availability Create(int mentorId, DayOfWeek dayOfWeek, TimeRange timeRange)
+    public static Availability Create(int mentorId, int dayId ,  DayOfWeek dayOfWeek, TimeRange timeRange)
     {
         var availability = new Availability
         {
             MentorId = mentorId,
+            DayId = dayId,
             DayOfWeek = dayOfWeek,
             TimeRange = timeRange,
             IsActive = true,
