@@ -211,3 +211,12 @@ var availability = await response.Content.ReadFromJsonAsync<dynamic>();
 Assert.NotNull(availability);
 Assert.True(((JsonElement)availability.GetProperty("isAvailable")).GetBoolean());
 Assert.True(((JsonElement)availability.GetProperty("timeSlots")).GetArrayLength() > 0);
+
+
+---
+
+var availabilityWeekTasks = Enumerable.Range(0, 7)
+.Select(async dayOfWeek =>
+{ do something .. return .. } = 
+
+        var availabilityWeek = (await Task.WhenAll(availabilityWeekTasks)).ToList();

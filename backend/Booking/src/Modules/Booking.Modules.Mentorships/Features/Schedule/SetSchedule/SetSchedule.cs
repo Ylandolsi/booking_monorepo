@@ -2,27 +2,28 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Features.Schedule.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
-internal sealed class SetBulkAvailability : IEndpoint
+internal sealed class SetSchedule : IEndpoint
 {
-    public sealed record Request(List<DayAvailabilityRequest> DayAvailabilities);
+    public sealed record Request(List<DayAvailability> DayAvailabilities);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(MentorshipEndpoints.Availability.SetBulk, async (
                 Request request,
                 UserContext userContext,
-                ICommandHandler<SetBulkAvailabilityCommand> handler,
+                ICommandHandler<SetScheduleCommand> handler,
                 CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
 
-                var command = new SetBulkAvailabilityCommand(
+                var command = new SetScheduleCommand(
                     userId,
                     request.DayAvailabilities);
 

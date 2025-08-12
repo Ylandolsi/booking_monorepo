@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Features.Schedule.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,12 +15,12 @@ public class GetMentorSchedule : IEndpoint
     {
         app.MapGet(MentorshipEndpoints.Availability.GetSchedule,
                 async (UserContext userContext,
-                    IQueryHandler<GetMentorScheduleQuery, List<MentorScheduleResponse>> handler,
+                    IQueryHandler<GetMentorScheduleQuery, List<DayAvailability>> handler,
                     CancellationToken cancellationToken) =>
                 {
                     int mentorId = userContext.UserId;
                     var query = new GetMentorScheduleQuery(mentorId);
-                    Result<List<MentorScheduleResponse>> result = await handler.Handle(query, cancellationToken);
+                    Result<List<DayAvailability>> result = await handler.Handle(query, cancellationToken);
                     return result.Match(Results.Ok, CustomResults.Problem);
                 })
             .RequireAuthorization()

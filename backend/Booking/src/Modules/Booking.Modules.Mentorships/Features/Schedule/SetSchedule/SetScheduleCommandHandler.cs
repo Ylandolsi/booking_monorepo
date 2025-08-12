@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
 
-internal sealed class SetBulkAvailabilityCommandHandler(
+internal sealed class SetScheduleCommandHandler(
     MentorshipsDbContext context,
-    ILogger<SetBulkAvailabilityCommandHandler> logger) 
-    : ICommandHandler<SetBulkAvailabilityCommand>
+    ILogger<SetScheduleCommandHandler> logger) 
+    : ICommandHandler<SetScheduleCommand>
 {
     public async Task<Result> Handle(
-        SetBulkAvailabilityCommand command, 
+        SetScheduleCommand command, 
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Processing bulk availability for mentor {MentorId} with {DayCount} days",
@@ -64,7 +64,7 @@ internal sealed class SetBulkAvailabilityCommandHandler(
                 
                 context.Availabilities.RemoveRange(existingAvailabilities);
 
-                foreach (var timeSlot in dayRequest.TimeSlots)
+                foreach (var timeSlot in dayRequest.AvailabilityRanges)
                 {
                     if (!TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart) ||
                         !TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd))

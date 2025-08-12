@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Features.Schedule.Shared;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,9 +10,9 @@ namespace Booking.Modules.Mentorships.Features.Availability.Get.GetSchedule;
 public class GetMentorScheduleQueryHandler(
     MentorshipsDbContext context,
     ILogger<GetMentorScheduleQueryHandler> logger)
-    : IQueryHandler<GetMentorScheduleQuery, List<MentorScheduleResponse>>
+    : IQueryHandler<GetMentorScheduleQuery, List<DayAvailability>>
 {
-    public async Task<Result<List<MentorScheduleResponse>>> Handle(GetMentorScheduleQuery query,
+    public async Task<Result<List<DayAvailability>>> Handle(GetMentorScheduleQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("GetMentorScheduleQuery executed for mentor with id = {MentorId}", query.MentorId);
@@ -21,24 +22,29 @@ public class GetMentorScheduleQueryHandler(
             .Where(av => av.MentorId == query.MentorId)
             .ToListAsync(cancellationToken);
 
-        var availabilityWeek = Enumerable.Range(0, 7)
-            .Select(dayOfWeek =>
+        var availabilityWeekTasks = Enumerable.Range(0, 7)
+            .Select(async dayOfWeek =>
             {
                 var dayAvailabilities = availabilities
                     .Where(av => (int)av.DayOfWeek == dayOfWeek)
                     .Select(av => new AvailabilityRange
                     {
-                        Id = av.Id,
-                        TimeRange = av.TimeRange.ToString()
+                        StartTime = av.TimeRange.StartTime.ToString(),
+                        EndTime = av.TimeRange.EndTime.ToString()
                     })
                     .ToList();
 
-                return new MentorScheduleResponse
+                var isActive = await context.Days.Where(d => (int)d.DayOfWeek == dayOfWeek)
+                    .Select(d => d.IsActive).FirstOrDefaultAsync(cancellationToken); 
+                
+                return new DayAvailability
                 {
                     DayOfWeek = (DayOfWeek)dayOfWeek,
+                    IsActive = isActive,    
                     AvailabilityRanges = dayAvailabilities
                 };
             }).ToList();
+        var availabilityWeek = (await Task.WhenAll(availabilityWeekTasks)).ToList();
 
         return Result.Success(availabilityWeek);
     }

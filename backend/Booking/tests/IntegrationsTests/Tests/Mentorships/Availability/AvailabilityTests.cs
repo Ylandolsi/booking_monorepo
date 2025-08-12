@@ -17,205 +17,6 @@ public class AvailabilityTests : MentorshipTestBase
     {
     }
 
-    #region SetBulkAvailability
-
-    [Fact]
-    public async Task SetBulkAvailability_ShouldCreateDaysAndSlots_WhenValidDataProvided()
-    {
-        // Arrange
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        var bulkRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" },
-                        new { StartTime = "14:00", EndTime = "17:00" }
-                    }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Wednesday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "10:00", EndTime = "16:00" }
-                    }
-                }
-            }
-        };
-
-        // Act
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //var result = await response.Content.ReadFromJsonAsync<dynamic>();
-        //Assert.NotNull(result);
-        // Assert.True(((JsonElement)result.GetProperty("totalSlotsCreated")).GetInt32() > 0);
-    }
-
-    [Fact]
-    public async Task SetBulkAvailability_ShouldToggleDayAvailability_WhenIsActiveFalse()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        // First, create availability
-        var initialRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Tuesday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "17:00" }
-                    }
-                }
-            }
-        };
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, initialRequest);
-
-        // Then, deactivate the day
-        var toggleRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Tuesday,
-                    IsActive = false,
-                    TimeSlots = new object[0] // Empty slots when deactivating
-                }
-            }
-        };
-
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, toggleRequest);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task SetBulkAvailability_ShouldReplaceExistingSlots_WhenDayAlreadyExists()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        // Create initial availability
-        var initialRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Friday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" }
-                    }
-                }
-            }
-        };
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, initialRequest);
-
-        // Update with new slots
-        var updateRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Friday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "10:00", EndTime = "14:00" },
-                        new { StartTime = "15:00", EndTime = "18:00" }
-                    }
-                }
-            }
-        };
-
-        // Act
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, updateRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task SetBulkAvailability_ShouldReturnBadRequest_WhenInvalidTimeFormat()
-    {
-        // Arrange
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        var invalidRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "25:00", EndTime = "26:00" } // Invalid time
-                    }
-                }
-            }
-        };
-
-        // Act
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, invalidRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode); // Handler handles invalid times gracefully
-    }
-
-    [Fact]
-    public async Task SetBulkAvailability_ShouldHandleBufferTime_WithMultipleSlots()
-    {
-        // Arrange
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        var bulkRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    TimeSlots = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" },
-                        new { StartTime = "13:00", EndTime = "17:00" }
-                    }
-                }
-            }
-        };
-
-        // Act
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    #endregion
-
     #region GetMentorAvailabilityByDay
 
     [Fact]
@@ -233,7 +34,7 @@ public class AvailabilityTests : MentorshipTestBase
                 {
                     DayOfWeek = DayOfWeek.Monday,
                     IsActive = true,
-                    TimeSlots = new[]
+                    AvailabilityRanges = new[]
                     {
                         new { StartTime = "09:00", EndTime = "12:00" },
                         new { StartTime = "14:00", EndTime = "17:00" }
@@ -275,7 +76,7 @@ public class AvailabilityTests : MentorshipTestBase
                 {
                     DayOfWeek = DayOfWeek.Thursday,
                     IsActive = false, // Day is inactive
-                    TimeSlots = new object[0]
+                    AvailabilityRanges = new object[0]
                 }
             }
         };
@@ -314,20 +115,20 @@ public class AvailabilityTests : MentorshipTestBase
                 new
                 {
                     DayOfWeek = DayOfWeek.Monday, IsActive = true,
-                    TimeSlots = new[] { new { StartTime = "09:00", EndTime = "17:00" } }
+                    AvailabilityRanges = new[] { new { StartTime = "09:00", EndTime = "17:00" } }
                 },
                 new
                 {
                     DayOfWeek = DayOfWeek.Wednesday, IsActive = true,
-                    TimeSlots = new[] { new { StartTime = "10:00", EndTime = "16:00" } }
+                    AvailabilityRanges = new[] { new { StartTime = "10:00", EndTime = "16:00" } }
                 },
                 new
                 {
                     DayOfWeek = DayOfWeek.Thursday, IsActive = true,
-                    TimeSlots = new[] { new { StartTime = "08:00", EndTime = "14:00" } }
+                    AvailabilityRanges = new[] { new { StartTime = "08:00", EndTime = "14:00" } }
                 },
                 /*
-                new { DayOfWeek = DayOfWeek.Friday, IsActive = false, TimeSlots = new object[0] }
+                new { DayOfWeek = DayOfWeek.Friday, IsActive = false, AvailabilityRanges = new object[0] }
             */
             }
         };
@@ -389,233 +190,7 @@ public class AvailabilityTests : MentorshipTestBase
         Assert.True(availability.IsAvailable);
     }
     */
-
-
-    // ******************** deprecated ********************
-
-    #region Delete
-
-    // TODO DeleteAvailability_ShouldReturnBadRequest_WhenHasBookedSessions 
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task DeleteAvailability_ShouldSucceed_WhenRequested()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        var createResponse = await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Monday,
-            StartTime = "09:00",
-            EndTime = "17:00"
-        });
-
-        var availabilityId = await createResponse.Content.ReadFromJsonAsync<int>();
-
-        // Act
-        var response = await userAct.DeleteAsync($"/mentorships/availability/{availabilityId}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-    }
-
-    #endregion
-
-    #region SetAvailability
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task SetAvailability_ShouldReturnBadRequest_WhenInvalidTimeIncrement()
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser("increment_test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 50.0m });
-
-        var invalidData = new
-        {
-            DayOfWeek = DayOfWeek.Monday,
-            StartTime = "09:15",
-            EndTime = "10:45", // End time before start time
-        };
-
-        // Act
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, invalidData);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task SetAvailability_ShouldReturnBadRequest_WhenDurationDifferentThan30()
-    {
-        var (userArrange, userAct) = GetClientsForUser("short_duration_test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 60.0m });
-
-        var shortDurationData = new
-        {
-            DayOfWeek = DayOfWeek.Tuesday,
-            StartTime = new TimeOnly(10, 0),
-            EndTime = new TimeOnly(10, 15) // Only 15 minutes
-        };
-
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, shortDurationData);
-
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task SetAvailability_ShouldReturnBadRequest_WhenOverlappingWithExisting()
-    {
-        var (userArrange, userAct) = GetClientsForUser("overlap_test");
-        var loginData = await CreateUserAndLogin(null, null, userArrange);
-
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, new { HourlyRate = 65.0m });
-
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Wednesday,
-            StartTime = "10:00",
-            EndTime = "14:00"
-        });
-
-        var overlappingData = new
-        {
-            DayOfWeek = DayOfWeek.Wednesday,
-            StartTime = "12:00",
-            EndTime = "16:00"
-        };
-
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, overlappingData);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task SetAvailability_ShouldReturnBadRequest_WhenEndTimeBeforeStartTime()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        var availabilityData = new
-        {
-            DayOfWeek = 1, // Monday
-            StartTime = "09:00",
-            EndTime = "08:30", // End time before start time
-        };
-
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task SetAvailability_ShouldCreateAvailabilityAndReturnId_WhenValidDataProvided()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        var availabilityData = new
-        {
-            DayOfWeek = 1, // Monday
-            StartTime = "09:00",
-            EndTime = "17:00",
-        };
-
-        var response = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, availabilityData);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var result = await response.Content.ReadFromJsonAsync<int>();
-        Assert.NotNull(result);
-    }
-
-    #endregion
-
-    #region ToggleDay
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task ToggleAvailability_ShouldToggleIndividualSlot_WhenValidId()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        var availabilityResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Tuesday,
-            StartTime = "09:00",
-            EndTime = "17:00"
-        });
-
-        var availabilityId = await availabilityResponse.Content.ReadFromJsonAsync<int>();
-
-        var toggleResponse = await userAct.PatchAsync($"/mentorships/availability/{availabilityId}/toggle", null);
-
-
-        Assert.Equal(HttpStatusCode.OK, toggleResponse.StatusCode);
-        var result = await toggleResponse.Content.ReadFromJsonAsync<dynamic>();
-        Assert.NotNull(result);
-    }
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task ToggleDayAvailability_ShouldToggleAllSlotsForDay_WhenValidDay()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Thursday,
-            StartTime = "09:00",
-            EndTime = "12:00"
-        });
-
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Thursday,
-            StartTime = "14:00",
-            EndTime = "17:00"
-        });
-
-        // Act
-        var response =
-            await userAct.PatchAsync($"/mentorships/availability/day/toggle?dayOfWeek={DayOfWeek.Thursday}", null);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var result = await response.Content.ReadFromJsonAsync<dynamic>();
-        Assert.NotNull(result);
-    }
-
-    #endregion
-
-    #region Update
-
-    [Fact(Skip = "This test is skipped temporarily.")]
-    public async Task UpdateAvailability_ShouldUpdateSlot_WhenValidData()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        var createResponse = await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Friday,
-            StartTime = "09:00",
-            EndTime = "17:00"
-        });
-
-        var availabilityId = await createResponse.Content.ReadFromJsonAsync<int>();
-
-        var updateData = new
-        {
-            DayOfWeek = DayOfWeek.Friday,
-            StartTime = "10:00",
-            EndTime = "16:00"
-        };
-
-        var response = await userAct.PutAsJsonAsync($"/mentorships/availability/{availabilityId}", updateData);
-
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-    }
-
-    #endregion
-
+    
 
     private DateTime GetNextMonday()
     {
