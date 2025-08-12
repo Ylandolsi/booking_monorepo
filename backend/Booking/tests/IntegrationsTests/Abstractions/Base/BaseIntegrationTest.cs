@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Amazon.SimpleEmail.Model;
 using Bogus;
@@ -8,6 +9,8 @@ using Booking.Modules.Users.Features.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using Snapshooter;
+using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Abstractions;
 
@@ -18,15 +21,14 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     protected readonly IServiceScope _scope;
     protected readonly IntegrationTestsWebAppFactory Factory;
     protected List<SendEmailRequest> EmailCapturer => Factory.CapturedEmails;
-    
+
     protected readonly CookieManager CookieManager;
     protected readonly TestHttpClientFactory ClientFactory;
-    
+
     // Default clients (backward compatibility)
     protected HttpClient ArrangeClient => ClientFactory.GetArrangeClient("default");
     protected HttpClient ActClient => ClientFactory.GetActClient("default");
 
-    
 
     // authentications purpose
     // users claims wihtout really creating a user ( not persisted in the database )
@@ -49,9 +51,9 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
         _scope = Factory.Services.CreateScope();
         _resetDatabase = factory.ResetDatabase;
         EmailCapturer?.Clear();
-        
+
         _client = Factory.CreateClient();
-        
+
         CookieManager = new CookieManager();
         ClientFactory = new TestHttpClientFactory(factory, CookieManager);
     }
@@ -63,8 +65,13 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
                statusCode == StatusCodes.Status204NoContent;
     }
 
-    protected void CheckSuccess(HttpResponseMessage response) => Assert.True(IsSucceed((int)response.StatusCode), "The response status code does not indicate success.");
+    /*protected void CheckSuccess(HttpResponseMessage response) => Assert.True(IsSucceed((int)response.StatusCode),
+        "The response status code does not indicate success.");*/
 
+    protected void CheckSuccess(HttpResponseMessage response)
+    {
+        Assert.True(response.IsSuccessStatusCode, $"Expected success status code, but got {(int)response.StatusCode}");
+    }
 
     public async Task InitializeAsync()
     {
@@ -73,8 +80,68 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     public Task DisposeAsync() => Task.CompletedTask;
-    
-    
+
+    #region Snapshot Testing Helpers
+
+    protected async Task<JsonDocument> ParseResponseContent(HttpResponseMessage response)
+    {
+        
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        return jsonDocument;
+        
+        /*
+         access an array
+
+        var timeSlots = jsonDocument.RootElement.GetProperty("timeSlots"); // JsonElement (array)
+        if (timeSlots.ValueKind == JsonValueKind.Array)
+        {
+            var timeSlotsLength = timeSlots.GetArrayLength(); // 0 for []
+            var timeSlotsList = timeSlots.EnumerateArray().ToList();
+
+         }
+
+         access a boolean
+
+         var isAvailable = jsonDocument.RootElement.GetProperty("isAvailable").GetBoolean();
+
+         access int
+
+         var year = jsonDocument.RootElement.GetProperty("year").GetInt32()
+
+        access object
+
+        var days = jsonDocument.RootElement.GetProperty("days"); // JsonElement (object)
+           if (days.ValueKind == JsonValueKind.Object)
+           {
+               // Access specific properties
+               bool monday = days.GetProperty("monday").GetBoolean(); // true
+               bool tuesday = days.GetProperty("tuesday").GetBoolean(); // false
+
+               // Iterate over all properties
+               var daysProperties = days.EnumerateObject().ToDictionary(prop => prop.Name, prop => prop.Value.GetBoolean());
+               // Result: { "monday": true, "tuesday": false, "wednesday": true }
+           }
+        */
+    }
+
+    /// <summary>
+    /// Captures and compares JSON response snapshot with optional field ignores.
+    /// </summary>
+    /// <param name="response">The HTTP response to snapshot.</param>
+    /// <param name="snapshotName">Optional name for the snapshot file.</param>
+    /// <param name="ignoreFields">Fields to ignore.</param>
+    protected async Task MatchSnapshotAsync(HttpResponseMessage response, string snapshotName,
+        Func<MatchOptions, MatchOptions> matchOptions = null)
+    {
+        var content = await response.Content.ReadAsStringAsync();
+        var jsonDocument = JsonDocument.Parse(content);
+        var formattedJson = JsonSerializer.Serialize(jsonDocument, new JsonSerializerOptions { WriteIndented = true });
+        Snapshot.Match(formattedJson, snapshotName, matchOptions);
+    }
+
+    #endregion
+
     #region User Management Methods
 
     /// <summary>
@@ -121,7 +188,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
 
     #endregion
 
-   
+
     #region Reset and Cleanup Methods
 
     /// <summary>
@@ -140,15 +207,15 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     {
         ClientFactory.ClearAllClients();
         CookieManager.ClearCookies();
-        
+
         _scope.Dispose();
         GC.SuppressFinalize(this);
     }
+
     #endregion
-    
+
     protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
     {
-
         var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
         if (sentEmail is null) return (null, null);
 

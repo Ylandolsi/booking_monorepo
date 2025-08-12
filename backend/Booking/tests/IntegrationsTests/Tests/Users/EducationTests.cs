@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Utils;
 using IntegrationsTests.Abstractions;
+using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Users;
 
@@ -14,7 +15,7 @@ public class EducationTests : AuthenticationTestBase
     [Fact]
     public async Task AddEducation_ShouldCreateEducation_WhenUserIsAuthenticated()
     {
-        var userData = await CreateUserAndLogin(); 
+        var userData = await CreateUserAndLogin();
 
         var educationPayload = new
         {
@@ -28,6 +29,10 @@ public class EducationTests : AuthenticationTestBase
         var response = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
 
         response.EnsureSuccessStatusCode();
+        /*
+        Snapshot.Match(educations);
+        */
+
 
     }
 

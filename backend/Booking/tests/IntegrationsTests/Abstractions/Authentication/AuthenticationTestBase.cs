@@ -65,9 +65,9 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
         var registerResponse = await arrangeClient.PostAsJsonAsync("/users/register", registerPayload);
         await TriggerOutboxProcess();
+        await Task.Delay(TimeSpan.FromSeconds(2));
         if (!verify) return; 
 
-        await Task.Delay(TimeSpan.FromSeconds(2));
 
 
         var (token, parsedEmail) = ExtractTokenAndEmailFromEmail(email);

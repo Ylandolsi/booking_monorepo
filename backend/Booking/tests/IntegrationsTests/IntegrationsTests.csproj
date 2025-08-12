@@ -20,6 +20,8 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="Snapshooter" Version="1.0.1" />
+        <PackageReference Include="Snapshooter.Xunit" Version="1.0.1" />
         <PackageReference Include="Testcontainers" Version="4.6.0" />
         <PackageReference Include="Testcontainers.PostgreSql" Version="4.6.0" />
         <PackageReference Include="xunit" Version="2.9.3" />
@@ -44,6 +46,10 @@
       <Reference Include="xunit.core">
         <HintPath>..\..\..\..\.nuget\packages\xunit.extensibility.core\2.9.3\lib\netstandard1.1\xunit.core.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Tests\Mentorships\Availability\__snapshots__\" />
     </ItemGroup>
 
 </Project>

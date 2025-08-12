@@ -7,6 +7,7 @@ using Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication.Me;
 using IntegrationsTests.Abstractions;
+using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Mentorships.Availability;
 
@@ -248,6 +249,8 @@ public class AvailabilityTests : MentorshipTestBase
         var (publicArrange, publicAct) = GetClientsForUser("public_user");
         var response = await publicAct.GetAsync(
             $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={currentUser.Slug}&date={nextMonday:yyyy-MM-dd}");
+        
+        await MatchSnapshotAsync(response, "GetMentorAvailabilityByDay_ShouldReturnCorrectSlots_WhenDayHasAvailability" , matchOptions => matchOptions.IgnoreAllFields("date"));
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -290,6 +293,7 @@ public class AvailabilityTests : MentorshipTestBase
         var availability = await response.Content.ReadFromJsonAsync<dynamic>();
         Assert.False(((JsonElement)availability.GetProperty("isAvailable")).GetBoolean());
         Assert.Equal(0, ((JsonElement)availability.GetProperty("timeSlots")).GetArrayLength());
+        
     }
 
     #endregion
