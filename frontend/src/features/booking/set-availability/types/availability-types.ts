@@ -34,18 +34,6 @@ export type DayOfWeek =
   | 'saturday'
   | 'sunday';
 
-export interface TimeRange {
-  id: string;
-  start: string; // HH:mm format
-  end: string; // HH:mm format
-}
-
-export interface DaySchedule {
-  day: DayOfWeek;
-  enabled: boolean;
-  timeRanges: TimeRange[];
-}
-
 export type SessionSlot = {
   start: string; // ISO string format
   end: string; // ISO string format

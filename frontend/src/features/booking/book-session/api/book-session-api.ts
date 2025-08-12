@@ -3,9 +3,9 @@ import { useMutation } from '@tanstack/react-query';
 import type {
   BookingSession,
   SessionBookingRequest,
-} from '../types/session-types';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
-import { bookingQueryKeys } from './booking-keys';
+} from '../types/session-types.ts';
+import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
+import { bookingQueryKeys } from './booking-keys.ts';
 
 export const bookSession = async (
   booking: SessionBookingRequest,

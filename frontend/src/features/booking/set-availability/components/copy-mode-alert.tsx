@@ -1,6 +1,9 @@
 import { Copy } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
-import { DAYS_OF_WEEK, type DayOfWeek } from '@/features/booking/pages';
+import {
+  DAYS_OF_WEEK,
+  type DayOfWeek,
+} from '@/features/booking/set-availability';
 
 interface CopyModeAlertProps {
   selectedCopySource: DayOfWeek;

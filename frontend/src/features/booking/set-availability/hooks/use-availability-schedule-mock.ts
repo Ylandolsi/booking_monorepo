@@ -4,9 +4,9 @@ import {
   DAYS_OF_WEEK,
   type DayOfWeek,
   type DaySchedule,
-} from '@/features/booking/pages';
+} from '@/features/booking/set-availability';
 
-export interface UseAvailabilityScheduleReturn {
+interface UseAvailabilityScheduleReturn {
   schedule: DaySchedule[];
   hasChanges: boolean;
   isSaving: boolean;
@@ -31,7 +31,7 @@ export interface UseAvailabilityScheduleReturn {
   getScheduleSummary: () => { enabledDays: number; totalSlots: number };
 }
 
-export function useAvailabilitySchedule(): UseAvailabilityScheduleReturn {
+export function useAvailabilityScheduleMock(): UseAvailabilityScheduleReturn {
   const [schedule, setSchedule] = useState<DaySchedule[]>(() =>
     DAYS_OF_WEEK.map((day) => ({
       day: day.key,

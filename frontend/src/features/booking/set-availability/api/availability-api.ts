@@ -5,12 +5,12 @@ import {
   type UseQueryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
-import { bookingQueryKeys } from '../../../api/booking-keys';
+import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
+import { bookingQueryKeys } from '@/features/booking';
 import type {
   DayAvailabilityType,
   MonthAvailability,
-} from '@/features/booking/pages/set-availability';
+} from '@/features/booking/set-availability';
 
 // GET
 

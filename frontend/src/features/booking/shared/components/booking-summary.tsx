@@ -10,7 +10,7 @@ import {
   Badge,
 } from '@/components/ui';
 import { cn } from '@/utils';
-import type { BookingSummary } from '../types/booking-types';
+import type { BookingSummary } from '../../book-session/types/booking-types.ts';
 
 interface BookingSummaryProps {
   booking: BookingSummary;

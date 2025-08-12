@@ -7,7 +7,7 @@ import {
   useAvailabilitySchedule,
   DayAvailability,
   SummaryCard,
-} from '@/features/booking/pages';
+} from '@/features/booking/set-availability';
 
 export function SetAvailabilityPage() {
   const {
