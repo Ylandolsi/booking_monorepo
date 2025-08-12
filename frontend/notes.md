@@ -343,3 +343,23 @@ b[0].x = 2; // a[0].x is still 1
 This ensures that `originalSchedule` is a snapshot of the initial state, so you can compare or reset later without accidental mutation.
 
 Let me know if you want to see alternative deep copy methods!
+
+```ts
+[field]: value means:
+If field is 'start', it sets start: value.
+If field is 'end', it sets end: value.
+
+  const updateTimeRange = (
+    day: DayOfWeek,
+    rangeId: number,
+    field: 'start' | 'end',
+    value: string,
+  ) => {
+    updateSchedule(day, (ds) => ({
+      ...ds,
+      availabilityRanges: ds.availabilityRanges.map(
+        (r: AvailabilityRangeType) =>
+          r.id === rangeId ? { ...r, [field]: value } : r,
+      ),
+    }));
+```

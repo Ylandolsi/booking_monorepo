@@ -1,15 +1,17 @@
+import { QueryStateWrapper } from '@/components';
 import { ContentLayout } from '@/components/layouts';
 import {
-  DAYS_OF_WEEK,
   CopyModeAlert,
   SaveSuccessAlert,
   ScheduleActions,
   useAvailabilitySchedule,
   DayAvailability,
   SummaryCard,
-} from '@/features/booking/set-availability';
+  useSetWeeklySchedule,
+} from '@/features/booking/schedule';
+import { DAYS_OF_WEEK } from '@/features/booking/shared';
 
-export function SetAvailabilityPage() {
+export function ScheduleContent() {
   const {
     schedule,
     hasChanges,
@@ -70,6 +72,23 @@ export function SetAvailabilityPage() {
           onReset={actions.resetChanges}
         />
       </div>
+    </ContentLayout>
+  );
+}
+export function SetAvailabilityPage() {
+  const scheduleQuery = useSetWeeklySchedule();
+
+  return (
+    <ContentLayout>
+      <QueryStateWrapper
+        query={scheduleQuery}
+        loadingMessage="Loading your schedule..."
+        loadingType="spinner"
+        containerClassName="container mx-auto py-10 px-4 max-w-6xl"
+        emptyStateMessage="No schedule data available. Let's set up your availability!"
+      >
+        {() => <ScheduleContent />}
+      </QueryStateWrapper>
     </ContentLayout>
   );
 }

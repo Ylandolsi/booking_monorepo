@@ -1,10 +1,5 @@
 import { Card, CardHeader, CardTitle, Button, CardContent } from '@/components';
-import {
-  type DayOfWeek,
-  type TimeRange,
-  TIME_OPTIONS,
-  PREDEFINED_TIME_SLOTS,
-} from '@/features/booking/set-availability';
+
 import { formatTimeRange } from '@/utils';
 import {
   Separator,
@@ -17,31 +12,32 @@ import {
   Badge,
 } from '@/components/ui';
 import { Copy, Clock, X, Plus } from 'lucide-react';
+import { PREDEFINED_TIME_SLOTS, TIME_OPTIONS } from '@/features/booking/shared';
 
-interface DayAvailabilityProps {
-  keyWeek: DayOfWeek;
-  timeRanges: TimeRange[];
-  isEnabled: boolean;
-  selectedCopySource: DayOfWeek | null;
-  setSelectedCopySource: (day: DayOfWeek | null) => void;
-  toggleDay: (day: DayOfWeek) => void;
-  addPredefinedTimeSlot: (
-    day: DayOfWeek,
-    timeSlot: { start: string; end: string },
-  ) => void;
-  addCustomTimeSlot: (day: DayOfWeek) => void;
-  updateTimeRange: (
-    day: DayOfWeek,
-    rangeId: string,
-    field: 'start' | 'end',
-    value: string,
-  ) => void;
-  removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
-  copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
-  label: string;
-}
+// interface DayAvailabilityProps {
+//   keyWeek: DayOfWeek;
+//   timeRanges: TimeRange[];
+//   isEnabled: boolean;
+//   selectedCopySource: DayOfWeek | null;
+//   setSelectedCopySource: (day: DayOfWeek | null) => void;
+//   toggleDay: (day: DayOfWeek) => void;
+//   addPredefinedTimeSlot: (
+//     day: DayOfWeek,
+//     timeSlot: { start: string; end: string },
+//   ) => void;
+//   addCustomTimeSlot: (day: DayOfWeek) => void;
+//   updateTimeRange: (
+//     day: DayOfWeek,
+//     rangeId: string,
+//     field: 'start' | 'end',
+//     value: string,
+//   ) => void;
+//   removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
+//   copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
+//   label: string;
+// }
 
-export function DayAvailability(props: DayAvailabilityProps) {
+export function DayAvailability(props) {
   return (
     <Card
       className={`transition-all ${props.isEnabled ? 'border-blue-200 bg-blue-50/30' : ''}`}
