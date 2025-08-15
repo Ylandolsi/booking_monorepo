@@ -4,3 +4,4 @@ export * from './use-media-query';
 export * from './use-outside-click';
 export * from './use-required-params';
 export * from './use-query-state';
+export * from './use-mentor';

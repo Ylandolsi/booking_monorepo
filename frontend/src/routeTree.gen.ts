@@ -13,6 +13,7 @@ import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
@@ -49,6 +50,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const TestMentorRequiredRoute = TestMentorRequiredRouteImport.update({
+  id: '/test/mentor-required',
+  path: '/test/mentor-required',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/mentor-required'
     | '/app/'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/mentor-required'
     | '/app'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/mentor-required'
     | '/app/'
     | '/auth/email-verification/verified'
     | '/auth/email-verification/'
@@ -285,6 +297,7 @@ export interface RootRouteChildren {
   TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
+  TestMentorRequiredRoute: typeof TestMentorRequiredRoute
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
   BookingMentorSlugIndexRoute: typeof BookingMentorSlugIndexRoute
@@ -320,6 +333,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/test/mentor-required': {
+      id: '/test/mentor-required'
+      path: '/test/mentor-required'
+      fullPath: '/test/mentor-required'
+      preLoaderRoute: typeof TestMentorRequiredRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/test/img': {
       id: '/test/img'
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
+  TestMentorRequiredRoute: TestMentorRequiredRoute,
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
   BookingMentorSlugIndexRoute: BookingMentorSlugIndexRoute,

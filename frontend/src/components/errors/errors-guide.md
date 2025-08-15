@@ -14,6 +14,38 @@ export const useUserData = (userSlug?: string) => {
     };
 };
 `
+
+### **MentorRequired Error Component**
+
+The `MentorRequired` error component is used when a user tries to access mentor-only features without having mentor status.
+
+```typescript
+import { MentorRequired } from '@/components/errors';
+
+// Basic usage
+<MentorRequired />
+
+// Custom usage with specific message
+<MentorRequired
+  title="Become a Mentor to Schedule Sessions"
+  message="You need mentor privileges to create and manage mentoring sessions."
+  actionDescription="To schedule sessions with students, please complete your mentor registration first."
+/>
+
+// Minimal configuration
+<MentorRequired
+  showHomeButton={false}
+  message="Please become a mentor to continue."
+/>
+```
+
+**Props:**
+- `title`: Custom title (default: "Mentor Status Required")
+- `message`: Custom message (default: "You need to become a mentor...")
+- `showBecomeMentorButton`: Show "Become a Mentor" button (default: true)
+- `showHomeButton`: Show "Go Home" button (default: true)
+- `actionDescription`: Additional description shown in highlighted box
+
 ### **1. Loading State Types**
 
 ```typescript

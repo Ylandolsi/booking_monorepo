@@ -1,9 +1,9 @@
-import { AuthGuard } from '@/features/auth';
+import { AuthGuard } from '@/components/guards';
 import Sidebar from './sidebar';
 import { PageLoading } from '@/components/ui/index';
 import { BottomNav } from '../navigation/bottom-nav';
 import { useAuth } from '@/features/auth/hooks';
-import { MainErrorFallback } from '../errors/main';
+import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/stores';
 import { Header } from '@/components/headers';
 

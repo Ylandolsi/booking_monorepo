@@ -33,7 +33,7 @@ declare module '@tanstack/react-query' {
 const queryConfig = {
   queries: {
     refetchOnWindowFocus: false, // Don't refetch data when window regains focus
-    retry: 1, // Retry failed queries once
+    retry: 0, //  Dont Retry failed queries , TODO : maybe add retry ?
     staleTime: 1000 * 60 * 5, // Data is considered fresh for 5 minutes
     gcTime: 1000 * 60 * 10, // Unused data is garbage collected after 10 minutes
   },

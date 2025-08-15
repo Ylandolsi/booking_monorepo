@@ -36,7 +36,7 @@ export function useBookSession() {
     meta: {
       invalidatesQuery: [
         bookingQueryKeys.myBookings(),
-        bookingQueryKeys.availability(),
+        // bookingQueryKeys.availability(),
       ],
       successMessage: 'Session booked successfully!',
       errorMessage: 'Failed to book session. Please try again.',
@@ -50,7 +50,7 @@ export function useCancelSession() {
     meta: {
       invalidatesQuery: [
         bookingQueryKeys.myBookings(),
-        bookingQueryKeys.availability(),
+        // bookingQueryKeys.availability(),
       ],
       successMessage: 'Session cancelled successfully',
       errorMessage: 'Failed to cancel session',

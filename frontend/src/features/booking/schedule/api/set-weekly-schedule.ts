@@ -18,7 +18,9 @@ export const setWeeklySchedule = async (
   request: DailySchedule[],
 ): Promise<number[]> => {
   if (!request) throw new Error('Bulk availability request is required');
-  return api.post<number[]>(MentorshipEndpoints.Availability.SetBulk, request);
+  return api.post<number[]>(MentorshipEndpoints.Availability.SetBulk, {
+    dayAvailabilities: [...request],
+  });
 };
 
 export const useSetWeeklySchedule = ({
@@ -32,7 +34,6 @@ export const useSetWeeklySchedule = ({
       invalidatesQuery: [scheduleQueryKeys.weeklySchedule],
       successMessage: 'Schedule updated succesfully',
       successAction: () => onSuccess(),
-      errorMessage: 'Failed to update the schedule',
     },
   });
 };

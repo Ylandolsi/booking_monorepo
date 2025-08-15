@@ -8,3 +8,4 @@ export * from './shared';
 export * from './ui';
 export * from '../stores';
 export * from './headers';
+export * from './guards';

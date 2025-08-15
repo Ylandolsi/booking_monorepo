@@ -10,6 +10,7 @@ import {
 } from '@/features/booking/schedule';
 import { DAYS_OF_WEEK } from '@/features/booking/shared';
 import { mapDayToNumber } from '@/utils/enum-days-week';
+import { MentorGuard } from '@/components';
 
 function ScheduleContent() {
   const {
@@ -81,7 +82,6 @@ function ScheduleContent() {
 export function SetAvailabilityPage() {
   const { scheduleQuery } = useAvailabilitySchedule();
 
-  // Create compatible query state for QueryStateWrapper
   const queryState = {
     data: scheduleQuery.data,
     isLoading: scheduleQuery.isLoading,
@@ -92,14 +92,17 @@ export function SetAvailabilityPage() {
 
   return (
     <ContentLayout>
-      <QueryStateWrapper
-        query={queryState}
-        loadingMessage="Loading your schedule..."
-        loadingType="spinner"
-        emptyStateMessage="No schedule data available. Let's set up your availability!"
-      >
-        {() => <ScheduleContent />}
-      </QueryStateWrapper>
+      <MentorGuard>
+        <QueryStateWrapper
+          query={queryState}
+          loadingMessage="Loading your schedule..."
+          loadingType="spinner"
+          emptyStateMessage="No schedule data available. Let's set up your availability!"
+          containerClassName="min-h-screen"
+        >
+          {() => <ScheduleContent />}
+        </QueryStateWrapper>
+      </MentorGuard>
     </ContentLayout>
   );
 }

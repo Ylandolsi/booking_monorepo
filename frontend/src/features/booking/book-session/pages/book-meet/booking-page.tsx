@@ -21,10 +21,17 @@ import { BookingSummaryCard } from '@/features/booking/shared/components/booking
 import { useBookSession } from '@/features/booking/book-session/api/book-session-api.ts';
 import {
   useMonthlyAvailability,
-  useDailyAvailability } from '../../../set-availability';
+  useDailyAvailability,
+} from '../../../set-availability';
 import { useMentorDetails } from '@/features/mentor/api';
-import type { TimeSlot } from '@/features/booking/shared/types/availability-types';
 import type { BookingSummary } from '../../types/booking-types.ts';
+
+export type TimeSlot = {
+  start: string; // ISO string format
+  end: string; // ISO string format
+  isAvailable: boolean;
+  isBooked: boolean;
+};
 
 export function BookingPage() {
   const { mentorSlug } = useParams({ strict: false }) as {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { Logo } from '../../../components/logo';
 import { Card, CardHeader, Link } from '@/components/ui/index';
-import { AuthGuard } from './auth-guard';
+import { AuthGuard } from '@/components/guards';
 
 type LayoutProps = {
   children: React.ReactNode;
