@@ -14,41 +14,41 @@ import { GenerateIdNumber } from '@/utils';
 
 export interface UseAvailabilityScheduleReturn {
   schedule: DailySchedule[];
-
+  scheduleQuery: any;
   hasChanges: boolean;
   isSaving: boolean;
   saveSuccess: boolean;
-  selectedCopySource: DailySchedule[] | null;
-  // actions: {
-  //   setSelectedCopySource: (day: DailySchedule[] | null) => void;
-  //   toggleDay: (day: WeeklySchedule) => void;
-  //   addTimeSlot: (
-  //     day: WeeklySchedule,
-  //     slot: { start: string; end: string },
-  //   ) => void;
-  //   addCustomTimeSlot: (day: WeeklySchedule) => void;
-  //   updateTimeRange: (
-  //     day: WeeklySchedule,
-  //     rangeId: string,
-  //     field: 'start' | 'end',
-  //     value: string,
-  //   ) => void;
-  //   removeTimeRange: (day: WeeklySchedule, rangeId: string) => void;
-  //   copyAvailability: (fromDay: WeeklySchedule, toDay: WeeklySchedule) => void;
-  //   saveAvailability: () => Promise<void>;
-  //   resetChanges: () => void;
-  // };
-  // getScheduleSummary: () => { enabledDays: number; totalSlots: number };
+  selectedCopySource: DayOfWeek | null;
+  actions: {
+    setSelectedCopySource: (day: DayOfWeek | null) => void;
+    toggleDay: (day: DayOfWeek) => void;
+    addTimeSlot: (
+      day: DayOfWeek,
+      slot: { startTime: string; endTime: string },
+    ) => void;
+    addCustomTimeSlot: (day: DayOfWeek) => void;
+    updateTimeRange: (
+      day: DayOfWeek,
+      rangeId: string,
+      field: 'startTime' | 'endTime',
+      value: string,
+    ) => void;
+    removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
+    copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
+    saveAvailability: () => Promise<void>;
+    resetChanges: () => void;
+  };
+  getScheduleSummary: () => { enabledDays: number; totalSlots: number };
 }
 
 export function useAvailabilitySchedule() {
   const useWeeklyScheduleMutation = useSetWeeklySchedule();
-  const [schedule, setSchedule] = useState<DailySchedule[]>();
-  const { data: apiSchedule, error, isLoading } = useWeeklySchedule();
-  // once it loads , create state with that data !
+  const scheduleQuery = useWeeklySchedule();
+  const { data: apiSchedule } = scheduleQuery;
+  const [schedule, setSchedule] = useState<DailySchedule[]>([]);
 
   const [selectedCopySource, setSelectedCopySource] =
-    useState<DailySchedule | null>(null);
+    useState<DayOfWeek | null>(null);
 
   const hasChanges = useMemo(() => {
     if (!apiSchedule) return false;
@@ -59,7 +59,9 @@ export function useAvailabilitySchedule() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    setSchedule(apiSchedule);
+    if (apiSchedule) {
+      setSchedule(apiSchedule);
+    }
   }, [apiSchedule]);
 
   const updateSchedule = (
@@ -67,7 +69,6 @@ export function useAvailabilitySchedule() {
     updater: (ds: DailySchedule) => DailySchedule,
   ) => {
     setSchedule((prev) => {
-      if (prev == undefined) return;
       return prev.map((ds) =>
         ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds,
       );
@@ -78,10 +79,20 @@ export function useAvailabilitySchedule() {
     updateSchedule(day, (ds) => ({ ...ds, isActive: !ds.isActive }));
   };
 
-  const addTimeSlot = (day: DayOfWeek, slot: AvailabilityRangeType) => {
+  const addTimeSlot = (
+    day: DayOfWeek,
+    slot: { startTime: string; endTime: string },
+  ) => {
     updateSchedule(day, (ds) => ({
       ...ds,
-      availabilityRanges: [...ds.availabilityRanges, { ...slot }],
+      availabilityRanges: [
+        ...ds.availabilityRanges,
+        {
+          id: GenerateIdNumber(),
+          startTime: slot.startTime,
+          endTime: slot.endTime,
+        },
+      ],
     }));
   };
 
@@ -89,32 +100,33 @@ export function useAvailabilitySchedule() {
     addTimeSlot(day, {
       startTime: '09:00',
       endTime: '10:00',
-    } as AvailabilityRangeType);
+    });
 
   const updateTimeRange = (
     day: DayOfWeek,
-    rangeId: number,
-    field: 'start' | 'end',
+    rangeId: string,
+    field: 'startTime' | 'endTime',
     value: string,
   ) => {
     updateSchedule(day, (ds) => ({
       ...ds,
       availabilityRanges: ds.availabilityRanges.map(
         (r: AvailabilityRangeType) =>
-          r.id === rangeId ? { ...r, [field]: value } : r,
+          r.id?.toString() === rangeId ? { ...r, [field]: value } : r,
       ),
     }));
   };
 
-  const removeTimeRange = (day: DayOfWeek, rangeId: number) => {
+  const removeTimeRange = (day: DayOfWeek, rangeId: string) => {
     updateSchedule(day, (ds) => ({
       ...ds,
-      availabilityRanges: ds.availabilityRanges.filter((r) => r.id !== rangeId),
+      availabilityRanges: ds.availabilityRanges.filter(
+        (r) => r.id?.toString() !== rangeId,
+      ),
     }));
   };
 
   const copyAvailability = (fromDay: DayOfWeek, toDay: DayOfWeek) => {
-    if (schedule == undefined) return;
     const source = schedule.find(
       (s) => s.dayOfWeek === mapDayToNumber(fromDay),
     );
@@ -127,13 +139,15 @@ export function useAvailabilitySchedule() {
         id: GenerateIdNumber(),
       })),
     }));
+    setSelectedCopySource(null);
   };
 
   const saveAvailability = async () => {
     setIsSaving(true);
+    console.log(schedule);
     try {
       // apply mutation here of update
-      await useWeeklyScheduleMutation.mutateAsync(schedule!);
+      await useWeeklyScheduleMutation.mutateAsync(schedule);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
@@ -144,12 +158,13 @@ export function useAvailabilitySchedule() {
   };
 
   const resetChanges = () => {
-    setSchedule(apiSchedule);
+    if (apiSchedule) {
+      setSchedule(apiSchedule);
+    }
     setSelectedCopySource(null);
   };
 
   const getScheduleSummary = () => {
-    if (schedule == undefined) return;
     const enabledDays = schedule.filter(
       (d) => d.isActive && d.availabilityRanges.length > 0,
     );
@@ -162,6 +177,7 @@ export function useAvailabilitySchedule() {
 
   return {
     schedule,
+    scheduleQuery,
     hasChanges,
     isSaving,
     saveSuccess,

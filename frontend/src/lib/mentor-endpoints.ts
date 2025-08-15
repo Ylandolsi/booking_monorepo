@@ -6,11 +6,11 @@ export const MentorshipEndpoints = {
     SetBulk: 'mentorships/availability/bulk',
     Remove: 'mentorships/availability/{availabilityId}',
     Update: 'mentorships/availability/{availabilityId}',
-    ToggleAvailability: '/mentorships/availability/{availabilityId}/toggle',
-    ToggleDay: '/mentorships/availability/day/toggle', // Query: dayOfWeek
-    GetDaily: '/mentorships/availability', // Query: mentorSlug, date
-    GetMonthly: '/mentorships/availability/month', // Query: mentorSlug, year, month
-    GetSchedule: '/mentorships/availability/schedule',
+    ToggleAvailability: 'mentorships/availability/{availabilityId}/toggle',
+    ToggleDay: 'mentorships/availability/day/toggle', // Query: dayOfWeek
+    GetDaily: 'mentorships/availability', // Query: mentorSlug, date
+    GetMonthly: 'mentorships/availability/month', // Query: mentorSlug, year, month
+    GetSchedule: 'mentorships/availability/schedule',
   },
 
   Sessions: {
@@ -32,7 +32,7 @@ export const MentorshipEndpoints = {
 
   Reviews: {
     Submit: 'mentorships/reviews',
-    GetMentorReviews: '/entorships/reviews/{userSlug}',
+    GetMentorReviews: 'entorships/reviews/{userSlug}',
     // GetDetails: "mentorships/reviews/{reviewId}",
   },
 

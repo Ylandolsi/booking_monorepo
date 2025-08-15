@@ -9,7 +9,10 @@ import {
 } from '@tanstack/react-query';
 
 export const getWeeklySchedule = async (): Promise<DailySchedule[]> => {
-  return api.get<DailySchedule[]>(MentorshipEndpoints.Availability.GetSchedule);
+  const res = await api.get<DailySchedule[]>(
+    MentorshipEndpoints.Availability.GetSchedule,
+  );
+  return res;
 };
 
 export function useWeeklySchedule(
@@ -17,7 +20,7 @@ export function useWeeklySchedule(
 ): UseQueryResult<DailySchedule[], unknown> {
   return useQuery({
     queryKey: scheduleQueryKeys.weeklySchedule,
-    queryFn: () => getWeeklySchedule,
+    queryFn: getWeeklySchedule,
     ...overrides,
   });
 }

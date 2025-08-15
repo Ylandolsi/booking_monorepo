@@ -22,29 +22,36 @@ public class GetMentorScheduleQueryHandler(
             .Where(av => av.MentorId == query.MentorId)
             .ToListAsync(cancellationToken);
 
-        var availabilityWeekTasks = Enumerable.Range(0, 7)
-            .Select(async dayOfWeek =>
+        var allDays = await context.Days
+            .Select(d => new { d.DayOfWeek, d.IsActive })
+            .ToListAsync(cancellationToken);
+
+        var availabilityWeek = Enumerable.Range(0, 7)
+            .Select(dayOfWeek =>
             {
                 var dayAvailabilities = availabilities
                     .Where(av => (int)av.DayOfWeek == dayOfWeek)
                     .Select(av => new AvailabilityRange
                     {
                         StartTime = av.TimeRange.StartTime.ToString(),
-                        EndTime = av.TimeRange.EndTime.ToString()
+                        EndTime = av.TimeRange.EndTime.ToString(),
+                        Id = av.Id,
                     })
                     .ToList();
 
-                var isActive = await context.Days.Where(d => (int)d.DayOfWeek == dayOfWeek)
-                    .Select(d => d.IsActive).FirstOrDefaultAsync(cancellationToken); 
-                
+                var isActive = allDays
+                    .Where(d => (int)d.DayOfWeek == dayOfWeek)
+                    .Select(d => d.IsActive)
+                    .FirstOrDefault();
+
                 return new DayAvailability
                 {
                     DayOfWeek = (DayOfWeek)dayOfWeek,
-                    IsActive = isActive,    
+                    IsActive = isActive,
                     AvailabilityRanges = dayAvailabilities
                 };
-            }).ToList();
-        var availabilityWeek = (await Task.WhenAll(availabilityWeekTasks)).ToList();
+            })
+            .ToList();
 
         return Result.Success(availabilityWeek);
     }

@@ -12,32 +12,37 @@ import {
   Badge,
 } from '@/components/ui';
 import { Copy, Clock, X, Plus } from 'lucide-react';
-import { PREDEFINED_TIME_SLOTS, TIME_OPTIONS } from '@/features/booking/shared';
+import {
+  PREDEFINED_TIME_SLOTS,
+  TIME_OPTIONS,
+  type DayOfWeek,
+} from '@/features/booking/shared';
+import type { AvailabilityRangeType } from '@/features/booking/schedule/types';
 
-// interface DayAvailabilityProps {
-//   keyWeek: DayOfWeek;
-//   timeRanges: TimeRange[];
-//   isEnabled: boolean;
-//   selectedCopySource: DayOfWeek | null;
-//   setSelectedCopySource: (day: DayOfWeek | null) => void;
-//   toggleDay: (day: DayOfWeek) => void;
-//   addPredefinedTimeSlot: (
-//     day: DayOfWeek,
-//     timeSlot: { start: string; end: string },
-//   ) => void;
-//   addCustomTimeSlot: (day: DayOfWeek) => void;
-//   updateTimeRange: (
-//     day: DayOfWeek,
-//     rangeId: string,
-//     field: 'start' | 'end',
-//     value: string,
-//   ) => void;
-//   removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
-//   copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
-//   label: string;
-// }
+interface DayAvailabilityProps {
+  keyWeek: DayOfWeek;
+  timeRanges: AvailabilityRangeType[];
+  isEnabled: boolean;
+  selectedCopySource: DayOfWeek | null;
+  setSelectedCopySource: (day: DayOfWeek | null) => void;
+  toggleDay: (day: DayOfWeek) => void;
+  addPredefinedTimeSlot: (
+    day: DayOfWeek,
+    timeSlot: { startTime: string; endTime: string },
+  ) => void;
+  addCustomTimeSlot: (day: DayOfWeek) => void;
+  updateTimeRange: (
+    day: DayOfWeek,
+    rangeId: string,
+    field: 'startTime' | 'endTime',
+    value: string,
+  ) => void;
+  removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
+  copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
+  label: string;
+}
 
-export function DayAvailability(props) {
+export function DayAvailability(props: DayAvailabilityProps) {
   return (
     <Card
       className={`transition-all ${props.isEnabled ? 'border-blue-200 bg-blue-50/30' : ''}`}
@@ -117,12 +122,12 @@ export function DayAvailability(props) {
                 <Clock className="w-4 h-4 text-gray-500" />
 
                 <Select
-                  value={range.start}
+                  value={range.startTime}
                   onValueChange={(value) =>
                     props.updateTimeRange(
                       props.keyWeek,
-                      range.id,
-                      'start',
+                      range.id?.toString() || '0',
+                      'startTime',
                       value,
                     )
                   }
@@ -142,9 +147,14 @@ export function DayAvailability(props) {
                 <span className="text-gray-500">to</span>
 
                 <Select
-                  value={range.end}
+                  value={range.endTime}
                   onValueChange={(value) =>
-                    props.updateTimeRange(props.keyWeek, range.id, 'end', value)
+                    props.updateTimeRange(
+                      props.keyWeek,
+                      range.id?.toString() || '',
+                      'endTime',
+                      value,
+                    )
                   }
                 >
                   <SelectTrigger className="w-24">
@@ -160,13 +170,18 @@ export function DayAvailability(props) {
                 </Select>
 
                 <Badge variant="secondary" className="ml-auto">
-                  {formatTimeRange(range.start, range.end)}
+                  {formatTimeRange(range.startTime, range.endTime)}
                 </Badge>
 
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => props.removeTimeRange(props.keyWeek, range.id)}
+                  onClick={() =>
+                    props.removeTimeRange(
+                      props.keyWeek,
+                      range.id?.toString() || '',
+                    )
+                  }
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <X className="w-4 h-4" />
@@ -188,7 +203,8 @@ export function DayAvailability(props) {
                 {PREDEFINED_TIME_SLOTS.map((slot) => {
                   const alreadyExists = props.timeRanges.some(
                     (range) =>
-                      range.start <= slot.start && range.end >= slot.end,
+                      range.startTime <= slot.start &&
+                      range.endTime >= slot.end,
                   );
                   return (
                     <Button
@@ -197,7 +213,10 @@ export function DayAvailability(props) {
                       size="sm"
                       disabled={alreadyExists}
                       onClick={() =>
-                        props.addPredefinedTimeSlot(props.keyWeek, slot)
+                        props.addPredefinedTimeSlot(props.keyWeek, {
+                          startTime: slot.start,
+                          endTime: slot.end,
+                        })
                       }
                       className="text-xs"
                     >
