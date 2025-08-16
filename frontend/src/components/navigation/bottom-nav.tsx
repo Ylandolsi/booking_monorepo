@@ -6,16 +6,16 @@ import {
   UserSearch,
 } from 'lucide-react';
 import { Badge } from '@/components/ui';
-import { useNavigate } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks/use-navigation';
 
 export function BottomNav() {
-  const navigate = useNavigate();
+  const nav = useAppNavigation();
 
   const bottomNavItems = [
     {
       icon: <House size={20} />,
       label: 'Home',
-      onClick: () => navigate({ to: '/app' }),
+      onClick: () => nav.goToApp(),
       active: true,
     },
     {

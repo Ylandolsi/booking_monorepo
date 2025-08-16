@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui';
 import { GraduationCap, UserPlus, Home } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
-import { paths } from '@/config';
+import { routeBuilder } from '@/config';
 
 interface MentorRequiredProps {
   title?: string;
@@ -26,7 +26,7 @@ export const MentorRequired = ({
   };
 
   const handleGoHome = () => {
-    navigate({ to: paths.app.root.getHref() });
+    navigate({ to: routeBuilder.app.root() });
   };
 
   const handleContactSupport = () => {

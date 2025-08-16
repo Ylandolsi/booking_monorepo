@@ -17,6 +17,7 @@ import {
 } from '@/components/ui';
 import { useBooking, TimeSlots } from '@/features/booking/book-session';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAppNavigation } from '@/hooks/use-navigation';
 import React from 'react';
 import { formatDate } from '@/utils';
 import { ContentLayout, ErrorComponenet } from '@/components';
@@ -24,6 +25,7 @@ import { BookingSummary } from '@/features/booking/book-session/components';
 
 function BookingContent() {
   const isMobile = useIsMobile();
+  const nav = useAppNavigation();
 
   const {
     // State
@@ -131,9 +133,7 @@ function BookingContent() {
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => (window.location.href = '/app/bookings')}>
-              View My Bookings
-            </Button>
+            <Button onClick={() => nav.goToApp()}>View My Bookings</Button>
             <Button variant="outline" onClick={resetBooking}>
               Book Another Session
             </Button>

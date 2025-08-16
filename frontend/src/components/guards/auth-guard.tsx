@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from '@tanstack/react-router';
 import { useUser } from '@/features/auth';
 import { Spinner } from '@/components/ui';
+import { routes } from '@/config/routes';
 import type { ReactNode } from 'react';
 
 interface AuthGuardProps {
@@ -17,7 +18,7 @@ export const AuthGuard = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   requireAdmin = false,
   authPage = false,
-  redirectTo = '/auth/login',
+  redirectTo = routes.to.auth.login(),
 }: AuthGuardProps) => {
   const { data: user, isLoading, error } = useUser();
   const location = useLocation();
@@ -32,7 +33,7 @@ export const AuthGuard = ({
 
   if (authPage) {
     if (user) {
-      return <Navigate to="/app" replace />;
+      return <Navigate to={'/app' as any} replace />;
     }
     return <>{children}</>;
   }
@@ -47,8 +48,8 @@ export const AuthGuard = ({
     }
 
     const cleanPath = location.pathname;
-    const loginUrl = `${redirectTo}?redirectTo=${encodeURIComponent(cleanPath)}`;
-    return <Navigate to={loginUrl} replace />;
+    const loginUrl = routes.to.auth.login({ redirectTo: cleanPath });
+    return <Navigate to={loginUrl as any} replace />;
   }
 
   return <>{children}</>;

@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks/use-navigation';
 import {
   X,
   Settings,
@@ -52,7 +52,7 @@ const Sidebar = ({
   const { currentUser, error, isLoading, logout } = useAuth();
   const { itemActive, setItemActive } = useSideBar();
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const nav = useAppNavigation();
 
   if (error) return <MainErrorFallback />;
   if (isLoading) return <PageLoading />;
@@ -60,22 +60,22 @@ const Sidebar = ({
     {
       name: 'Home',
       icon: <Home size={20} />,
-      click: () => navigate({ to: '/app' }),
+      click: () => nav.goToApp(),
     },
     {
       name: 'Profile',
       icon: <UserIcon size={20} />,
-      click: () => navigate({ to: `/profile/${currentUser?.slug}` }),
+      click: () => nav.goToProfile(currentUser?.slug || ''),
     },
     {
       name: 'Become Mentor',
       icon: <GiTeacher size={20} />,
-      click: () => navigate({ to: '/mentor/become' }),
+      click: () => nav.goToMentorBecome(),
     },
     {
       name: 'Set Availability',
       icon: <Timer size={20} />,
-      click: () => navigate({ to: '/mentor/set-schedule' }),
+      click: () => nav.goToMentorSetSchedule(),
     },
     {
       name: 'Bookings',
@@ -174,9 +174,7 @@ const Sidebar = ({
                     {currentUser?.firstName} {currentUser?.lastName}
                   </div>
                   <button
-                    onClick={() =>
-                      navigate({ to: `/profile/${currentUser?.slug}` })
-                    }
+                    onClick={() => nav.goToProfile(currentUser?.slug || '')}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     View profile

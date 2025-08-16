@@ -1,3 +1,4 @@
+import { routeBuilder } from '@/config';
 import {
   useUser,
   useLogin,
@@ -8,7 +9,6 @@ import {
 } from '@/features/auth';
 
 import { useNavigate } from '@tanstack/react-router';
-import { paths } from '@/config';
 
 export const useAuth = () => {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export const useAuth = () => {
   const register = useRegister();
   const logout = useLogout({
     onSuccess: () => {
-      navigate({ to: paths.auth.login.getHref() });
+      navigate({ to: routeBuilder.auth.login() });
     },
   });
   const forgotPassword = useForgotPassword();

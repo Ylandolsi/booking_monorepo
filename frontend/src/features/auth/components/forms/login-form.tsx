@@ -6,6 +6,7 @@ import {
   type LoginInput,
   AUTH_PLACEHOLDERS,
 } from '@/features/auth';
+import { routes } from '@/config/routes';
 
 import {
   Input,
@@ -103,14 +104,17 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
         <div className="text-foreground mt-4 ml-2 text-center text-sm font-bold">
           <Link
             className="text-primary/70 hover:text-primary"
-            href="/auth/forgot-password"
+            href={routes.to.auth.forgotPassword()}
           >
             Forget your password?
           </Link>
         </div>
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Don't have an account?{' '}
-          <Link className="text-primary hover:underline" href="/auth/register">
+          <Link
+            className="text-primary hover:underline"
+            href={routes.to.auth.register()}
+          >
             Register
           </Link>
         </div>

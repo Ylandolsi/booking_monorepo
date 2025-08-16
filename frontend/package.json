@@ -11,7 +11,8 @@
     "generate:routes": "node scripts/generate-route-paths.cjs",
     "check:routes": "node scripts/check-routes.js",
     "check:routes:ci": "node scripts/check-routes.js --strict",
-    "prebuild": "npm run generate:routes && npm run check:routes"
+    "prebuild": "npm run generate:routes && npm run check:routes",
+    "find:navigation": "node scripts/find-navigation-patterns.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

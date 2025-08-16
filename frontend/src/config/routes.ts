@@ -20,15 +20,12 @@ export const ROUTE_PATHS = {
 
   // App routes
   APP: {
-    INDEX: '/app/',
+    INDEX: '/app',
   },
 
   // Booking routes
   BOOKING: {
     SESSION: '/booking/session/$mentorSlug/',
-    DEMO: '/booking/demo/$mentorSlug/',
-    ENHANCED: '/booking/enhanced/$mentorSlug/',
-    TEST: '/booking/test/$mentorSlug/',
   },
 
   // Mentor routes
@@ -54,7 +51,6 @@ export const ROUTE_PATHS = {
     DASHBOARD: '/test/dashboard',
     BOOKING_DEMO: '/test/booking-demo',
     ALREADY: '/test/already',
-    TTTT: '/test/tttt',
   },
 
   // Utility routes
@@ -144,12 +140,6 @@ export const routeBuilder = {
   booking: {
     session: (mentorSlug: string) =>
       ROUTE_PATHS.BOOKING.SESSION.replace('$mentorSlug', mentorSlug),
-    demo: (mentorSlug: string) =>
-      ROUTE_PATHS.BOOKING.DEMO.replace('$mentorSlug', mentorSlug),
-    enhanced: (mentorSlug: string) =>
-      ROUTE_PATHS.BOOKING.ENHANCED.replace('$mentorSlug', mentorSlug),
-    test: (mentorSlug: string) =>
-      ROUTE_PATHS.BOOKING.TEST.replace('$mentorSlug', mentorSlug),
   },
 
   // Mentor routes

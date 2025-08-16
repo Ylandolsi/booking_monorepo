@@ -42,25 +42,9 @@ export function useAppNavigation() {
       navigate({ to: routes.to.app.root() });
     },
 
-    goToDashboard: () => {
-      navigate({ to: routes.to.app.dashboard() });
-    },
-
     // Booking navigation
     goToBookingSession: (mentorSlug: string) => {
       navigate({ to: routes.to.booking.session(mentorSlug) });
-    },
-
-    goToBookingDemo: (mentorSlug: string) => {
-      navigate({ to: routes.to.booking.demo(mentorSlug) });
-    },
-
-    goToBookingEnhanced: (mentorSlug: string) => {
-      navigate({ to: routes.to.booking.enhanced(mentorSlug) });
-    },
-
-    goToBookingTest: (mentorSlug: string) => {
-      navigate({ to: routes.to.booking.test(mentorSlug) });
     },
 
     // Mentor navigation
@@ -77,6 +61,36 @@ export function useAppNavigation() {
       navigate({ to: routes.to.profile.user(userSlug) });
     },
 
+    // Test navigation
+    goToTestDashboard: () => {
+      navigate({ to: routes.to.test.dashboard() });
+    },
+
+    goToTestMentorRequired: () => {
+      navigate({ to: routes.to.test.mentorRequired() });
+    },
+
+    goToTestImg: () => {
+      navigate({ to: routes.to.test.img() });
+    },
+
+    goToTestBookingDemo: () => {
+      navigate({ to: routes.to.test.bookingDemo() });
+    },
+
+    goToTestAlready: () => {
+      navigate({ to: routes.to.test.already() });
+    },
+
+    // Error example navigation
+    goToErrorExpSimpleLoading: () => {
+      navigate({ to: routes.to.errorExp.simpleLoading() });
+    },
+
+    // goToErrorExpAdvancedLoading: () => {
+    //   navigate({ to: routes.to.errorExp.advancedLoading() });
+    // },
+
     // Utility navigation
     goToUnauthorized: () => {
       navigate({ to: routes.to.unauthorized() });
@@ -91,6 +105,19 @@ export function useAppNavigation() {
       navigate({
         to: routePath,
         replace: options?.replace ?? false,
+      });
+    },
+
+    // Navigate with state
+    navigateWithState: (
+      routePath: string,
+      state: any,
+      options?: { replace?: boolean },
+    ) => {
+      navigate({
+        to: routePath,
+        replace: options?.replace ?? false,
+        state,
       });
     },
 

@@ -1,7 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { ResetPassword } from '@/features/auth/pages/reset-password-page';
-import { paths } from '@/config/paths';
-import { ROUTE_PATHS } from '@/config/routes';
+import { ROUTE_PATHS, routeBuilder } from '@/config/routes';
 
 export const Route = createFileRoute(ROUTE_PATHS.AUTH.RESET_PASSWORD)({
   component: ResetPassword,
@@ -13,7 +12,7 @@ export const Route = createFileRoute(ROUTE_PATHS.AUTH.RESET_PASSWORD)({
   beforeLoad: ({ search }) => {
     if (!search.email || !search.token) {
       throw redirect({
-        to: paths.auth.login.getHref(),
+        to: routeBuilder.auth.login(),
       });
     }
   },
