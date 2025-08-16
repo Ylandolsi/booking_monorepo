@@ -49,6 +49,16 @@ const alertVariants = cva(
 type AlertProps = React.ComponentProps<'div'> &
   VariantProps<typeof alertVariants>;
 
+// <div className="py-10 px-4 ">
+//   <Alert variant="destructive">
+//     {React.createElement(alertIconMap['destructive'])}
+//     <AlertDescription>
+//       {mentorDetailsQuery.isError
+//         ? 'Failed to load mentor details. Please try again later.'
+//         : 'Failed to load availability. Please refresh the page.'}
+//     </AlertDescription>
+//   </Alert>
+// </div>;
 function Alert({ className, variant, ...props }: AlertProps) {
   return (
     <div

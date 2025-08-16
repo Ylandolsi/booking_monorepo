@@ -65,6 +65,23 @@ export const PageLoading = () => (
     <LoadingState type="spinner" size="lg" message="Loading page..." />
   </div>
 );
+export const PageLoading2 = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => (
+  <div className="mx-auto">
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="text-center space-y-4">
+        <Spinner className="w-8 h-8 mx-auto" />
+        <p className="text-lg text-gray-600">{title}...</p>
+        <p className="text-sm text-gray-500">{description}...</p>
+      </div>
+    </div>
+  </div>
+);
 // height = height of the content : we need to specify it
 export const ContentLoading = () => (
   <div className="flex items-center justify-center p-8">
