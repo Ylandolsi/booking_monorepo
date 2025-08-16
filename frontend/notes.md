@@ -385,3 +385,55 @@ to show list in a good format , transparent a little bit when its not shown comp
               }}
             >
 ```
+
+```ts
+useful for react router
+export const paths = {
+home: {
+getHref: () => '/',
+},
+auth: {
+register: {
+getHref: (redirectTo?: string | null | undefined) =>
+`/auth/register${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
+    login: {
+      getHref: (redirectTo?: string | null | undefined) =>
+        `/auth/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
+    verificationEmail: {
+      getHref: (redirectTo?: string | null | undefined) =>
+        `/auth/email-verification${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+},
+emailVerified: {
+getHref: (redirectTo?: string | null | undefined) =>
+`/auth/email-verification/verified${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
+  },
+  app: {
+    root: {
+      getHref: () => '/app',
+    },
+    dashboard: {
+      getHref: () => '/app',
+    },
+    discussions: {
+      getHref: () => '/app/discussions',
+    },
+    discussion: {
+      getHref: (id: string) => `/app/discussions/${id}`,
+    },
+    users: {
+      getHref: () => '/app/users',
+    },
+    profile: {
+      getHref: () => '/app/profile',
+    },
+  },
+  public: {
+    discussion: {
+      getHref: (id: string) => `/public/discussions/${id}`,
+},
+},
+} as const
+```

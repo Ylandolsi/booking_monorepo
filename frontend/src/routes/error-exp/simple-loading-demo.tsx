@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ROUTE_PATHS } from '@/config/routes';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { QueryWrapper } from '@/components/wrappers/query-wrapper';
@@ -99,6 +100,6 @@ export const SimpleLoadingDemo = () => {
   );
 };
 
-export const Route = createFileRoute('/error-exp/simple-loading-demo')({
+export const Route = createFileRoute(ROUTE_PATHS.ERROR_EXP.SIMPLE_LOADING)({
   component: SimpleLoadingDemo,
 });

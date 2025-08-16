@@ -13,7 +13,7 @@ export function DesktopHeader() {
 
   return (
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-8">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-6">
           <ProfileImage size="lg" />
           <ProfileInfo titleSize="lg" />

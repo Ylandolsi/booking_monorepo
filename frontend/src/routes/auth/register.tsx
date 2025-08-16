@@ -1,27 +1,10 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AuthLayout, RegisterForm } from '@/features/auth';
-import { paths } from '@/config/paths';
+import { createFileRoute } from '@tanstack/react-router';
+import { RegisterPage } from '@/features/auth/pages/register-page';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/auth/register')({
+export const Route = createFileRoute(ROUTE_PATHS.AUTH.REGISTER)({
   component: RegisterPage,
   validateSearch: (search: Record<string, unknown>) => ({
     redirectTo: search.redirectTo as string | undefined,
   }),
 });
-
-function RegisterPage() {
-  const navigate = useNavigate();
-  const { redirectTo } = Route.useSearch();
-
-  return (
-    <AuthLayout>
-      <RegisterForm
-        OnRegiterSuccess={() => {
-          const targetPath =
-            redirectTo || paths.auth.verificationEmail.getHref();
-          navigate({ to: targetPath });
-        }}
-      />
-    </AuthLayout>
-  );
-}

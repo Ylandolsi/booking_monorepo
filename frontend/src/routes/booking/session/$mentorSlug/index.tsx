@@ -1,7 +1,8 @@
-import { BookingPage } from '@/features/booking';
 import { createFileRoute } from '@tanstack/react-router';
+import { BookingPage } from '@/features/booking';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/booking/session/$mentorSlug/')({
+export const Route = createFileRoute(ROUTE_PATHS.BOOKING.SESSION)({
   component: RouteComponent,
 });
 

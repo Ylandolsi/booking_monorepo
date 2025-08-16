@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Link } from '@/components';
 import { cn } from '@/utils';
 import { useProfileBySlug, useProfileEditStore } from '@/features/profile';
 interface ProfileActionsProps {
@@ -21,7 +21,7 @@ export function ProfileActions({
 
   return (
     <div className={cn(containerClasses[variant], className)}>
-      {isSlugCurrent && (
+      {isSlugCurrent ? (
         <Button
           className="rounded-xl w-full"
           size="lg"
@@ -32,10 +32,13 @@ export function ProfileActions({
         >
           Edit Profile
         </Button>
+      ) : (
+        <Link to={'/booking/session/john-doe'}>
+          <Button variant="outline" size="lg" className="rounded-xl w-full">
+            Book a session
+          </Button>
+        </Link>
       )}
-      <Button variant="outline" size="lg" className="rounded-xl w-full">
-        Message
-      </Button>
     </div>
   );
 }

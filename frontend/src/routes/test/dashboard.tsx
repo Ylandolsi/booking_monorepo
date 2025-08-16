@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import React, { useState } from 'react';
 import { useUser } from '@/features/auth';
+import { ROUTE_PATHS } from '@/config/routes';
 import {
   Button,
   Card,
@@ -31,7 +32,7 @@ import {
   Edit3,
 } from 'lucide-react';
 
-export const Route = createFileRoute('/test/dashboard')({
+export const Route = createFileRoute(ROUTE_PATHS.TEST.DASHBOARD)({
   component: RouteComponent,
 });
 
@@ -159,9 +160,7 @@ export function MentorDashboardPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold">
-            Welcome back, {user?.firstName || 'Mentor'}!
-          </h1>
+          <h1 className="text-3xl font-bold">Welcome back, {'Mentor'}!</h1>
           <p className="text-gray-600">
             Manage your mentoring sessions and track your progress
           </p>

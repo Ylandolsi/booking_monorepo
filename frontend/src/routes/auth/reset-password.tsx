@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router';
-import { AuthLayout, ResetPasswordPage } from '@/features/auth';
+import { createFileRoute, redirect } from '@tanstack/react-router';
+import { ResetPassword } from '@/features/auth/pages/reset-password-page';
 import { paths } from '@/config/paths';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/auth/reset-password')({
+export const Route = createFileRoute(ROUTE_PATHS.AUTH.RESET_PASSWORD)({
   component: ResetPassword,
   validateSearch: (search) => ({
     redirectTo: search.redirectTo as string | undefined,
@@ -17,21 +18,3 @@ export const Route = createFileRoute('/auth/reset-password')({
     }
   },
 });
-
-function ResetPassword() {
-  const navigate = useNavigate();
-  const { redirectTo, email, token } = Route.useSearch();
-
-  return (
-    <AuthLayout>
-      <ResetPasswordPage
-        email={email!}
-        token={token!}
-        onSuccess={() => {
-          const targetPath = redirectTo || paths.auth.login.getHref();
-          navigate({ to: targetPath });
-        }}
-      />
-    </AuthLayout>
-  );
-}

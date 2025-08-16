@@ -1,7 +1,8 @@
 import { ContentLayout } from '@/components/layouts';
 import { createFileRoute } from '@tanstack/react-router';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/app/')({
+export const Route = createFileRoute(ROUTE_PATHS.APP.INDEX)({
   component: RouteComponent,
 });
 

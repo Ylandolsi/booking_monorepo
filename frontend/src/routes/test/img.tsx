@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect, useRef } from 'react';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/test/img')({
+export const Route = createFileRoute(ROUTE_PATHS.TEST.IMG)({
   component: LazyImageDemo,
 });
 

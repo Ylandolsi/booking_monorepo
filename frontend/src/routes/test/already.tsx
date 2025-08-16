@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { ROUTE_PATHS } from '@/config/routes';
 
 import React from 'react';
 import { useUser } from '@/features/auth';
@@ -303,7 +304,7 @@ export function AlreadyMentorPage() {
   );
 }
 
-export const Route = createFileRoute('/test/already')({
+export const Route = createFileRoute(ROUTE_PATHS.TEST.ALREADY)({
   component: RouteComponent,
 });
 

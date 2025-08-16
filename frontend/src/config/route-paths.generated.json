@@ -1,0 +1,40 @@
+{
+  "ROOT": "/",
+  "AUTH": {
+    "LOGIN": "/auth/login",
+    "REGISTER": "/auth/register",
+    "FORGOT_PASSWORD": "/auth/forgot-password",
+    "RESET_PASSWORD": "/auth/reset-password",
+    "EMAIL_VERIFICATION": "/auth/email-verification/",
+    "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verification/verified"
+  },
+  "APP": {
+    "INDEX": "/app/"
+  },
+  "BOOKING": {
+    "SESSION": "/booking/session/$mentorSlug/",
+    "DEMO": "/booking/demo/$mentorSlug/",
+    "ENHANCED": "/booking/enhanced/$mentorSlug/",
+    "TEST": "/booking/test/$mentorSlug/"
+  },
+  "MENTOR": {
+    "BECOME": "/mentor/become",
+    "SET_SCHEDULE": "/mentor/set-schedule"
+  },
+  "PROFILE": {
+    "USER": "/profile/$userSlug/"
+  },
+  "ERROR_EXP": {
+    "SIMPLE_LOADING": "/error-exp/simple-loading-demo",
+    "ADVANCED_LOADING": "/error-exp/advanced-loading-examples"
+  },
+  "TEST": {
+    "MENTOR_REQUIRED": "/test/mentor-required",
+    "IMG": "/test/img",
+    "DASHBOARD": "/test/dashboard",
+    "BOOKING_DEMO": "/test/booking-demo",
+    "ALREADY": "/test/already",
+    "TTTT": "/test/tttt"
+  },
+  "UNAUTHORIZED": "/unauthorized"
+}

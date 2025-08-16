@@ -1,8 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AuthLayout, LoginForm } from '@/features/auth';
-import { paths } from '@/config/paths';
+import { createFileRoute } from '@tanstack/react-router';
+import { LoginPage } from '@/features/auth/pages/login-page';
+import { ROUTE_PATHS } from '@/config/routes';
 
-export const Route = createFileRoute('/auth/login')({
+export const Route = createFileRoute(ROUTE_PATHS.AUTH.LOGIN)({
   component: LoginPage,
   validateSearch: (search: Record<string, unknown>) => {
     // This validation is a safeguard against redirect loops.
@@ -15,19 +15,3 @@ export const Route = createFileRoute('/auth/login')({
     };
   },
 });
-
-function LoginPage() {
-  const navigate = useNavigate();
-  const { redirectTo } = Route.useSearch();
-
-  return (
-    <AuthLayout>
-      <LoginForm
-        onSuccess={() => {
-          const targetPath = redirectTo || paths.app.root.getHref();
-          navigate({ to: targetPath, replace: true });
-        }}
-      />
-    </AuthLayout>
-  );
-}

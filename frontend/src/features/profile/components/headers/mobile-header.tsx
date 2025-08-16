@@ -12,8 +12,8 @@ export function MobileHeader() {
 
   return (
     <div className="bg-card rounded-2xl shadow-lg border border-border/50 p-6">
-      <div className="space-y-6">
-        <div className="flex justify-between items-start">
+      <div className="space-y-6 ">
+        <div className="flex justify-between items-center">
           <ProfileImage size="sm" />
           <ProfileActions variant="vertical" className="flex flex-col gap-2" />
         </div>

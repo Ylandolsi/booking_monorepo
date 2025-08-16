@@ -21,7 +21,6 @@ import { Route as TestAlreadyRouteImport } from './routes/test/already'
 import { Route as MentorSetScheduleRouteImport } from './routes/mentor/set-schedule'
 import { Route as MentorBecomeRouteImport } from './routes/mentor/become'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
-import { Route as ErrorExpAdvancedLoadingExamplesRouteImport } from './routes/error-exp/advanced-loading-examples'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -29,7 +28,6 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
-import { Route as BookingTestMentorSlugIndexRouteImport } from './routes/booking/test/$mentorSlug/index'
 import { Route as BookingSessionMentorSlugIndexRouteImport } from './routes/booking/session/$mentorSlug/index'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -93,12 +91,6 @@ const ErrorExpSimpleLoadingDemoRoute =
     path: '/error-exp/simple-loading-demo',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ErrorExpAdvancedLoadingExamplesRoute =
-  ErrorExpAdvancedLoadingExamplesRouteImport.update({
-    id: '/error-exp/advanced-loading-examples',
-    path: '/error-exp/advanced-loading-examples',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/auth/reset-password',
   path: '/auth/reset-password',
@@ -136,12 +128,6 @@ const AuthEmailVerificationVerifiedRoute =
     path: '/auth/email-verification/verified',
     getParentRoute: () => rootRouteImport,
   } as any)
-const BookingTestMentorSlugIndexRoute =
-  BookingTestMentorSlugIndexRouteImport.update({
-    id: '/booking/test/$mentorSlug/',
-    path: '/booking/test/$mentorSlug/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const BookingSessionMentorSlugIndexRoute =
   BookingSessionMentorSlugIndexRouteImport.update({
     id: '/booking/session/$mentorSlug/',
@@ -157,7 +143,6 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
   '/mentor/set-schedule': typeof MentorSetScheduleRoute
@@ -171,7 +156,6 @@ export interface FileRoutesByFullPath {
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -180,7 +164,6 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
   '/mentor/set-schedule': typeof MentorSetScheduleRoute
@@ -194,7 +177,6 @@ export interface FileRoutesByTo {
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -205,7 +187,6 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/advanced-loading-examples': typeof ErrorExpAdvancedLoadingExamplesRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/mentor/become': typeof MentorBecomeRoute
   '/mentor/set-schedule': typeof MentorSetScheduleRoute
@@ -219,7 +200,6 @@ export interface FileRoutesById {
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug/': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug/': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug/': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -231,7 +211,6 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
     | '/mentor/set-schedule'
@@ -245,7 +224,6 @@ export interface FileRouteTypes {
     | '/auth/email-verification'
     | '/profile/$userSlug'
     | '/booking/session/$mentorSlug'
-    | '/booking/test/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -254,7 +232,6 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
     | '/mentor/set-schedule'
@@ -268,7 +245,6 @@ export interface FileRouteTypes {
     | '/auth/email-verification'
     | '/profile/$userSlug'
     | '/booking/session/$mentorSlug'
-    | '/booking/test/$mentorSlug'
   id:
     | '__root__'
     | '/'
@@ -278,7 +254,6 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/advanced-loading-examples'
     | '/error-exp/simple-loading-demo'
     | '/mentor/become'
     | '/mentor/set-schedule'
@@ -292,7 +267,6 @@ export interface FileRouteTypes {
     | '/auth/email-verification/'
     | '/profile/$userSlug/'
     | '/booking/session/$mentorSlug/'
-    | '/booking/test/$mentorSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -303,7 +277,6 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-  ErrorExpAdvancedLoadingExamplesRoute: typeof ErrorExpAdvancedLoadingExamplesRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   MentorBecomeRoute: typeof MentorBecomeRoute
   MentorSetScheduleRoute: typeof MentorSetScheduleRoute
@@ -316,7 +289,6 @@ export interface RootRouteChildren {
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
   ProfileUserSlugIndexRoute: typeof ProfileUserSlugIndexRoute
   BookingSessionMentorSlugIndexRoute: typeof BookingSessionMentorSlugIndexRoute
-  BookingTestMentorSlugIndexRoute: typeof BookingTestMentorSlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -405,13 +377,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ErrorExpSimpleLoadingDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/error-exp/advanced-loading-examples': {
-      id: '/error-exp/advanced-loading-examples'
-      path: '/error-exp/advanced-loading-examples'
-      fullPath: '/error-exp/advanced-loading-examples'
-      preLoaderRoute: typeof ErrorExpAdvancedLoadingExamplesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/reset-password': {
       id: '/auth/reset-password'
       path: '/auth/reset-password'
@@ -461,13 +426,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationVerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/booking/test/$mentorSlug/': {
-      id: '/booking/test/$mentorSlug/'
-      path: '/booking/test/$mentorSlug'
-      fullPath: '/booking/test/$mentorSlug'
-      preLoaderRoute: typeof BookingTestMentorSlugIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/booking/session/$mentorSlug/': {
       id: '/booking/session/$mentorSlug/'
       path: '/booking/session/$mentorSlug'
@@ -496,7 +454,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
-  ErrorExpAdvancedLoadingExamplesRoute: ErrorExpAdvancedLoadingExamplesRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   MentorBecomeRoute: MentorBecomeRoute,
   MentorSetScheduleRoute: MentorSetScheduleRoute,
@@ -509,7 +466,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
   ProfileUserSlugIndexRoute: ProfileUserSlugIndexRoute,
   BookingSessionMentorSlugIndexRoute: BookingSessionMentorSlugIndexRoute,
-  BookingTestMentorSlugIndexRoute: BookingTestMentorSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
