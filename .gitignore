@@ -75,4 +75,5 @@ ehthumbs.db
 Thumbs.db
 
 docker-compose.override.yml
+docker-compose.dev.yml
 **/.containers/
