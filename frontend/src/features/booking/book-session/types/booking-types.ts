@@ -1,6 +1,14 @@
 import type { DayAvailabilityType } from '@/features/booking/book-session/types/availability-types';
 
-export type TimeSlot = {
+export type SessionBookingRequestType = {
+  mentorSlug: string;
+  date: string; // YYYY-MM-DD format
+  startTime: string; // HH:mm format
+  duration: number; // in minutes (default 30)
+  notes?: string;
+};
+
+export type TimeSlotType = {
   startTime: string;
   endTime: string;
   isBooked: boolean;
@@ -9,7 +17,7 @@ export type TimeSlot = {
 
 export type BookingStateType = {
   selectedDate: string | null; // YYYY-MM-DD format
-  selectedSlot: TimeSlot | null;
+  selectedSlot: TimeSlotType | null;
   currentMonth: number; // 1-12
   currentYear: number;
   availability: DayAvailabilityType[];
@@ -21,7 +29,7 @@ export type BookingContextType = {
   state: BookingStateType;
   actions: {
     setSelectedDate: (date: string | null) => void;
-    setSelectedSlot: (slot: TimeSlot | null) => void;
+    setSelectedSlot: (slot: TimeSlotType | null) => void;
     setCurrentMonth: (month: number) => void;
     setCurrentYear: (year: number) => void;
     setAvailability: (availability: DayAvailabilityType[]) => void;

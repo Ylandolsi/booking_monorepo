@@ -1,16 +1,20 @@
 import { useCallback, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import type { BookingSummary } from '@/features/booking';
+import type {
+  BookingSummaryType,
+  DayAvailabilityType,
+  SessionBookingRequestType,
+  SessionSlotType,
+} from '@/features/booking';
 import { useMentorDetails } from '@/features/mentor/become';
 import { useBookSession, useMonthlyAvailability } from '@/features/booking';
 import { useProfile } from '@/features/profile';
-import type { SessionSlot, SessionBookingRequest } from '../types';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
 
 export interface BookingHookState {
   selectedDate: Date | undefined;
-  selectedSlot: SessionSlot | null;
+  selectedSlot: SessionSlotType | null;
   step: BookingStep;
   notes: string;
 }
@@ -48,9 +52,9 @@ export function useBooking() {
   const hasError =
     mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
 
-  const selectedDayData =
+  const selectedDayData: DayAvailabilityType =
     state.selectedDate && monthlyAvailabilityQuery.data
-      ? monthlyAvailabilityQuery.data.days.find((day) => {
+      ? monthlyAvailabilityQuery.data.days.find((day: DayAvailabilityType) => {
           const dayDate = new Date(day.date);
           return (
             dayDate.getDate() === state.selectedDate!.getDate() &&
@@ -62,7 +66,7 @@ export function useBooking() {
 
   const availableSlots =
     selectedDayData?.timeSlots.filter(
-      (slot) => slot.isAvailable && !slot.isBooked,
+      (slot: SessionSlotType) => slot.isAvailable && !slot.isBooked,
     ) || [];
 
   // Actions
@@ -74,7 +78,7 @@ export function useBooking() {
     }));
   }, []);
 
-  const setSelectedSlot = useCallback((slot: SessionSlot | null) => {
+  const setSelectedSlot = useCallback((slot: SessionSlotType | null) => {
     setState((prev: BookingHookState) => ({
       ...prev,
       selectedSlot: slot,
@@ -105,7 +109,7 @@ export function useBooking() {
   }, []);
 
   // Create booking summary
-  const createBookingSummary = useCallback((): BookingSummary | null => {
+  const createBookingSummary = useCallback((): BookingSummaryType | null => {
     if (
       !mentorDetailsQuery.data ||
       !mentorInfoQuery.data ||
@@ -147,7 +151,7 @@ export function useBooking() {
       return;
     }
 
-    const bookingRequest: SessionBookingRequest = {
+    const bookingRequest: SessionBookingRequestType = {
       mentorSlug,
       date: state.selectedDate.toISOString().split('T')[0],
       startTime: state.selectedSlot.startTime,

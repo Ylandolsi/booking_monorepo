@@ -35,11 +35,3 @@
 //     avatar?: string;
 //   };
 // };
-
-// export type SessionBookingRequestType = {
-//   mentorSlug: string;
-//   date: string; // YYYY-MM-DD format
-//   startTime: string; // HH:mm format
-//   duration: number; // in minutes (default 30)
-//   notes?: string;
-// };
