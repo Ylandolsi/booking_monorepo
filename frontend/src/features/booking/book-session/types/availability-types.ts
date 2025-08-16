@@ -1,4 +1,4 @@
-export type SessionSlot = {
+export type SessionSlotType = {
   startTime: string; // 16:00
   endTime: string; // ISO string format
   isAvailable: boolean;
@@ -8,7 +8,7 @@ export type SessionSlot = {
 export type DayAvailabilityType = {
   date: string; // YYYY-MM-DD format
   isAvailable: boolean; // exists at least on sessionSlot available
-  timeSlots: SessionSlot[];
+  timeSlots: SessionSlotType[];
   summary: DailySummaryType;
 };
 
@@ -19,7 +19,7 @@ export type DailySummaryType = {
   availabilityPercentage: number;
 };
 
-export type MonthAvailability = {
+export type MonthAvailabilityType = {
   year: number;
   month: number; // 1-12
   days: DayAvailabilityType[];

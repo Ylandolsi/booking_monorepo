@@ -75,7 +75,7 @@ const Sidebar = ({
     {
       name: 'Set Availability',
       icon: <Timer size={20} />,
-      click: () => navigate({ to: '/mentor/set-availability' }),
+      click: () => navigate({ to: '/mentor/set-schedule' }),
     },
     {
       name: 'Bookings',

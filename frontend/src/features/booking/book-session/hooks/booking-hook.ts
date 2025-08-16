@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import type { BookingSummary } from '@/features/booking';
-import { useMentorDetails } from '@/features/mentor';
+import { useMentorDetails } from '@/features/mentor/become';
 import { useBookSession, useMonthlyAvailability } from '@/features/booking';
 import { useProfile } from '@/features/profile';
 import type { SessionSlot, SessionBookingRequest } from '../types';

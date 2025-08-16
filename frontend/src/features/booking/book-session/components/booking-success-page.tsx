@@ -6,13 +6,13 @@ import {
   DollarSign,
 } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
-import type { BookingSummary } from '../types/booking-types';
-import type { SessionSlot } from '../types/availability-types';
+import type { BookingSummaryType } from '../types/booking-types';
+import type { SessionSlotType } from '../types/availability-types';
 
 interface BookingSuccessPageProps {
-  bookingSummary: BookingSummary | null;
+  bookingSummary: BookingSummaryType | null;
   selectedDate: Date | undefined;
-  selectedSlot: SessionSlot | null;
+  selectedSlot: SessionSlotType | null;
   onBookAnother: () => void;
   onViewBookings: () => void;
 }

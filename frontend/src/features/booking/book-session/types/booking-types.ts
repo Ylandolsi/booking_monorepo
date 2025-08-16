@@ -1,30 +1,37 @@
-import type { DayAvailability, TimeSlot } from './availability-types';
+import type { DayAvailabilityType } from '@/features/booking/book-session/types/availability-types';
 
-export type BookingState = {
+export type TimeSlot = {
+  startTime: string;
+  endTime: string;
+  isBooked: boolean;
+  isAvailable: boolean;
+};
+
+export type BookingStateType = {
   selectedDate: string | null; // YYYY-MM-DD format
   selectedSlot: TimeSlot | null;
   currentMonth: number; // 1-12
   currentYear: number;
-  availability: DayAvailability[];
+  availability: DayAvailabilityType[];
   isLoading: boolean;
   error: string | null;
 };
 
 export type BookingContextType = {
-  state: BookingState;
+  state: BookingStateType;
   actions: {
     setSelectedDate: (date: string | null) => void;
     setSelectedSlot: (slot: TimeSlot | null) => void;
     setCurrentMonth: (month: number) => void;
     setCurrentYear: (year: number) => void;
-    setAvailability: (availability: DayAvailability[]) => void;
+    setAvailability: (availability: DayAvailabilityType[]) => void;
     setLoading: (loading: boolean) => void;
     setError: (error: string | null) => void;
     resetBooking: () => void;
   };
 };
 
-export type BookingSummary = {
+export type BookingSummaryType = {
   mentor: {
     slug: string;
     name: string;
