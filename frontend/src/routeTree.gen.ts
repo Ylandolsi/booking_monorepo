@@ -31,6 +31,8 @@ import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/em
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
 import { Route as BookingTestMentorSlugIndexRouteImport } from './routes/booking/test/$mentorSlug/index'
 import { Route as BookingRealMentorSlugIndexRouteImport } from './routes/booking/real/$mentorSlug/index'
+import { Route as BookingEnhancedMentorSlugIndexRouteImport } from './routes/booking/enhanced/$mentorSlug/index'
+import { Route as BookingDemoMentorSlugIndexRouteImport } from './routes/booking/demo/$mentorSlug/index'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -148,6 +150,18 @@ const BookingRealMentorSlugIndexRoute =
     path: '/booking/real/$mentorSlug/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BookingEnhancedMentorSlugIndexRoute =
+  BookingEnhancedMentorSlugIndexRouteImport.update({
+    id: '/booking/enhanced/$mentorSlug/',
+    path: '/booking/enhanced/$mentorSlug/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BookingDemoMentorSlugIndexRoute =
+  BookingDemoMentorSlugIndexRouteImport.update({
+    id: '/booking/demo/$mentorSlug/',
+    path: '/booking/demo/$mentorSlug/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -170,6 +184,8 @@ export interface FileRoutesByFullPath {
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
+  '/booking/demo/$mentorSlug': typeof BookingDemoMentorSlugIndexRoute
+  '/booking/enhanced/$mentorSlug': typeof BookingEnhancedMentorSlugIndexRoute
   '/booking/real/$mentorSlug': typeof BookingRealMentorSlugIndexRoute
   '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
@@ -193,6 +209,8 @@ export interface FileRoutesByTo {
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
+  '/booking/demo/$mentorSlug': typeof BookingDemoMentorSlugIndexRoute
+  '/booking/enhanced/$mentorSlug': typeof BookingEnhancedMentorSlugIndexRoute
   '/booking/real/$mentorSlug': typeof BookingRealMentorSlugIndexRoute
   '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
@@ -218,6 +236,8 @@ export interface FileRoutesById {
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug/': typeof ProfileUserSlugIndexRoute
+  '/booking/demo/$mentorSlug/': typeof BookingDemoMentorSlugIndexRoute
+  '/booking/enhanced/$mentorSlug/': typeof BookingEnhancedMentorSlugIndexRoute
   '/booking/real/$mentorSlug/': typeof BookingRealMentorSlugIndexRoute
   '/booking/test/$mentorSlug/': typeof BookingTestMentorSlugIndexRoute
 }
@@ -244,6 +264,8 @@ export interface FileRouteTypes {
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
+    | '/booking/demo/$mentorSlug'
+    | '/booking/enhanced/$mentorSlug'
     | '/booking/real/$mentorSlug'
     | '/booking/test/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
@@ -267,6 +289,8 @@ export interface FileRouteTypes {
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
+    | '/booking/demo/$mentorSlug'
+    | '/booking/enhanced/$mentorSlug'
     | '/booking/real/$mentorSlug'
     | '/booking/test/$mentorSlug'
   id:
@@ -291,6 +315,8 @@ export interface FileRouteTypes {
     | '/auth/email-verification/verified'
     | '/auth/email-verification/'
     | '/profile/$userSlug/'
+    | '/booking/demo/$mentorSlug/'
+    | '/booking/enhanced/$mentorSlug/'
     | '/booking/real/$mentorSlug/'
     | '/booking/test/$mentorSlug/'
   fileRoutesById: FileRoutesById
@@ -315,6 +341,8 @@ export interface RootRouteChildren {
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
   ProfileUserSlugIndexRoute: typeof ProfileUserSlugIndexRoute
+  BookingDemoMentorSlugIndexRoute: typeof BookingDemoMentorSlugIndexRoute
+  BookingEnhancedMentorSlugIndexRoute: typeof BookingEnhancedMentorSlugIndexRoute
   BookingRealMentorSlugIndexRoute: typeof BookingRealMentorSlugIndexRoute
   BookingTestMentorSlugIndexRoute: typeof BookingTestMentorSlugIndexRoute
 }
@@ -475,6 +503,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookingRealMentorSlugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/enhanced/$mentorSlug/': {
+      id: '/booking/enhanced/$mentorSlug/'
+      path: '/booking/enhanced/$mentorSlug'
+      fullPath: '/booking/enhanced/$mentorSlug'
+      preLoaderRoute: typeof BookingEnhancedMentorSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking/demo/$mentorSlug/': {
+      id: '/booking/demo/$mentorSlug/'
+      path: '/booking/demo/$mentorSlug'
+      fullPath: '/booking/demo/$mentorSlug'
+      preLoaderRoute: typeof BookingDemoMentorSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -508,6 +550,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
   ProfileUserSlugIndexRoute: ProfileUserSlugIndexRoute,
+  BookingDemoMentorSlugIndexRoute: BookingDemoMentorSlugIndexRoute,
+  BookingEnhancedMentorSlugIndexRoute: BookingEnhancedMentorSlugIndexRoute,
   BookingRealMentorSlugIndexRoute: BookingRealMentorSlugIndexRoute,
   BookingTestMentorSlugIndexRoute: BookingTestMentorSlugIndexRoute,
 }

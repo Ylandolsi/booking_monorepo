@@ -79,7 +79,7 @@ function MyComponent() {
 }
 
 
-import { MainErrorFallback, NetworkError, NotFound, Unauthorized } from '@/components/errors';
+import { MainErrorFallback, NetworkError, ErrorComponenet, Unauthorized } from '@/components/errors';
 
 // Main error fallback
 <MainErrorFallback
@@ -96,7 +96,7 @@ import { MainErrorFallback, NetworkError, NotFound, Unauthorized } from '@/compo
 />
 
 // Not found (404)
-<NotFound
+<ErrorComponenet
   title="Custom 404"
   message="Custom not found message"
   showHomeButton={true}
@@ -274,7 +274,7 @@ export const ConditionalErrorHandling = () => {
     }
 
     if (message.includes('not found')) {
-      return <NotFound title="Resource Not Found" message={error.message} />;
+      return <ErrorComponenet title="Resource Not Found" message={error.message} />;
     }
 
     if (message.includes('unauthorized')) {

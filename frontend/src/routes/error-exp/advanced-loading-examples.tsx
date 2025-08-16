@@ -12,15 +12,13 @@ import {
   LoadingState,
   PageLoading,
   ContentLoading,
-  CardSkelton,
-  ListSkelton,
   Skeleton,
   Spinner,
 } from '@/components/ui';
 import {
   MainErrorFallback,
   NetworkError,
-  NotFound,
+  ErrorComponenet,
   Unauthorized,
 } from '@/components/errors';
 import { Button, Card, Badge } from '@/components/ui';
@@ -601,7 +599,10 @@ export const ErrorBoundaryExample = () => {
         return <NetworkError onRetry={() => console.log('Retrying...')} />;
       case 'not-found':
         return (
-          <NotFound title="Custom 404" message="This page doesn't exist" />
+          <ErrorComponenet
+            title="Custom 404"
+            message="This page doesn't exist"
+          />
         );
       case 'unauthorized':
         return (

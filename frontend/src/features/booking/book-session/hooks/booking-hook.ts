@@ -1,107 +1,205 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import type { BookingSummary, TimeSlot } from '@/features/booking';
-import { useQueryState } from '@/hooks';
+import type { BookingSummary } from '@/features/booking';
 import { useMentorDetails } from '@/features/mentor';
 import { useBookSession, useMonthlyAvailability } from '@/features/booking';
 import { useProfile } from '@/features/profile';
+import type { SessionSlot, SessionBookingRequest } from '../types';
+
+export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
+
+export interface BookingHookState {
+  selectedDate: Date | undefined;
+  selectedSlot: SessionSlot | null;
+  step: BookingStep;
+  notes: string;
+}
 
 export function useBooking() {
   const { mentorSlug } = useParams({ strict: false }) as {
     mentorSlug?: string;
   };
 
+  // State management
+  const [state, setState] = useState<BookingHookState>({
+    selectedDate: new Date(),
+    selectedSlot: null,
+    step: 'select',
+    notes: '',
+  });
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [bookingStep, setBookingStep] = useState<'select' | 'success'>(
-    'select',
-  );
-
-  const mentorInfoQuery = useProfile(mentorSlug!) ;
-  const mentorDetailsQuery = useMentorDetails(mentorSlug, { enabled: !!mentorSlug });
+  // API queries
+  const mentorInfoQuery = useProfile(mentorSlug!);
+  const mentorDetailsQuery = useMentorDetails(mentorSlug, {
+    enabled: !!mentorSlug,
+  });
 
   const monthlyAvailabilityQuery = useMonthlyAvailability(
     mentorSlug,
-    selectedDate?.getFullYear(),
-    selectedDate?.getMonth() + 1
+    state.selectedDate?.getFullYear(),
+    state.selectedDate ? state.selectedDate.getMonth() + 1 : undefined,
+    { enabled: !!mentorSlug && !!state.selectedDate },
   );
 
   const bookSessionMutation = useBookSession();
 
-  useEffect(() => {
-    setSelectedSlot(null);
+  const isLoading =
+    mentorDetailsQuery.isLoading || monthlyAvailabilityQuery.isLoading;
+  const hasError =
+    mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
 
-  }, [selectedDate]);
+  const selectedDayData =
+    state.selectedDate && monthlyAvailabilityQuery.data
+      ? monthlyAvailabilityQuery.data.days.find((day) => {
+          const dayDate = new Date(day.date);
+          return (
+            dayDate.getDate() === state.selectedDate!.getDate() &&
+            dayDate.getMonth() === state.selectedDate!.getMonth() &&
+            dayDate.getFullYear() === state.selectedDate!.getFullYear()
+          );
+        })
+      : undefined;
 
-  // Handle booking confirmation
-  /* const handleBookSession = async () => {
-     if (!selectedDate || !selectedSlot || !mentorSlug) return;
+  const availableSlots =
+    selectedDayData?.timeSlots.filter(
+      (slot) => slot.isAvailable && !slot.isBooked,
+    ) || [];
 
-     try {
-       await bookSessionMutation.mutateAsync({
-         mentorSlug,
-         date: selectedDate,
-         startTime: new Date(selectedSlot.startTime).toLocaleTimeString(
-           'en-US',
-           {
-             hour12: false,
-             hour: '2-digit',
-             minute: '2-digit',
-           },
-         ),
-         duration: 30,
-         notes: '',
-       });
-       setBookingStep('success');
-     } catch (error) {
-       console.error('Booking failed:', error);
-     }
-   };*/
+  // Actions
+  const setSelectedDate = useCallback((date: Date | undefined) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      selectedDate: date,
+      selectedSlot: null, // Reset slot when date changes
+    }));
+  }, []);
 
-  // Create booking summary data
-  /*const createBookingSummary = (): BookingSummary | null => {
-    if (!mentorDetailsQuery.data || !selectedDate || !selectedSlot) return null;
+  const setSelectedSlot = useCallback((slot: SessionSlot | null) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      selectedSlot: slot,
+    }));
+  }, []);
+
+  const setStep = useCallback((step: BookingStep) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      step,
+    }));
+  }, []);
+
+  const setNotes = useCallback((notes: string) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      notes,
+    }));
+  }, []);
+
+  const resetBooking = useCallback(() => {
+    setState({
+      selectedDate: undefined,
+      selectedSlot: null,
+      step: 'select',
+      notes: '',
+    });
+  }, []);
+
+  // Create booking summary
+  const createBookingSummary = useCallback((): BookingSummary | null => {
+    if (
+      !mentorDetailsQuery.data ||
+      !mentorInfoQuery.data ||
+      !state.selectedDate ||
+      !state.selectedSlot
+    ) {
+      return null;
+    }
 
     return {
       mentor: {
         slug: mentorSlug || '',
-/!*        name: `Professional Mentor`,
-        avatar: undefined,
-        title: 'Experienced Mentor',
-        expertise: ['General Mentoring'],*!/
+        name: `${mentorInfoQuery.data.firstName} ${mentorInfoQuery.data.lastName}`,
+        avatar: mentorInfoQuery.data.profilePicture?.profilePictureLink,
+        title: 'Professional Mentor',
+        expertise: ['General Mentoring'],
         hourlyRate: mentorDetailsQuery.data.hourlyRate || 50,
       },
       session: {
-        date: selectedDate,
-        time: new Date(selectedSlot.startTime).toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        }),
+        date: state.selectedDate.toISOString().split('T')[0],
+        time: state.selectedSlot.startTime,
         duration: 30,
         price: mentorDetailsQuery.data.hourlyRate || 50,
         currency: '$',
       },
       total: mentorDetailsQuery.data.hourlyRate || 50,
     };
-  };*/
+  }, [
+    mentorDetailsQuery.data,
+    mentorInfoQuery.data,
+    state.selectedDate,
+    state.selectedSlot,
+    mentorSlug,
+  ]);
 
-  /*
-    const bookingSummary = createBookingSummary();
-  */
+  // Handle booking submission
+  const handleBookSession = useCallback(async () => {
+    if (!state.selectedDate || !state.selectedSlot || !mentorSlug) {
+      return;
+    }
+
+    const bookingRequest: SessionBookingRequest = {
+      mentorSlug,
+      date: state.selectedDate.toISOString().split('T')[0],
+      startTime: state.selectedSlot.startTime,
+      duration: 30,
+      notes: state.notes,
+    };
+
+    try {
+      setStep('confirm');
+      await bookSessionMutation.mutateAsync(bookingRequest);
+      setStep('success');
+    } catch (error) {
+      console.error('Booking failed:', error);
+      setStep('error');
+    }
+  }, [
+    state.selectedDate,
+    state.selectedSlot,
+    state.notes,
+    mentorSlug,
+    bookSessionMutation,
+    setStep,
+  ]);
+
+  const bookingSummary = createBookingSummary();
 
   return {
+    // State
+    selectedDate: state.selectedDate,
+    selectedSlot: state.selectedSlot,
+    step: state.step,
+    notes: state.notes,
+
+    // Computed values
+    isLoading,
+    hasError,
+    selectedDayData,
+    availableSlots,
+    bookingSummary,
+
+    // Queries
     mentorInfoQuery,
     mentorDetailsQuery,
     monthlyAvailabilityQuery,
-    selectedDate,
-    setSelectedDate,
-    bookingStep,
-    setBookingStep,
     bookSessionMutation,
-    // handleBookSession,
-    // bookingSummary,
-  };
 
+    // Actions
+    setSelectedDate,
+    setSelectedSlot,
+    setStep,
+    setNotes,
+    resetBooking,
+    handleBookSession,
+  };
 }

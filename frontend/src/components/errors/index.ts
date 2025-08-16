@@ -1,6 +1,6 @@
 export * from './main';
 export * from './network-error';
-export * from './not-found';
+export * from './error-component';
 export * from './unauthorized';
 export * from './global-error';
 export * from './mentor-required';

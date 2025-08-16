@@ -1,21 +1,40 @@
 import { Button } from '@/components/ui';
-import { Search, Home, ArrowLeft } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { paths } from '@/config';
+import {
+  AlertCircle,
+  XCircle,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+} from 'lucide-react';
+import React from 'react';
 
-interface NotFoundProps {
+interface ErrorComponenetProps {
   title?: string;
   message?: string;
   showHomeButton?: boolean;
   showBackButton?: boolean;
+  iconType?: keyof typeof errorIconMap;
 }
 
-export const NotFound = ({
+const errorIconMap = {
+  default: AlertCircle,
+  destructive: XCircle,
+  success: CheckCircle,
+  warning: AlertTriangle,
+  info: Info,
+} as const;
+
+export const ErrorComponenet = ({
   title = 'Page Not Found',
   message = "The page you're looking for doesn't exist or has been moved.",
   showHomeButton = true,
   showBackButton = true,
-}: NotFoundProps) => {
+  iconType = 'default',
+}: ErrorComponenetProps) => {
+  const IconComponent = errorIconMap[iconType] || errorIconMap.default;
   const navigate = useNavigate();
 
   const handleGoHome = () => {
@@ -31,7 +50,7 @@ export const NotFound = ({
       <div className="max-w-md w-full text-center space-y-6">
         {/* 404 Icon */}
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-          <Search className="w-8 h-8 text-muted-foreground" />
+          <IconComponent className="w-6 h-6 text-muted-foreground" />
         </div>
 
         {/* Error Message */}

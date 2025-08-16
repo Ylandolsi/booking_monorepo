@@ -363,3 +363,25 @@ If field is 'end', it sets end: value.
       ),
     }));
 ```
+
+```ts : group state in one single palce for better code
+const [state, setState] = useState<BookingHookState>({
+  selectedDate: undefined,
+  selectedSlot: null,
+  step: 'select',
+  notes: '',
+});
+```
+
+```ts
+to show list in a good format , transparent a little bit when its not shown completly
+            <div
+              className="space-y-3 max-h-80 overflow-y-auto pr-2 pb-5"
+              style={{
+                maskImage:
+                  'linear-gradient(to bottom, black 90%, transparent 100%)',
+                WebkitMaskImage:
+                  'linear-gradient(to bottom, black 90%, transparent 100%)',
+              }}
+            >
+```

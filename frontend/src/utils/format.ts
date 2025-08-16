@@ -12,15 +12,20 @@ export const formatDate = (date: Date | string): string => {
   });
 };
 
-export const formatTime = (time: string) => {
-  const [hours, minutes] = time.split(':');
-  const hour = parseInt(hours);
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-  return `${displayHour}:${minutes} ${ampm}`;
+export const formatTime = (timeString: string): string => {
+  // Parse HH:mm format
+  const [hours, minutes] = timeString.split(':');
+  const time = new Date();
+  time.setHours(parseInt(hours), parseInt(minutes));
+
+  return time.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
 };
+
 export const formatTimeRange = (start: string, end: string) => {
   return `${formatTime(start)} - ${formatTime(end)}`;
 };
-
 // const formatDate = (dateStr: string | undefined) => {
