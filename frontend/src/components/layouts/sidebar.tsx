@@ -112,8 +112,6 @@ const Sidebar = ({
     }
   };
 
-  console.log(currentUser);
-
   return (
     <>
       {/* Mobile overlay */}

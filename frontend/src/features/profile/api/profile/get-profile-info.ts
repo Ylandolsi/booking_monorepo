@@ -3,8 +3,9 @@ import type { User } from '@/types/api';
 import * as Endpoints from '@/lib/user-endpoints.ts';
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { profileQueryKeys } from '@/features/profile';
+import { useQueryState } from '@/hooks';
 
-export const userInfo = async (userSlug: string) => {
+export const userInfo = async (userSlug? : string) => {
   if (userSlug === undefined || userSlug === '') {
     throw new Error('userSlug is required');
   }
@@ -12,11 +13,11 @@ export const userInfo = async (userSlug: string) => {
 };
 
 export function useProfile(
-  userSlug: string,
-  overrides?: Partial<UseQueryOptions<any, unknown, any>>,
+  userSlug?: string ,
+  overrides?: Partial<UseQueryOptions<User, unknown, User>>,
 ) {
   return useQuery({
-    queryKey: profileQueryKeys.slug(userSlug),
+    queryKey: profileQueryKeys.slug(userSlug!),
     queryFn: () => userInfo(userSlug),
     enabled: !!userSlug,
     ...overrides,

@@ -1,1 +1,2 @@
-export { BookingPage } from './book-meet/booking-page.tsx';
+export * from './booking-page-demo.tsx';
+export * from './booking-page.tsx';

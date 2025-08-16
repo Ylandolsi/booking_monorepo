@@ -1,6 +1,6 @@
 export type SessionSlot = {
-  start: string; // ISO string format
-  end: string; // ISO string format
+  startTime: string; // 16:00
+  endTime: string; // ISO string format
   isAvailable: boolean;
   isBooked: boolean;
 };

@@ -5,7 +5,7 @@ export type AvailabilityRangeType = {
 };
 
 export type DailySchedule = {
-  dayOfWeek: number;
+  dayOfWeek: number; // // 0-6 (Sunday-Saturday)
   isActive: boolean;
   availabilityRanges: AvailabilityRangeType[];
 };

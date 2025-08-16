@@ -15,9 +15,8 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 {
     public record ScheduledAtWithDuration
     {
-        public DateTime ScheduledAt; 
+        public DateTime ScheduledAt;
         public int Minutes;
-        
     }
 
     public async Task<Result<DailyAvailabilityResponse>> Handle(GetMentorAvailabilityByDayQuery query,
@@ -32,7 +31,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             var dayOfWeek = query.Date.DayOfWeek;
 
 
-            
             // Get mentor with buffer time
             var mentor = await context.Mentors
                 .Where(m => m.UserSlug == query.MentorSlug && m.IsActive)
@@ -73,7 +71,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                     ScheduledAt = s.ScheduledAt,
                     Minutes = s.Duration.Minutes
                 })
-                .OrderBy( s => s.ScheduledAt)
+                .OrderBy(s => s.ScheduledAt)
                 .ToListAsync(cancellationToken);
 
 
@@ -144,13 +142,13 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
         var currentTime = startTime;
         var slotDuration = Duration.ThirtyMinutes.Minutes;
 
-        int pointerSession = 0; 
-        while (currentTime <= endTime ) 
+        int pointerSession = 0;
+        while (currentTime <= endTime)
         {
             var slotEndTime = currentTime.Add(TimeSpan.FromMinutes(30));
             if (slotEndTime > endTime)
             {
-                break; 
+                break;
             }
 
             // todo : optimize it to 2 pointers approach 
@@ -163,13 +161,13 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
                 return (slotStart < sessionEnd && slotEnd > sessionStart);
             });
-            
 
-            var isAvailable = !isBooked ;
+
+            var isAvailable = !isBooked;
 
             slots.Add(new TimeSlotResponse(
-                currentTime,
-                slotEndTime,
+                currentTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),
+                slotEndTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),
                 isBooked,
                 isAvailable));
 

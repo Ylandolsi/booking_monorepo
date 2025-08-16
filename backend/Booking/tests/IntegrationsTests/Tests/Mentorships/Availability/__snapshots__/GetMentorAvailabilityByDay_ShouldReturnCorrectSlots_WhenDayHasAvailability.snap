@@ -3,50 +3,50 @@
   "isAvailable": true,
   "timeSlots": [
     {
-      "startTime": "09:00:00",
-      "endTime": "09:30:00",
+      "startTime": "09:00",
+      "endTime": "09:30",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "09:45:00",
-      "endTime": "10:15:00",
+      "startTime": "09:45",
+      "endTime": "10:15",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "10:30:00",
-      "endTime": "11:00:00",
+      "startTime": "10:30",
+      "endTime": "11:00",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "11:15:00",
-      "endTime": "11:45:00",
+      "startTime": "11:15",
+      "endTime": "11:45",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "14:00:00",
-      "endTime": "14:30:00",
+      "startTime": "14:00",
+      "endTime": "14:30",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "14:45:00",
-      "endTime": "15:15:00",
+      "startTime": "14:45",
+      "endTime": "15:15",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "15:30:00",
-      "endTime": "16:00:00",
+      "startTime": "15:30",
+      "endTime": "16:00",
       "isBooked": false,
       "isAvailable": true
     },
     {
-      "startTime": "16:15:00",
-      "endTime": "16:45:00",
+      "startTime": "16:15",
+      "endTime": "16:45",
       "isBooked": false,
       "isAvailable": true
     }

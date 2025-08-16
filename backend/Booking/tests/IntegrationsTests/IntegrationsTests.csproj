@@ -48,8 +48,4 @@
       </Reference>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Tests\Mentorships\Availability\__snapshots__\" />
-    </ItemGroup>
-
 </Project>

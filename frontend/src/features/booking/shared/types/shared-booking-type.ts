@@ -1,12 +1,12 @@
 export const DAYS_OF_WEEK: { key: DayOfWeek; label: string; short: string }[] =
   [
+    { key: 'sunday', label: 'Sunday', short: 'Sun' },
     { key: 'monday', label: 'Monday', short: 'Mon' },
     { key: 'tuesday', label: 'Tuesday', short: 'Tue' },
     { key: 'wednesday', label: 'Wednesday', short: 'Wed' },
     { key: 'thursday', label: 'Thursday', short: 'Thu' },
     { key: 'friday', label: 'Friday', short: 'Fri' },
     { key: 'saturday', label: 'Saturday', short: 'Sat' },
-    { key: 'sunday', label: 'Sunday', short: 'Sun' },
   ];
 
 export const PREDEFINED_TIME_SLOTS = [

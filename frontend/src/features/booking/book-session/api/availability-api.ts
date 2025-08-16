@@ -6,11 +6,11 @@ import {
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
-import { availabilityQueryKeys } from '@/features/booking/set-availability';
+import { availabilityQueryKeys } from '@/features/booking/book-session';
 import type {
   DayAvailabilityType,
   MonthAvailability,
-} from '@/features/booking/set-availability';
+} from '@/features/booking/book-session';
 
 // GET
 
@@ -65,7 +65,7 @@ export function useMonthlyAvailability(
   mentorSlug?: string,
   year?: number,
   month?: number,
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
+  overrides? : Partial<UseQueryOptions<any, unknown>> ,
 ): UseQueryResult<MonthAvailability, unknown> {
   return useQuery(
     queryOptions({

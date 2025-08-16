@@ -140,6 +140,7 @@ public class AvailabilityTests : MentorshipTestBase
         var (publicArrange, publicAct) = GetClientsForUser("public_monthly");
         var response = await publicAct.GetAsync(
             $"{MentorshipEndpoints.Availability.GetMonthly}?mentorSlug={currentUser.Slug}&year={currentDate.Year}&month={currentDate.Month}");
+        await MatchSnapshotAsync(response, "GetMentorAvailabilityByMonth_ShouldReturnCompleteMonth_WithMixedActiveDays" , matchOptions => matchOptions.IgnoreAllFields("date"));
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

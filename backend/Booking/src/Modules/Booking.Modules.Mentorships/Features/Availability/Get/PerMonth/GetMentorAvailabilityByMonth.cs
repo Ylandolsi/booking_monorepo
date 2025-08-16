@@ -18,7 +18,7 @@ internal sealed class GetMentorAvailabilityByMonth : IEndpoint
                 [FromQuery] int month,
                 IQueryHandler<GetMentorAvailabilityByMonthQuery, MonthlyAvailabilityResponse> handler,
                 CancellationToken cancellationToken,
-                bool includePastDays = false,
+                bool includePastDays = true,
                 bool includeBookedSlots = true) =>
             {
                 var query = new GetMentorAvailabilityByMonthQuery(mentorSlug, year, month, includePastDays,
