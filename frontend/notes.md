@@ -538,3 +538,31 @@ json// packages/ui/package.json
 }
 
 ```
+
+```
+  const [username, setUsername] = useState('')
+
+      <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+```
+
+abortController
+
+```when loading a route with loaded , we can setup this
+to show spinner when laoding but after some blank time that s the startyegy if tanstakc rotuer
+export const Route = createFileRoute(ROUTE_PATHS.APP.PROFILE.USER)({
+  component: RouteComponent,
+  loader: async () => {
+    // wait 5 seconds
+    await new Promise<void>((resolve) => setTimeout(resolve, 5000));
+    return undefined;
+  },
+  pendingComponent: PageLoading,
+});
+```

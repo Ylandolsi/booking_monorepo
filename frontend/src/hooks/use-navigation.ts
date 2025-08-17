@@ -12,6 +12,7 @@ export function useAppNavigation() {
   const navigate = useNavigate();
 
   return {
+    goTo: navigate,
     // Auth navigation
     goToLogin: (params?: { redirectTo?: string }) => {
       navigate({ to: routes.to.auth.login(params) });

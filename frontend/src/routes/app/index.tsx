@@ -1,4 +1,3 @@
-import { ContentLayout } from '@/components/layouts';
 import { createFileRoute } from '@tanstack/react-router';
 import { ROUTE_PATHS } from '@/config/routes';
 

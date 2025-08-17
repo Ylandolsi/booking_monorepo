@@ -1,19 +1,19 @@
+import { ROUTE_PATHS } from '@/config';
 import { LoginForm } from '@/features/auth/components';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks';
+import { getRouteApi } from '@tanstack/react-router';
 
 export function LoginPage() {
-  // const navigate = useNavigate();
   // const { redirectTo } = useSearch();
-
+  const navigate = useAppNavigation();
+  const routeApi = getRouteApi(ROUTE_PATHS.AUTH.LOGIN);
+  const { redirectTo } = routeApi.useSearch();
   return (
     <LoginForm
       onSuccess={() => {
-        return;
+        const targetPath = redirectTo;
+        navigate.goTo({ to: targetPath, replace: true });
       }}
-      // onSuccess={() => {
-      //   const targetPath = redirectTo || paths.app.root.getHref();
-      //   navigate({ to: targetPath, replace: true });
-      // }}
     />
   );
 }

@@ -6,15 +6,15 @@ import {
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
 import { HelmetProvider } from 'react-helmet-async';
-import { MainErrorFallback } from '@/components/errors/main';
 import { PageLoading } from '@/components';
 import type { DefaultOptions } from '@tanstack/react-query';
 import { toast, Toaster } from 'sonner';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { routeTree } from '@/routeTree.gen';
 
 type AppProviderProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 };
 // meta? : Register["mutationMeta"];
 declare module '@tanstack/react-query' {
@@ -74,18 +74,34 @@ const queryClient = new QueryClient({
     },
   }),
 });
+
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient, // injected so it can be used in loader
+  },
+  defaultPendingComponent: () => <PageLoading />,
+});
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <React.Suspense fallback={<PageLoading />}>
-      <ErrorBoundary FallbackComponent={MainErrorFallback}>
-        <HelmetProvider>
-          <QueryClientProvider client={queryClient}>
-            {import.meta.env.DEV && <ReactQueryDevtools />}
-            <Toaster />
-            {children}
-          </QueryClientProvider>
-        </HelmetProvider>
-      </ErrorBoundary>
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+
+          {/* < QueryErrorResetBoundary > // TODO : GOOGLE THIS  */}
+          {import.meta.env.DEV && <ReactQueryDevtools />}
+          <Toaster />
+          {children}
+        </QueryClientProvider>
+      </HelmetProvider>
     </React.Suspense>
   );
 };

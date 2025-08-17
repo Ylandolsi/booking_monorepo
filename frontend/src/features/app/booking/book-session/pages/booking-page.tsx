@@ -18,14 +18,14 @@ import {
 import { useBooking, TimeSlots } from '@/features/app/booking/book-session';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
-import React from 'react';
 import { formatDate } from '@/utils';
-import { ContentLayout, ErrorComponenet } from '@/components';
+import { ErrorComponenet } from '@/components';
 import { BookingSummary } from '@/features/app/booking/book-session/components';
+import React from 'react';
 
 function BookingContent() {
   const nav = useAppNavigation();
-
+  const isMobile = useIsMobile();
   const {
     // State
     selectedDate,

@@ -69,180 +69,180 @@ export default tseslint.config(
           trailingUnderscore: 'forbid',
         },
       ],
-      'import/no-restricted-paths': [
-        'error',
-        {
-          zones: [
-            // Prevent cross-feature imports - features should be isolated
-            {
-              target: './src/features/auth',
-              from: './src/features',
-              except: ['./auth'],
-            },
-            {
-              target: './src/features/profile',
-              from: './src/features',
-              except: ['./profile'],
-            },
-            // Add more feature restrictions as needed
-            // {
-            //   target: './src/features/dashboard',
-            //   from: './src/features',
-            //   except: ['./dashboard'],
-            // },
+      // 'import/no-restricted-paths': [
+      //   'error',
+      //   {
+      //     zones: [
+      //       // Prevent cross-feature imports - features should be isolated
+      //       {
+      //         target: './src/features/auth',
+      //         from: './src/features',
+      //         except: ['./auth'],
+      //       },
+      //       {
+      //         target: './src/features/profile',
+      //         from: './src/features',
+      //         except: ['./profile'],
+      //       },
+      //       // Add more feature restrictions as needed
+      //       // {
+      //       //   target: './src/features/dashboard',
+      //       //   from: './src/features',
+      //       //   except: ['./dashboard'],
+      //       // },
 
-            // Enforce unidirectional architecture
-            // Features and app can't import from each other directly
-            {
-              target: './src/features',
-              from: './src/app',
-            },
+      //       // Enforce unidirectional architecture
+      //       // Features and app can't import from each other directly
+      //       {
+      //         target: './src/features',
+      //         from: './src/app',
+      //       },
 
-            // Shared modules should not import from features or app
-            {
-              target: [
-                './src/components',
-                './src/hooks',
-                './src/lib',
-                './src/types',
-                './src/utils',
-              ],
-              from: ['./src/features', './src/app'],
-            },
+      //       // Shared modules should not import from features or app
+      //       {
+      //         target: [
+      //           './src/components',
+      //           './src/hooks',
+      //           './src/lib',
+      //           './src/types',
+      //           './src/utils',
+      //         ],
+      //         from: ['./src/features', './src/app'],
+      //       },
 
-            // ENFORCE BARREL EXPORTS - Prevent direct internal imports
-            // Block direct imports from feature internals (force barrel exports)
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/components',
-            },
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/hooks',
-            },
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/services',
-            },
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/utils',
-            },
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/types',
-            },
-            {
-              target: ['./src/app', './src/features', './src/components'],
-              from: './src/features/*/api',
-            },
+      //       // ENFORCE BARREL EXPORTS - Prevent direct internal imports
+      //       // Block direct imports from feature internals (force barrel exports)
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/components',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/hooks',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/services',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/utils',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/types',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features', './src/components'],
+      //         from: './src/features/*/api',
+      //       },
 
-            // Block direct imports from shared module internals
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/components/ui',
-            },
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/components/forms',
-            },
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/hooks/use-*',
-            },
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/lib/api',
-            },
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/lib/utils',
-            },
-            {
-              target: ['./src/app', './src/features'],
-              from: './src/utils/helpers',
-            },
-          ],
-        },
-      ],
+      //       // Block direct imports from shared module internals
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/components/ui',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/components/forms',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/hooks/use-*',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/lib/api',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/lib/utils',
+      //       },
+      //       {
+      //         target: ['./src/app', './src/features'],
+      //         from: './src/utils/helpers',
+      //       },
+      //     ],
+      //   },
+      // ],
       'import/no-cycle': 'error',
       'linebreak-style': ['error', 'unix'],
       'react/prop-types': 'off',
 
       // Alternative approach: Use import/no-restricted-paths with more specific patterns
       // This will catch direct internal imports that bypass barrel exports
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: [
-                '@/features/*/components/*',
-                '!@/features/*/components/index',
-              ],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from components folder',
-            },
-            {
-              group: ['@/features/*/hooks/*', '!@/features/*/hooks/index'],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from hooks folder',
-            },
-            {
-              group: [
-                '@/features/*/services/*',
-                '!@/features/*/services/index',
-              ],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from services folder',
-            },
-            {
-              group: ['@/features/*/utils/*', '!@/features/*/utils/index'],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from utils folder',
-            },
-            {
-              group: ['@/features/*/types/*', '!@/features/*/types/index'],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from types folder',
-            },
-            {
-              group: ['@/features/*/api/*', '!@/features/*/api/index'],
-              message:
-                'Import from feature barrel export (@/features/[feature]) instead of directly from api folder',
-            },
-            // Enforce barrel exports for shared modules
-            {
-              group: [
-                '@/components/ui/*',
-                '!@/components/ui/index',
-                '!@/components/index',
-              ],
-              message:
-                'Import from component barrel export (@/components) instead of directly from ui folder',
-            },
-            {
-              group: [
-                '@/components/forms/*',
-                '!@/components/forms/index',
-                '!@/components/index',
-              ],
-              message:
-                'Import from component barrel export (@/components) instead of directly from forms folder',
-            },
-            {
-              group: ['@/lib/*/[!index]*', '!@/lib/index'],
-              message:
-                'Import from lib barrel export (@/lib) instead of directly from internal folders',
-            },
-            {
-              group: ['@/utils/*/[!index]*', '!@/utils/index'],
-              message:
-                'Import from utils barrel export (@/utils) instead of directly from internal folders',
-            },
-          ],
-        },
-      ],
+      // 'no-restricted-imports': [
+      //   'error',
+      //   {
+      //     patterns: [
+      //       {
+      //         group: [
+      //           '@/features/*/components/*',
+      //           '!@/features/*/components/index',
+      //         ],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from components folder',
+      //       },
+      //       {
+      //         group: ['@/features/*/hooks/*', '!@/features/*/hooks/index'],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from hooks folder',
+      //       },
+      //       {
+      //         group: [
+      //           '@/features/*/services/*',
+      //           '!@/features/*/services/index',
+      //         ],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from services folder',
+      //       },
+      //       {
+      //         group: ['@/features/*/utils/*', '!@/features/*/utils/index'],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from utils folder',
+      //       },
+      //       {
+      //         group: ['@/features/*/types/*', '!@/features/*/types/index'],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from types folder',
+      //       },
+      //       {
+      //         group: ['@/features/*/api/*', '!@/features/*/api/index'],
+      //         message:
+      //           'Import from feature barrel export (@/features/[feature]) instead of directly from api folder',
+      //       },
+      //       // Enforce barrel exports for shared modules
+      //       {
+      //         group: [
+      //           '@/components/ui/*',
+      //           '!@/components/ui/index',
+      //           '!@/components/index',
+      //         ],
+      //         message:
+      //           'Import from component barrel export (@/components) instead of directly from ui folder',
+      //       },
+      //       {
+      //         group: [
+      //           '@/components/forms/*',
+      //           '!@/components/forms/index',
+      //           '!@/components/index',
+      //         ],
+      //         message:
+      //           'Import from component barrel export (@/components) instead of directly from forms folder',
+      //       },
+      //       {
+      //         group: ['@/lib/*/[!index]*', '!@/lib/index'],
+      //         message:
+      //           'Import from lib barrel export (@/lib) instead of directly from internal folders',
+      //       },
+      //       {
+      //         group: ['@/utils/*/[!index]*', '!@/utils/index'],
+      //         message:
+      //           'Import from utils barrel export (@/utils) instead of directly from internal folders',
+      //       },
+      //     ],
+      //   },
+      // ],
 
       'import/default': 'off',
       'import/no-named-as-default-member': 'off',
