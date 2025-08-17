@@ -7,17 +7,17 @@ import {
   useForgotPassword,
   useResetPassword,
 } from '@/features/auth';
-
-import { useNavigate } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks';
 
 export const useAuth = () => {
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
   const { data: currentUser, isLoading, error } = useUser();
   const login = useLogin();
   const register = useRegister();
+
   const logout = useLogout({
     onSuccess: () => {
-      navigate({ to: routeBuilder.auth.login() });
+      navigate.goToLogin();
     },
   });
   const forgotPassword = useForgotPassword();

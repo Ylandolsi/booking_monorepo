@@ -1,8 +1,9 @@
-import { Navigate, useLocation } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router';
 import { useUser } from '@/features/auth';
 import { Spinner } from '@/components/ui';
 import { routes } from '@/config/routes';
 import type { ReactNode } from 'react';
+import { useAppNavigation } from '@/hooks';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -20,6 +21,7 @@ export const AuthGuard = ({
   authPage = false,
   redirectTo = routes.to.auth.login(),
 }: AuthGuardProps) => {
+  const navigate = useAppNavigation();
   const { data: user, isLoading, error } = useUser();
   const location = useLocation();
 
@@ -33,7 +35,7 @@ export const AuthGuard = ({
 
   if (authPage) {
     if (user) {
-      return <Navigate to={'/app' as any} replace />;
+      navigate.goToApp();
     }
     return <>{children}</>;
   }
@@ -44,12 +46,12 @@ export const AuthGuard = ({
 
   if (!user || error) {
     if (isAuthPath(location.pathname)) {
-      return <Navigate to={redirectTo} replace />;
+      navigate.goTo({ to: redirectTo, replace: true });
     }
 
     const cleanPath = location.pathname;
     const loginUrl = routes.to.auth.login({ redirectTo: cleanPath });
-    return <Navigate to={loginUrl as any} replace />;
+    navigate.goTo({ to: loginUrl, replace: true });
   }
 
   return <>{children}</>;

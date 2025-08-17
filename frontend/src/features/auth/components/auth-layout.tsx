@@ -9,20 +9,8 @@ type LayoutProps = {
 };
 
 export const AuthLayout = ({ children }: LayoutProps) => {
-  // const user = useUser();
-  // const navigate = useNavigate();
-  // const location = useLocation();
   const search = useSearch({ strict: false });
   const redirectTo = (search.redirectTo as string) || './app';
-
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate({
-  //       to: redirectTo ? redirectTo : paths.app.dashboard.getHref(),
-  //       replace: true
-  //     });
-  //   }
-  // }, [user, navigate, redirectTo]);
 
   return (
     <AuthGuard authPage={true} redirectTo={redirectTo}>

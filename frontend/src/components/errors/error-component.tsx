@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui';
 import { Home, ArrowLeft } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,
   XCircle,
@@ -8,8 +7,8 @@ import {
   AlertTriangle,
   Info,
 } from 'lucide-react';
-import React from 'react';
 import { routeBuilder } from '@/config';
+import { useAppNavigation } from '@/hooks';
 
 interface ErrorComponenetProps {
   title?: string;
@@ -35,10 +34,10 @@ export const ErrorComponenet = ({
   iconType = 'default',
 }: ErrorComponenetProps) => {
   const IconComponent = errorIconMap[iconType] || errorIconMap.default;
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
 
   const handleGoHome = () => {
-    navigate({ to: routeBuilder.app.root() });
+    navigate.goToApp();
   };
 
   const handleGoBack = () => {
@@ -85,16 +84,15 @@ export const ErrorComponenet = ({
           <p>You might want to check these pages instead:</p>
           <div className="mt-2 space-y-1">
             <button
-              onClick={() => navigate({ to: routeBuilder.app.root() })}
+              onClick={() => navigate.goToApp()}
               className="block text-primary hover:underline"
             >
               Dashboard
             </button>
             <button
               onClick={() =>
-                navigate({
-                  to: routeBuilder.profile.user('uhavetofixthisslug'),
-                })
+                // TODO : fix this
+                navigate.goTo(routeBuilder.profile.user('uhavetofixthisslug'))
               }
               className="block text-primary hover:underline"
             >

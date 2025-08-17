@@ -1,5 +1,3 @@
-
-
 ## 📖 **Usage Patterns**
 
 ### **✅ Recommended (Refactored)**
@@ -58,4 +56,3 @@ const nav = useAppNavigation();
 const handleGoHome = () => nav.goToHome();
 const handleGoBack = () => nav.goBack();
 ```
-

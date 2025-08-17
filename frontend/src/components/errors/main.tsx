@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui';
 import { AlertCircle, RefreshCw, Home, ArrowLeft } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
-import { routeBuilder } from '@/config';
+import { useAppNavigation } from '@/hooks';
 
 interface ErrorFallbackProps {
   error?: Error;
@@ -18,7 +17,7 @@ export const MainErrorFallback = ({
   showBackButton = true,
   customMessage,
 }: ErrorFallbackProps) => {
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
 
   const handleRefresh = () => {
     if (resetErrorBoundary) {
@@ -29,7 +28,7 @@ export const MainErrorFallback = ({
   };
 
   const handleGoHome = () => {
-    navigate({ to: routeBuilder.app.root() });
+    navigate.goToApp();
   };
 
   const handleGoBack = () => {

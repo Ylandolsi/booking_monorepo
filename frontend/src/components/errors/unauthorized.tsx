@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui';
 import { Shield, LogIn, Lock } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
-import { routeBuilder } from '@/config';
+import { useAppNavigation } from '@/hooks';
 
 interface UnauthorizedProps {
   title?: string;
@@ -16,14 +15,14 @@ export const Unauthorized = ({
   showLoginButton = true,
   showHomeButton = true,
 }: UnauthorizedProps) => {
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
 
   const handleLogin = () => {
-    navigate({ to: routeBuilder.auth.login() });
+    navigate.goToLogin();
   };
 
   const handleGoHome = () => {
-    navigate({ to: routeBuilder.app.root() });
+    navigate.goToApp();
   };
 
   return (

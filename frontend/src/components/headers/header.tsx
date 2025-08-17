@@ -1,15 +1,17 @@
-import { useNavigate } from '@tanstack/react-router';
 import { Logo } from '@/components/logo';
 import { Badge, Button } from '@/components/ui';
 import { useAuth } from '@/features/auth';
 import { useSideBar } from '@/stores';
 import { LazyImage } from '@/utils';
 import { Bell, Menu } from 'lucide-react';
+import { useAppNavigation } from '@/hooks';
 
 export function Header() {
   const { setSidebarOpen } = useSideBar();
   const { currentUser } = useAuth();
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
+
+  if (!currentUser || currentUser == undefined) return null;
 
   return (
     <header className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
@@ -47,7 +49,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate({ to: `/members/${currentUser?.id}` })}
+              onClick={() => navigate.goToProfile(currentUser.slug)}
               className="h-10 px-2 hover:bg-muted"
             >
               <LazyImage

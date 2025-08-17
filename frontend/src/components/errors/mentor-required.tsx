@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui';
 import { GraduationCap, UserPlus, Home } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
-import { routeBuilder } from '@/config';
+import { useAppNavigation } from '@/hooks';
 
 interface MentorRequiredProps {
   title?: string;
@@ -18,20 +17,21 @@ export const MentorRequired = ({
   showHomeButton = true,
   actionDescription = 'This action requires mentor privileges. Please complete your mentor registration to continue.',
 }: MentorRequiredProps) => {
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
 
   const handleBecomeMentor = () => {
     // Navigate to mentor registration page
-    window.location.href = '/mentor/become';
+    // window.location.href = '/mentor/become';
+    navigate.goToMentorBecome();
   };
 
   const handleGoHome = () => {
-    navigate({ to: routeBuilder.app.root() });
+    navigate.goToApp();
   };
 
   const handleContactSupport = () => {
     // Navigate to support page or open contact form
-    window.location.href = '/support';
+    navigate.goToSupport();
   };
 
   return (
