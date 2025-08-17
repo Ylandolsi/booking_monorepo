@@ -36,14 +36,18 @@ export function Overview() {
           </div>
         )}
         {/* Social Links */}
-        {user?.socialLinks && Object.keys(user.socialLinks).length > 0 && (
-          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/50">
-            <h2 className="text-xl font-semibold mb-4 text-foreground">
-              Social Links
-            </h2>
-            <SocialLinks links={user.socialLinks ?? {}} variant="icons" />
-          </div>
-        )}
+        {user?.socialLinks &&
+          Object.keys(user.socialLinks).length > 0 &&
+          Object.values(user.socialLinks).some(
+            (value) => value != null && value !== '',
+          ) && (
+            <div className="bg-card rounded-xl p-6 shadow-sm border border-border/50">
+              <h2 className="text-xl font-semibold mb-4 text-foreground">
+                Social Links
+              </h2>
+              <SocialLinks links={user.socialLinks ?? {}} variant="icons" />
+            </div>
+          )}
 
         {/* Expertise Section */}
         {user.expertises?.length > 0 && (

@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
+import { Route as CentralizedRoutesRouteImport } from './routes/centralized-routes'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as TestTtttRouteImport } from './routes/test/tttt'
 import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
@@ -28,11 +30,17 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-pas
 import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
 import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
+import { Route as BookingTestMentorSlugIndexRouteImport } from './routes/booking/test/$mentorSlug/index'
 import { Route as BookingSessionMentorSlugIndexRouteImport } from './routes/booking/session/$mentorSlug/index'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
   path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CentralizedRoutesRoute = CentralizedRoutesRouteImport.update({
+  id: '/centralized-routes',
+  path: '/centralized-routes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -49,6 +57,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const TestTtttRoute = TestTtttRouteImport.update({
+  id: '/test/tttt',
+  path: '/test/tttt',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TestMentorRequiredRoute = TestMentorRequiredRouteImport.update({
   id: '/test/mentor-required',
@@ -128,6 +141,12 @@ const AuthEmailVerificationVerifiedRoute =
     path: '/auth/email-verification/verified',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BookingTestMentorSlugIndexRoute =
+  BookingTestMentorSlugIndexRouteImport.update({
+    id: '/booking/test/$mentorSlug/',
+    path: '/booking/test/$mentorSlug/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const BookingSessionMentorSlugIndexRoute =
   BookingSessionMentorSlugIndexRouteImport.update({
     id: '/booking/session/$mentorSlug/',
@@ -138,6 +157,7 @@ const BookingSessionMentorSlugIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/centralized-routes': typeof CentralizedRoutesRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -151,14 +171,17 @@ export interface FileRoutesByFullPath {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
+  '/test/tttt': typeof TestTtttRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
+  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/centralized-routes': typeof CentralizedRoutesRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -172,16 +195,19 @@ export interface FileRoutesByTo {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
+  '/test/tttt': typeof TestTtttRoute
   '/app': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
+  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/centralized-routes': typeof CentralizedRoutesRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -195,17 +221,20 @@ export interface FileRoutesById {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
+  '/test/tttt': typeof TestTtttRoute
   '/app/': typeof AppIndexRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
   '/profile/$userSlug/': typeof ProfileUserSlugIndexRoute
   '/booking/session/$mentorSlug/': typeof BookingSessionMentorSlugIndexRoute
+  '/booking/test/$mentorSlug/': typeof BookingTestMentorSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/app'
+    | '/centralized-routes'
     | '/unauthorized'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -219,14 +248,17 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
+    | '/test/tttt'
     | '/app/'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
     | '/booking/session/$mentorSlug'
+    | '/booking/test/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/centralized-routes'
     | '/unauthorized'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -240,15 +272,18 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
+    | '/test/tttt'
     | '/app'
     | '/auth/email-verification/verified'
     | '/auth/email-verification'
     | '/profile/$userSlug'
     | '/booking/session/$mentorSlug'
+    | '/booking/test/$mentorSlug'
   id:
     | '__root__'
     | '/'
     | '/app'
+    | '/centralized-routes'
     | '/unauthorized'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -262,16 +297,19 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
+    | '/test/tttt'
     | '/app/'
     | '/auth/email-verification/verified'
     | '/auth/email-verification/'
     | '/profile/$userSlug/'
     | '/booking/session/$mentorSlug/'
+    | '/booking/test/$mentorSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  CentralizedRoutesRoute: typeof CentralizedRoutesRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
@@ -285,10 +323,12 @@ export interface RootRouteChildren {
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   TestMentorRequiredRoute: typeof TestMentorRequiredRoute
+  TestTtttRoute: typeof TestTtttRoute
   AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
   AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
   ProfileUserSlugIndexRoute: typeof ProfileUserSlugIndexRoute
   BookingSessionMentorSlugIndexRoute: typeof BookingSessionMentorSlugIndexRoute
+  BookingTestMentorSlugIndexRoute: typeof BookingTestMentorSlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,6 +338,13 @@ declare module '@tanstack/react-router' {
       path: '/unauthorized'
       fullPath: '/unauthorized'
       preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/centralized-routes': {
+      id: '/centralized-routes'
+      path: '/centralized-routes'
+      fullPath: '/centralized-routes'
+      preLoaderRoute: typeof CentralizedRoutesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -320,6 +367,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/test/tttt': {
+      id: '/test/tttt'
+      path: '/test/tttt'
+      fullPath: '/test/tttt'
+      preLoaderRoute: typeof TestTtttRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/test/mentor-required': {
       id: '/test/mentor-required'
@@ -426,6 +480,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationVerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/test/$mentorSlug/': {
+      id: '/booking/test/$mentorSlug/'
+      path: '/booking/test/$mentorSlug'
+      fullPath: '/booking/test/$mentorSlug'
+      preLoaderRoute: typeof BookingTestMentorSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking/session/$mentorSlug/': {
       id: '/booking/session/$mentorSlug/'
       path: '/booking/session/$mentorSlug'
@@ -449,6 +510,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  CentralizedRoutesRoute: CentralizedRoutesRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
@@ -462,10 +524,12 @@ const rootRouteChildren: RootRouteChildren = {
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   TestMentorRequiredRoute: TestMentorRequiredRoute,
+  TestTtttRoute: TestTtttRoute,
   AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
   AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
   ProfileUserSlugIndexRoute: ProfileUserSlugIndexRoute,
   BookingSessionMentorSlugIndexRoute: BookingSessionMentorSlugIndexRoute,
+  BookingTestMentorSlugIndexRoute: BookingTestMentorSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
