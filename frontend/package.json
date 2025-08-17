@@ -11,6 +11,7 @@
     "generate:routes": "node scripts/generate-route-paths.cjs",
     "check:routes": "node scripts/check-routes.js",
     "check:routes:ci": "node scripts/check-routes.js --strict",
+    "check:imports": "node scripts/check-imports.js",
     "prebuild": "npm run generate:routes && npm run check:routes",
     "find:navigation": "node scripts/find-navigation-patterns.js"
   },
@@ -83,6 +84,7 @@
     "esbuild": "^0.25.9",
     "eslint": "^9.25.0",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-check-file": "^3.3.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-no-relative-import-paths": "^1.6.1",

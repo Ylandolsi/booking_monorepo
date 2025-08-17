@@ -1,4 +1,4 @@
-import { AuthLayout, RegisterForm } from '@/features/auth';
+import { RegisterForm } from '@/features/auth';
 import { useNavigate } from '@tanstack/react-router';
 
 export function RegisterPage() {
@@ -6,17 +6,15 @@ export function RegisterPage() {
   // const { redirectTo } = Route.useSearch();
 
   return (
-    <AuthLayout>
-      <RegisterForm
-        OnRegiterSuccess={() => {
-          return;
-        }}
-        // OnRegiterSuccess={() => {
-        //   const targetPath =
-        //     redirectTo || paths.auth.verificationEmail.getHref();
-        //   navigate({ to: targetPath });
-        // }}
-      />
-    </AuthLayout>
+    <RegisterForm
+      OnRegiterSuccess={() => {
+        return;
+      }}
+      // OnRegiterSuccess={() => {
+      //   const targetPath =
+      //     redirectTo || paths.auth.verificationEmail.getHref();
+      //   navigate({ to: targetPath });
+      // }}
+    />
   );
 }

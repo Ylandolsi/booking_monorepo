@@ -1,5 +1,5 @@
 import { useUser } from '@/features/auth';
-import { useMentorDetails } from '@/features/mentor/become/api';
+import { useMentorDetails } from '@/features/app/mentor/become/api';
 
 export const useMentor = () => {
   const { data: user } = useUser();

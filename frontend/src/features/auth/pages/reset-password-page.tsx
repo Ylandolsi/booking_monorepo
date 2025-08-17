@@ -1,4 +1,4 @@
-import { AuthLayout, ResetPasswordPage } from '@/features/auth/components';
+import { ResetPasswordPage } from '@/features/auth/components';
 import { useNavigate } from '@tanstack/react-router';
 
 export function ResetPassword() {
@@ -6,18 +6,16 @@ export function ResetPassword() {
   // const { redirectTo, email, token } = Route.useSearch();
 
   return (
-    <AuthLayout>
-      <ResetPasswordPage
-        // email={email!}
-        // token={token!}
-        // onSuccess={() => {
-        //   const targetPath = redirectTo || paths.auth.login.getHref();
-        //   navigate({ to: targetPath });
-        // }}
-        onSuccess={() => {}}
-        token=""
-        email=""
-      />
-    </AuthLayout>
+    <ResetPasswordPage
+      // email={email!}
+      // token={token!}
+      // onSuccess={() => {
+      //   const targetPath = redirectTo || paths.auth.login.getHref();
+      //   navigate({ to: targetPath });
+      // }}
+      onSuccess={() => {}}
+      token=""
+      email=""
+    />
   );
 }

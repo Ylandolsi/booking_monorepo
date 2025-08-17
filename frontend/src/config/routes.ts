@@ -14,30 +14,30 @@ export const ROUTE_PATHS = {
     REGISTER: '/auth/register',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
-    EMAIL_VERIFICATION: '/auth/email-verification/',
+    EMAIL_VERIFICATION: '/auth/email-verification',
     EMAIL_VERIFICATION_VERIFIED: '/auth/email-verification/verified',
   },
 
   // App routes
   APP: {
     INDEX: '/app',
+    BOOKING: {
+      SESSION: '/app/booking/session/$mentorSlug',
+    },
+
+    // Mentor routes
+    MENTOR: {
+      BECOME: '/app/mentor/become',
+      SET_SCHEDULE: '/app/mentor/set-schedule',
+    },
+
+    // Profile routes
+    PROFILE: {
+      USER: '/app/profile/$userSlug',
+    },
   },
 
   // Booking routes
-  BOOKING: {
-    SESSION: '/booking/session/$mentorSlug/',
-  },
-
-  // Mentor routes
-  MENTOR: {
-    BECOME: '/mentor/become',
-    SET_SCHEDULE: '/mentor/set-schedule',
-  },
-
-  // Profile routes
-  PROFILE: {
-    USER: '/profile/$userSlug/',
-  },
 
   // Error/Test routes
   ERROR_EXP: {
@@ -139,19 +139,19 @@ export const routeBuilder = {
   // Booking routes
   booking: {
     session: (mentorSlug: string) =>
-      ROUTE_PATHS.BOOKING.SESSION.replace('$mentorSlug', mentorSlug),
+      ROUTE_PATHS.APP.BOOKING.SESSION.replace('$mentorSlug', mentorSlug),
   },
 
   // Mentor routes
   mentor: {
-    become: () => ROUTE_PATHS.MENTOR.BECOME,
-    setSchedule: () => ROUTE_PATHS.MENTOR.SET_SCHEDULE,
+    become: () => ROUTE_PATHS.APP.MENTOR.BECOME,
+    setSchedule: () => ROUTE_PATHS.APP.MENTOR.SET_SCHEDULE,
   },
 
   // Profile routes
   profile: {
     user: (userSlug: string) =>
-      ROUTE_PATHS.PROFILE.USER.replace('$userSlug', userSlug),
+      ROUTE_PATHS.APP.PROFILE.USER.replace('$userSlug', userSlug),
   },
 
   // Error/Test routes

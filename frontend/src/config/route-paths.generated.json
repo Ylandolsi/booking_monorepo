@@ -9,17 +9,17 @@
     "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verification/verified"
   },
   "APP": {
-    "INDEX": "/app/"
+    "INDEX": "/app"
   },
   "BOOKING": {
-    "SESSION": "/booking/session/$mentorSlug/"
+    "SESSION": "/app/booking/session/$mentorSlug"
   },
   "MENTOR": {
     "BECOME": "/mentor/become",
     "SET_SCHEDULE": "/mentor/set-schedule"
   },
   "PROFILE": {
-    "USER": "/profile/$userSlug/"
+    "USER": "/profile/$userSlug"
   },
   "ERROR_EXP": {
     "SIMPLE_LOADING": "/error-exp/simple-loading-demo",

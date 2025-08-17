@@ -1,4 +1,4 @@
-import { AuthLayout, LoginForm } from '@/features/auth/components';
+import { LoginForm } from '@/features/auth/components';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
 export function LoginPage() {
@@ -6,16 +6,14 @@ export function LoginPage() {
   // const { redirectTo } = useSearch();
 
   return (
-    <AuthLayout>
-      <LoginForm
-        onSuccess={() => {
-          return;
-        }}
-        // onSuccess={() => {
-        //   const targetPath = redirectTo || paths.app.root.getHref();
-        //   navigate({ to: targetPath, replace: true });
-        // }}
-      />
-    </AuthLayout>
+    <LoginForm
+      onSuccess={() => {
+        return;
+      }}
+      // onSuccess={() => {
+      //   const targetPath = redirectTo || paths.app.root.getHref();
+      //   navigate({ to: targetPath, replace: true });
+      // }}
+    />
   );
 }

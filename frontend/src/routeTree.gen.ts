@@ -10,40 +10,44 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
-import { Route as CentralizedRoutesRouteImport } from './routes/centralized-routes'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AuthRouteRouteImport } from './routes/auth/route'
+import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as TestTtttRouteImport } from './routes/test/tttt'
 import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
 import { Route as TestAlreadyRouteImport } from './routes/test/already'
-import { Route as MentorSetScheduleRouteImport } from './routes/mentor/set-schedule'
-import { Route as MentorBecomeRouteImport } from './routes/mentor/become'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
-import { Route as ProfileUserSlugIndexRouteImport } from './routes/profile/$userSlug/index'
-import { Route as AuthEmailVerificationIndexRouteImport } from './routes/auth/email-verification/index'
-import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification/verified'
-import { Route as BookingTestMentorSlugIndexRouteImport } from './routes/booking/test/$mentorSlug/index'
-import { Route as BookingSessionMentorSlugIndexRouteImport } from './routes/booking/session/$mentorSlug/index'
+import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
+import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification.verified'
+import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
+import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
+import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
+import { Route as AppBookingSessionMentorSlugRouteImport } from './routes/app/booking/session.$mentorSlug'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
   path: '/unauthorized',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CentralizedRoutesRoute = CentralizedRoutesRouteImport.update({
-  id: '/centralized-routes',
-  path: '/centralized-routes',
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
+const AuthRouteRoute = AuthRouteRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRouteRoute = AppRouteRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
@@ -57,11 +61,6 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
-} as any)
-const TestTtttRoute = TestTtttRouteImport.update({
-  id: '/test/tttt',
-  path: '/test/tttt',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const TestMentorRequiredRoute = TestMentorRequiredRouteImport.update({
   id: '/test/mentor-required',
@@ -88,16 +87,6 @@ const TestAlreadyRoute = TestAlreadyRouteImport.update({
   path: '/test/already',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MentorSetScheduleRoute = MentorSetScheduleRouteImport.update({
-  id: '/mentor/set-schedule',
-  path: '/mentor/set-schedule',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MentorBecomeRoute = MentorBecomeRouteImport.update({
-  id: '/mentor/become',
-  path: '/mentor/become',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ErrorExpSimpleLoadingDemoRoute =
   ErrorExpSimpleLoadingDemoRouteImport.update({
     id: '/error-exp/simple-loading-demo',
@@ -105,230 +94,210 @@ const ErrorExpSimpleLoadingDemoRoute =
     getParentRoute: () => rootRouteImport,
   } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  id: '/auth/reset-password',
-  path: '/auth/reset-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
-  getParentRoute: () => rootRouteImport,
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
-  getParentRoute: () => rootRouteImport,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/auth/forgot-password',
-  path: '/auth/forgot-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const ProfileUserSlugIndexRoute = ProfileUserSlugIndexRouteImport.update({
-  id: '/profile/$userSlug/',
-  path: '/profile/$userSlug/',
-  getParentRoute: () => rootRouteImport,
+const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
+  id: '/email-verification',
+  path: '/email-verification',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
-const AuthEmailVerificationIndexRoute =
-  AuthEmailVerificationIndexRouteImport.update({
-    id: '/auth/email-verification/',
-    path: '/auth/email-verification/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthEmailVerificationVerifiedRoute =
   AuthEmailVerificationVerifiedRouteImport.update({
-    id: '/auth/email-verification/verified',
-    path: '/auth/email-verification/verified',
-    getParentRoute: () => rootRouteImport,
+    id: '/verified',
+    path: '/verified',
+    getParentRoute: () => AuthEmailVerificationRoute,
   } as any)
-const BookingTestMentorSlugIndexRoute =
-  BookingTestMentorSlugIndexRouteImport.update({
-    id: '/booking/test/$mentorSlug/',
-    path: '/booking/test/$mentorSlug/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const BookingSessionMentorSlugIndexRoute =
-  BookingSessionMentorSlugIndexRouteImport.update({
-    id: '/booking/session/$mentorSlug/',
-    path: '/booking/session/$mentorSlug/',
-    getParentRoute: () => rootRouteImport,
+const AppProfileUserSlugRoute = AppProfileUserSlugRouteImport.update({
+  id: '/profile/$userSlug',
+  path: '/profile/$userSlug',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMentorSetScheduleRoute = AppMentorSetScheduleRouteImport.update({
+  id: '/mentor/set-schedule',
+  path: '/mentor/set-schedule',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMentorBecomeRoute = AppMentorBecomeRouteImport.update({
+  id: '/mentor/become',
+  path: '/mentor/become',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBookingSessionMentorSlugRoute =
+  AppBookingSessionMentorSlugRouteImport.update({
+    id: '/booking/session/$mentorSlug',
+    path: '/booking/session/$mentorSlug',
+    getParentRoute: () => AppRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
-  '/centralized-routes': typeof CentralizedRoutesRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
+  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/mentor/become': typeof MentorBecomeRoute
-  '/mentor/set-schedule': typeof MentorSetScheduleRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
-  '/test/tttt': typeof TestTtttRoute
   '/app/': typeof AppIndexRoute
+  '/app/mentor/become': typeof AppMentorBecomeRoute
+  '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
+  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
-  '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
-  '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
-  '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
+  '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/centralized-routes': typeof CentralizedRoutesRoute
+  '/app': typeof AppIndexRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
+  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/mentor/become': typeof MentorBecomeRoute
-  '/mentor/set-schedule': typeof MentorSetScheduleRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
-  '/test/tttt': typeof TestTtttRoute
-  '/app': typeof AppIndexRoute
+  '/app/mentor/become': typeof AppMentorBecomeRoute
+  '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
+  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
-  '/auth/email-verification': typeof AuthEmailVerificationIndexRoute
-  '/profile/$userSlug': typeof ProfileUserSlugIndexRoute
-  '/booking/session/$mentorSlug': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug': typeof BookingTestMentorSlugIndexRoute
+  '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
-  '/centralized-routes': typeof CentralizedRoutesRoute
+  '/auth': typeof AuthRouteRouteWithChildren
   '/unauthorized': typeof UnauthorizedRoute
+  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/mentor/become': typeof MentorBecomeRoute
-  '/mentor/set-schedule': typeof MentorSetScheduleRoute
   '/test/already': typeof TestAlreadyRoute
   '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
-  '/test/tttt': typeof TestTtttRoute
   '/app/': typeof AppIndexRoute
+  '/app/mentor/become': typeof AppMentorBecomeRoute
+  '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
+  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
-  '/auth/email-verification/': typeof AuthEmailVerificationIndexRoute
-  '/profile/$userSlug/': typeof ProfileUserSlugIndexRoute
-  '/booking/session/$mentorSlug/': typeof BookingSessionMentorSlugIndexRoute
-  '/booking/test/$mentorSlug/': typeof BookingTestMentorSlugIndexRoute
+  '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/app'
-    | '/centralized-routes'
+    | '/auth'
     | '/unauthorized'
+    | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/mentor/become'
-    | '/mentor/set-schedule'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
-    | '/test/tttt'
     | '/app/'
+    | '/app/mentor/become'
+    | '/app/mentor/set-schedule'
+    | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
-    | '/auth/email-verification'
-    | '/profile/$userSlug'
-    | '/booking/session/$mentorSlug'
-    | '/booking/test/$mentorSlug'
+    | '/app/booking/session/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/centralized-routes'
+    | '/app'
+    | '/auth'
     | '/unauthorized'
+    | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/mentor/become'
-    | '/mentor/set-schedule'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
-    | '/test/tttt'
-    | '/app'
+    | '/app/mentor/become'
+    | '/app/mentor/set-schedule'
+    | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
-    | '/auth/email-verification'
-    | '/profile/$userSlug'
-    | '/booking/session/$mentorSlug'
-    | '/booking/test/$mentorSlug'
+    | '/app/booking/session/$mentorSlug'
   id:
     | '__root__'
     | '/'
     | '/app'
-    | '/centralized-routes'
+    | '/auth'
     | '/unauthorized'
+    | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/mentor/become'
-    | '/mentor/set-schedule'
     | '/test/already'
     | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
-    | '/test/tttt'
     | '/app/'
+    | '/app/mentor/become'
+    | '/app/mentor/set-schedule'
+    | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
-    | '/auth/email-verification/'
-    | '/profile/$userSlug/'
-    | '/booking/session/$mentorSlug/'
-    | '/booking/test/$mentorSlug/'
+    | '/app/booking/session/$mentorSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRouteRoute: typeof AppRouteRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
-  CentralizedRoutesRoute: typeof CentralizedRoutesRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
-  MentorBecomeRoute: typeof MentorBecomeRoute
-  MentorSetScheduleRoute: typeof MentorSetScheduleRoute
   TestAlreadyRoute: typeof TestAlreadyRoute
   TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   TestMentorRequiredRoute: typeof TestMentorRequiredRoute
-  TestTtttRoute: typeof TestTtttRoute
-  AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
-  AuthEmailVerificationIndexRoute: typeof AuthEmailVerificationIndexRoute
-  ProfileUserSlugIndexRoute: typeof ProfileUserSlugIndexRoute
-  BookingSessionMentorSlugIndexRoute: typeof BookingSessionMentorSlugIndexRoute
-  BookingTestMentorSlugIndexRoute: typeof BookingTestMentorSlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -340,18 +309,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnauthorizedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/centralized-routes': {
-      id: '/centralized-routes'
-      path: '/centralized-routes'
-      fullPath: '/centralized-routes'
-      preLoaderRoute: typeof CentralizedRoutesRouteImport
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
       id: '/app'
       path: '/app'
       fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -367,13 +343,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
-    }
-    '/test/tttt': {
-      id: '/test/tttt'
-      path: '/test/tttt'
-      fullPath: '/test/tttt'
-      preLoaderRoute: typeof TestTtttRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/test/mentor-required': {
       id: '/test/mentor-required'
@@ -410,20 +379,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestAlreadyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mentor/set-schedule': {
-      id: '/mentor/set-schedule'
-      path: '/mentor/set-schedule'
-      fullPath: '/mentor/set-schedule'
-      preLoaderRoute: typeof MentorSetScheduleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mentor/become': {
-      id: '/mentor/become'
-      path: '/mentor/become'
-      fullPath: '/mentor/become'
-      preLoaderRoute: typeof MentorBecomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/error-exp/simple-loading-demo': {
       id: '/error-exp/simple-loading-demo'
       path: '/error-exp/simple-loading-demo'
@@ -433,103 +388,140 @@ declare module '@tanstack/react-router' {
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
-      path: '/auth/reset-password'
+      path: '/reset-password'
       fullPath: '/auth/reset-password'
       preLoaderRoute: typeof AuthResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/register': {
       id: '/auth/register'
-      path: '/auth/register'
+      path: '/register'
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/login': {
       id: '/auth/login'
-      path: '/auth/login'
+      path: '/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/forgot-password': {
       id: '/auth/forgot-password'
-      path: '/auth/forgot-password'
+      path: '/forgot-password'
       fullPath: '/auth/forgot-password'
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
-    '/profile/$userSlug/': {
-      id: '/profile/$userSlug/'
-      path: '/profile/$userSlug'
-      fullPath: '/profile/$userSlug'
-      preLoaderRoute: typeof ProfileUserSlugIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/email-verification/': {
-      id: '/auth/email-verification/'
-      path: '/auth/email-verification'
+    '/auth/email-verification': {
+      id: '/auth/email-verification'
+      path: '/email-verification'
       fullPath: '/auth/email-verification'
-      preLoaderRoute: typeof AuthEmailVerificationIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthEmailVerificationRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/auth/email-verification/verified': {
       id: '/auth/email-verification/verified'
-      path: '/auth/email-verification/verified'
+      path: '/verified'
       fullPath: '/auth/email-verification/verified'
       preLoaderRoute: typeof AuthEmailVerificationVerifiedRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthEmailVerificationRoute
     }
-    '/booking/test/$mentorSlug/': {
-      id: '/booking/test/$mentorSlug/'
-      path: '/booking/test/$mentorSlug'
-      fullPath: '/booking/test/$mentorSlug'
-      preLoaderRoute: typeof BookingTestMentorSlugIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/app/profile/$userSlug': {
+      id: '/app/profile/$userSlug'
+      path: '/profile/$userSlug'
+      fullPath: '/app/profile/$userSlug'
+      preLoaderRoute: typeof AppProfileUserSlugRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/booking/session/$mentorSlug/': {
-      id: '/booking/session/$mentorSlug/'
+    '/app/mentor/set-schedule': {
+      id: '/app/mentor/set-schedule'
+      path: '/mentor/set-schedule'
+      fullPath: '/app/mentor/set-schedule'
+      preLoaderRoute: typeof AppMentorSetScheduleRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/mentor/become': {
+      id: '/app/mentor/become'
+      path: '/mentor/become'
+      fullPath: '/app/mentor/become'
+      preLoaderRoute: typeof AppMentorBecomeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/booking/session/$mentorSlug': {
+      id: '/app/booking/session/$mentorSlug'
       path: '/booking/session/$mentorSlug'
-      fullPath: '/booking/session/$mentorSlug'
-      preLoaderRoute: typeof BookingSessionMentorSlugIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      fullPath: '/app/booking/session/$mentorSlug'
+      preLoaderRoute: typeof AppBookingSessionMentorSlugRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AuthEmailVerificationRouteChildren {
+  AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
+}
+
+const AuthEmailVerificationRouteChildren: AuthEmailVerificationRouteChildren = {
+  AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
+}
+
+const AuthEmailVerificationRouteWithChildren =
+  AuthEmailVerificationRoute._addFileChildren(
+    AuthEmailVerificationRouteChildren,
+  )
+
+interface AuthRouteRouteChildren {
+  AuthEmailVerificationRoute: typeof AuthEmailVerificationRouteWithChildren
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthEmailVerificationRoute: AuthEmailVerificationRouteWithChildren,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppMentorBecomeRoute: typeof AppMentorBecomeRoute
+  AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
+  AppProfileUserSlugRoute: typeof AppProfileUserSlugRoute
+  AppBookingSessionMentorSlugRoute: typeof AppBookingSessionMentorSlugRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppMentorBecomeRoute: AppMentorBecomeRoute,
+  AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
+  AppProfileUserSlugRoute: AppProfileUserSlugRoute,
+  AppBookingSessionMentorSlugRoute: AppBookingSessionMentorSlugRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRouteRoute: AppRouteRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
   AppRoute: AppRouteWithChildren,
-  CentralizedRoutesRoute: CentralizedRoutesRoute,
   UnauthorizedRoute: UnauthorizedRoute,
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-  AuthResetPasswordRoute: AuthResetPasswordRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
-  MentorBecomeRoute: MentorBecomeRoute,
-  MentorSetScheduleRoute: MentorSetScheduleRoute,
   TestAlreadyRoute: TestAlreadyRoute,
   TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   TestMentorRequiredRoute: TestMentorRequiredRoute,
-  TestTtttRoute: TestTtttRoute,
-  AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
-  AuthEmailVerificationIndexRoute: AuthEmailVerificationIndexRoute,
-  ProfileUserSlugIndexRoute: ProfileUserSlugIndexRoute,
-  BookingSessionMentorSlugIndexRoute: BookingSessionMentorSlugIndexRoute,
-  BookingTestMentorSlugIndexRoute: BookingTestMentorSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

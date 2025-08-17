@@ -12,6 +12,14 @@ export default tseslint.config(
   { ignores: ['dist'] },
   {
     files: ['**/*.{ts,tsx}'],
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: ['./tsconfig.json', './tsconfig.app.json'],
+        },
+      },
+    },
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
@@ -29,6 +37,12 @@ export default tseslint.config(
       'check-file': checkFilePlugin,
     },
     rules: {
+      'import/no-unresolved': [
+        'error',
+        { commonjs: true, caseSensitive: false },
+      ],
+      'import/no-cycle': ['error', { maxDepth: 10 }],
+
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',

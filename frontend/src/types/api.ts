@@ -9,8 +9,8 @@ import type {
   LanguageType,
   ProfilePictureType,
   SocialLinksType,
-} from '@/features/profile';
-import type { ProfileCompletionStatusType } from '@/features/profile/types/profile-completetion';
+} from '@/features/app/profile';
+import type { ProfileCompletionStatusType } from '@/features/app/profile/';
 
 export type BaseEntity = {
   id: string;

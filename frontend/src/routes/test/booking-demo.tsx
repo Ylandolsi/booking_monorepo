@@ -1,5 +1,5 @@
 import { ContentLayout } from '@/components';
-import { BookingPage } from '@/features/booking';
+import { BookingPage } from '@/features/app/booking';
 import { createFileRoute } from '@tanstack/react-router';
 import { ROUTE_PATHS } from '@/config/routes';
 
