@@ -8,10 +8,8 @@ export const Route = createFileRoute(ROUTE_PATHS.APP.INDEX)({
 
 function RouteComponent() {
   return (
-    <ContentLayout>
-      <div className="flex h-screen p-4 ">
-        <h1 className="text-2xl font-bold">Welcome 💫 </h1>
-      </div>
-    </ContentLayout>
+    <div className="flex h-screen p-4 ">
+      <h1 className="text-2xl font-bold">Welcome 💫 </h1>
+    </div>
   );
 }

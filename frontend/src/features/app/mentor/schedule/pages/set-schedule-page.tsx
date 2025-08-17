@@ -1,5 +1,4 @@
 import { QueryStateWrapper } from '@/components/wrappers';
-import { ContentLayout } from '@/components/layouts';
 import {
   CopyModeAlert,
   SaveSuccessAlert,
@@ -91,18 +90,16 @@ export function SetSchedulePage() {
   };
 
   return (
-    <ContentLayout>
-      <MentorGuard>
-        <QueryStateWrapper
-          query={queryState}
-          loadingMessage="Loading your schedule..."
-          loadingType="spinner"
-          emptyStateMessage="No schedule data available. Let's set up your availability!"
-          containerClassName="min-h-screen"
-        >
-          {() => <ScheduleContent />}
-        </QueryStateWrapper>
-      </MentorGuard>
-    </ContentLayout>
+    <MentorGuard>
+      <QueryStateWrapper
+        query={queryState}
+        loadingMessage="Loading your schedule..."
+        loadingType="spinner"
+        emptyStateMessage="No schedule data available. Let's set up your availability!"
+        containerClassName="min-h-screen"
+      >
+        {() => <ScheduleContent />}
+      </QueryStateWrapper>
+    </MentorGuard>
   );
 }

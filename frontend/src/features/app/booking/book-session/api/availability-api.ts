@@ -9,7 +9,7 @@ import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
 import { availabilityQueryKeys } from '@/features/app/booking/book-session';
 import type {
   DayAvailabilityType,
-  MonthAvailability,
+  MonthAvailabilityType,
 } from '@/features/app/booking/book-session';
 
 // GET
@@ -36,12 +36,12 @@ export const getMonthlyAvailability = async (
   mentorSlug: string,
   year: number,
   month: number,
-): Promise<MonthAvailability> => {
+): Promise<MonthAvailabilityType> => {
   if (!mentorSlug || !year || !month) {
     throw new Error('mentorSlug, year, and month are required');
   }
 
-  return await api.get<MonthAvailability>(
+  return await api.get<MonthAvailabilityType>(
     `${MentorshipEndpoints.Availability.GetMonthly}?mentorSlug=${mentorSlug}&year=${year}&month=${month}`,
   );
 };
@@ -66,7 +66,7 @@ export function useMonthlyAvailability(
   year?: number,
   month?: number,
   overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<MonthAvailability, unknown> {
+): UseQueryResult<MonthAvailabilityType, unknown> {
   return useQuery(
     queryOptions({
       queryKey: availabilityQueryKeys.monthlyAvailability(

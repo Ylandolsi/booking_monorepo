@@ -52,7 +52,7 @@ export function useBooking() {
   const hasError =
     mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
 
-  const selectedDayData: DayAvailabilityType =
+  const selectedDayData: DayAvailabilityType | undefined =
     state.selectedDate && monthlyAvailabilityQuery.data
       ? monthlyAvailabilityQuery.data.days.find((day: DayAvailabilityType) => {
           const dayDate = new Date(day.date);

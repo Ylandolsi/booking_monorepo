@@ -507,3 +507,34 @@ export const paths = {
 } as const;
 
 ```
+
+consided this appraoch for future :
+
+```tsx
+Package Approach for React Apps
+src/
+├── packages/
+│   ├── ui/
+│   │   ├── package.json
+│   │   ├── Button/
+│   │   ├── Modal/
+│   │   └── index.ts
+│   ├── hooks/
+│   │   ├── package.json
+│   │   └── src/
+│   └── utils/
+│       ├── package.json
+│       └── src/
+└── app/
+    ├── pages/
+    └── components/
+json// packages/ui/package.json
+{
+  "name": "@myapp/ui",
+  "exports": {
+    "./button": "./Button/index.js",
+    "./modal": "./Modal/index.js"
+  }
+}
+
+```

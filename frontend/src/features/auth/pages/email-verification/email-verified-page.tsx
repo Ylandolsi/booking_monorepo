@@ -1,4 +1,4 @@
-import { CardDescription, CardFooter, Link } from '@/components/ui';
+import { CardDescription, CardFooter, Link } from '@/components';
 
 export function VerificationEmailDonePage() {
   return (

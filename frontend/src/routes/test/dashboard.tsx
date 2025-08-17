@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import React, { useState } from 'react';
-import { useUser } from '@/features/auth';
+import { useState } from 'react';
 import { ROUTE_PATHS } from '@/config/routes';
 import {
   Button,
@@ -117,7 +116,7 @@ const mockRecentSessions = [
 
 export function MentorDashboardPage() {
   //   const { data: user } = useUser();
-  const user = {};
+  // const user = {};
   const [activeTab, setActiveTab] = useState('overview');
 
   // Mock loading states - replace with real hooks

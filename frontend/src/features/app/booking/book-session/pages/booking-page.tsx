@@ -24,7 +24,6 @@ import { ContentLayout, ErrorComponenet } from '@/components';
 import { BookingSummary } from '@/features/app/booking/book-session/components';
 
 function BookingContent() {
-  const isMobile = useIsMobile();
   const nav = useAppNavigation();
 
   const {
@@ -330,9 +329,5 @@ function BookingContent() {
 }
 
 export function BookingPage() {
-  return (
-    <ContentLayout>
-      <BookingContent />
-    </ContentLayout>
-  );
+  return <BookingContent />;
 }
