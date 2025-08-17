@@ -5,21 +5,21 @@
     "REGISTER": "/auth/register",
     "FORGOT_PASSWORD": "/auth/forgot-password",
     "RESET_PASSWORD": "/auth/reset-password",
-    "EMAIL_VERIFICATION": "/auth/email-verification/",
+    "EMAIL_VERIFICATION": "/auth/email-verification",
     "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verification/verified"
   },
   "APP": {
-    "INDEX": "/app"
-  },
-  "BOOKING": {
-    "SESSION": "/app/booking/session/$mentorSlug"
-  },
-  "MENTOR": {
-    "BECOME": "/mentor/become",
-    "SET_SCHEDULE": "/mentor/set-schedule"
-  },
-  "PROFILE": {
-    "USER": "/profile/$userSlug"
+    "INDEX": "/app",
+    "BOOKING": {
+      "SESSION": "/app/booking/session/$mentorSlug"
+    },
+    "MENTOR": {
+      "BECOME": "/app/mentor/become",
+      "SET_SCHEDULE": "/app/mentor/set-schedule"
+    },
+    "PROFILE": {
+      "USER": "/app/profile/$userSlug"
+    }
   },
   "ERROR_EXP": {
     "SIMPLE_LOADING": "/error-exp/simple-loading-demo",

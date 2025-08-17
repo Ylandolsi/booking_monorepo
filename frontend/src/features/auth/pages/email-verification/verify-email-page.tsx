@@ -1,23 +1,21 @@
+import { ROUTE_PATHS } from '@/config';
 import { EmailVerificationPage } from '@/features/auth/components';
-// import { useNavigate } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks';
+import { getRouteApi } from '@tanstack/react-router';
 
 export function VerificationEmailPage() {
-  // const navigate = useNavigate();
-  // const { redirectTo, token, email } = Route.useSearch();
-
+  const navigate = useAppNavigation();
+  const routeApi = getRouteApi(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION);
+  const { redirectTo, token, email } = routeApi.useSearch();
   return (
     <>
       <EmailVerificationPage
         onSuccess={() => {
-          // navigate({
-          //   to: redirectTo ? redirectTo : paths.auth.emailVerified.getHref(),
-          //   replace: true,
-          // });
+          if (redirectTo) navigate.goTo({ to: redirectTo, replace: true });
+          else navigate.goToEmailVerificationVerified();
         }}
-        token=""
-        email=""
-        // token={token}
-        // email={email}
+        token={token}
+        email={email}
       />
     </>
   );

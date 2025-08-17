@@ -1,19 +1,19 @@
+import { ROUTE_PATHS } from '@/config';
 import { ForgotPasswordForm } from '@/features/auth/components';
-// import { useNavigate } from '@tanstack/react-router';
+import { useAppNavigation } from '@/hooks';
+import { getRouteApi } from '@tanstack/react-router';
 
 export function ForgotPasswordPage() {
-  // const navigate = useNavigate();
-  // const { redirectTo } = Route.useSearch();
+  const navigate = useAppNavigation();
+  const routeApi = getRouteApi(ROUTE_PATHS.AUTH.FORGOT_PASSWORD);
+  const { redirectTo } = routeApi.useSearch();
 
   return (
     <ForgotPasswordForm
       onSuccess={() => {
-        return;
+        if (redirectTo) navigate.goTo({ to: redirectTo, replace: true });
+        else navigate.goToLogin();
       }}
-      // onSuccess={() => {
-      //   const targetPath = redirectTo || paths.auth.login.getHref();
-      //   navigate({ to: targetPath });
-      // }}
     />
   );
 }

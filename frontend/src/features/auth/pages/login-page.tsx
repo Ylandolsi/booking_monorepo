@@ -11,8 +11,8 @@ export function LoginPage() {
   return (
     <LoginForm
       onSuccess={() => {
-        const targetPath = redirectTo;
-        navigate.goTo({ to: targetPath, replace: true });
+        if (redirectTo) navigate.goTo({ to: redirectTo, replace: true });
+        else navigate.goToApp();
       }}
     />
   );
