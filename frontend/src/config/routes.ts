@@ -1,7 +1,13 @@
 /**
  * Centralized Route Definitions
- * This file contains all route paths and utilities for the application
+ * This file contains all route paths, param placeholders, and utilities for the application
  */
+
+// Param placeholders
+export const ROUTE_PARAMS = {
+  MENTOR_SLUG: '$mentorSlug',
+  USER_SLUG: '$userSlug',
+} as const;
 
 // Route path constants
 export const ROUTE_PATHS = {
@@ -22,7 +28,7 @@ export const ROUTE_PATHS = {
   APP: {
     INDEX: '/app',
     BOOKING: {
-      SESSION: '/app/booking/session/$mentorSlug',
+      SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
     },
 
     // Mentor routes
@@ -33,11 +39,9 @@ export const ROUTE_PATHS = {
 
     // Profile routes
     PROFILE: {
-      USER: '/app/profile/$userSlug',
+      USER: `/app/profile/${ROUTE_PARAMS.USER_SLUG}`,
     },
   },
-
-  // Booking routes
 
   // Error/Test routes
   ERROR_EXP: {
@@ -139,7 +143,10 @@ export const routeBuilder = {
   // Booking routes
   booking: {
     session: (mentorSlug: string) =>
-      ROUTE_PATHS.APP.BOOKING.SESSION.replace('$mentorSlug', mentorSlug),
+      ROUTE_PATHS.APP.BOOKING.SESSION.replace(
+        ROUTE_PARAMS.MENTOR_SLUG,
+        mentorSlug,
+      ),
   },
 
   // Mentor routes
@@ -151,7 +158,7 @@ export const routeBuilder = {
   // Profile routes
   profile: {
     user: (userSlug: string) =>
-      ROUTE_PATHS.APP.PROFILE.USER.replace('$userSlug', userSlug),
+      ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
   },
 
   // Error/Test routes
@@ -177,6 +184,9 @@ export const routeBuilder = {
 export const routes = {
   // Paths - direct path constants
   paths: ROUTE_PATHS,
+
+  // Param placeholders
+  params: ROUTE_PARAMS,
 
   // Builders - functions to generate routes with parameters
   to: routeBuilder,

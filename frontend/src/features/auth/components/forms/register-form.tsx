@@ -23,6 +23,7 @@ import {
 } from '@/components/ui';
 
 import { googleOIDC } from '../../api/oauth-api';
+import { ROUTE_PATHS } from '@/config';
 
 type RegisterFormProps = {
   OnRegiterSuccess: () => void;
@@ -157,7 +158,10 @@ export const RegisterForm = ({ OnRegiterSuccess }: RegisterFormProps) => {
       <div className="flex flex-col items-center">
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Already have an account?{' '}
-          <Link className="text-primary hover:underline" href="/auth/login">
+          <Link
+            className="text-primary hover:underline"
+            to={ROUTE_PATHS.AUTH.LOGIN}
+          >
             Login
           </Link>
         </div>
