@@ -12,7 +12,7 @@ internal sealed class BookSession : IEndpoint
 {
     public sealed record Request(
         string  MentorSlug,
-        DateTime StartDateTime,
+        DateTime StartDateTime, //ISO 8601 format ("2025-08-20T15:00:00Z").
         int DurationMinutes,
         string? Note);
 

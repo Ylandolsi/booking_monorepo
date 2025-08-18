@@ -2,8 +2,8 @@ import { useCallback, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import type {
   BookingSummaryType,
+  BookSessionRequestType,
   DayAvailabilityType,
-  SessionBookingRequestType,
   SessionSlotType,
 } from '@/features/app/booking';
 import { useMentorDetails } from '@/features/app/mentor/become';
@@ -151,12 +151,12 @@ export function useBooking() {
       return;
     }
 
-    const bookingRequest: SessionBookingRequestType = {
+    const bookingRequest: BookSessionRequestType = {
       mentorSlug,
-      date: state.selectedDate.toISOString().split('T')[0],
-      startTime: state.selectedSlot.startTime,
-      duration: 30,
-      notes: state.notes,
+      date: state.selectedDate.toLocaleDateString('en-CA'),
+      startTime: state.selectedDate.toISOString(), //.split('T')[0],
+      durationMinutes: 30,
+      notes: state.notes ?? '',
     };
 
     try {
@@ -177,6 +177,7 @@ export function useBooking() {
   ]);
 
   const bookingSummary = createBookingSummary();
+  console.log(state.selectedDate);
 
   return {
     // State

@@ -1,2 +1,3 @@
 export * from './shared';
-export * from './book-session';
+export * from './book';
+export * from './availability';

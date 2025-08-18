@@ -33,3 +33,10 @@ export type DayOfWeek =
   | 'friday'
   | 'saturday'
   | 'sunday';
+
+export type SessionSlotType = {
+  startTime: string; // 16:00
+  endTime: string; // 16:00
+  isAvailable: boolean;
+  isBooked: boolean;
+};

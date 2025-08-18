@@ -37,8 +37,10 @@ internal sealed class BookSessionCommandHandler(
             .AnyAsync(a => a.MentorId == mentor.Id &&
                           a.DayOfWeek == requestedDay &&
                           a.IsActive &&
-                          a.TimeRange.StartTime <= requestedTime &&
-                          a.TimeRange.EndTime >= endTime,
+                          a.TimeRange.StartHour <= requestedTime.Hour &&
+                          a.TimeRange.StartMinute <= requestedTime.Minute && 
+                          a.TimeRange.EndHour >= endTime.Hour && 
+                a.TimeRange.EndMinute >= endTime.Minute,
                      cancellationToken);
 
         if (!mentorAvailable)
@@ -54,8 +56,8 @@ internal sealed class BookSessionCommandHandler(
             .Where(s => s.MentorId == mentor.Id &&
                        s.Status != SessionStatus.Cancelled &&
                        s.Status != SessionStatus.NoShow)
-            .AnyAsync(s => command.StartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
-                          command.StartDateTime.AddMinutes(command.DurationMinutes) > s.ScheduledAt,
+            .AnyAsync(s => command.StartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) && // starttimeof other  < end 
+                          command.StartDateTime.AddMinutes(command.DurationMinutes) > s.ScheduledAt, // endtimeof other session > start
                      cancellationToken);
 
         if (hasConflict)

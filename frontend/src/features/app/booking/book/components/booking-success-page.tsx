@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
 import type { BookingSummaryType } from '../types/booking-types';
-import type { SessionSlotType } from '../types/availability-types';
+import type { SessionSlotType } from '../../availability/types/availability-types';
 
 interface BookingSuccessPageProps {
   bookingSummary: BookingSummaryType | null;

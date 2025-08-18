@@ -15,12 +15,12 @@ import {
   PageLoading2,
   alertIconMap,
 } from '@/components/ui';
-import { useBooking, TimeSlots } from '@/features/app/booking/book-session';
+import { useBooking, TimeSlots } from '@/features/app/booking/book';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { formatDate } from '@/utils';
 import { ErrorComponenet } from '@/components';
-import { BookingSummary } from '@/features/app/booking/book-session/components';
+import { BookingSummary } from '@/features/app/booking/book/components';
 import React from 'react';
 
 function BookingContent() {

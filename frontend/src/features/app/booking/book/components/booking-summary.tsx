@@ -21,7 +21,7 @@ import {
 } from '@/components/ui';
 import { cn } from '@/utils';
 import type { BookingSummaryType } from '../types/booking-types';
-import type { SessionSlotType } from '../types/availability-types';
+import type { SessionSlotType } from '../../availability/types/availability-types';
 import { useState } from 'react';
 
 interface BookingSummaryProps {

@@ -34,7 +34,6 @@ public class Availability : Entity
             DayOfWeek = dayOfWeek,
             TimeRange = timeRange,
             IsActive = true,
-            CreatedAt = DateTime.UtcNow
         };
 
         return availability;

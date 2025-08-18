@@ -6,11 +6,11 @@ import {
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
-import { availabilityQueryKeys } from '@/features/app/booking/book-session';
 import type {
   DayAvailabilityType,
   MonthAvailabilityType,
-} from '@/features/app/booking/book-session';
+} from '@/features/app/booking/availability/types';
+import { availabilityQueryKeys } from '@/features/app/booking/availability/api/availability-keys';
 
 // GET
 
