@@ -75,7 +75,43 @@ public static class AuthenticationExtensions
 
                 options.ClientId = googleOptions.ClientId!;
                 options.ClientSecret = googleOptions.ClientSecret!;
+                options.AccessType = "offline";
+                options.SaveTokens = true;
+    
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("https://www.googleapis.com/auth/calendar");
 
+                // Use the Parameters collection instead
+                options.Events.OnRedirectToAuthorizationEndpoint = context =>
+                {
+                    var uriBuilder = new UriBuilder(context.RedirectUri);
+                    var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+        
+                    // Add or update the prompt parameter
+                    query["prompt"] = "consent";
+                    query["access_type"] = "offline";
+        
+                    uriBuilder.Query = query.ToString();
+                    context.Response.Redirect(uriBuilder.ToString());
+                    return Task.CompletedTask;
+                };
+
+                options.ClaimActions.MapJsonKey("picture", "picture");
+                options.ClaimActions.MapJsonKey("given_name", "given_name");
+                options.ClaimActions.MapJsonKey("family_name", "family_name");
+                options.ReturnUrlParameter = "/auth/login/google/callback";
+
+            });
+            /*.AddGoogle(options =>
+            {
+                var googleOptions = configuration.GetSection(GoogleOAuthOptions.GoogleOptionsKey)
+                    .Get<GoogleOAuthOptions>() ?? throw new InvalidOperationException("Google Oauth is not configured");
+
+                options.ClientId = googleOptions.ClientId!;
+                options.ClientSecret = googleOptions.ClientSecret!;
+
+                options.AccessType = "offline";
                 options.SaveTokens = true;
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
@@ -87,7 +123,7 @@ public static class AuthenticationExtensions
                 options.ClaimActions.MapJsonKey("family_name", "family_name");
 
                 options.ReturnUrlParameter = "/auth/login/google/callback";
-            });
+            });*/
 
 
         services.AddHttpContextAccessor();
