@@ -154,8 +154,8 @@ export function useBooking() {
     const bookingRequest: BookSessionRequestType = {
       mentorSlug,
       date: state.selectedDate.toLocaleDateString('en-CA'),
-      startTime: state.selectedDate.toISOString(), //.split('T')[0],
-      durationMinutes: 30,
+      startTime: state.selectedSlot.startTime,
+      endTime: state.selectedSlot.endTime,
       notes: state.notes ?? '',
     };
 

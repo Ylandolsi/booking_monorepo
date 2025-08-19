@@ -15,68 +15,113 @@ internal sealed class BookSessionCommandHandler(
 {
     public async Task<Result<int>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Booking session for mentor {MentorSlug} and mentee {MenteeId} at {StartDateTime}",
-            command.MentorSlug, command.MenteeId, command.StartDateTime);
+        logger.LogInformation(
+            "Booking session for mentor {MentorSlug} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
+            command.MentorSlug, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
-        // Check if mentor exists and is active
+        if (!DateTime.TryParseExact(command.Date, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
+                out var sessionDate))
+        {
+            logger.LogWarning("Invalid date format: {Date}", command.Date);
+            return Result.Failure<int>(Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
+        }
+
+        sessionDate = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
+
+
+        if (!TimeOnly.TryParse(command.StartTime, out var startTime))
+        {
+            logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
+            return Result.Failure<int>(Error.Problem("Session.InvalidStartTime", "Start time must be in HH:mm format"));
+        }
+
+        if (!TimeOnly.TryParse(command.EndTime, out var endTime))
+        {
+            logger.LogWarning("Invalid end time format: {EndTime}", command.EndTime);
+            return Result.Failure<int>(Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
+        }
+
+        if (endTime <= startTime)
+        {
+            logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
+                command.StartTime);
+            return Result.Failure<int>(Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
+        }
+
+        var sessionStartDateTime = sessionDate.Add(startTime.ToTimeSpan());
+        var sessionEndDateTime = sessionDate.Add(endTime.ToTimeSpan());
+
+        sessionStartDateTime = DateTime.SpecifyKind(sessionStartDateTime.Date, DateTimeKind.Utc);
+        sessionEndDateTime = DateTime.SpecifyKind(sessionEndDateTime.Date, DateTimeKind.Utc);
+
+
+        var durationMinutes = (int)(endTime - startTime).TotalMinutes;
+
+        // Validate session is not in the past
+        if (sessionStartDateTime <= DateTime.UtcNow)
+        {
+            logger.LogWarning("Attempted to book session in the past: {SessionDateTime}", sessionStartDateTime);
+            return Result.Failure<int>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
+        }
+
         Domain.Entities.Mentor? mentor = await context.Mentors
             .FirstOrDefaultAsync(m => m.UserSlug == command.MentorSlug && m.IsActive, cancellationToken);
 
         if (mentor == null)
         {
-            logger.LogWarning("Active mentor with SLUG {MentorId} not found", command.MentorSlug);
+            logger.LogWarning("Active mentor with SLUG {MentorSlug} not found", command.MentorSlug);
             return Result.Failure<int>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
 
-        // Check if the time slot is available (mentor's availability)
-        var requestedDay = command.StartDateTime.DayOfWeek;
-        var requestedTime = TimeOnly.FromDateTime(command.StartDateTime);
-        var endTime = requestedTime.AddMinutes(command.DurationMinutes);
+        var requestedDayOfWeek = sessionDate.DayOfWeek;
 
+        // Check if the time slot is available 
         bool mentorAvailable = await context.Availabilities
             .AnyAsync(a => a.MentorId == mentor.Id &&
-                          a.DayOfWeek == requestedDay &&
-                          a.IsActive &&
-                          a.TimeRange.StartHour <= requestedTime.Hour &&
-                          a.TimeRange.StartMinute <= requestedTime.Minute && 
-                          a.TimeRange.EndHour >= endTime.Hour && 
-                a.TimeRange.EndMinute >= endTime.Minute,
-                     cancellationToken);
+                           a.DayOfWeek == requestedDayOfWeek &&
+                           a.IsActive &&
+                           (a.TimeRange.StartHour < startTime.Hour || (a.TimeRange.StartHour == startTime.Hour) &&
+                               (a.TimeRange.StartMinute <= startTime.Minute)) &&
+                           (a.TimeRange.EndHour > endTime.Hour || (a.TimeRange.EndHour == endTime.Hour) &&
+                               (a.TimeRange.EndMinute >= endTime.Minute)),
+                cancellationToken);
 
         if (!mentorAvailable)
         {
-            logger.LogWarning("Mentor {MentorId} is not available at {StartDateTime}", 
-                mentor.Id, command.StartDateTime);
-            return Result.Failure<int>(Error.Problem("Session.MentorNotAvailable", 
+            logger.LogWarning("Mentor {MentorId} is not available on {DayOfWeek} from {StartTime} to {EndTime}",
+                mentor.Id, requestedDayOfWeek, command.StartTime, command.EndTime);
+            return Result.Failure<int>(Error.Problem("Session.MentorNotAvailable",
                 "Mentor is not available at the requested time"));
         }
 
         // Check for conflicting sessions
         bool hasConflict = await context.Sessions
             .Where(s => s.MentorId == mentor.Id &&
-                       s.Status != SessionStatus.Cancelled &&
-                       s.Status != SessionStatus.NoShow)
-            .AnyAsync(s => command.StartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) && // starttimeof other  < end 
-                          command.StartDateTime.AddMinutes(command.DurationMinutes) > s.ScheduledAt, // endtimeof other session > start
-                     cancellationToken);
+                        s.Status != SessionStatus.Cancelled &&
+                        s.Status != SessionStatus.NoShow &&
+                        s.ScheduledAt.Date == sessionDate)
+            .AnyAsync(s => sessionStartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
+                           sessionEndDateTime > s.ScheduledAt,
+                cancellationToken);
 
         if (hasConflict)
         {
-            logger.LogWarning("Session conflict detected for mentor {MentorId} at {StartDateTime}", 
-                mentor.Id, command.StartDateTime);
-            return Result.Failure<int>(Error.Problem("Session.TimeConflict", 
+            logger.LogWarning("Session conflict detected for mentor {MentorId} on {Date} from {StartTime} to {EndTime}",
+                mentor.Id, command.Date, command.StartTime, command.EndTime);
+            return Result.Failure<int>(Error.Problem("Session.TimeConflict",
                 "The requested time slot conflicts with an existing session"));
         }
 
         // Create duration and price value objects
-        var duration = Duration.Create(command.DurationMinutes);
+        var duration = Duration.Create(durationMinutes);
         if (duration.IsFailure)
         {
             return Result.Failure<int>(duration.Error);
         }
 
         // Calculate price based on mentor's hourly rate and duration
-        var totalPrice = mentor.HourlyRate.Amount * (decimal)(command.DurationMinutes / 60.0m);
+        var durationInHours = durationMinutes / 60.0m;
+        var totalPrice = mentor.HourlyRate.Amount * durationInHours;
         var price = Price.Create(totalPrice);
         if (price.IsFailure)
         {
@@ -88,7 +133,7 @@ internal sealed class BookSessionCommandHandler(
             var session = Session.Create(
                 mentor.Id,
                 command.MenteeId,
-                command.StartDateTime,
+                sessionStartDateTime,
                 duration.Value,
                 price.Value,
                 command.Note ?? string.Empty);
@@ -96,8 +141,9 @@ internal sealed class BookSessionCommandHandler(
             await context.Sessions.AddAsync(session, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId}",
-                session.Id, mentor.Id, command.MenteeId);
+            logger.LogInformation(
+                "Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
+                session.Id, mentor.Id, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
             return Result.Success(session.Id);
         }

@@ -1,6 +1,8 @@
+using System.Net.Http.Json;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
+using Booking.Modules.Users.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +53,8 @@ public class TestProfileSeeder
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
         // Update additional properties
-        user.UpdateBio("Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
+        user.UpdateBio(
+            "Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
         user.UpdateGender(Genders.Male);
         user.UpdateSocialLinks(new SocialLinks(
             "https://github.com/johndoe",
@@ -122,6 +125,8 @@ public class TestProfileSeeder
                 endDate: new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
             )
         });
+       
+        
 
         await context.SaveChangesAsync();
         return user;
@@ -148,7 +153,8 @@ public class TestProfileSeeder
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
         // Update additional properties
-        user.UpdateBio("Marketing strategist with focus on digital transformation and brand development. Experienced in helping startups establish market presence.");
+        user.UpdateBio(
+            "Marketing strategist with focus on digital transformation and brand development. Experienced in helping startups establish market presence.");
         user.UpdateGender(Genders.Female);
         user.UpdateSocialLinks(new SocialLinks(
             null,
@@ -253,7 +259,8 @@ public class TestProfileSeeder
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
         // Update additional properties
-        user.UpdateBio("Certified financial advisor with 15+ years of experience. Specializing in investment strategies, retirement planning, and wealth management for high net worth individuals.");
+        user.UpdateBio(
+            "Certified financial advisor with 15+ years of experience. Specializing in investment strategies, retirement planning, and wealth management for high net worth individuals.");
         user.UpdateGender(Genders.Male);
         user.UpdateSocialLinks(new SocialLinks(
             null,

@@ -7,6 +7,13 @@ and hmac is existing only in webhook (server to server ) not in callback so no o
 
 add retry failure in webhook
 
+---
+TODO : 
+- intgerate with calendar 
+- review next meets 
+- review previous meets/mentors 
+- simulation for the gateway
+--
 callback vs webhook : callback : gatway -> front -> backend ->
 -----
 read about locks more , especially in migrations 

@@ -6,6 +6,7 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Book;
 public sealed record BookSessionCommand(
     string MentorSlug,
     int MenteeId,
-    DateTime StartDateTime,
-    int DurationMinutes,
+    string Date, // YYYY-MM-DD,
+    string StartTime , 
+    string EndTime ,
     string? Note) : ICommand<int>;

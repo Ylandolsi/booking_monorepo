@@ -35,8 +35,8 @@
 export type BookSessionRequestType = {
   mentorSlug: string;
   date: string; // "YYYY-MM-DD"
-  startTime: string;
-  durationMinutes: number;
+  startTime: string; // HH:MM
+  endTime: string;
   notes?: string;
 };
 

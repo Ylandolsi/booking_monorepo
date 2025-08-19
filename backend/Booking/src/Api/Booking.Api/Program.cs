@@ -57,9 +57,15 @@ builder.Configuration.AddModuleConfiguration(["users"]);
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddMentorshipsModule(builder.Configuration);
 
+/*
+builder.Services.AddSingleton<TestProfileSeeder>();
+builder.Services.AddHostedService<SeedHostedService>();
+*/
+
 
 
 WebApplication app = builder.Build();
+
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
     //     need to handle seeding langugaes and expertise in a better way!
@@ -99,8 +105,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         "yesslandolsi@gmail.com",
         "");
     
+    
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
     await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+
 
 
     var result = await userManager.CreateAsync(testUser, "Password123!");
@@ -146,6 +154,7 @@ app.UseAuthorization();
 app.MapEndpoints();
 
 await app.RunAsync();
+
 
 // REMARK: Required for functional and integration tests to work.
 namespace Booking.Api
