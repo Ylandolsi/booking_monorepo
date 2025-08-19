@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Azure.Core;
+using Booking.Common.Authentication;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -18,6 +20,7 @@ internal sealed class CreateOrLoginCommandHandler(
     TokenHelper tokenHelper,
     SlugGenerator slugGenerator,
     UsersDbContext context,
+    UserContext userContext ,  
     ILogger<CreateOrLoginCommandHandler> logger) : ICommandHandler<CreateOrLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
@@ -35,7 +38,19 @@ internal sealed class CreateOrLoginCommandHandler(
         // Find user by the external login first
         User? user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
 
-        if (user is null)
+        var integrateOrLogin = false;
+        int? userId;
+        try
+        {
+            userId = userContext.UserId;
+        }
+        catch (Exception e)
+        {
+            userId = null;
+            integrateOrLogin = true;
+        }
+
+        if (user is null && integrateOrLogin)
         {
             // If not found by login, try by email
             user = await userManager.FindByEmailAsync(claims.Email);
@@ -58,6 +73,8 @@ internal sealed class CreateOrLoginCommandHandler(
                     claims.Email,
                     claims.Picture ?? string.Empty);
                 user.EmailConfirmed = true;
+                
+                user.IntegrateWithGoogle(); 
 
                 IdentityResult createResult = await userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
@@ -84,7 +101,27 @@ internal sealed class CreateOrLoginCommandHandler(
         }
         else
         {
+            
             logger.LogInformation("User with email {Email} already exists, logging in.", claims.Email);
+            
+            // check if its already integrated with google calendar or not 
+            if ( user is null && userId != null ) user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId , cancellationToken);
+            if ( user is not null && !user.IntegratedWithGoogle && userId != null)
+            {
+                IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
+                if (!addLoginResult.Succeeded)
+                {
+                    logger.LogWarning("Failed to integrate Google to user with email: {Email}. Errors: {Errors}",
+                        claims.Email, addLoginResult.Errors);
+                    return Result.Failure<LoginResponse>(
+                        CreateOrLoginErrors.UserIntegrationFailed("Could not link Google account."));
+                }
+                else
+                {
+                    user.IntegrateWithGoogle(); 
+                }
+                
+            }
         }
 
         // At this point, 'user' is valid, so generate tokens and return the response

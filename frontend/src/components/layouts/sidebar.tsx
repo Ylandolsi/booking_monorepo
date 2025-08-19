@@ -20,6 +20,8 @@ import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
 import { GiTeacher } from 'react-icons/gi';
+import { FaGoogle } from 'react-icons/fa';
+import { googleOIDC } from '@/features/auth';
 
 export type Item = {
   name:
@@ -30,7 +32,9 @@ export type Item = {
     | 'Notifications'
     | 'Settings'
     | 'Become Mentor'
-    | 'Set Availability';
+    | 'Set Availability'
+    | 'Integrate With Google'
+    | 'Already Integrated';
   icon: JSX.Element;
   click: () => void;
   badge?: string;
@@ -91,6 +95,11 @@ const Sidebar = ({
   ];
 
   const accountItems: Item[] = [
+    {
+      icon: <FaGoogle size={20} />,
+      click: async () => await googleOIDC(),
+      name: 'Integrate With Google',
+    },
     {
       name: 'Notifications',
       icon: <Bell size={20} />,
@@ -262,12 +271,25 @@ const Sidebar = ({
               </h3>
             )}
             <nav className="space-y-1">
-              {accountItems.map((item) => (
-                <Button
-                  variant={'ghost'}
-                  key={item.name}
-                  onClick={() => handleItemClick(item)}
-                  className={`
+              {accountItems.map(function (item) {
+                const googleItem = item.name.startsWith('Integrate');
+                const integratedWithGoogle =
+                  googleItem && currentUser?.integratedWithGoogle;
+                if (integratedWithGoogle) {
+                  item.name = 'Already Integrated';
+                  item.click = () => {};
+                }
+                // item.name.startsWith("Integrate") ?
+                // (
+                //   {currentUser.inte}
+                // )
+                // :
+                return (
+                  <Button
+                    variant={'ghost'}
+                    key={item.name}
+                    onClick={() => handleItemClick(item)}
+                    className={`
                     w-full flex items-center rounded-lg text-left transition-all duration-200 group hover:bg-muted text-muted-foreground hover:text-foreground relative
                     ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
@@ -276,40 +298,41 @@ const Sidebar = ({
                         : 'hover:bg-muted text-muted-foreground hover:text-foreground'
                     }
                   `}
-                  title={collapsed ? item.name : undefined}
-                >
-                  <span
-                    className={`${itemActive == item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                    title={collapsed ? item.name : undefined}
                   >
-                    {item.icon}
-                  </span>
-                  {!collapsed && (
-                    <>
-                      <span className="font-medium flex-1">{item.name}</span>
-                      {item.badge && (
+                    <span
+                      className={`${itemActive == item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                    >
+                      {item.icon}
+                    </span>
+                    {!collapsed && (
+                      <>
+                        <span className="font-medium flex-1">{item.name}</span>
+                        {item.badge && (
+                          <Badge
+                            variant="destructive"
+                            className="h-5 px-2 text-xs"
+                          >
+                            {item.badge}
+                          </Badge>
+                        )}
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
+                      </>
+                    )}
+                    {/* Badge for collapsed state */}
+                    {collapsed && item.badge && (
+                      <div className="absolute -top-1 -right-1">
                         <Badge
                           variant="destructive"
-                          className="h-5 px-2 text-xs"
+                          className="h-4 w-4 p-0 text-xs flex items-center justify-center"
                         >
                           {item.badge}
                         </Badge>
-                      )}
-                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground" />
-                    </>
-                  )}
-                  {/* Badge for collapsed state */}
-                  {collapsed && item.badge && (
-                    <div className="absolute -top-1 -right-1">
-                      <Badge
-                        variant="destructive"
-                        className="h-4 w-4 p-0 text-xs flex items-center justify-center"
-                      >
-                        {item.badge}
-                      </Badge>
-                    </div>
-                  )}
-                </Button>
-              ))}
+                      </div>
+                    )}
+                  </Button>
+                );
+              })}
             </nav>
           </div>
 

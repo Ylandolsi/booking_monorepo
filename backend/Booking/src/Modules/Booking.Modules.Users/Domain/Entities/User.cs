@@ -27,7 +27,7 @@ public sealed class User : IdentityUser<int>, IEntity
     public string Gender { get; private set; } = "Male";
     public SocialLinks SocialLinks { get; private set; } = null!;
     public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
-
+    public bool IntegratedWithGoogle { get; private set; } = false; 
     public string Bio { get; private set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -155,7 +155,11 @@ public sealed class User : IdentityUser<int>, IEntity
 
         return Status.BecomeMentor();
     }
-    
+
+    public void IntegrateWithGoogle()
+    {
+        IntegratedWithGoogle =  true;
+    }
 
     // TODO : configure these one to many as readonly 
     //builder.Navigation(o => o.Items)

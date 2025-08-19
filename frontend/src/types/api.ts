@@ -42,6 +42,7 @@ export type User = {
   expertises: ExpertiseType[];
   languages: LanguageType[];
   profileCompletionStatus: ProfileCompletionStatusType;
+  integratedWithGoogle: boolean;
   // TODO  : add country !! country: string;
 };
 
