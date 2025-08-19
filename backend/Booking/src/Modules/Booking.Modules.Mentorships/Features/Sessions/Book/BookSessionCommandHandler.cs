@@ -51,8 +51,8 @@ internal sealed class BookSessionCommandHandler(
         var sessionStartDateTime = sessionDate.Add(startTime.ToTimeSpan());
         var sessionEndDateTime = sessionDate.Add(endTime.ToTimeSpan());
 
-        sessionStartDateTime = DateTime.SpecifyKind(sessionStartDateTime.Date, DateTimeKind.Utc);
-        sessionEndDateTime = DateTime.SpecifyKind(sessionEndDateTime.Date, DateTimeKind.Utc);
+        sessionStartDateTime = DateTime.SpecifyKind(sessionStartDateTime, DateTimeKind.Utc);
+        sessionEndDateTime = DateTime.SpecifyKind(sessionEndDateTime, DateTimeKind.Utc);
 
 
         var durationMinutes = (int)(endTime - startTime).TotalMinutes;

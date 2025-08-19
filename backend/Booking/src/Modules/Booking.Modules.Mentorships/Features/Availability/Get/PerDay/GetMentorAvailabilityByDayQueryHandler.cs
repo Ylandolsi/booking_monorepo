@@ -64,7 +64,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
             List<ScheduledAtWithDuration> bookedSessions = await context.Sessions
                 .Where(s => s.Mentor.UserSlug == query.MentorSlug &&
-                            s.ScheduledAt == query.Date.Date &&
+                            s.ScheduledAt.Date == query.Date.Date &&
                             s.Status != Domain.Enums.SessionStatus.Cancelled)
                 .Select(s => new ScheduledAtWithDuration
                 {
