@@ -103,27 +103,7 @@ public static class AuthenticationExtensions
                 options.ReturnUrlParameter = "/auth/login/google/callback";
 
             });
-            /*.AddGoogle(options =>
-            {
-                var googleOptions = configuration.GetSection(GoogleOAuthOptions.GoogleOptionsKey)
-                    .Get<GoogleOAuthOptions>() ?? throw new InvalidOperationException("Google Oauth is not configured");
-
-                options.ClientId = googleOptions.ClientId!;
-                options.ClientSecret = googleOptions.ClientSecret!;
-
-                options.AccessType = "offline";
-                options.SaveTokens = true;
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("https://www.googleapis.com/auth/calendar");
-                
-
-                options.ClaimActions.MapJsonKey("picture", "picture");
-                options.ClaimActions.MapJsonKey("given_name", "given_name");
-                options.ClaimActions.MapJsonKey("family_name", "family_name");
-
-                options.ReturnUrlParameter = "/auth/login/google/callback";
-            });*/
+            
 
 
         services.AddHttpContextAccessor();
