@@ -44,7 +44,8 @@ public sealed class MeQueryHandler(
             user.Experiences.ToList(), user.Educations.ToList(),
             user.UserExpertises.Select(ue => ue.Expertise).ToList(),
             user.UserLanguages.Select(ul => ul.Language).ToList(),
-            user.ProfileCompletionStatus
+            user.ProfileCompletionStatus,
+            user.IntegratedWithGoogle
         ));
     }
 }

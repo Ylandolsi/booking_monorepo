@@ -1,12 +1,16 @@
-﻿using Booking.Common.Endpoints;
+﻿using Booking.Common.Authentication;
+using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Users.Features.Authentication.Google.Integrate;
+using Booking.Modules.Users.Features.Authentication.Google.Signin;
 using Booking.Modules.Users.Features.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.Google;
 
@@ -15,13 +19,16 @@ internal sealed class LoginGoogleCallback : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GoogleLoginCallback, async (
-                [FromQuery] string? returnUrl,
+                [FromQuery] string returnUrl,
                 ICommandHandler<CreateOrLoginCommand, LoginResponse> createOrLoginCommandHandler,
-                IHttpContextAccessor httpContextAccessor) =>
+                ICommandHandler<IntegrateAccountCommand> integrateAccountCommandHandler,
+                IHttpContextAccessor httpContextAccessor,
+                UserContext userContext , 
+                ILogger<LoginGoogleCallback> logger) =>
             {
                 // the echange is happening ineternally by the .net identity
                 // in the callback signin-google
-                
+
                 // exchange the code with tokens 
                 // result.principal => claims
                 // and result.ticket includes tokens and other stuff 
@@ -38,6 +45,31 @@ internal sealed class LoginGoogleCallback : IEndpoint
                     );
                 }
 
+                int userId = 0;
+                try
+                {
+                    userId = userContext.UserId;
+
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error logging user with ID {UserId}.", userId);
+                }
+
+
+                if (userId != 0)
+                {
+                    var integrateCommand = new IntegrateAccountCommand(result.Principal!, userId!);
+                    Result integrateResponse =
+                        await integrateAccountCommandHandler.Handle(integrateCommand, default);
+
+                    if (integrateResponse.IsFailure)
+                    {
+                        return CustomResults.Problem(integrateResponse);
+                    }
+
+                    return Results.Redirect(returnUrl);
+                }
 
                 var command = new CreateOrLoginCommand(result.Principal!);
                 Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);

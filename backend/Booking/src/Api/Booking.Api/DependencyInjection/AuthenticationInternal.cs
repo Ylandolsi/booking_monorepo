@@ -88,7 +88,6 @@ public static class AuthenticationExtensions
                     var uriBuilder = new UriBuilder(context.RedirectUri);
                     var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
         
-                    // Add or update the prompt parameter
                     query["prompt"] = "consent";
                     query["access_type"] = "offline";
         

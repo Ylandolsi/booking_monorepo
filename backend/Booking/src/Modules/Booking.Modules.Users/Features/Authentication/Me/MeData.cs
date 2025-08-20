@@ -15,5 +15,6 @@ public record MeData(
     List<Domain.Entities.Education> Educations,
     List<Domain.Entities.Expertise> Expertises,
     List<Domain.Entities.Language> Languages,
-    ProfileCompletionStatus ProfileCompletionStatus);
+    ProfileCompletionStatus ProfileCompletionStatus ,
+    bool IntegratedWithGoogle);
     

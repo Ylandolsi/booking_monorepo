@@ -13,6 +13,8 @@ TODO :
 - review next meets 
 - review previous meets/mentors 
 - simulation for the gateway
+- Fix availability / booking 
+- Admin dashboard 
 --
 callback vs webhook : callback : gatway -> front -> backend ->
 -----
