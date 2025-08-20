@@ -12,6 +12,7 @@ using Booking.Modules.Users.BackgroundJobs.Cleanup;
 using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
 using Booking.Modules.Users.BackgroundJobs.SendingVerificationEmail;
 using Booking.Modules.Users.Features.Authentication;
+using Booking.Modules.Users.Features.Authentication.Google;
 using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,8 @@ public static class UsersModule
 
         services.AddScoped<EmailVerificationSender>();
         services.AddScoped<TokenHelper>();
+
+        services.AddScoped<GoogleTokensSave>();
 
         return services;
     }

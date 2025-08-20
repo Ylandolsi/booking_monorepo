@@ -4,4 +4,4 @@ using Booking.Modules.Users.Features.Utils;
 
 namespace Booking.Modules.Users.Features.Authentication.Google.Signin;
 
-public record CreateOrLoginCommand(ClaimsPrincipal Principal) : ICommand<LoginResponse>;
+public record CreateOrLoginCommand(ClaimsPrincipal Principal , GoogleTokens GoogleTokens) : ICommand<LoginResponse>;

@@ -21,6 +21,7 @@ internal sealed class IntegrateAccountCommandHandler(
     SlugGenerator slugGenerator,
     UsersDbContext context,
     UserContext userContext,
+    GoogleTokensSave GoogleTokensSave,
     ILogger<IntegrateAccountCommandHandler> logger) : ICommandHandler<IntegrateAccountCommand>
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)
@@ -34,7 +35,7 @@ internal sealed class IntegrateAccountCommandHandler(
         }
 
         var loginInfo = new UserLoginInfo("Google", claims.Id, "Google");
-        
+
         User? user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
 
         if (user is not null)
@@ -43,11 +44,11 @@ internal sealed class IntegrateAccountCommandHandler(
             return Result.Failure(
                 GoogleErrors.EmailAlreadyTaken($"Email {claims.Email} already assigned to someone else"));
         }
-        
+
 
         user = await context.Users.FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
-        
-        if (user is not null && !user.IntegratedWithGoogle )
+
+        if (user is not null && !user.IntegratedWithGoogle)
         {
             IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             if (!addLoginResult.Succeeded)
@@ -57,12 +58,12 @@ internal sealed class IntegrateAccountCommandHandler(
                 return Result.Failure<LoginResponse>(
                     GoogleErrors.UserIntegrationFailed("Could not link Google account."));
             }
-            else
-            {
-                user.IntegrateWithGoogle();
-                await context.SaveChangesAsync(cancellationToken);
-            }
-
+            
+            user.IntegrateWithGoogle();
+            GoogleTokensSave.StoreToken(user, command.GoogleTokens);
+            await context.SaveChangesAsync(cancellationToken);
+            
+            
         }
 
         logger.LogInformation("User {Email} integrated  successfully with google calendar !", claims.Email);

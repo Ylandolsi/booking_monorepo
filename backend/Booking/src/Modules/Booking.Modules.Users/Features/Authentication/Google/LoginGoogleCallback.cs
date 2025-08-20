@@ -23,7 +23,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 ICommandHandler<CreateOrLoginCommand, LoginResponse> createOrLoginCommandHandler,
                 ICommandHandler<IntegrateAccountCommand> integrateAccountCommandHandler,
                 IHttpContextAccessor httpContextAccessor,
-                UserContext userContext , 
+                UserContext userContext,
                 ILogger<LoginGoogleCallback> logger) =>
             {
                 // the echange is happening ineternally by the .net identity
@@ -36,6 +36,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
                     ? await httpContextAccessor.HttpContext.AuthenticateAsync("Google")
                     : AuthenticateResult.Fail("");
 
+
                 if (!result.Succeeded)
                 {
                     Results.Problem(
@@ -44,12 +45,19 @@ internal sealed class LoginGoogleCallback : IEndpoint
                         detail: "Authentication with Google was not successful. Please try again."
                     );
                 }
+                var propeties = result.Properties.Items;
+                GoogleTokens googleTokens = new GoogleTokens
+                {
+                    AccessToken = propeties[".Token.refresh_token"],
+                    RefreshToken = propeties.ContainsKey(".Token.access_token")
+                        ? propeties[".Token.access_token"]
+                        : null
+                };
 
                 int userId = 0;
                 try
                 {
                     userId = userContext.UserId;
-
                 }
                 catch (Exception ex)
                 {
@@ -59,7 +67,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
 
                 if (userId != 0)
                 {
-                    var integrateCommand = new IntegrateAccountCommand(result.Principal!, userId!);
+                    var integrateCommand = new IntegrateAccountCommand(result.Principal!,  googleTokens , userId!);
                     Result integrateResponse =
                         await integrateAccountCommandHandler.Handle(integrateCommand, default);
 
@@ -71,7 +79,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
                     return Results.Redirect(returnUrl);
                 }
 
-                var command = new CreateOrLoginCommand(result.Principal!);
+                var command = new CreateOrLoginCommand(result.Principal! , googleTokens );
                 Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
 
                 if (!loginResponseResult.IsSuccess)

@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Booking.Modules.Users.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Modules.Users.Features.Authentication.Google.Signin;
 
@@ -44,4 +46,5 @@ public static class GoogleClaims
             claims.GetValueOrDefault("Picture")
         );
     }
-}
+    
+}    

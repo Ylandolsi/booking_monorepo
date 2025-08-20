@@ -9,12 +9,18 @@ add retry failure in webhook
 
 ---
 TODO : 
-- intgerate with calendar 
+- intgerate with calendar  ( avoid user alraedy integrated with another account to switch it !)
 - review next meets 
 - review previous meets/mentors 
 - simulation for the gateway
 - Fix availability / booking 
 - Admin dashboard 
+- save tokens 
+- refactor refresh tokens 
+Services/Auth/TokenManagementService.cs
+
+
+
 --
 callback vs webhook : callback : gatway -> front -> backend ->
 -----
