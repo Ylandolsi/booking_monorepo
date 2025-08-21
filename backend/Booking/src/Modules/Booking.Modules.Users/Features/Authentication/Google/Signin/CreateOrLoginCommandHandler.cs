@@ -19,7 +19,7 @@ internal sealed class CreateOrLoginCommandHandler(
     SlugGenerator slugGenerator,
     UsersDbContext context,
     UserContext userContext,
-    GoogleTokensSave GoogleTokensSave,
+    GoogleTokenService googleTokenService,
     ILogger<CreateOrLoginCommandHandler> logger) : ICommandHandler<CreateOrLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ internal sealed class CreateOrLoginCommandHandler(
 
             // Add the external login to the user (either existing by email or newly created)
             IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
-            GoogleTokensSave.StoreToken(user, command.GoogleTokens);
+            await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             await context.SaveChangesAsync(cancellationToken);
 
             if (!addLoginResult.Succeeded)

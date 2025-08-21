@@ -1,4 +1,4 @@
-﻿namespace Booking.Modules.Users;
+﻿namespace Booking.Common.Options;
 
 public  class GoogleOAuthOptions
 {

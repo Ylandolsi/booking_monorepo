@@ -3,6 +3,7 @@ using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
+using Booking.Modules.Mentorships.Features.GoogleCalendar;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -33,6 +34,8 @@ public static class MentorshipsModule
         services.AddTransient<DomainEventsDispatcher>();
         services.AddScoped<AwsSesEmailService>();
         services.AddSingleton<EmailTemplateProvider>();
+
+        services.AddScoped<GoogleCalendarService>(); 
 
 
         return services;

@@ -11,6 +11,7 @@ using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.BackgroundJobs.Cleanup;
 using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
 using Booking.Modules.Users.BackgroundJobs.SendingVerificationEmail;
+using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Google;
 using Booking.Modules.Users.Features.Authentication.Verification;
@@ -32,11 +33,18 @@ public static class UsersModule
         IConfiguration configuration) =>
         services
             .AddServices()
+            .ExposeApiForModules()
             // .AddAWS(configuration)
             .AddDatabase(configuration)
             .AddBackgroundJobs()
             .AddResielenecPipelines(configuration)
             .AddEndpoints(AssemblyReference.Assembly);
+
+    private static IServiceCollection ExposeApiForModules(this IServiceCollection service)
+    {
+        service.AddScoped<IUsersModuleApi, UsersModuleApi>();
+        return service; 
+    }
 
 
     private static IServiceCollection AddServices(this IServiceCollection services)
@@ -52,7 +60,8 @@ public static class UsersModule
         services.AddScoped<EmailVerificationSender>();
         services.AddScoped<TokenHelper>();
 
-        services.AddScoped<GoogleTokensSave>();
+        services.AddScoped<GoogleTokenService>();
+
 
         return services;
     }

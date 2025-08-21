@@ -1,9 +1,9 @@
 using Booking.Common.Authorization;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Booking.Api.DependencyInjection;
+namespace Booking.Api.Services;
 
-public static  class AuthorizaationInternal
+public static  class AuthorizationInternal
 {
     public static IServiceCollection AddAuthorizationInternal(this IServiceCollection services)
     {

@@ -1,0 +1,286 @@
+using System.Net;
+using Booking.Common.Options;
+using Booking.Common.Results;
+using Booking.Modules.Users.Contracts;
+using Google;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Calendar.v3.Data;
+using Google.Apis.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+namespace Booking.Modules.Mentorships.Features.GoogleCalendar;
+
+public class GoogleCalendarService
+{
+    private readonly GoogleOAuthOptions GoogleOAuthOptions;
+    private readonly ILogger<GoogleCalendarService> Logger;
+    private readonly string ApplicationName = "Meetini";
+    private IUsersModuleApi UsersModuleApi;
+    private CalendarService CalendarService ;
+
+
+    public GoogleCalendarService(
+        IOptions<GoogleOAuthOptions> googleOAuthOptions,
+        IUsersModuleApi usersModuleApi,
+        ILogger<GoogleCalendarService> logger)
+    {
+        GoogleOAuthOptions = googleOAuthOptions.Value;
+        UsersModuleApi = usersModuleApi;
+        Logger = logger;
+    }
+
+    public async Task<Result> InitializeAsync(int userId)
+    {
+        var googleTokens = await UsersModuleApi.GetUserTokensAsync(userId);
+
+        var clientSecrets = new ClientSecrets
+        {
+            ClientId = GoogleOAuthOptions.ClientId,
+            ClientSecret = GoogleOAuthOptions.ClientSecret,
+        };
+
+        var flow =
+            new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+            {
+                ClientSecrets = clientSecrets,
+                Scopes = new[] { CalendarService.Scope.Calendar }
+            });
+
+        try
+        {
+            // Force token refresh check by accessing the token
+            GoogleTokensDto? newTokens = await RefreshTokenAsync(googleTokens.RefreshToken);
+            newTokens ??= googleTokens; // keep old tokens if failed to refresh 
+
+            var tokenResponse = new TokenResponse
+            {
+                AccessToken = newTokens.AccessToken,
+                RefreshToken = newTokens.RefreshToken,
+            };
+
+            var credential = new UserCredential(flow, userId.ToString(), tokenResponse);
+            /*
+                bool refreshed = await credential.RefreshTokenAsync(default);
+                if (refreshed)
+                {
+                    var debg = credential.Token.AccessToken;
+                    var dbg2 = credential.Token.RefreshToken;
+
+                }
+            */
+
+            var service = new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = ApplicationName,
+            });
+
+            CalendarService = service; 
+            
+            var updatedTokenInfo = new GoogleTokensDto
+            {
+                AccessToken = credential.Token.AccessToken,
+                RefreshToken = credential.Token.RefreshToken,
+                /*
+                 causes problem here 
+    ExpiresAt = tokenResponse.IssuedUtc.Add(TimeSpan.FromSeconds((long)tokenResponse.ExpiresInSeconds)),
+*/
+            };
+
+            await UsersModuleApi.StoreUserTokensAsyncById(userId, updatedTokenInfo);
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(GoogleCalendarErrors.FailedToCreateService);
+        }
+    }
+
+    private async Task<GoogleTokensDto?> RefreshTokenAsync(string refreshToken, string userId = "user")
+    {
+        try
+        {
+            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+            {
+                ClientSecrets = new ClientSecrets
+                {
+                    ClientId = GoogleOAuthOptions.ClientId,
+                    ClientSecret = GoogleOAuthOptions.ClientSecret,
+                }
+            });
+
+            var tokenResponse = await flow.RefreshTokenAsync(userId, refreshToken, CancellationToken.None);
+
+            return new GoogleTokensDto
+            {
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken ?? refreshToken, // Keep original if not returned
+                /*
+                 working here 
+                ExpiresAt = tokenResponse.IssuedUtc.Add(TimeSpan.FromSeconds((long)tokenResponse.ExpiresInSeconds)),
+            */
+            };
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to refresh token");
+            return null;
+        }
+    }
+
+    public async Task<bool> ValidateTokenAsync(string accessToken)
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var response =
+                await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={accessToken}");
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                return false;
+
+            var content = await response.Content.ReadAsStringAsync();
+            // You can parse the JSON response to get more details about the token
+            return !string.IsNullOrEmpty(content);
+
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to validate token");
+            return false;
+        }
+    }
+    public async Task<Result<Event>> CreateEventAsync(string calendarId = "primary")
+    /*
+    public async Task<Event> CreateEventAsync(Event newEvent, string calendarId = "primary")
+    */
+
+    {
+        var eventTest = CreateSimpleEvent("testtest", "test", DateTime.Now.AddHours(3), DateTime.Now.AddHours(5) );
+        try
+        {
+            var request = CalendarService.Events.Insert(eventTest, calendarId);
+            var response = await request.ExecuteAsync();
+            return Result.Success(response);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<Event>(GoogleCalendarErrors.EventCreationFailed);
+        }
+    }
+
+    public async Task<Result<IList<Event>>> GetEventsAsync(int userId,
+        string calendarId = "primary", DateTime? timeMin = null, DateTime? timeMax = null, int maxResults = 10)
+    {
+        var googleTokens = await UsersModuleApi.GetUserTokensAsync(userId);
+
+        try
+        {
+            var request = CalendarService.Events.List(calendarId);
+            request.TimeMin = timeMin ?? DateTime.Now;
+            request.TimeMax = timeMax;
+            request.ShowDeleted = false;
+            request.SingleEvents = true;
+            request.MaxResults = maxResults;
+            request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
+
+            var events = await request.ExecuteAsync(); // TODO : add polly here S
+            var response = events.Items ?? new List<Event>();
+            return Result.Success(response);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Unauthorized)
+        {
+            Logger.LogWarning("Unauthorized access - token may be invalid or expired");
+            return Result.Failure<IList<Event>>(GoogleCalendarErrors.Unauthorized);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+        {
+            Logger.LogWarning("Access forbidden - insufficient permissions");
+            return Result.Failure<IList<Event>>(GoogleCalendarErrors.Forbidden);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
+        {
+            Logger.LogWarning("Calendar not found: {CalendarId}", calendarId);
+            return Result.Failure<IList<Event>>(GoogleCalendarErrors.CalendarNotFound);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.TooManyRequests)
+        {
+            Logger.LogWarning("Rate limit exceeded");
+            return Result.Failure<IList<Event>>(GoogleCalendarErrors.RateLimitExceeded);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error occurred while fetching events");
+            return Result.Failure<IList<Event>>(GoogleCalendarErrors.UnexpectedError);
+        }
+    }
+
+    public async Task<Result<Event>> UpdateEventAsync(Event eventToUpdate, string calendarId = "primary")
+    {
+        if (CalendarService == null)
+        {
+            return Result.Failure<Event>(GoogleCalendarErrors.ServiceNotInitialized);
+        }
+
+        try
+        {
+            var request = CalendarService.Events.Update(eventToUpdate, calendarId, eventToUpdate.Id);
+            var updatedEvent = await request.ExecuteAsync();
+            return Result.Success(updatedEvent);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to update event");
+            return Result.Failure<Event>(GoogleCalendarErrors.EventUpdateFailed);
+        }
+    }
+
+    public async Task<Result> DeleteEventAsync(string eventId, string calendarId = "primary")
+    {
+        if (CalendarService == null)
+        {
+            return Result.Failure(GoogleCalendarErrors.ServiceNotInitialized);
+        }
+
+        try
+        {
+            var request = CalendarService.Events.Delete(calendarId, eventId);
+            await request.ExecuteAsync();
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to delete event");
+            return Result.Failure(GoogleCalendarErrors.EventDeletionFailed);
+        }
+    }
+
+    public static Event CreateSimpleEvent(string title, string description, DateTime startTime, DateTime endTime, string? location = null)
+    {
+        return new Event
+        {
+            Summary = title,
+            Description = description,
+            Location = location,
+            Start = new EventDateTime()
+            {
+                DateTime = startTime,
+                TimeZone = TimeZoneInfo.Local.Id,
+            },
+            End = new EventDateTime()
+            {
+                DateTime = endTime,
+                TimeZone = TimeZoneInfo.Local.Id,
+            },
+            Reminders = new Event.RemindersData()
+            {
+                UseDefault = true
+            }
+        };
+    }
+}

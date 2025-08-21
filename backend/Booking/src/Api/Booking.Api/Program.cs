@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Booking.Api.DependencyInjection;
 using Booking.Api.Extensions;
+using Booking.Api.Services;
 using Booking.Common;
 using Booking.Modules.Mentorships;
 using Booking.Modules.Mentorships.Persistence;

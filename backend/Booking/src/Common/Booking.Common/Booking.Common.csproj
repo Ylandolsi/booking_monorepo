@@ -76,5 +76,10 @@
     <!-- This tells MSBuild to embed any .html file from the EmailTemplates folder as a resource -->
     <EmbeddedResource Include=".\Email\Templates\*.html" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Google\" />
+  </ItemGroup>
   
 </Project>

@@ -21,7 +21,7 @@ internal sealed class IntegrateAccountCommandHandler(
     SlugGenerator slugGenerator,
     UsersDbContext context,
     UserContext userContext,
-    GoogleTokensSave GoogleTokensSave,
+    GoogleTokenService googleTokenService,
     ILogger<IntegrateAccountCommandHandler> logger) : ICommandHandler<IntegrateAccountCommand>
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ internal sealed class IntegrateAccountCommandHandler(
             }
             
             user.IntegrateWithGoogle();
-            GoogleTokensSave.StoreToken(user, command.GoogleTokens);
+            await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             await context.SaveChangesAsync(cancellationToken);
             
             

@@ -1,11 +1,12 @@
 using System.Security.Cryptography;
 using Booking.Common.Authentication;
+using Booking.Common.Options;
 using Booking.Modules.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Booking.Api.DependencyInjection;
+namespace Booking.Api.Services;
 
 public static class AuthenticationExtensions
 {

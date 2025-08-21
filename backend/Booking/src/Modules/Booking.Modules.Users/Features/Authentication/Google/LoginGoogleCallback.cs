@@ -2,6 +2,7 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Features.Authentication.Google.Integrate;
 using Booking.Modules.Users.Features.Authentication.Google.Signin;
 using Booking.Modules.Users.Features.Utils;
@@ -45,13 +46,17 @@ internal sealed class LoginGoogleCallback : IEndpoint
                         detail: "Authentication with Google was not successful. Please try again."
                     );
                 }
+
                 var propeties = result.Properties.Items;
                 GoogleTokens googleTokens = new GoogleTokens
                 {
                     AccessToken = propeties[".Token.refresh_token"],
                     RefreshToken = propeties.ContainsKey(".Token.access_token")
                         ? propeties[".Token.access_token"]
-                        : null
+                        : null,
+                    ExpiresAt = DateTimeOffset  // 2025-08-21T11:52:55.9919390+00:00
+                        .Parse(propeties[".Token.expires_at"])
+                        .UtcDateTime, // 2025-08-21 11:52:55 (UTC)
                 };
 
                 int userId = 0;
@@ -67,7 +72,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
 
                 if (userId != 0)
                 {
-                    var integrateCommand = new IntegrateAccountCommand(result.Principal!,  googleTokens , userId!);
+                    var integrateCommand = new IntegrateAccountCommand(result.Principal!, googleTokens, userId!);
                     Result integrateResponse =
                         await integrateAccountCommandHandler.Handle(integrateCommand, default);
 
@@ -79,7 +84,7 @@ internal sealed class LoginGoogleCallback : IEndpoint
                     return Results.Redirect(returnUrl);
                 }
 
-                var command = new CreateOrLoginCommand(result.Principal! , googleTokens );
+                var command = new CreateOrLoginCommand(result.Principal!, googleTokens);
                 Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
 
                 if (!loginResponseResult.IsSuccess)
@@ -98,34 +103,3 @@ internal sealed class LoginGoogleCallback : IEndpoint
             .WithName(UsersEndpoints.GoogleLoginCallback);
     }
 }
-
-
-//private async Task<GoogleTokenResponse> RefreshGoogleTokens(string refreshToken)
-//    {
-//        using var client = new HttpClient();
-//        var request = new HttpRequestMessage(HttpMethod.Post, "https://oauth2.googleapis.com/token");
-//        request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-//        {
-//               neksa l code 
-//            ["client_id"] = _configuration["Google:ClientId"],
-//            ["client_secret"] = _configuration["Google:ClientSecret"],
-//            ["refresh_token"] = refreshToken,
-//            ["grant_type"] = "refresh_token"
-//        });
-
-//        var response = await client.SendAsync(request);
-//        if (!response.IsSuccessStatusCode)
-//        {
-//            return null;
-//        }
-
-//        return await response.Content.ReadFromJsonAsync<GoogleTokenResponse>();
-//    }
-
-//public class GoogleTokenResponse
-//{
-//    public string AccessToken { get; set; }
-//    public string RefreshToken { get; set; }
-//    public int ExpiresIn { get; set; }
-//    public string TokenType { get; set; }
-//}

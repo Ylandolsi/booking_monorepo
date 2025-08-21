@@ -4,18 +4,13 @@ using Amazon.S3;
 using Amazon.SimpleEmail;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
+using Booking.Common.Options;
 using Booking.Modules.Users;
-using Booking.Modules.Users.BackgroundJobs.Cleanup;
-using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
-using Booking.Modules.Users.BackgroundJobs.SendingVerificationEmail;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
-using Polly;
-using Polly.CircuitBreaker;
-using Polly.Retry;
 
-namespace Booking.Api.DependencyInjection;
+namespace Booking.Api.Services;
 
 public static class Infrastructure
 {
