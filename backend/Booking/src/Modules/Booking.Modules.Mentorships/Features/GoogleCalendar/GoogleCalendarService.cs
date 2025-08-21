@@ -19,19 +19,25 @@ public class GoogleCalendarService
     private readonly GoogleOAuthOptions GoogleOAuthOptions;
     private readonly ILogger<GoogleCalendarService> Logger;
     private readonly string ApplicationName = "Meetini";
+    private readonly HttpClient HttpClient;
     private IUsersModuleApi UsersModuleApi;
-    private CalendarService CalendarService ;
+    private CalendarService CalendarService;
 
 
     public GoogleCalendarService(
         IOptions<GoogleOAuthOptions> googleOAuthOptions,
         IUsersModuleApi usersModuleApi,
+        HttpClient httpClient,
         ILogger<GoogleCalendarService> logger)
     {
+        HttpClient = httpClient;
         GoogleOAuthOptions = googleOAuthOptions.Value;
         UsersModuleApi = usersModuleApi;
+
         Logger = logger;
     }
+
+    #region Init , Tokens management
 
     public async Task<Result> InitializeAsync(int userId)
     {
@@ -79,16 +85,16 @@ public class GoogleCalendarService
                 ApplicationName = ApplicationName,
             });
 
-            CalendarService = service; 
-            
+            CalendarService = service;
+
             var updatedTokenInfo = new GoogleTokensDto
             {
                 AccessToken = credential.Token.AccessToken,
                 RefreshToken = credential.Token.RefreshToken,
                 /*
-                 causes problem here 
-    ExpiresAt = tokenResponse.IssuedUtc.Add(TimeSpan.FromSeconds((long)tokenResponse.ExpiresInSeconds)),
-*/
+                causes problem here
+                ExpiresAt = tokenResponse.IssuedUtc.Add(TimeSpan.FromSeconds((long)tokenResponse.ExpiresInSeconds)),
+                */
             };
 
             await UsersModuleApi.StoreUserTokensAsyncById(userId, updatedTokenInfo);
@@ -121,7 +127,7 @@ public class GoogleCalendarService
                 AccessToken = tokenResponse.AccessToken,
                 RefreshToken = tokenResponse.RefreshToken ?? refreshToken, // Keep original if not returned
                 /*
-                 working here 
+                 working here
                 ExpiresAt = tokenResponse.IssuedUtc.Add(TimeSpan.FromSeconds((long)tokenResponse.ExpiresInSeconds)),
             */
             };
@@ -137,9 +143,9 @@ public class GoogleCalendarService
     {
         try
         {
-            using var httpClient = new HttpClient();
+            const string linkToVerify = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
             var response =
-                await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={accessToken}");
+                await HttpClient.GetAsync($"{linkToVerify}{accessToken}");
 
             if (response.StatusCode != HttpStatusCode.OK)
                 return false;
@@ -147,7 +153,6 @@ public class GoogleCalendarService
             var content = await response.Content.ReadAsStringAsync();
             // You can parse the JSON response to get more details about the token
             return !string.IsNullOrEmpty(content);
-
         }
         catch (Exception ex)
         {
@@ -155,16 +160,16 @@ public class GoogleCalendarService
             return false;
         }
     }
-    public async Task<Result<Event>> CreateEventAsync(string calendarId = "primary")
-    /*
-    public async Task<Event> CreateEventAsync(Event newEvent, string calendarId = "primary")
-    */
 
+    #endregion
+
+    #region Calendar Crud operations
+
+    public async Task<Result<Event>> CreateEventAsync(Event newEvent, string calendarId = "primary")
     {
-        var eventTest = CreateSimpleEvent("testtest", "test", DateTime.Now.AddHours(3), DateTime.Now.AddHours(5) );
         try
         {
-            var request = CalendarService.Events.Insert(eventTest, calendarId);
+            var request = CalendarService.Events.Insert(newEvent, calendarId);
             var response = await request.ExecuteAsync();
             return Result.Success(response);
         }
@@ -260,7 +265,8 @@ public class GoogleCalendarService
         }
     }
 
-    public static Event CreateSimpleEvent(string title, string description, DateTime startTime, DateTime endTime, string? location = null)
+    public static Event CreateSimpleEvent(string title, string description, DateTime startTime, DateTime endTime,
+        string? location = null)
     {
         return new Event
         {
@@ -283,4 +289,112 @@ public class GoogleCalendarService
             }
         };
     }
+
+    #endregion
+
+    #region Meets
+
+    public async Task<Result<Event>> CreateEventWithMeetAsync(MeetingRequest meetingRequest,
+        string calendarId = "primary")
+    {
+        if (CalendarService == null)
+        {
+            return Result.Failure<Event>(GoogleCalendarErrors.ServiceNotInitialized);
+        }
+
+        MeetSettings meetSettings = new MeetSettings();
+        try
+        {
+            var meetEvent = CreateEventWithMeet(
+                meetingRequest.Title,
+                meetingRequest.Description,
+                meetingRequest.StartTime,
+                meetingRequest.EndTime,
+                meetSettings,
+                meetingRequest.Location,
+                meetingRequest.AttendeeEmails
+            );
+
+            var request = CalendarService.Events.Insert(meetEvent, calendarId);
+            request.ConferenceDataVersion = 1;
+            request.SendNotifications = meetingRequest.SendInvitations;
+
+            var createdEvent = await request.ExecuteAsync();
+            return Result.Success(createdEvent);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to create meeting event: {Title}", meetingRequest.Title);
+            return Result.Failure<Event>(GoogleCalendarErrors.EventCreationFailed);
+        }
+    }
+
+    public Event CreateEventWithMeet(string title, string description, DateTime startTime, DateTime endTime,
+        MeetSettings meetSettings,
+        string location = null, List<string> attendeeEmails = null)
+    {
+        var calendarEvent = new Event
+        {
+            Summary = title,
+            Description = description,
+            Location = location,
+            Start = new EventDateTime()
+            {
+                DateTime = startTime,
+                TimeZone = TimeZoneInfo.Local.Id,
+            },
+            End = new EventDateTime()
+            {
+                DateTime = endTime,
+                TimeZone = TimeZoneInfo.Local.Id,
+            },
+
+            // Google Meet integration
+            ConferenceData = new ConferenceData()
+            {
+                CreateRequest = new CreateConferenceRequest()
+                {
+                    RequestId = Guid.NewGuid().ToString(), // Unique ID for the request
+                    ConferenceSolutionKey = new ConferenceSolutionKey()
+                    {
+                        Type = "hangoutsMeet" // This creates a Google Meet link
+                    }
+                }
+            },
+
+            Attendees = attendeeEmails?.Select(email => new EventAttendee
+            {
+                Email = email,
+                ResponseStatus = "needsAction"
+            }).ToList(),
+
+            // Default reminders
+            Reminders = new Event.RemindersData()
+            {
+                UseDefault = meetSettings.UseDefaultReminders,
+                Overrides = meetSettings.CustomReminders?.Select(r => new EventReminder
+                {
+                    Method = r.Method,
+                    Minutes = r.Minutes
+                }).ToList()
+            },
+
+            // Configure guest permissions based on settings
+            GuestsCanSeeOtherGuests = meetSettings.GuestsCanSeeOtherGuests,
+            GuestsCanModify = meetSettings.GuestsCanModify,
+            GuestsCanInviteOthers = meetSettings.GuestsCanInviteOthers,
+        };
+
+        return calendarEvent;
+    }
+    
+
+    #endregion
+
+    
+}
+
+public class MeetInfo
+{
+    public string MeetLink { get; set; }
 }
