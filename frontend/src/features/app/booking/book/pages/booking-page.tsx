@@ -65,23 +65,21 @@ function BookingContent() {
 
   if (hasError) {
     return (
-      <div className="py-10 px-4 ">
-        <Alert variant="destructive">
-          {React.createElement(alertIconMap['destructive'])}
-          <AlertDescription>
-            {mentorDetailsQuery.isError
-              ? 'Failed to load mentor details. Please try again later.'
-              : 'Failed to load availability. Please refresh the page.'}
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert variant="destructive">
+        {React.createElement(alertIconMap['destructive'])}
+        <AlertDescription>
+          {mentorDetailsQuery.isError
+            ? 'Failed to load mentor details. Please try again later.'
+            : 'Failed to load availability. Please refresh the page.'}
+        </AlertDescription>
+      </Alert>
     );
   }
 
   // Success page
   if (step === 'success') {
     return (
-      <div className="container mx-auto py-10 px-4 max-w-4xl">
+      <div className="container mx-auto max-w-4xl">
         <div className="text-center space-y-6">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-10 h-10 text-green-600" />

@@ -29,7 +29,7 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header />
           {/* Page Content */}
-          <main className="flex-1 overflow-auto pb-20 bg-gradient-to-br from-background to-muted">
+          <main className="flex-1 overflow-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-20 bg-gradient-to-br from-background to-muted">
             {children}
           </main>
 

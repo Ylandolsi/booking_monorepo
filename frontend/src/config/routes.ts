@@ -41,6 +41,11 @@ export const ROUTE_PATHS = {
     PROFILE: {
       USER: `/app/profile/${ROUTE_PARAMS.USER_SLUG}`,
     },
+
+    // meets
+    MEETS: {
+      INDEX: `/app/meets`,
+    },
   },
 
   // Error/Test routes
@@ -147,6 +152,10 @@ export const routeBuilder = {
         ROUTE_PARAMS.MENTOR_SLUG,
         mentorSlug,
       ),
+  },
+
+  meets: {
+    index: () => ROUTE_PATHS.APP.MEETS.INDEX,
   },
 
   // Mentor routes

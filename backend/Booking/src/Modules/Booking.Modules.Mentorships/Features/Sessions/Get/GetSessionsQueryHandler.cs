@@ -6,18 +6,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Get;
 
-internal sealed class GetMentorSessionsQueryHandler(
+internal sealed class GetSessionsQueryHandler(
     MentorshipsDbContext context,
-    ILogger<GetMentorSessionsQueryHandler> logger) : IQueryHandler<GetMentorSessionsQuery, List<SessionResponse>>
+    ILogger<GetSessionsQueryHandler> logger) : IQueryHandler<GetSessionsQuery, List<SessionResponse>>
 {
-    public async Task<Result<List<SessionResponse>>> Handle(GetMentorSessionsQuery query, CancellationToken cancellationToken)
+    public async Task<Result<List<SessionResponse>>> Handle(GetSessionsQuery query, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Getting sessions for mentor {MentorId}", query.MentorId);
+        logger.LogInformation("Getting sessions for mentee {MenteeId}", query.MenteeId);
 
         try
         {
             var sessions = await context.Sessions
-                .Where(s => s.MentorId == query.MentorId)
+                .AsNoTracking()
+                .Where(s => s.MenteeId == query.MenteeId)
                 .OrderByDescending(s => s.ScheduledAt)
                 .Select(s => new SessionResponse(
                     s.Id,
@@ -33,17 +34,19 @@ internal sealed class GetMentorSessionsQueryHandler(
                     s.GoogleMeetLink != null ? s.GoogleMeetLink.Value : null,
                     s.CreatedAt))
                 .ToListAsync(cancellationToken);
+            
+            
 
-            logger.LogInformation("Retrieved {Count} sessions for mentor {MentorId}", 
-                sessions.Count, query.MentorId);
+            logger.LogInformation("Retrieved {Count} sessions for mentee {MenteeId}", 
+                sessions.Count, query.MenteeId);
 
             return Result.Success(sessions);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to get sessions for mentor {MentorId}", query.MentorId);
+            logger.LogError(ex, "Failed to get sessions for mentee {MenteeId}", query.MenteeId);
             return Result.Failure<List<SessionResponse>>(Error.Problem("Sessions.GetFailed", 
-                "Failed to retrieve mentor sessions"));
+                "Failed to retrieve mentee sessions"));
         }
     }
 }

@@ -18,13 +18,13 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
-import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
+import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification.verified'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
@@ -76,11 +76,6 @@ const TestDashboardRoute = TestDashboardRouteImport.update({
   path: '/test/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TestBookingDemoRoute = TestBookingDemoRouteImport.update({
-  id: '/test/booking-demo',
-  path: '/test/booking-demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ErrorExpSimpleLoadingDemoRoute =
   ErrorExpSimpleLoadingDemoRouteImport.update({
     id: '/error-exp/simple-loading-demo',
@@ -111,6 +106,11 @@ const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   id: '/email-verification',
   path: '/email-verification',
   getParentRoute: () => AuthRouteRoute,
+} as any)
+const AppMeetsRoute = AppMeetsRouteImport.update({
+  id: '/meets',
+  path: '/meets',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 const AuthEmailVerificationVerifiedRoute =
   AuthEmailVerificationVerifiedRouteImport.update({
@@ -146,13 +146,13 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/meets': typeof AppMeetsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -168,13 +168,13 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/meets': typeof AppMeetsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -192,13 +192,13 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/meets': typeof AppMeetsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -217,13 +217,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/meets'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -239,13 +239,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/meets'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -262,13 +262,13 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/meets'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -287,7 +287,6 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
-  TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   TestMentorRequiredRoute: typeof TestMentorRequiredRoute
@@ -358,13 +357,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/test/booking-demo': {
-      id: '/test/booking-demo'
-      path: '/test/booking-demo'
-      fullPath: '/test/booking-demo'
-      preLoaderRoute: typeof TestBookingDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/error-exp/simple-loading-demo': {
       id: '/error-exp/simple-loading-demo'
       path: '/error-exp/simple-loading-demo'
@@ -407,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/app/meets': {
+      id: '/app/meets'
+      path: '/meets'
+      fullPath: '/app/meets'
+      preLoaderRoute: typeof AppMeetsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/auth/email-verification/verified': {
       id: '/auth/email-verification/verified'
       path: '/verified'
@@ -446,6 +445,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppMeetsRoute: typeof AppMeetsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
@@ -454,6 +454,7 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppMeetsRoute: AppMeetsRoute,
   AppIndexRoute: AppIndexRoute,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
@@ -505,7 +506,6 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
-  TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   TestMentorRequiredRoute: TestMentorRequiredRoute,

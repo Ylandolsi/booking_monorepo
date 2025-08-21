@@ -25,7 +25,7 @@ function ScheduleContent() {
   const summary = getScheduleSummary();
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-6xl">
+    <div className="container mx-auto max-w-6xl">
       <h3 className="text-2xl font-bold text-gray-900 mb-4 text-left">
         Set Your Availability
       </h3>

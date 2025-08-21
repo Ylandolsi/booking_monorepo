@@ -122,7 +122,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
   ];
 
   return (
-    <div className="container space-y-6 mx-auto py-10 px-4 max-w-4xl">
+    <div className="container space-y-6 mx-auto max-w-4xl">
       {/* Success notification */}
       {updateMentorMutation.isSuccess && (
         <Alert className="mb-6 border-green-200 bg-green-50">

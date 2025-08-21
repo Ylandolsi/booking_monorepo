@@ -20,7 +20,7 @@ export function BecomeMentorPage() {
     return <AlreadyMentorPage />;
   }
   return (
-    <div className="py-10 mx-10 space-y-6">
+    <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="font-bold text-2xl">Become a Mentor</h1>
         <div className="space-y-2">

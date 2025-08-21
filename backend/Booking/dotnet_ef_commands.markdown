@@ -1,5 +1,7 @@
 # .NET and EF Core Commands
 
+In EF Core, if you don’t configure anything, it uses your C# property names (usually PascalCase).
+
 ## Entity Framework Migrations
 
 Add migrations for the Users module:

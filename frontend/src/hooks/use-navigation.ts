@@ -61,6 +61,10 @@ export function useAppNavigation() {
     goToProfile: (userSlug: string) => {
       navigate({ to: routes.to.profile.user(userSlug) });
     },
+    // my meets
+    goToMeets: () => {
+      navigate({ to: routes.to.meets.index() });
+    },
 
     // Test navigation
     goToTestDashboard: () => {

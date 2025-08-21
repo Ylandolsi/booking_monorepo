@@ -13,7 +13,6 @@ import {
   Timer,
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
-
 import { Button, Badge, Separator, PageLoading } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
@@ -27,7 +26,7 @@ export type Item = {
   name:
     | 'Home'
     | 'Profile'
-    | 'Bookings'
+    | 'Meetings'
     | 'Search'
     | 'Notifications'
     | 'Settings'
@@ -82,9 +81,11 @@ const Sidebar = ({
       click: () => nav.goToMentorSetSchedule(),
     },
     {
-      name: 'Bookings',
+      name: 'Meetings',
       icon: <Calendar size={20} />,
-      click: () => {},
+      click: () => {
+        nav.goToMeets();
+      },
       badge: '3',
     },
     {
