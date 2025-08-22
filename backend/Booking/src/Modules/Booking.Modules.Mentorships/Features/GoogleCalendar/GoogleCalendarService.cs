@@ -19,7 +19,6 @@ public class GoogleCalendarService
     private readonly GoogleOAuthOptions GoogleOAuthOptions;
     private readonly ILogger<GoogleCalendarService> Logger;
     private readonly string ApplicationName = "Meetini";
-    private readonly HttpClient HttpClient;
     private IUsersModuleApi UsersModuleApi;
     private CalendarService CalendarService;
 
@@ -27,10 +26,8 @@ public class GoogleCalendarService
     public GoogleCalendarService(
         IOptions<GoogleOAuthOptions> googleOAuthOptions,
         IUsersModuleApi usersModuleApi,
-        HttpClient httpClient,
         ILogger<GoogleCalendarService> logger)
     {
-        HttpClient = httpClient;
         GoogleOAuthOptions = googleOAuthOptions.Value;
         UsersModuleApi = usersModuleApi;
 
@@ -144,8 +141,9 @@ public class GoogleCalendarService
         try
         {
             const string linkToVerify = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+            using var httpClient = new HttpClient(); 
             var response =
-                await HttpClient.GetAsync($"{linkToVerify}{accessToken}");
+                await httpClient.GetAsync($"{linkToVerify}{accessToken}");
 
             if (response.StatusCode != HttpStatusCode.OK)
                 return false;

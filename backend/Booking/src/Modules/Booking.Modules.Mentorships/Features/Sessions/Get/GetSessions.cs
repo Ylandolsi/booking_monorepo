@@ -4,34 +4,31 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Get;
 
 internal sealed class GetSessions : IEndpoint
 {
-    public record Request
-    {
-        public int DaysFromNow { get; init; } = 0;  
-    }
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(MentorshipEndpoints.Sessions.GetSessions, async (
-                Request request  , 
-            UserContext userContext,
-            IQueryHandler<GetSessionsQuery, List<SessionResponse>> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int menteeId = userContext.UserId;
+                [FromQuery] int daysFromNow,
+                UserContext userContext,
+                IQueryHandler<GetSessionsQuery, List<SessionResponse>> handler,
+                CancellationToken cancellationToken) =>
+            {
+                int menteeId = userContext.UserId;
+                var query = new GetSessionsQuery(menteeId, daysFromNow);
 
-            var query = new GetSessionsQuery(menteeId,request.DaysFromNow);
-            Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
+                Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
 
-            return result.Match(
-                sessions => Results.Ok(sessions),
-                CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Sessions);
+                return result.Match(
+                    sessions => Results.Ok(sessions),
+                    CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Sessions);
     }
 }

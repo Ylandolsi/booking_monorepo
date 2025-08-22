@@ -27,13 +27,13 @@ public class endpoint : IEndpoint
                 return Results.BadRequest(eventsResult.Error);
             }
 
-            var createResult = await service.CreateEventAsync();
+            /*var createResult = await service.CreateEventAsync();
             if (createResult.IsFailure)
             {
                 return Results.BadRequest(createResult.Error);
-            }
+            }*/
             
-            return Results.Ok(createResult.Value);
+            return Results.Ok();
         }).RequireAuthorization(); 
     }
 }

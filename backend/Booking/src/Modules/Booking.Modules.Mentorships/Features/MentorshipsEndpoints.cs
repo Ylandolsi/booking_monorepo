@@ -23,7 +23,7 @@ public static class MentorshipEndpoints
         public const string Book = $"{Base}/sessions";
         public const string Cancel = $"{Base}/sessions/{{sessionId}}/cancel";
         public const string GetDetails = $"{Base}/sessions/{{sessionId}}";
-        public const string GetSessions = $"{Base}/sessions/me";
+        public const string GetSessions = $"{Base}/sessions"; // Query : daysFromNow 
     }
     
     public static class Relationships
