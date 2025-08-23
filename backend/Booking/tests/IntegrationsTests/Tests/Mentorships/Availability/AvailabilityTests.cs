@@ -161,38 +161,7 @@ public class AvailabilityTests : MentorshipTestBase
         if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week
         return today.AddDays(daysUntilTarget);
     }
-
-
-    /*
-    [Fact]
-    public async Task Availability_ShouldHandleTimeZoneCorrectly_WhenQueryingByDate()
-    {
-        var (userArrange, userAct) = await CreateMentor("mentorTest");
-
-
-        await userAct.PostAsJsonAsync(MentorshipEndpoints.Availability.Set, new
-        {
-            DayOfWeek = DayOfWeek.Sunday,
-            StartTime = new TimeOnly(8, 0),
-            EndTime = new TimeOnly(20, 0)
-        });
-
-        var nextSunday = GetNextSunday();
-
-        // Act
-        var response = await userAct.GetAsync(
-            $"/mentorships/mentors/{loginData.UserSlug}/availability/day?date={nextSunday:yyyy-MM-dd}");
-
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var availability = await response.Content.ReadFromJsonAsync<DailyAvailabilityResponse>();
-        Assert.NotNull(availability);
-        Assert.Equal(nextSunday.Date, availability.Date.Date);
-        Assert.True(availability.IsAvailable);
-    }
-    */
     
-
     private DateTime GetNextMonday()
     {
         var today = DateTime.Now.Date;

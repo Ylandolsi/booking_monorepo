@@ -1,3 +1,4 @@
+/*
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
@@ -38,3 +39,4 @@ internal sealed class CancelSession : IEndpoint
         .WithTags(Tags.Sessions);
     }
 }
+*/

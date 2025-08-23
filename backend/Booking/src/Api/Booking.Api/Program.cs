@@ -30,8 +30,6 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerDocumentation();
 
 Assembly[] moduleApplicationAssemblies =
 [
@@ -57,6 +55,8 @@ builder.Configuration.AddModuleConfiguration(["users"]);
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddMentorshipsModule(builder.Configuration);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerDocumentation();
 /*
 builder.Services.AddSingleton<TestProfileSeeder>();
 builder.Services.AddHostedService<SeedHostedService>();
@@ -71,9 +71,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     //     need to handle seeding langugaes and expertise in a better way!
     // and once only
 
-    app.UseSwaggerWithUi();
     app.MapOpenApi();
     app.MapScalarApiReference(opt => { opt.WithTitle("Booking API"); });
+    app.UseSwaggerWithUi();
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();

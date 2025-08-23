@@ -3,6 +3,7 @@ using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
+using Booking.Modules.Mentorships.Features.Utils;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,9 +27,6 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<int>(Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
         }
 
-        sessionDate = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
-
-
         if (!TimeOnly.TryParse(command.StartTime, out var startTime))
         {
             logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
@@ -41,6 +39,9 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<int>(Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
         }
 
+        var sessionDateUtc = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
+        // todo  : maybe handle endtime and start time from the request as datetime .. 
+
         if (endTime <= startTime)
         {
             logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
@@ -48,23 +49,23 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<int>(Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
         }
 
-        var sessionStartDateTime = sessionDate.Add(startTime.ToTimeSpan());
-        var sessionEndDateTime = sessionDate.Add(endTime.ToTimeSpan());
 
-        sessionStartDateTime = DateTime.SpecifyKind(sessionStartDateTime, DateTimeKind.Utc);
-        sessionEndDateTime = DateTime.SpecifyKind(sessionEndDateTime, DateTimeKind.Utc);
+        var sessionStartDateTimeUtc =
+            TimeConvertion.ToInstant(DateOnly.FromDateTime(sessionDate.Date), startTime, command.TimeZoneId);
+        var sessionEndDateTimeUtc =
+            TimeConvertion.ToInstant(DateOnly.FromDateTime(sessionDate.Date), endTime, command.TimeZoneId);
 
 
         var durationMinutes = (int)(endTime - startTime).TotalMinutes;
 
         // Validate session is not in the past
-        if (sessionStartDateTime <= DateTime.UtcNow)
+        if (sessionStartDateTimeUtc <= DateTime.UtcNow)
         {
-            logger.LogWarning("Attempted to book session in the past: {SessionDateTime}", sessionStartDateTime);
+            logger.LogWarning("Attempted to book session in the past: {SessionDateTime}", sessionStartDateTimeUtc);
             return Result.Failure<int>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
         }
 
-       Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
+        Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
             .FirstOrDefaultAsync(m => m.UserSlug == command.MentorSlug && m.IsActive, cancellationToken);
 
         if (mentor == null)
@@ -73,18 +74,25 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<int>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
 
-        var requestedDayOfWeek = sessionDate.DayOfWeek;
+
+
+        var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
+            mentor.TimezoneId == "" ? "Africa/Tunis" : mentor.TimezoneId);
+        
+        var requestedDayOfWeek = sessionStartDateTimeTimeZoneMentor.DayOfWeek;
+
+        var sessionEndDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionEndDateTimeUtc,
+            mentor.TimezoneId == "" ? "Africa/Tunis" : mentor.TimezoneId);
+
 
         // Check if the time slot is available 
         bool mentorAvailable = await context.Availabilities
-            .AnyAsync(a => a.MentorId == mentor.Id &&
-                           // TODO : change this 
-                           a.DayOfWeek == requestedDayOfWeek &&
-                           a.IsActive &&
-                           (a.TimeRange.StartTime.Hour < startTime.Hour || (a.TimeRange.StartTime.Hour == startTime.Hour) &&
-                               (a.TimeRange.StartTime.Minute <= startTime.Minute)) &&
-                           (a.TimeRange.EndTime.Hour > endTime.Hour || (a.TimeRange.EndTime.Hour == endTime.Hour) &&
-                               (a.TimeRange.EndTime.Minute >= endTime.Minute)),
+            .AnyAsync(a =>
+                    a.MentorId == mentor.Id &&
+                    a.IsActive &&
+                    a.DayOfWeek == requestedDayOfWeek &&
+                    a.TimeRange.StartTime <= TimeOnly.FromDateTime(sessionStartDateTimeTimeZoneMentor) &&
+                    a.TimeRange.EndTime >= TimeOnly.FromDateTime(sessionEndDateTimeTimeZoneMentor),
                 cancellationToken);
 
         if (!mentorAvailable)
@@ -100,9 +108,14 @@ internal sealed class BookSessionCommandHandler(
             .Where(s => s.MentorId == mentor.Id &&
                         s.Status != SessionStatus.Cancelled &&
                         s.Status != SessionStatus.NoShow &&
-                        s.ScheduledAt.Date == sessionDate)
-            .AnyAsync(s => sessionStartDateTime < s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
-                           sessionEndDateTime > s.ScheduledAt,
+                        s.ScheduledAt.Date == sessionDateUtc)
+            /**
+             * Session overlaps with another session :
+             * thisSessionStart <= endOtherSession
+             * thisSessionEnd >=  startOtherSession
+             */
+            .AnyAsync(s => sessionStartDateTimeUtc <= s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
+                           sessionEndDateTimeUtc >= s.ScheduledAt,
                 cancellationToken);
 
         if (hasConflict)
@@ -134,7 +147,7 @@ internal sealed class BookSessionCommandHandler(
             var session = Session.Create(
                 mentor.Id,
                 command.MenteeId,
-                sessionStartDateTime,
+                sessionStartDateTimeUtc,
                 duration.Value,
                 price.Value,
                 command.Note ?? string.Empty);

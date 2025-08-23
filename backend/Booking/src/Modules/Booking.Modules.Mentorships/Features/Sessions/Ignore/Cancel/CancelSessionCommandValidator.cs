@@ -1,3 +1,4 @@
+/*
 using FluentValidation;
 
 namespace Booking.Modules.Mentorships.Features.Sessions.Cancel;
@@ -19,3 +20,4 @@ internal sealed class CancelSessionCommandValidator : AbstractValidator<CancelSe
             .WithMessage("Cancellation reason cannot exceed 500 characters.");
     }
 }
+*/

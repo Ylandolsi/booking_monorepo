@@ -1,3 +1,4 @@
+/*
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities;
@@ -70,3 +71,4 @@ internal sealed class CancelSessionCommandHandler(
         }
     }
 }
+*/

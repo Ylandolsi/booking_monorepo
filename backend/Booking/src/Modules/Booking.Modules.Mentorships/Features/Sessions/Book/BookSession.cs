@@ -13,10 +13,10 @@ internal sealed class BookSession : IEndpoint
     public sealed record Request(
         string MentorSlug,
         string Date, // YYYY-MM-DD,
-        string StartTime , 
-        string EndTime ,
-        string? Note);
-    // TODO : add : timezone 
+        string StartTime, // TIMEONLY  
+        string EndTime,
+        string TimeZoneId = "Africa/Tunis",
+        string? Note = "");
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -34,6 +34,7 @@ internal sealed class BookSession : IEndpoint
                     request.Date,
                     request.StartTime,
                     request.EndTime,
+                    request.TimeZoneId,
                     request.Note);
 
                 Result<int> result = await handler.Handle(command, cancellationToken);

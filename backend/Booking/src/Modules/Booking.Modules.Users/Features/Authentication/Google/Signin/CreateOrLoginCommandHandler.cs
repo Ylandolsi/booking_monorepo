@@ -21,7 +21,7 @@ internal sealed class CreateOrLoginCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
-    IMentorshipsModuleApi mentorshipsModuleApi , 
+    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<CreateOrLoginCommandHandler> logger) : ICommandHandler<CreateOrLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
@@ -76,9 +76,18 @@ internal sealed class CreateOrLoginCommandHandler(
                             createResult.Errors.Select(e => e.Description))));
                 }
 
-                user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email , cancellationToken);
+                user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);
-                user.UpdateTimezone(calendar.Value.TimezoneId);
+                if (calendar.IsSuccess)
+                {
+                    user.UpdateTimezone(calendar.Value.TimezoneId);
+                }
+                else
+                {
+                    // fallback to tunisia 
+                    user.UpdateTimezone("Africa/Tunis");
+                }
+
                 logger.LogInformation("User registered successfully with email: {Email}", claims.Email);
             }
 

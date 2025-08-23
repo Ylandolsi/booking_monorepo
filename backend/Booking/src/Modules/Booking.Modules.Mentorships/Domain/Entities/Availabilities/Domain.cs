@@ -30,7 +30,10 @@ public class Availability : Entity
     {
     }
 
-    public static Availability Create(int mentorId, int dayId, DayOfWeek dayOfWeek, TimeOnly startTime,
+    public static Availability Create(int mentorId,
+        int dayId,
+        DayOfWeek dayOfWeek,
+        TimeOnly startTime,
         TimeOnly endTime,
         string timezoneId = "Africa/Tunis")
     {

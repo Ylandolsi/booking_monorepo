@@ -9,4 +9,5 @@ public sealed record BookSessionCommand(
     string Date, // YYYY-MM-DD,
     string StartTime , 
     string EndTime ,
-    string? Note) : ICommand<int>;
+    string TimeZoneId,
+    string? Note ) : ICommand<int>;

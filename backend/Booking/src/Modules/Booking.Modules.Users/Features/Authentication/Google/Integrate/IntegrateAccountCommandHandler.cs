@@ -23,7 +23,7 @@ internal sealed class IntegrateAccountCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
-    IMentorshipsModuleApi mentorshipsModuleApi ,
+    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<IntegrateAccountCommandHandler> logger) : ICommandHandler<IntegrateAccountCommand>
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)
@@ -62,13 +62,20 @@ internal sealed class IntegrateAccountCommandHandler(
             }
 
             var calendar = await mentorshipsModuleApi.GetUserCalendar(command.UserId);
-            user.UpdateTimezone(calendar.Value.TimezoneId);
+            if (calendar.IsSuccess)
+            {
+                user.UpdateTimezone(calendar.Value.TimezoneId);
+            }
+            else
+            {
+                // fallback to tunisia 
+                user.UpdateTimezone("Africa/Tunis");
+            }
+
             user.IntegrateWithGoogle();
-            
+
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             await context.SaveChangesAsync(cancellationToken);
-            
-            
         }
 
         logger.LogInformation("User {Email} integrated  successfully with google calendar !", claims.Email);

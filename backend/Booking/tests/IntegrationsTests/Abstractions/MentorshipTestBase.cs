@@ -50,7 +50,7 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     protected async Task<(HttpClient arrange, HttpClient act)> CreateMentee(string userId, string? email = null)
     {
         var (arrange, act) = GetClientsForUser(userId);
-        var loginData = await CreateUserAndLogin(userId, email, arrange);
+        var loginData = await CreateUserAndLogin(null,null, arrange);
 
         return (arrange, act); 
     }

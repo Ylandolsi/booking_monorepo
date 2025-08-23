@@ -1,6 +1,7 @@
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Features.Utils;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,11 @@ internal sealed class GetSessionsQueryHandler(
                     Price = s.Price.Amount,
                     Status = s.Status,
                     GoogleMeetLink = s.GoogleMeetLink.Url,
+                    ScheduledAt = s.ScheduledAt,
+                    CreatedAt = s.CreatedAt,
+                    UpdatedAt = s.UpdatedAt,
+                    CompletedAt = s.CompletedAt,
+                    CancelledAt = s.CancelledAt,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -42,6 +48,14 @@ internal sealed class GetSessionsQueryHandler(
                 session.MentorLastName = mentorData.LastName;
                 session.MentorProfilePicture = mentorData.ProfilePicture.ProfilePictureLink;
                 session.MentorProfilePictureBlurry = mentorData.ProfilePicture.ThumbnailUrlPictureLink;
+
+                session.ScheduledAt = TimeConvertion.ConvertInstantToTimeZone(session.ScheduledAt, query.TimeZoneId);
+                session.CreatedAt = TimeConvertion.ConvertInstantToTimeZone(session.CreatedAt, query.TimeZoneId);
+                session.UpdatedAt = TimeConvertion.ConvertInstantToTimeZone(session.UpdatedAt, query.TimeZoneId);
+                if (session.CancelledAt is not null)
+                {
+                    session.CancelledAt = TimeConvertion.ConvertInstantToTimeZone(session.CancelledAt.Value, query.TimeZoneId);
+                }
             }
 
 

@@ -28,7 +28,7 @@ internal sealed class SetScheduleCommandHandler(
                 .Include(m => m.Availabilities)
                 .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
 
-            /*if (mentor == null)
+            if (mentor == null)
             {
                 return Result.Failure(
                     Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
@@ -37,8 +37,13 @@ internal sealed class SetScheduleCommandHandler(
             if (mentor.TimezoneId == "")
             {
                 var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
-                mentor.UpdateTimezone(userData.TimzoneId);
-            }*/
+                var timeZone = (userData.TimzoneId == "" || userData.TimzoneId is null) ? command.TimeZoneId : userData.TimzoneId;
+                if (timeZone == "")
+                {
+                    timeZone = "Africa/Tunis";
+                }
+                mentor.UpdateTimezone(timeZone);
+            }
 
             var createdAvailabilityIds = new List<int>();
 
@@ -90,13 +95,13 @@ internal sealed class SetScheduleCommandHandler(
 
 
                     var availability = Domain.Entities.Availabilities.Availability.Create(
-                        command.MentorId,
-                        day.Id,
-                        dayRequest.DayOfWeek,
-                        timeStart,
-                        timeEnd,
-                        // mentor.TimeZoneId : if we used calendar  ! 
-                        command.TimeZoneId);
+                            command.MentorId,
+                            day.Id,
+                            dayRequest.DayOfWeek,
+                            timeStart,
+                            timeEnd,
+                            mentor.TimezoneId)
+                        ;
 
                     context.Availabilities.Add(availability);
                 }
