@@ -1,4 +1,4 @@
-namespace Booking.Modules.Mentorships.Features.Availability.Get.PerMonth;
+namespace Booking.Modules.Mentorships.Features.Availability.Get;
 
 public sealed record TimeSlotResponse(
     string StartTime,

@@ -1,4 +1,5 @@
 using Booking.Modules.Mentorships.Domain.Entities;
+using Booking.Modules.Mentorships.Domain.Entities.Days;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

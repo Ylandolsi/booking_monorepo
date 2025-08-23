@@ -1,11 +1,10 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.DeleteAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.DeleteAvailability;
 
 internal sealed class DeleteAvailabilityCommandHandler(
     MentorshipsDbContext context,
@@ -70,4 +69,4 @@ internal sealed class DeleteAvailabilityCommandHandler(
             return Result.Failure<bool>(Error.Problem("Availability.DeleteFailed", "Failed to delete availability"));
         }
     }
-} 
+} */

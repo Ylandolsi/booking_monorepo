@@ -1,12 +1,11 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.Update;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.Update;
 
 internal sealed class UpdateAvailabilityCommandHandler(
     MentorshipsDbContext context,
@@ -84,4 +83,4 @@ internal sealed class UpdateAvailabilityCommandHandler(
             return Result.Failure(Error.Problem("Availability.UpdateFailed", "Failed to update availability"));
         }
     }
-}
+}*/

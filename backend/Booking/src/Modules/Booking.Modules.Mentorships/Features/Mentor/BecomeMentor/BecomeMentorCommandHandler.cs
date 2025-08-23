@@ -1,6 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
+using Booking.Modules.Mentorships.Domain.Entities.Mentors;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +34,7 @@ public sealed class BecomeMentorCommandHandler(
         try
         {
             // Create mentor entity
-            var mentor = Domain.Entities.Mentor.Create(
+            var mentor = Domain.Entities.Mentors.Mentor.Create(
                 command.UserId,
                 command.HourlyRate,
                 command.UserSlug,

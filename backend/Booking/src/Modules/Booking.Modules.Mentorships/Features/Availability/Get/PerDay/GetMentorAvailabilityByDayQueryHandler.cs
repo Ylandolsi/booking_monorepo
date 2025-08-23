@@ -50,7 +50,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                 .Where(m => m.UserSlug == query.MentorSlug && m.IsActive)
                 .SelectMany(m => m.Availabilities)
                 .Where(a => a.IsActive && a.DayOfWeek == dayOfWeek)
-                .OrderBy(a => a.TimeRange.StartHour)
+                .OrderBy(a => a.TimeRange.StartTime)
                 .ToListAsync(cancellationToken);
 
             if (!dayAvailabilities.Any())

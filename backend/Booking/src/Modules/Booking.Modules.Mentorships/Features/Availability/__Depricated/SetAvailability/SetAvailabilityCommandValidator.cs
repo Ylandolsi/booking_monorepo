@@ -1,3 +1,4 @@
+/*
 using FluentValidation;
 
 namespace Booking.Modules.Mentorships.Features.Availability.SetAvailability;
@@ -38,3 +39,4 @@ internal sealed class SetAvailabilityCommandValidator : AbstractValidator<SetAva
             .WithMessage("Buffer time must be in 15-minute increments and between 0 and 480 minutes.");
     }
 }
+*/

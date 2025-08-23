@@ -1,11 +1,10 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleDayAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleDayAvailability;
 
 internal sealed class ToggleDayAvailabilityCommandHandler(
     MentorshipsDbContext context,
@@ -71,4 +70,4 @@ internal sealed class ToggleDayAvailabilityCommandHandler(
             return Result.Failure<bool>(Error.Problem("Availability.ToggleDayFailed", "Failed to toggle day availability"));
         }
     }
-} 
+} */

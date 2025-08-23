@@ -75,4 +75,10 @@
       <ProjectReference Include="..\..\Common\Booking.Common\Booking.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="ZiggyCreatures.FusionCache">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\ziggycreatures.fusioncache\2.4.0\lib\net9.0\ZiggyCreatures.FusionCache.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-using Booking.Common.Authentication;
+/*using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Availability.DeleteAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.DeleteAvailability;
 
 internal sealed class DeleteAvailability : IEndpoint
 {
@@ -30,4 +30,4 @@ internal sealed class DeleteAvailability : IEndpoint
         .RequireAuthorization()
         .WithTags(Tags.Availability);
     }
-} 
+} */

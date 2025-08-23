@@ -1,6 +1,4 @@
-using Booking.Modules.Mentorships.Features.Availability.Get.PerMonth;
-
-namespace Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
+namespace Booking.Modules.Mentorships.Features.Availability.Get;
 
 public sealed record DailyAvailabilityResponse(
     DateTime Date,

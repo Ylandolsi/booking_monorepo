@@ -1,7 +1,7 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleAvailability;
 
 public sealed record ToggleAvailabilityCommand(
     int UserId,
-    int AvailabilityId) : ICommand<bool>; 
+    int AvailabilityId) : ICommand<bool>; */

@@ -1,4 +1,5 @@
 using Booking.Common.Domain.Entity;
+using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 
 namespace Booking.Modules.Mentorships.Domain.Entities;
 

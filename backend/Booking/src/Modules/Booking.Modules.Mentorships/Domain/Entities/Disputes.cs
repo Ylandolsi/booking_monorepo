@@ -1,3 +1,5 @@
+using Booking.Modules.Mentorships.Domain.Entities.Sessions;
+
 namespace Booking.Modules.Mentorships.Domain.Entities;
 
 public class Dispute

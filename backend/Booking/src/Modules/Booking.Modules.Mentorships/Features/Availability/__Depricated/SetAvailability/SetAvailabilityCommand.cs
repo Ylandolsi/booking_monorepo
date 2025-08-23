@@ -1,6 +1,7 @@
+/*
 using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.SetAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.SetAvailability;
 
 public sealed record SetAvailabilityCommand(
     int UserId,
@@ -8,3 +9,4 @@ public sealed record SetAvailabilityCommand(
     TimeOnly StartTime,
     TimeOnly EndTime,
     int? BufferTimeMinutes = null) : ICommand<int>;
+    */

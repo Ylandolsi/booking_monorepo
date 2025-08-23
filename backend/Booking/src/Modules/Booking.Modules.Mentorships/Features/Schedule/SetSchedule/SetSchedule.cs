@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
+namespace Booking.Modules.Mentorships.Features.Schedule.SetSchedule;
 
 internal sealed class SetSchedule : IEndpoint
 {
-    public sealed record Request(List<DayAvailability> DayAvailabilities);
+    public sealed record Request(List<DayAvailability> DayAvailabilities );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

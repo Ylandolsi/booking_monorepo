@@ -16,7 +16,7 @@ internal sealed class UpdateMentorProfileCommandHandler(
     {
         logger.LogInformation("Updating mentor profile for mentor {MentorId}", command.MentorId);
 
-        Domain.Entities.Mentor? mentor = await context.Mentors
+        Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
             .FirstOrDefaultAsync(m => m.Id == command.MentorId, cancellationToken);
 
         if (mentor == null)

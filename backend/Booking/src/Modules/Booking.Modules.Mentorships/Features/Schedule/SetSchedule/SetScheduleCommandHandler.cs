@@ -1,21 +1,19 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-
-namespace Booking.Modules.Mentorships.Features.Availability.SetBulkAvailability;
+namespace Booking.Modules.Mentorships.Features.Schedule.SetSchedule;
 
 internal sealed class SetScheduleCommandHandler(
     MentorshipsDbContext context,
-    ILogger<SetScheduleCommandHandler> logger) 
+    ILogger<SetScheduleCommandHandler> logger)
     : ICommandHandler<SetScheduleCommand>
 {
     public async Task<Result> Handle(
-        SetScheduleCommand command, 
+        SetScheduleCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Processing bulk availability for mentor {MentorId} with {DayCount} days",
@@ -41,7 +39,7 @@ internal sealed class SetScheduleCommandHandler(
                 var day = mentor.Days.FirstOrDefault(d => d.DayOfWeek == dayRequest.DayOfWeek);
                 if (day == null)
                 {
-                    throw new Exception("Mentor should have 7 days when created"); 
+                    throw new Exception("Mentor should have 7 days when created");
                 }
 
                 if (dayRequest.IsActive && !day.IsActive)
@@ -61,7 +59,7 @@ internal sealed class SetScheduleCommandHandler(
                 var existingAvailabilities = await context.Availabilities
                     .Where(a => a.DayId == day.Id)
                     .ToListAsync(cancellationToken);
-                
+
                 context.Availabilities.RemoveRange(existingAvailabilities);
 
                 foreach (var timeSlot in dayRequest.AvailabilityRanges)
@@ -69,7 +67,7 @@ internal sealed class SetScheduleCommandHandler(
                     if (!TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart) ||
                         !TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd))
                     {
-                        logger.LogWarning("Invalid time format for slot {StartTime}-{EndTime}", 
+                        logger.LogWarning("Invalid time format for slot {StartTime}-{EndTime}",
                             timeSlot.StartTime, timeSlot.EndTime);
                         continue;
                     }
@@ -77,23 +75,18 @@ internal sealed class SetScheduleCommandHandler(
                     var totalMinutes = (timeEnd - timeStart).TotalMinutes;
                     if (totalMinutes % 30 != 0)
                     {
-                        logger.LogWarning("Time range must be in 30-minute increments: {StartTime}-{EndTime}", 
+                        logger.LogWarning("Time range must be in 30-minute increments: {StartTime}-{EndTime}",
                             timeSlot.StartTime, timeSlot.EndTime);
                         continue;
                     }
 
-                    var timeRangeResult = TimeRange.Create(timeStart, timeEnd);
-                    if (timeRangeResult.IsFailure)
-                    {
-                        logger.LogWarning("Failed to create time range: {Error}", timeRangeResult.Error.Description);
-                        continue;
-                    }
 
-                    var availability = Domain.Entities.Availability.Create(
+                    var availability = Domain.Entities.Availabilities.Availability.Create(
                         command.MentorId,
                         day.Id,
                         dayRequest.DayOfWeek,
-                        timeRangeResult.Value);
+                        timeStart,
+                        timeEnd);
 
                     context.Availabilities.Add(availability);
                 }

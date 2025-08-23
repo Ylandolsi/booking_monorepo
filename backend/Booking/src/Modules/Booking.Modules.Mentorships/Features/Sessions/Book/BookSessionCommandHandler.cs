@@ -1,6 +1,5 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
@@ -64,7 +63,7 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<int>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
         }
 
-        Domain.Entities.Mentor? mentor = await context.Mentors
+       Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
             .FirstOrDefaultAsync(m => m.UserSlug == command.MentorSlug && m.IsActive, cancellationToken);
 
         if (mentor == null)

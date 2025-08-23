@@ -1,55 +1,52 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Domain.Entities.Mentors;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 
-namespace Booking.Modules.Mentorships.Domain.Entities;
+namespace Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 
 public class Availability : Entity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
-    
+
     public int MentorId { get; private set; }
     public int DayId { get; private set; } // foreign key to Day
-    
+
     public DayOfWeek DayOfWeek { get; private set; } // sunday = 0, monday = 1, ..., saturday = 6
-    
+
     public TimeRange TimeRange { get; private set; } = null!;
-    
+
     public bool IsActive { get; private set; }
+    public string TimezoneId { get; private set; } = "Africa/Tunis";
+
 
     // Navigation properties
-    public Mentor Mentor { get; set; } = default!;
-    public Day Day { get; set; } = default!; 
+    public Mentor Mentor { get; private set; } = default!;
+    public Days.Day Day { get; private set; } = default!;
 
-    private Availability() { }
-    
-    public static Availability Create(int mentorId, int dayId ,  DayOfWeek dayOfWeek, TimeRange timeRange)
+    private Availability()
+    {
+    }
+
+    public static Availability Create(int mentorId, int dayId, DayOfWeek dayOfWeek, TimeOnly startTime,
+        TimeOnly endTime,
+        string timezoneId = "Africa/Tunis")
     {
         var availability = new Availability
         {
             MentorId = mentorId,
             DayId = dayId,
             DayOfWeek = dayOfWeek,
-            TimeRange = timeRange,
+            TimeRange = new TimeRange(startTime, endTime),
             IsActive = true,
+            TimezoneId = timezoneId,
         };
 
         return availability;
     }
 
-    public Result UpdateTimeRange(int startHour, int endHour , int startMinute , int endMinute )
-    {
-        var timeRangeResult = TimeRange.Create(startHour, endHour ,startMinute , endMinute );
-        if (timeRangeResult.IsFailure)
-        {
-            return Result.Failure(timeRangeResult.Error);
-        }
-
-        TimeRange = timeRangeResult.Value;
-        return Result.Success();
-    }
 
     public void Update(DayOfWeek dayOfWeek, TimeRange timeRange)
     {
@@ -79,7 +76,7 @@ public class Availability : Entity
         return Result.Success();
     }
 
-    public bool IsAvailableAt(DateTime dateTime)
+    /*public bool IsAvailableAt(DateTime dateTime)
     {
         if (!IsActive)
             return false;
@@ -89,28 +86,5 @@ public class Availability : Entity
 
         var hour = dateTime.Hour;
         return hour >= TimeRange.StartHour && hour < TimeRange.EndHour;
-    }
-}
-
-public static class AvailabilityErrors
-{
-    public static readonly Error AlreadyActive = Error.Problem(
-        "Availability.AlreadyActive",
-        "Availability is already active");
-
-    public static readonly Error AlreadyInactive = Error.Problem(
-        "Availability.AlreadyInactive",
-        "Availability is already inactive");
-
-    public static readonly Error NotFound = Error.NotFound(
-        "Availability.NotFound",
-        "Availability not found");
-
-    public static readonly Error ConflictingTimeRange = Error.Conflict(
-        "Availability.ConflictingTimeRange",
-        "Availability time range conflicts with existing availability");
-
-    public static Error NotFoundById(int id) => Error.NotFound(
-        "Availability.NotFoundById",
-        $"Availability with ID {id} not found");
+    }*/
 }

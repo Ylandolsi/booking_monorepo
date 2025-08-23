@@ -1,4 +1,4 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
@@ -41,7 +41,7 @@ internal sealed class SetAvailabilityCommandHandler(
                 command.StartTime, command.EndTime);
             return Result.Failure<int>(Error.Problem("Availability.InvalidTimeRange",
                 "Time range must be in 30-minute increments"));
-        }*/
+        }#1#
 
         // start and ending time should either be :00 or :30 
         if (command.StartTime.Minute != 0 && command.StartTime.Minute != 30)
@@ -127,4 +127,4 @@ internal sealed class SetAvailabilityCommandHandler(
             return Result.Failure<int>(Error.Problem("Availability.CreateFailed", "Failed to set availability"));
         }
     }
-}
+}*/

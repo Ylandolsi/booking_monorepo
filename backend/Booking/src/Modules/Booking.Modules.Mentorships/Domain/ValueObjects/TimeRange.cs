@@ -5,95 +5,54 @@ namespace Booking.Modules.Mentorships.Domain.ValueObjects;
 
 public class TimeRange : ValueObject
 {
-    public int StartHour { get; private set; }
-    public int StartMinute { get; private set; }
-    public int EndHour { get; private set; }
-    public int EndMinute { get; private set; }
-
-    // Add TimeOnly properties for easier access
-    public TimeOnly StartTime => new TimeOnly(StartHour, 0);
-    public TimeOnly EndTime => new TimeOnly(EndHour, 0);
+    public TimeOnly StartTime { set; get; }
+    public TimeOnly EndTime { set; get; }
 
     private TimeRange()
     {
     }
 
-    private TimeRange(int startHour, int endHour, int startMinute, int endMinute)
+    public TimeRange(TimeOnly startTime, TimeOnly endTime)
     {
-        StartHour = startHour;
-        EndHour = endHour;
-        StartMinute = startMinute;
-        EndMinute = endMinute;
+        StartTime = startTime;
+        EndTime = endTime;
     }
 
-    public static Result<TimeRange> Create(int startHour, int endHour, int startMinute, int endMinute)
+    public Result Update(TimeOnly startTime, TimeOnly endTime)
     {
-        if (startHour < 0 || startHour > 23)
-        {
-            return Result.Failure<TimeRange>(TimeRangeErrors.InvalidStartHour);
-        }
-
-        if (endHour < 0 || endHour > 23)
-        {
-            return Result.Failure<TimeRange>(TimeRangeErrors.InvalidEndHour);
-        }
-
-        if (startMinute < 0 || startMinute > 59)
-        {
-            return Result.Failure<TimeRange>(TimeRangeErrors.InvalidStartMinute);
-        }
-
-        if (endMinute < 0 || endMinute > 59)
-        {
-            return Result.Failure<TimeRange>(TimeRangeErrors.InvalidEndMinute);
-        }
-
-        if (startHour >= endHour)
-        {
-            return Result.Failure<TimeRange>(TimeRangeErrors.StartHourMustBeBeforeEndHour);
-        }
-
-        var timeRange = new TimeRange(startHour, endHour, startMinute, endMinute);
-        return Result.Success(timeRange);
+        StartTime = startTime;
+        EndTime = endTime;
+        
+        return Result.Success();
     }
 
-    public static Result<TimeRange> Create(TimeOnly startTime, TimeOnly endTime)
-    {
-        return Create(startTime.Hour, endTime.Hour, startTime.Minute, endTime.Minute);
-    }
-
-    public bool Contains(int hour)
-    {
-        return hour >= StartHour && hour < EndHour;
-    }
 
     public bool OverlapsWith(TimeRange other)
     {
-        int startTotal = StartHour * 60 + StartMinute;
-        int endTotal = EndHour * 60 + EndMinute;
+        int startTotal = StartTime.Hour * 60 + StartTime.Minute;
+        int endTotal = EndTime.Hour * 60 + EndTime.Minute;
 
-        int otherStartTotal = other.StartHour * 60 + other.StartMinute;
-        int otherEndTotal = other.EndHour * 60 + other.EndMinute;
+        int otherStartTotal = other.StartTime.Hour * 60 + other.StartTime.Minute;
+        int otherEndTotal = other.EndTime.Hour * 60 + other.EndTime.Minute;
 
         return startTotal < otherEndTotal && endTotal > otherStartTotal;
     }
 
 
-    public int DurationInHours => EndHour - StartHour;
+    public TimeSpan DurationInHours => EndTime - StartTime;
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
-        yield return StartHour;
-        yield return EndHour;
+        yield return StartTime;
+        yield return EndTime;
     }
-    
-    public string ToString() => $"{StartHour:D2}:{StartMinute:D2}-{EndHour:D2}:{EndMinute:D2}";
+
+    public string ToString() => $"{StartTime.Hour:D2}:{StartTime.Minute:D2}-{EndTime.Hour:D2}:{EndTime.Minute:D2}";
 
     /*public static TimeRange FromString(string timeRangeStr)
     {
         // parse "09:00-17:30" into TimeRange instance
     }*/
-
 }
 
 public static class TimeRangeErrors

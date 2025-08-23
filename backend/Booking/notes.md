@@ -72,3 +72,61 @@ amount (decimal)
 type (deduction, refund, release)
 status (pending, completed, failed)
 created_at
+
+
+So your model looks something like:
+
+Day (e.g. Monday, Tuesday…)
+
+TimeOnly (e.g. 14:00)
+
+TimeZoneId (e.g. "Africa/Tunis")
+
+This describes availability, not a concrete date.
+To actually book a slot, you need to combine:
+
+The chosen date (e.g. 2025-08-25 → Monday)
+
+The saved time (e.g. 14:00)
+
+The mentor’s time zone
+
+Then convert that into an Instant so it’s globally consistent.
+
+Example with NodaTime
+using NodaTime;
+
+public Instant ToInstant(DateOnly date, TimeOnly time, string timeZoneId)
+{
+// 1. Convert DateOnly + TimeOnly into LocalDateTime
+var localDateTime = new LocalDateTime(
+date.Year, date.Month, date.Day,
+time.Hour, time.Minute, time.Second);
+
+    // 2. Get the time zone
+    var tz = DateTimeZoneProviders.Tzdb[timeZoneId];
+
+    // 3. Map to a ZonedDateTime and then to Instant
+    var zoned = tz.AtStrictly(localDateTime); // or AtLeniently if you want DST-safe fallback
+    return zoned.ToInstant();
+}
+
+
+Usage:
+
+var date = new DateOnly(2025, 8, 25); // chosen Monday
+var time = new TimeOnly(14, 0);       // availability
+var timeZone = "Africa/Tunis";
+
+var instant = ToInstant(date, time, timeZone);
+// Save instant to DB when a booking happens
+
+Why this works
+
+You only store TimeOnly + TimeZoneId + DayOfWeek for availability.
+
+When a mentee books, you get the actual DateOnly of that week and combine them.
+
+Convert once to Instant → store it in DB as the actual booking time.
+
+Clients in different time zones just convert back from Instant → their local time zone.

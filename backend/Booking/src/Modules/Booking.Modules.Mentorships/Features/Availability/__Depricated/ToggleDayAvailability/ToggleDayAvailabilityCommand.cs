@@ -1,7 +1,7 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleDayAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleDayAvailability;
 
 public sealed record ToggleDayAvailabilityCommand(
     int UserId,
-    DayOfWeek DayOfWeek) : ICommand<bool>; 
+    DayOfWeek DayOfWeek) : ICommand<bool>; */

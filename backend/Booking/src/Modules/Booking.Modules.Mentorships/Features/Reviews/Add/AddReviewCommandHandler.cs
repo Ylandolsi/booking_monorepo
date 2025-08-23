@@ -1,6 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities;
+using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;

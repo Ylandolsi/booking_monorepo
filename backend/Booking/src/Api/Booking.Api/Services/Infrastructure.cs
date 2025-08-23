@@ -36,6 +36,7 @@ public static class Infrastructure
         //services.AddScoped<EmailVerificationSender>();
         //services.AddScoped<TokenHelper>();
 
+        services.AddFusionCache();
         return services;
     }
 

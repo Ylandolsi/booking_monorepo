@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
-using Org.BouncyCastle.Crypto.Engines;
+using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 
-namespace Booking.Modules.Mentorships.Domain.Entities;
+namespace Booking.Modules.Mentorships.Domain.Entities.Days;
 
 public class Day : Entity
 {
@@ -16,7 +16,7 @@ public class Day : Entity
     
     public bool IsActive { get; private set; } = true;
     
-    public Mentor Mentor { get; set; } = default!;
+    public Mentors.Mentor Mentor { get; set; } = default!;
     public ICollection<Availability> Availabilities { get; set; } = [];
 
     private Day() { }
@@ -63,10 +63,4 @@ public class Day : Entity
         
         return Result.Success();
     }
-}
-
-public static class DayErrors
-{
-    public static readonly Error AlreadyActive = Error.Problem("Day.AlreadyActive", "Day is already active");
-    public static readonly Error AlreadyInactive = Error.Problem("Day.AlreadyInactive", "Day is already inactive");
 }

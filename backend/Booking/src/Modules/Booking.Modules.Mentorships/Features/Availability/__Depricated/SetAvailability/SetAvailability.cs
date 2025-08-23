@@ -1,3 +1,4 @@
+/*
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Availability.SetAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.SetAvailability;
 
 internal sealed class SetAvailability : IEndpoint
 {
@@ -52,3 +53,4 @@ internal sealed class SetAvailability : IEndpoint
         .WithTags(Tags.Availability);
     }
 }
+*/

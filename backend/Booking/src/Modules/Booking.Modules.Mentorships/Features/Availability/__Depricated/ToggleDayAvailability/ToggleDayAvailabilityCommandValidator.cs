@@ -1,6 +1,6 @@
-using FluentValidation;
+/*using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleDayAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleDayAvailability;
 
 internal sealed class ToggleDayAvailabilityCommandValidator : AbstractValidator<ToggleDayAvailabilityCommand>
 {
@@ -14,4 +14,4 @@ internal sealed class ToggleDayAvailabilityCommandValidator : AbstractValidator<
             .IsInEnum()
             .WithMessage("Day of week must be a valid day.");
     }
-} 
+} */

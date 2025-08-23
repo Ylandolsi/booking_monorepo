@@ -1,6 +1,6 @@
-using FluentValidation;
+/*using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleAvailability;
 
 internal sealed class ToggleAvailabilityCommandValidator : AbstractValidator<ToggleAvailabilityCommand>
 {
@@ -14,4 +14,4 @@ internal sealed class ToggleAvailabilityCommandValidator : AbstractValidator<Tog
             .GreaterThan(0)
             .WithMessage("Availability ID must be a positive integer.");
     }
-} 
+} */

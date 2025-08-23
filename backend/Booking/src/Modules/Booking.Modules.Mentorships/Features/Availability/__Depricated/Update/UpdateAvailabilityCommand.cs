@@ -1,6 +1,7 @@
+/*
 using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.Update;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.Update;
 
 public sealed record UpdateAvailabilityCommand(
     int AvailabilityId,
@@ -8,3 +9,4 @@ public sealed record UpdateAvailabilityCommand(
     DayOfWeek DayOfWeek,
     TimeOnly StartTime,
     TimeOnly EndTime) : ICommand;
+    */

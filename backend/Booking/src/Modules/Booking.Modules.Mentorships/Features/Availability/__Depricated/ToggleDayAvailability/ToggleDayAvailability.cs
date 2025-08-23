@@ -1,4 +1,4 @@
-using Booking.Common.Authentication;
+/*using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Availability.ToggleDayAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.ToggleDayAvailability;
 
 internal sealed class ToggleDayAvailability : IEndpoint
 {
@@ -31,4 +31,4 @@ internal sealed class ToggleDayAvailability : IEndpoint
         .RequireAuthorization()
         .WithTags(Tags.Availability);
     }
-} 
+} */

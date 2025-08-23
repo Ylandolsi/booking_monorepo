@@ -1,6 +1,7 @@
+/*
 using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Availability.Update;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.Update;
 
 internal sealed class UpdateAvailabilityCommandValidator : AbstractValidator<UpdateAvailabilityCommand>
 {
@@ -34,3 +35,4 @@ internal sealed class UpdateAvailabilityCommandValidator : AbstractValidator<Upd
             .WithMessage("Availability must be at least 30 minutes long.");
     }
 }
+*/

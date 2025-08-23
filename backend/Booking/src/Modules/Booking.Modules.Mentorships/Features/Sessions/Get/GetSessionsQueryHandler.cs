@@ -1,6 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Users.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -8,6 +9,7 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Get;
 
 internal sealed class GetSessionsQueryHandler(
     MentorshipsDbContext context,
+    IUsersModuleApi usersModuleApi,
     ILogger<GetSessionsQueryHandler> logger) : IQueryHandler<GetSessionsQuery, List<SessionResponse>>
 {
     public async Task<Result<List<SessionResponse>>> Handle(GetSessionsQuery query, CancellationToken cancellationToken)
@@ -20,24 +22,29 @@ internal sealed class GetSessionsQueryHandler(
                 .AsNoTracking()
                 .Where(s => s.MenteeId == query.MenteeId)
                 .OrderByDescending(s => s.ScheduledAt)
-                .Select(s => new SessionResponse(
-                    s.Id,
-                    s.MentorId,
-                    "Mentor Name", // TODO: Join with user table to get actual name
-                    s.MenteeId,
-                    "Mentee Name", // TODO: Join with user table to get actual name
-                    s.ScheduledAt,
-                    s.Duration.Minutes,
-                    s.Price.Amount,
-                    s.Note,
-                    s.Status,
-                    s.GoogleMeetLink != null ? s.GoogleMeetLink.Value : null,
-                    s.CreatedAt))
+                .Select(s => new SessionResponse
+                {
+                    Id = s.Id,
+                    MentorId = s.MentorId,
+                    Price = s.Price.Amount,
+                    Status = s.Status,
+                    GoogleMeetLink = s.GoogleMeetLink.Url,
+                })
                 .ToListAsync(cancellationToken);
-            
-            
 
-            logger.LogInformation("Retrieved {Count} sessions for mentee {MenteeId}", 
+
+            foreach (var session in sessions)
+            {
+                var mentorData = await usersModuleApi.GetUserInfo(session.MentorId, cancellationToken);
+                session.MentorEmail = mentorData.Email;
+                session.MentorFirstName = mentorData.FirstName;
+                session.MentorLastName = mentorData.LastName;
+                session.MentorProfilePicture = mentorData.ProfilePicture.ProfilePictureLink;
+                session.MentorProfilePictureBlurry = mentorData.ProfilePicture.ThumbnailUrlPictureLink;
+            }
+
+
+            logger.LogInformation("Retrieved {Count} sessions for mentee {MenteeId}",
                 sessions.Count, query.MenteeId);
 
             return Result.Success(sessions);
@@ -45,7 +52,7 @@ internal sealed class GetSessionsQueryHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to get sessions for mentee {MenteeId}", query.MenteeId);
-            return Result.Failure<List<SessionResponse>>(Error.Problem("Sessions.GetFailed", 
+            return Result.Failure<List<SessionResponse>>(Error.Problem("Sessions.GetFailed",
                 "Failed to retrieve mentee sessions"));
         }
     }

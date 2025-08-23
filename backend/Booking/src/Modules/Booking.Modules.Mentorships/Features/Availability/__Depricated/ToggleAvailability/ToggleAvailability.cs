@@ -1,4 +1,4 @@
-using Booking.Common.Authentication;
+/*using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
@@ -30,4 +30,4 @@ internal sealed class ToggleAvailability : IEndpoint
         .RequireAuthorization()
         .WithTags(Tags.Availability);
     }
-} 
+} */

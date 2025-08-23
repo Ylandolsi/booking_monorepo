@@ -5,7 +5,7 @@ using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Availability.Get.GetSchedule;
+namespace Booking.Modules.Mentorships.Features.Schedule.GetSchedule;
 
 public class GetMentorScheduleQueryHandler(
     MentorshipsDbContext context,

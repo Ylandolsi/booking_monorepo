@@ -1,6 +1,6 @@
-using FluentValidation;
+/*using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Availability.DeleteAvailability;
+namespace Booking.Modules.Mentorships.Features.Availability.__Depricated.DeleteAvailability;
 
 internal sealed class DeleteAvailabilityCommandValidator : AbstractValidator<DeleteAvailabilityCommand>
 {
@@ -14,4 +14,4 @@ internal sealed class DeleteAvailabilityCommandValidator : AbstractValidator<Del
             .GreaterThan(0)
             .WithMessage("Availability ID must be a positive integer.");
     }
-} 
+} */
