@@ -1,4 +1,4 @@
-namespace Booking.Modules.Users.Contracts;
+namespace Booking.Common.Contracts.Users;
 
 public interface IUsersModuleApi
 {

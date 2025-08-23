@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Features.Availability;
 using Booking.Modules.Mentorships.Features.Schedule.Shared;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -31,11 +32,19 @@ public class GetMentorScheduleQueryHandler(
             {
                 var dayAvailabilities = availabilities
                     .Where(av => (int)av.DayOfWeek == dayOfWeek)
-                    .Select(av => new AvailabilityRange
+                    .Select(av =>
                     {
-                        StartTime = av.TimeRange.StartTime.ToString(),
-                        EndTime = av.TimeRange.EndTime.ToString(),
-                        Id = av.Id,
+                        var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) =
+                            ConvertAvailability.Convert(
+                                av.TimeRange.StartTime, av.TimeRange.EndTime,
+                                DateOnly.FromDateTime(DateTime.UtcNow), av.TimezoneId, query.TimeZoneId);
+
+                        return new AvailabilityRange
+                        {
+                            StartTime = TimeOnly.FromDateTime(convertedToMenteeTimeZoneStart).ToString(),
+                            EndTime = TimeOnly.FromDateTime(convertedToMenteeTimeZoneEnd).ToString(),
+                            Id = av.Id
+                        };
                     })
                     .ToList();
 
@@ -55,5 +64,4 @@ public class GetMentorScheduleQueryHandler(
 
         return Result.Success(availabilityWeek);
     }
-
 }

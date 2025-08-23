@@ -43,19 +43,19 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                 .ToListAsync(cancellationToken);
             
             var allDaysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(query.Year, query.Month))
-                .Select(day => new DateTime(query.Year, query.Month, day))
+                .Select(day => new DateOnly(query.Year, query.Month, day))
                 .ToList();
 
             // Filter out past days if IncludePastDays is false
             var daysToProcess = query.IncludePastDays
                 ? allDaysInMonth
-                : allDaysInMonth.Where(date => date >= DateTime.Today).ToList();
+                : allDaysInMonth.Where(date => date >= DateOnly.FromDateTime(DateTime.Now)).ToList();
 
             var monthlyAvailability = new List<DailyAvailabilityResponse>();
 
             foreach (var date in daysToProcess)
             {
-                var queryDay = new GetMentorAvailabilityByDayQuery(query.MentorSlug, date);
+                var queryDay = new GetMentorAvailabilityByDayQuery(query.MentorSlug, date , query.TimeZoneId);
                 var responseDay = await dailyAvailabilityHandler.Handle(queryDay, cancellationToken); 
                 monthlyAvailability.Add( responseDay.Value);
             }

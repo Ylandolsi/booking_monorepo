@@ -5,4 +5,5 @@ namespace Booking.Modules.Mentorships.Features.Schedule.SetSchedule;
 
 public sealed record SetScheduleCommand(
     int MentorId,
-    List<DayAvailability> DayAvailabilities) : ICommand;
+    List<DayAvailability> DayAvailabilities , 
+    string TimeZoneId = "Africa/Tunis") : ICommand;

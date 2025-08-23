@@ -11,7 +11,7 @@ namespace Booking.Modules.Mentorships.Features.Schedule.SetSchedule;
 
 internal sealed class SetSchedule : IEndpoint
 {
-    public sealed record Request(List<DayAvailability> DayAvailabilities );
+    public sealed record Request(List<DayAvailability> DayAvailabilities, string TimeZoneId = "Africa/Tunis");
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -25,7 +25,8 @@ internal sealed class SetSchedule : IEndpoint
 
                 var command = new SetScheduleCommand(
                     userId,
-                    request.DayAvailabilities);
+                    request.DayAvailabilities,
+                    request.TimeZoneId);
 
                 Result result = await handler.Handle(command, cancellationToken);
 

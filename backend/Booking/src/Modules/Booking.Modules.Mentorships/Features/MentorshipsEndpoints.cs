@@ -13,7 +13,7 @@ public static class MentorshipEndpoints
         public const string ToggleAvailability = $"{Base}/availability/{{availabilityId}}/toggle"; 
         public const string ToggleDay = $"{Base}/availability/day/toggle"; // Query: dayOfWeek
         public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
-        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month
+        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
         public const string GetSchedule = $"{Base}/availability/schedule";
         
     }

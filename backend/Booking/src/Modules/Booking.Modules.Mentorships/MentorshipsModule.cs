@@ -1,8 +1,10 @@
+using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Domain.Events;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
+using Booking.Modules.Mentorships.Contracts;
 using Booking.Modules.Mentorships.Features.GoogleCalendar;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +37,9 @@ public static class MentorshipsModule
         services.AddScoped<AwsSesEmailService>();
         services.AddSingleton<EmailTemplateProvider>();
 
-        services.AddScoped<GoogleCalendarService>(); 
+        services.AddScoped<GoogleCalendarService>();
+
+        services.AddScoped<IMentorshipsModuleApi, MentorshipsModuleApi>();
 
 
         return services;
@@ -46,7 +50,7 @@ public static class MentorshipsModule
     {
         string? connectionString = configuration.GetConnectionString("Database");
 
-        services.AddDbContext<MentorshipsDbContext>((sp, options)=> options
+        services.AddDbContext<MentorshipsDbContext>((sp, options) => options
             .UseNpgsql(connectionString,
                 npgsqlOptions =>
                 {
@@ -55,28 +59,21 @@ public static class MentorshipsModule
             // TODO : add this interceptor 
             //.AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>())
             .UseSnakeCaseNamingConvention());
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
 
 
-
-
-
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
-
-
         return services;
     }
 
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,
         IConfiguration configuration)
     {
-       
-
         return services;
     }
 }

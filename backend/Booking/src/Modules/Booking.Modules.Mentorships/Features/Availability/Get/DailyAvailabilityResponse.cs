@@ -1,7 +1,7 @@
 namespace Booking.Modules.Mentorships.Features.Availability.Get;
 
 public sealed record DailyAvailabilityResponse(
-    DateTime Date,
+    DateOnly Date,
     bool IsAvailable,
     List<TimeSlotResponse> TimeSlots,
     DailySummary Summary);

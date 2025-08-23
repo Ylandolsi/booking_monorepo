@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Booking.Common.Authentication;
+using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -22,6 +23,7 @@ internal sealed class IntegrateAccountCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
+    IMentorshipsModuleApi mentorshipsModuleApi ,
     ILogger<IntegrateAccountCommandHandler> logger) : ICommandHandler<IntegrateAccountCommand>
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)
@@ -58,8 +60,11 @@ internal sealed class IntegrateAccountCommandHandler(
                 return Result.Failure<LoginResponse>(
                     GoogleErrors.UserIntegrationFailed("Could not link Google account."));
             }
-            
+
+            var calendar = await mentorshipsModuleApi.GetUserCalendar(command.UserId);
+            user.UpdateTimezone(calendar.Value.TimezoneId);
             user.IntegrateWithGoogle();
+            
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             await context.SaveChangesAsync(cancellationToken);
             

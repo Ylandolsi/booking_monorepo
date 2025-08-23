@@ -15,16 +15,20 @@ internal sealed class GetMentorAvailabilityByDay : IEndpoint
         app.MapGet(MentorshipEndpoints.Availability.GetDaily, async (
                 [FromQuery] string mentorSlug,
                 [FromQuery] string date,
+                [FromQuery] string? timeZoneId,
                 IQueryHandler<GetMentorAvailabilityByDayQuery, DailyAvailabilityResponse> handler,
                 CancellationToken cancellationToken) =>
             {
-                if (!DateTime.TryParse(date, out var parsedDate))
+                if (!DateOnly.TryParse(date, out var parsedDate))
                 {
                     return Results.BadRequest("Invalid date format. Use YYYY-MM-DD.");
                 }
-                parsedDate = DateTime.SpecifyKind(parsedDate.Date, DateTimeKind.Utc);
 
-                var query = new GetMentorAvailabilityByDayQuery(mentorSlug, parsedDate.Date);
+                var query = new GetMentorAvailabilityByDayQuery(
+                    mentorSlug,
+                    parsedDate,
+                    (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId
+                );
                 Result<DailyAvailabilityResponse> result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(

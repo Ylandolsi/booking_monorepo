@@ -1,4 +1,5 @@
 using Booking.Common.Authentication;
+using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -20,6 +21,7 @@ internal sealed class CreateOrLoginCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
+    IMentorshipsModuleApi mentorshipsModuleApi , 
     ILogger<CreateOrLoginCommandHandler> logger) : ICommandHandler<CreateOrLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
@@ -74,6 +76,9 @@ internal sealed class CreateOrLoginCommandHandler(
                             createResult.Errors.Select(e => e.Description))));
                 }
 
+                user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email , cancellationToken);
+                var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);
+                user.UpdateTimezone(calendar.Value.TimezoneId);
                 logger.LogInformation("User registered successfully with email: {Email}", claims.Email);
             }
 

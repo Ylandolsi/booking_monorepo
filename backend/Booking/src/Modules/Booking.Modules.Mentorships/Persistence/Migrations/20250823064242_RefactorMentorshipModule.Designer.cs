@@ -3,6 +3,7 @@ using System;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     [DbContext(typeof(MentorshipsDbContext))]
-    partial class MentorshipsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250823064242_RefactorMentorshipModule")]
+    partial class RefactorMentorshipModule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,11 +186,6 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                     b.Property<DateTime?>("LastActiveAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_active_at");
-
-                    b.Property<string>("TimezoneId")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("timezone_id");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")

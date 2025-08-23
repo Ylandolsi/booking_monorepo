@@ -13,13 +13,16 @@ public class Mentor : Entity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; private set; }
-    
+
     public string UserSlug { get; private set; } = string.Empty;
     public HourlyRate HourlyRate { get; private set; } = null!;
     public Duration BufferTime { get; private set; } = new Duration(15); // Default 15 minutes
 
     public bool IsActive { get; private set; }
     public DateTime? LastActiveAt { get; private set; }
+
+    public string TimezoneId { get; private set; }
+
 
     // Navigation properties
     public ICollection<Session> Sessions { get; private set; } = new List<Session>();
@@ -29,13 +32,19 @@ public class Mentor : Entity
 
     public ICollection<Availability> Availabilities { get; private set; } = new List<Availability>();
     public ICollection<Review> Reviews { get; private set; } = new List<Review>();
-    public ICollection<Day> Days { get; private set; } = new List<Day>(); 
+    public ICollection<Day> Days { get; private set; } = new List<Day>();
 
     private Mentor()
     {
     }
 
-    public static Mentor Create(int userId, decimal hourlyRateAmount, string userSlug, int bufferTimeMinutes = 10, string currency = "USD")
+
+    public static Mentor Create(int userId,
+        decimal hourlyRateAmount,
+        string userSlug,
+        int bufferTimeMinutes = 10,
+        string currency = "USD",
+        string timezoneId = "Africa/Tunis")
     {
         var bufferTimeResult = Duration.Create(bufferTimeMinutes);
         if (bufferTimeResult.IsFailure)
@@ -48,25 +57,37 @@ public class Mentor : Entity
             Id = userId,
             HourlyRate = new HourlyRate(hourlyRateAmount, currency),
             BufferTime = bufferTimeResult.Value,
-            UserSlug = userSlug, 
+            UserSlug = userSlug,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
-            LastActiveAt = DateTime.UtcNow
+            LastActiveAt = DateTime.UtcNow,
+            TimezoneId = timezoneId
         };
-        mentor.CreateAllDays(); 
+        mentor.CreateAllDays();
         return mentor;
     }
-    
+
+    public void UpdateTimezone(string timezoneId)
+    {
+        if (timezoneId == "")
+        {
+            return;
+        }
+
+        TimezoneId = timezoneId;
+    }
+
     private void CreateAllDays()
     {
         var allDaysOfWeek = Enum.GetValues<DayOfWeek>();
-        
+
         foreach (var dayOfWeek in allDaysOfWeek)
         {
-            var day = Day.Create(Id, dayOfWeek, isActive: false); 
+            var day = Day.Create(Id, dayOfWeek, isActive: false);
             Days.Add(day);
         }
     }
+
     public Result UpdateHourlyRate(decimal amount, string currency = "USD")
     {
         if (amount <= 0)
@@ -117,5 +138,4 @@ public class Mentor : Entity
     {
         LastActiveAt = DateTime.UtcNow;
     }
-    
 }

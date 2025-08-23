@@ -41,6 +41,7 @@ internal sealed class GetUserQueryHandler(
                 Bio = u.Bio,
                 Experiences = u.Experiences.ToList(),
                 Educations = u.Educations.ToList(),
+                TimezoneId = u.TimezoneId, 
                 Expertises = u.UserExpertises.Select(ue => ue.Expertise).ToList(),
                 Languages = u.UserLanguages.Select(ul => ul.Language).ToList()
             })

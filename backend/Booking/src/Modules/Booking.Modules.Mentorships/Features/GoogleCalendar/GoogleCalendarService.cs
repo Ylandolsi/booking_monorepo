@@ -1,4 +1,5 @@
 using System.Net;
+using Booking.Common.Contracts.Users;
 using Booking.Common.Options;
 using Booking.Common.Results;
 using Booking.Modules.Users.Contracts;
@@ -163,17 +164,58 @@ public class GoogleCalendarService
 
     #region Calendar Crud operations
 
-    public async Task<Result<Event>> CreateEventAsync(Event newEvent, string calendarId = "primary")
+    public async Task<Result<Calendar>> GetCalendarAsync(string calendarId = "primary")
     {
         try
         {
-            var request = CalendarService.Events.Insert(newEvent, calendarId);
+            var request = CalendarService.Calendars.Get(calendarId);
             var response = await request.ExecuteAsync();
             return Result.Success(response);
         }
         catch (Exception ex)
         {
-            return Result.Failure<Event>(GoogleCalendarErrors.EventCreationFailed);
+            return Result.Failure<Calendar>(GoogleCalendarErrors.FailedToGetCalendar);
+        }
+    }
+    /*{
+        "value": {
+            "conferenceProperties": {
+                "allowedConferenceSolutionTypes": [
+                "hangoutsMeet"
+                    ],
+                "eTag": null
+            },
+            "description": null,
+            "eTag": "\"M5wO-UIvX1HOSzuYphUtwOzWCSY\"",
+            "id": "yassine.landolsi@converty.shop",
+            "kind": "calendar#calendar",
+            "location": null,
+            "summary": "yassine.landolsi@converty.shop",
+            "timeZone": "Africa/Tunis"
+        },
+        "isSuccess": true,
+        "isFailure": false,
+        "error": {
+            "code": "",
+            "description": "",
+            "type": 0
+        }
+    }*/
+
+    public async Task<Result<Calendar>> CreateEventAsync(Event newEvent, string calendarId = "primary")
+    {
+        try
+        {
+            var request = CalendarService.Events.Insert(newEvent, calendarId);
+            var response = await request.ExecuteAsync();
+
+            var reqCalendar = CalendarService.Calendars.Get(calendarId);
+            var respCalendar = await reqCalendar.ExecuteAsync();
+            return Result.Success(respCalendar);
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<Calendar>(GoogleCalendarErrors.EventCreationFailed);
         }
     }
 
@@ -191,9 +233,10 @@ public class GoogleCalendarService
             request.SingleEvents = true;
             request.MaxResults = maxResults;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-
+            
             var events = await request.ExecuteAsync(); // TODO : add polly here S
             var response = events.Items ?? new List<Event>();
+            
             return Result.Success(response);
         }
         catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Unauthorized)

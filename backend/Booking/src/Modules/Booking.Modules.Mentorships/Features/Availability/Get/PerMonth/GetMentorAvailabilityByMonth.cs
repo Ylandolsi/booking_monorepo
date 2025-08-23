@@ -16,13 +16,22 @@ internal sealed class GetMentorAvailabilityByMonth : IEndpoint
                 [FromQuery] string mentorSlug,
                 [FromQuery] int year,
                 [FromQuery] int month,
+                // TODO : we can change this , to timeZoneId :
+                // but we need to inforce that every mentor is connected to GoogleCalendar 
+                [FromQuery] string? timeZoneId,
                 IQueryHandler<GetMentorAvailabilityByMonthQuery, MonthlyAvailabilityResponse> handler,
                 CancellationToken cancellationToken,
                 bool includePastDays = true,
                 bool includeBookedSlots = true) =>
             {
-                var query = new GetMentorAvailabilityByMonthQuery(mentorSlug, year, month, includePastDays,
+                var query = new GetMentorAvailabilityByMonthQuery(
+                    mentorSlug,
+                    year,
+                    month,
+                    (timeZoneId == "" || timeZoneId is null)  ?  "Africa/Tunis" : timeZoneId,
+                    includePastDays,
                     includeBookedSlots);
+
                 Result<MonthlyAvailabilityResponse> result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(

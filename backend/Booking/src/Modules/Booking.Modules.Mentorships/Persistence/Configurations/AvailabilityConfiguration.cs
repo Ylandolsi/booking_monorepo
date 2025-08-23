@@ -24,12 +24,12 @@ internal sealed class AvailabilityConfiguration : IEntityTypeConfiguration<Avail
 
         builder.OwnsOne(a => a.TimeRange, timeRange =>
         {
-            timeRange.Property(tr => tr.StartHour)
-                .HasColumnName("start_hour")
+            timeRange.Property(tr => tr.StartTime)
+                .HasColumnName("start_time")
                 .IsRequired();
 
-            timeRange.Property(tr => tr.EndHour)
-                .HasColumnName("end_hour")
+            timeRange.Property(tr => tr.EndTime)
+                .HasColumnName("end_time")
                 .IsRequired();
             
         });

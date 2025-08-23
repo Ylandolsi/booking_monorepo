@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
@@ -77,12 +78,13 @@ internal sealed class BookSessionCommandHandler(
         // Check if the time slot is available 
         bool mentorAvailable = await context.Availabilities
             .AnyAsync(a => a.MentorId == mentor.Id &&
+                           // TODO : change this 
                            a.DayOfWeek == requestedDayOfWeek &&
                            a.IsActive &&
-                           (a.TimeRange.StartHour < startTime.Hour || (a.TimeRange.StartHour == startTime.Hour) &&
-                               (a.TimeRange.StartMinute <= startTime.Minute)) &&
-                           (a.TimeRange.EndHour > endTime.Hour || (a.TimeRange.EndHour == endTime.Hour) &&
-                               (a.TimeRange.EndMinute >= endTime.Minute)),
+                           (a.TimeRange.StartTime.Hour < startTime.Hour || (a.TimeRange.StartTime.Hour == startTime.Hour) &&
+                               (a.TimeRange.StartTime.Minute <= startTime.Minute)) &&
+                           (a.TimeRange.EndTime.Hour > endTime.Hour || (a.TimeRange.EndTime.Hour == endTime.Hour) &&
+                               (a.TimeRange.EndTime.Minute >= endTime.Minute)),
                 cancellationToken);
 
         if (!mentorAvailable)

@@ -2,6 +2,7 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Features.Availability.Get.PerMonth;
+using Booking.Modules.Mentorships.Features.Utils;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -27,9 +28,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
         try
         {
-            query = query with { Date = DateTime.SpecifyKind(query.Date, DateTimeKind.Utc) };
             var dayOfWeek = query.Date.DayOfWeek;
-
 
             // Get mentor with buffer time
             var mentor = await context.Mentors
@@ -53,6 +52,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                 .OrderBy(a => a.TimeRange.StartTime)
                 .ToListAsync(cancellationToken);
 
+
             if (!dayAvailabilities.Any())
             {
                 return Result.Success(new DailyAvailabilityResponse(
@@ -64,7 +64,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
             List<ScheduledAtWithDuration> bookedSessions = await context.Sessions
                 .Where(s => s.Mentor.UserSlug == query.MentorSlug &&
-                            s.ScheduledAt.Date == query.Date.Date &&
+                            DateOnly.FromDateTime(s.ScheduledAt.Date) == query.Date &&
                             s.Status != Domain.Enums.SessionStatus.Cancelled)
                 .Select(s => new ScheduledAtWithDuration
                 {
@@ -81,9 +81,13 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
             foreach (var availability in dayAvailabilities)
             {
+                var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) = ConvertAvailability.Convert(
+                    availability.TimeRange.StartTime, availability.TimeRange.EndTime,
+                    query.Date, availability.TimezoneId, query.TimeZoneId);
+                
                 var availabilitySlots = CalculateAvailabilitySlots(
-                    availability.TimeRange.StartTime,
-                    availability.TimeRange.EndTime,
+                    TimeOnly.FromDateTime(convertedToMenteeTimeZoneStart),
+                    TimeOnly.FromDateTime(convertedToMenteeTimeZoneEnd),
                     bookedSessions,
                     mentor.BufferTime.Minutes,
                     availability.Id);

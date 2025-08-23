@@ -16,6 +16,7 @@ internal sealed class BookSession : IEndpoint
         string StartTime , 
         string EndTime ,
         string? Note);
+    // TODO : add : timezone 
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

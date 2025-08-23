@@ -2,6 +2,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.SimpleEmail;
+using Booking.Common.Contracts.Users;
 using Booking.Common.Domain.Events;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;

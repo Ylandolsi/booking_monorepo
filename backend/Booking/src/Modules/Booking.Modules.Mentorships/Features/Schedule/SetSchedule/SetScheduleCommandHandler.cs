@@ -1,3 +1,4 @@
+using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
@@ -9,6 +10,7 @@ namespace Booking.Modules.Mentorships.Features.Schedule.SetSchedule;
 
 internal sealed class SetScheduleCommandHandler(
     MentorshipsDbContext context,
+    IUsersModuleApi usersModuleApi,
     ILogger<SetScheduleCommandHandler> logger)
     : ICommandHandler<SetScheduleCommand>
 {
@@ -26,11 +28,17 @@ internal sealed class SetScheduleCommandHandler(
                 .Include(m => m.Availabilities)
                 .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
 
-            if (mentor == null)
+            /*if (mentor == null)
             {
                 return Result.Failure(
                     Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
+
+            if (mentor.TimezoneId == "")
+            {
+                var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
+                mentor.UpdateTimezone(userData.TimzoneId);
+            }*/
 
             var createdAvailabilityIds = new List<int>();
 
@@ -86,7 +94,9 @@ internal sealed class SetScheduleCommandHandler(
                         day.Id,
                         dayRequest.DayOfWeek,
                         timeStart,
-                        timeEnd);
+                        timeEnd,
+                        // mentor.TimeZoneId : if we used calendar  ! 
+                        command.TimeZoneId);
 
                     context.Availabilities.Add(availability);
                 }

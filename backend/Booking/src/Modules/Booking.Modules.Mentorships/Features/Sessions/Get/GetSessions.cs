@@ -13,6 +13,7 @@ internal sealed class GetSessions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
+        // TODO : add timezone
         app.MapGet(MentorshipEndpoints.Sessions.GetSessions, async (
                 [FromQuery] int daysFromNow,
                 UserContext userContext,

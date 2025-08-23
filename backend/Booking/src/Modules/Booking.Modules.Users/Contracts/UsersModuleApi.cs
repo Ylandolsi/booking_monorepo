@@ -1,3 +1,4 @@
+using Booking.Common.Contracts.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Google;
 using Booking.Modules.Users.Presistence;
@@ -35,20 +36,17 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
         await googleService.StoreUserTokensAsyncById(userId, googleTokenMapped);
     }
 
-    public async Task<UserDto> GetUserInfo(int userId, CancellationToken ctx = default ) 
+    public async Task<UserDto> GetUserInfo(int userId, CancellationToken ctx = default)
     {
         var usersDbContext = serviceProvider.GetService<UsersDbContext>();
         var fusionCache = serviceProvider.GetService<IFusionCache>();
         var cacheKey = $"user_{userId}";
-        
+
         var userData = await fusionCache.GetOrSetAsync<User>(
             cacheKey,
-            async _ =>
-            {
-                return await usersDbContext.Users.FirstOrDefaultAsync(u => u.Id == userId , ctx);
-            },
+            async _ => { return await usersDbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, ctx); },
             TimeSpan.FromSeconds(1),
-            token : ctx 
+            token: ctx
         );
 
         return new UserDto
@@ -60,7 +58,8 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
             {
                 ProfilePictureLink = userData.ProfilePictureUrl.ProfilePictureLink,
                 ThumbnailUrlPictureLink = userData.ProfilePictureUrl.ThumbnailUrlPictureLink
-            }
+            },
+            TimzoneId = userData.TimezoneId,
         };
     }
 }

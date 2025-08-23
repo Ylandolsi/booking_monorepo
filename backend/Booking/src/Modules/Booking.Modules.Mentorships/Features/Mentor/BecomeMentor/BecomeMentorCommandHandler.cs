@@ -1,8 +1,10 @@
+using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities.Mentors;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Users.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +12,7 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 
 public sealed class BecomeMentorCommandHandler(
     MentorshipsDbContext context,
+    IUsersModuleApi usersModuleApi,
     ILogger<BecomeMentorCommandHandler> logger) : ICommandHandler<BecomeMentorCommand>
 {
     public async Task<Result> Handle(BecomeMentorCommand command, CancellationToken cancellationToken)
@@ -40,10 +43,16 @@ public sealed class BecomeMentorCommandHandler(
                 command.UserSlug,
                 command.BufferTimeMinutes);
 
+            /*
+             var userData = await usersModuleApi.GetUserInfo(command.UserId, cancellationToken);
+            mentor.UpdateTimezone(userData.TimzoneId);
+            */
+
             context.Mentors.Add(mentor);
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("User {UserId} became a mentor with ID {MentorId} and buffer time {BufferTime} minutes", 
+            logger.LogInformation(
+                "User {UserId} became a mentor with ID {MentorId} and buffer time {BufferTime} minutes",
                 command.UserId, mentor.Id, mentor.BufferTime.Minutes);
 
             return Result.Success();

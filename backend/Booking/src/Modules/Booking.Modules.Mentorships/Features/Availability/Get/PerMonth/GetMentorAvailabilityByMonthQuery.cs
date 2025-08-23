@@ -6,5 +6,6 @@ public sealed record GetMentorAvailabilityByMonthQuery(
     string MentorSlug,
     int Year,
     int Month,
+    string TimeZoneId  ="Africa/Tunis",
     bool IncludePastDays = false,
     bool IncludeBookedSlots = true) : IQuery<MonthlyAvailabilityResponse>;

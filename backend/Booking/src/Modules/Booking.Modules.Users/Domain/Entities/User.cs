@@ -27,13 +27,16 @@ public sealed class User : IdentityUser<int>, IEntity
     public string Gender { get; private set; } = "Male";
     public SocialLinks SocialLinks { get; private set; } = null!;
     public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
-    public bool IntegratedWithGoogle { get; private set; } = false; 
+    public bool IntegratedWithGoogle { get; private set; } = false;
+    public string TimezoneId { get; private set; } = "Africa/Tunis";
     public string Bio { get; private set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    private User() { }
+    private User()
+    {
+    }
 
 
     public static User Create(
@@ -41,7 +44,8 @@ public sealed class User : IdentityUser<int>, IEntity
         string firstName,
         string lastName,
         string emailAddress,
-        string profilePictureSource)
+        string profilePictureSource,
+        string timezoneId = "Africa/Tunis")
     {
         if (string.IsNullOrWhiteSpace(slug))
             throw new ArgumentException("Slug cannot be null or empty", nameof(slug));
@@ -57,11 +61,22 @@ public sealed class User : IdentityUser<int>, IEntity
             UserName = emailAddress,
             ProfilePictureUrl = new ProfilePicture(profilePictureSource),
             Slug = slug,
-            CreatedAt = DateTime.UtcNow, 
+            CreatedAt = DateTime.UtcNow,
+            TimezoneId = timezoneId,
         };
 
 
         return user;
+    }
+
+    public Result UpdateTimezone(string timezoneId)
+    {
+        if (timezoneId == "")
+        {
+            return Result.Failure(UserErrors.InvalidTimeZone(timezoneId));
+        }
+        TimezoneId = timezoneId;
+        return Result.Success();
     }
     public Result UpdateSocialLinks(SocialLinks links)
     {
@@ -76,11 +91,11 @@ public sealed class User : IdentityUser<int>, IEntity
     {
         if (bio?.Length > UserConstraints.MaxBioLength)
             return Result.Failure(UserErrors.BioTooLong);
-        
+
         var oldBio = Bio;
         Bio = bio?.Trim() ?? string.Empty;
 
-        
+
         return Result.Success();
     }
 
@@ -101,7 +116,7 @@ public sealed class User : IdentityUser<int>, IEntity
         {
             var oldName = Name;
             Name = new Name(firstName, lastName);
-            
+
             return Result.Success();
         }
         catch (ArgumentException ex)
@@ -109,36 +124,34 @@ public sealed class User : IdentityUser<int>, IEntity
             return Result.Failure(Error.Problem("User.InvalidName", ex.Message));
         }
     }
-    
+
     public void UpdateProfileCompletion()
     {
         ProfileCompletionStatus.UpdateCompletionStatus(this);
-        
-        
     }
-    
+
     public Result CanBecomeMentor()
     {
         var profileCompletion = ProfileCompletionStatus.GetCompletionPercentage();
-        
+
         if (profileCompletion < 80)
         {
             return Result.Failure(Error.Problem(
-                "User.InsufficientProfileCompletion", 
+                "User.InsufficientProfileCompletion",
                 "Profile must be at least 80% complete to become a mentor"));
         }
 
         if (!Experiences.Any())
         {
             return Result.Failure(Error.Problem(
-                "User.NoExperience", 
+                "User.NoExperience",
                 "User must have at least one experience to become a mentor"));
         }
 
         if (!UserExpertises.Any())
         {
             return Result.Failure(Error.Problem(
-                "User.NoExpertise", 
+                "User.NoExpertise",
                 "User must have at least one expertise to become a mentor"));
         }
 
@@ -158,7 +171,7 @@ public sealed class User : IdentityUser<int>, IEntity
 
     public void IntegrateWithGoogle()
     {
-        IntegratedWithGoogle =  true;
+        IntegratedWithGoogle = true;
     }
 
     // TODO : configure these one to many as readonly 
@@ -175,11 +188,12 @@ public sealed class User : IdentityUser<int>, IEntity
     public ICollection<MentorMentee> UserMentors { get; private set; } = new List<MentorMentee>();
 
     public ICollection<MentorMentee> UserMentees { get; private set; } = new List<MentorMentee>();
+
     // MAX 4
     public ICollection<UserExpertise> UserExpertises { get; private set; } = new HashSet<UserExpertise>();
+
     // MAX 4 
     public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
-
 
 
     // Domain Events
@@ -188,8 +202,7 @@ public sealed class User : IdentityUser<int>, IEntity
     [NotMapped] // for ef core 
     [JsonIgnore] // even though it wont get mapped , we need to ignore it for serialization
     public List<IDomainEvent> DomainEvents => _domainContainer.DomainEvents;
+
     public void ClearDomainEvents() => _domainContainer.ClearDomainEvents();
     public void Raise(IDomainEvent domainEvent) => _domainContainer.Raise(domainEvent);
-
-
 }
