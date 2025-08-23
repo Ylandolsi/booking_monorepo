@@ -14,18 +14,17 @@ internal sealed class GetSessions : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(MentorshipEndpoints.Sessions.GetSessions, async (
-                [FromQuery] int? daysFromNow,
+                [FromQuery] string? upToDate,
                 [FromQuery] string? timeZoneId,
                 UserContext userContext,
                 IQueryHandler<GetSessionsQuery, List<SessionResponse>> handler,
                 CancellationToken cancellationToken) =>
             {
 
-                daysFromNow = daysFromNow ?? 0 ; 
                 timeZoneId = timeZoneId is "" or null ? "Africa/Tunis" : timeZoneId;
 
                 int menteeId = userContext.UserId;
-                var query = new GetSessionsQuery(menteeId, daysFromNow.Value , timeZoneId);
+                var query = new GetSessionsQuery(menteeId, upToDate , timeZoneId);
 
                 Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
 

@@ -129,7 +129,8 @@ public class SessionRetrievalTests : MentorshipTestBase
         var session2Id = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Tuesday, "10:00", "11:00");
 
         // Act - request sessions for next 7 days
-        var response = await menteeAct.GetAsync($"{MentorshipEndpoints.Sessions.GetSessions}?daysFromNow=7");
+        var dateAfter7days = DateTime.Today.AddDays(7);
+        var response = await menteeAct.GetAsync($"{MentorshipEndpoints.Sessions.GetSessions}?upToDate={dateAfter7days}");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -153,7 +154,9 @@ public class SessionRetrievalTests : MentorshipTestBase
         var sessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00", "Europe/Paris");
 
         // Act - request sessions with timezone parameter
-        var response = await menteeAct.GetAsync($"{MentorshipEndpoints.Sessions.GetSessions}?timeZoneId=Europe/Paris&daysFromNow=7");
+        var dateAfter7days = DateTime.Today.AddDays(7);
+
+        var response = await menteeAct.GetAsync($"{MentorshipEndpoints.Sessions.GetSessions}?timeZoneId=Europe/Paris&upToDate={dateAfter7days}");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

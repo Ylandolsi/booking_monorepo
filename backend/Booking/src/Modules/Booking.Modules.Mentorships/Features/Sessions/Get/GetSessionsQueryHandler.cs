@@ -17,12 +17,24 @@ internal sealed class GetSessionsQueryHandler(
     public async Task<Result<List<SessionResponse>>> Handle(GetSessionsQuery query, CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting sessions for mentee {MenteeId}", query.MenteeId);
-
+        DateTime parsedUpToDate;
+        if (query.UpToDate is null)
+        {
+            // if date is not defined return all the sessions 
+            parsedUpToDate = DateTime.MaxValue;
+        }
+        else
+        {
+            parsedUpToDate = DateTime.Parse(query.UpToDate);
+            parsedUpToDate = TimeConvertion.ToInstant(DateOnly.FromDateTime(parsedUpToDate),
+                TimeOnly.FromDateTime(parsedUpToDate), query.TimeZoneId); 
+        }
+        
         try
         {
             var sessionsIMentee = await context.Sessions
                 .AsNoTracking()
-                .Where(s => s.MenteeId == query.MenteeId)
+                .Where(s => s.MenteeId == query.MenteeId && DateOnly.FromDateTime(s.ScheduledAt) <= DateOnly.FromDateTime(parsedUpToDate))
                 .OrderByDescending(s => s.ScheduledAt)
                 .Select(s => new SessionResponse
                 {

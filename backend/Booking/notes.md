@@ -23,6 +23,7 @@ TODO :
 - disable book session from profile if the user is not a mentor 
 - booing page : from md : show mobile version 
 - add fallback objects contains all the ... 
+- u have to configure the ef cong domains very carefully 
 
 
 send notif problem: https://www.linkedin.com/posts/mohamed--thabet_%D8%A3%D9%88%D9%84-%D8%A8%D9%88%D8%B3%D8%AA-%D9%81%D9%8A-%D8%B3%D9%84%D8%B3%D9%84%D8%A9-%D9%85%D8%B4%D8%A7%D9%83%D9%84-backend-%D9%85%D9%86-%D8%A3%D8%B1%D8%B6-activity-7361008063882891264-rpyW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg                                        
