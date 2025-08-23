@@ -17,10 +17,13 @@ public sealed record SessionResponse
     public SessionStatus Status { get; set; }
     public string? GoogleMeetLink { get; set; }
     public DateTime ScheduledAt { get; set; }
+    public int DurationInMinutes { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public DateTime? CompletedAt { get;  set; }
 
     public DateTime? CancelledAt { get;  set; }
     public DateTime CreatedAt { get; set; }
+
+    public bool IamMentor { get; set; }
 }

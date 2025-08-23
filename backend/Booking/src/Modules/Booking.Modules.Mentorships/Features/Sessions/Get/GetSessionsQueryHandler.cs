@@ -20,7 +20,7 @@ internal sealed class GetSessionsQueryHandler(
 
         try
         {
-            var sessions = await context.Sessions
+            var sessionsIMentee = await context.Sessions
                 .AsNoTracking()
                 .Where(s => s.MenteeId == query.MenteeId)
                 .OrderByDescending(s => s.ScheduledAt)
@@ -36,10 +36,33 @@ internal sealed class GetSessionsQueryHandler(
                     UpdatedAt = s.UpdatedAt,
                     CompletedAt = s.CompletedAt,
                     CancelledAt = s.CancelledAt,
+                    IamMentor = false , 
+                })
+                .ToListAsync(cancellationToken);
+            
+            var sessionsIMentor = await context.Sessions
+                .AsNoTracking()
+                .Where(s => s.MentorId == query.MenteeId )
+                .OrderByDescending(s => s.ScheduledAt)
+                .Select(s => new SessionResponse
+                {
+                    Id = s.Id,
+                    MentorId = s.MentorId,
+                    Price = s.Price.Amount,
+                    Status = s.Status,
+                    GoogleMeetLink = s.GoogleMeetLink.Url,
+                    ScheduledAt = s.ScheduledAt,
+                    DurationInMinutes = s.Duration.Minutes , 
+                    CreatedAt = s.CreatedAt,
+                    UpdatedAt = s.UpdatedAt,
+                    CompletedAt = s.CompletedAt,
+                    CancelledAt = s.CancelledAt,
+                    IamMentor = true , 
                 })
                 .ToListAsync(cancellationToken);
 
-
+            var sessions = sessionsIMentor.Concat(sessionsIMentee).ToList();
+            
             foreach (var session in sessions)
             {
                 var mentorData = await usersModuleApi.GetUserInfo(session.MentorId, cancellationToken);
@@ -58,7 +81,8 @@ internal sealed class GetSessionsQueryHandler(
                 }
             }
 
-
+            sessions.Sort((a, b) => a.ScheduledAt.CompareTo(b.ScheduledAt));
+            
             logger.LogInformation("Retrieved {Count} sessions for mentee {MenteeId}",
                 sessions.Count, query.MenteeId);
 
