@@ -11,7 +11,7 @@ namespace Booking.Modules.Mentorships.Features.Payment;
 public class WebhookCommandHandler(
     MentorshipsDbContext context,
     KonnectService konnectService,
-    ILogger<WebhookCommandHandler> logger) : ICommand<WebhookCommand>
+    ILogger<WebhookCommandHandler> logger) : ICommandHandler<WebhookCommand>
 {
     public async Task<Result> Handle(WebhookCommand command, CancellationToken cancellationToken)
     {
@@ -48,10 +48,28 @@ public class WebhookCommandHandler(
 
         if (session == null)
         {
-            logger.LogError("Session dosent exists for the payment ref {Ref}" , command.PaymentRef);
+            logger.LogError("Session doesn't exist for the payment ref {Ref}", command.PaymentRef);
+            return Result.Failure(Error.NotFound("Session.NotFound", "Session not found"));
         }
         
         payment.SetComplete();
+        session.AddAmountPaid(payment.Price);
+
+        // If session is now fully paid, confirm it
+        if (session.AmountPaid >= session.Price.Amount)
+        {
+            var meetLink = "https://meet.google.com/placeholder"; // TODO: Generate actual meet link  
+            session.Confirm(meetLink);
+
+            // Create escrow for the session price
+            var escrow = new Escrow(session.Price.Amount, session.Id, session.MentorId);
+            await context.Escrows.AddAsync(escrow, cancellationToken);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Payment {PaymentRef} completed successfully for session {SessionId}", 
+            command.PaymentRef, session.Id);
         //  by event !  
 
         // query payment and update the status 
@@ -70,7 +88,6 @@ public class WebhookCommandHandler(
                 amountWithFees = successfulTransaction.amount;
             }
         }*/
-
-        return;
+        return Result.Success();
     }
 }

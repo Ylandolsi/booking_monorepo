@@ -29,11 +29,22 @@ public class PaymentCompletedDomainEventHandler(
             domainEvent.SessionId,
             domainEvent.Price);
 
-
         var session = await context.Sessions.FirstOrDefaultAsync(s => s.Id == domainEvent.SessionId, cancellationToken);
+        if (session == null)
+        {
+            logger.LogError("Session {SessionId} not found for payment completion", domainEvent.SessionId);
+            return;
+        }
+
+        // Only proceed if session is not already confirmed
+        if (session.Status == SessionStatus.Confirmed)
+        {
+            logger.LogInformation("Session {SessionId} is already confirmed", domainEvent.SessionId);
+            return;
+        }
+
         var sessionStartTime = session.ScheduledAt;
         var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
-
 
         var mentorData = await usersModuleApi.GetUserInfo(domainEvent.MentorId, cancellationToken);
         var menteeData = await usersModuleApi.GetUserInfo(domainEvent.MenteeId, cancellationToken);
@@ -60,20 +71,23 @@ public class PaymentCompletedDomainEventHandler(
         var resEvent = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
         if (resEvent.IsFailure)
         {
-            
+            logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}", 
+                domainEvent.SessionId, resEvent.Error.Description);
+            // Continue without calendar event - session should still be confirmed
         }
 
-        var meetLink = resEvent.Value.HangoutLink;
+        var meetLink = resEvent.IsSuccess ? resEvent.Value.HangoutLink : "https://meet.google.com/placeholder";
         session.Confirm(meetLink);
 
-        var escrowCreated = new Escrow(domainEvent.Price, domainEvent.SessionId, domainEvent.SessionId);
-        await context.AddAsync(escrowCreated);
-        
-        
- 
+        // Create escrow for the full session price
+        var escrowCreated = new Escrow(domainEvent.Price, domainEvent.SessionId, domainEvent.MentorId);
+        await context.AddAsync(escrowCreated, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation("Session {SessionId} confirmed with meeting link and escrow created", domainEvent.SessionId);
         
         /*await googleCalendarService.InitializeAsync(domainEvent.MenteeId);
-        await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);*/
+await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);*/
         
         
 

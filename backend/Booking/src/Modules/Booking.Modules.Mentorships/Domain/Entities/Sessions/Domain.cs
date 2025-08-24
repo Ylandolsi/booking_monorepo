@@ -112,7 +112,7 @@ public class Session : Entity
 
     public Result Confirm(string googleMeetUrl)
     {
-        if (Status != SessionStatus.Booked)
+        if (Status != SessionStatus.Booked && Status != SessionStatus.WaitingForPayment)
         {
             return Result.Failure(SessionErrors.CannotConfirmSession);
         }
@@ -167,7 +167,7 @@ public class Session : Entity
 
     public Result RequestReschedule()
     {
-        if (Status != SessionStatus.Booked && Status != SessionStatus.Confirmed)
+        if (Status != SessionStatus.Booked && Status != SessionStatus.WaitingForPayment && Status != SessionStatus.Confirmed)
         {
             return Result.Failure(SessionErrors.CannotRescheduleSession);
         }
@@ -205,5 +205,10 @@ public class Session : Entity
 
         Note = note?.Trim() ?? string.Empty;
         return Result.Success();
+    }
+
+    public void SetWaitingForPayment()
+    {
+        Status = SessionStatus.WaitingForPayment;
     }
 }

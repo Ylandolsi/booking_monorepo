@@ -12,7 +12,7 @@ public class Wallet
         Balance = balance;
     }
 
-    public void UpdateBalance(int balanceToAdd)
+    public void UpdateBalance(decimal balanceToAdd)
     {
         Balance += balanceToAdd;
     }

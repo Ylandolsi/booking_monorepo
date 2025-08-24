@@ -3,8 +3,9 @@ namespace Booking.Modules.Mentorships.Domain.Enums;
 public enum SessionStatus
 {
     Booked = 1,
-    Confirmed = 2, // means paid : TODO : maybe change it 
-    Completed = 3,
-    Cancelled = 4,
-    NoShow = 5
+    WaitingForPayment = 2,
+    Confirmed = 3, // means paid 
+    Completed = 4,
+    Cancelled = 5,
+    NoShow = 6
 }

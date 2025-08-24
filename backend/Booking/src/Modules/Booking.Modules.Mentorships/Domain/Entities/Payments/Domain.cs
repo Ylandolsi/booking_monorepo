@@ -32,6 +32,11 @@ public class Payment : Entity
         Status = PaymentStatus.Completed;
         Raise(new PaymentCompletedDomainEvent(UserId, MentorId, SessionId, Price));
     }
+
+    public void UpdateReference(string reference)
+    {
+        Reference = reference;
+    }
 }
 
 public enum PaymentStatus

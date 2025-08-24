@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Common.Contracts.Users;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
@@ -15,6 +16,7 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Book;
 internal sealed class BookSessionCommandHandler(
     MentorshipsDbContext context,
     KonnectService konnectService,
+    IUsersModuleApi usersModuleApi,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, int>
 {
     private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(BookSessionCommand command)
@@ -190,25 +192,92 @@ internal sealed class BookSessionCommandHandler(
                 command.Note ?? string.Empty);
 
             var amountLeftToPay = price.Value.Amount - amountToBePaid;
-            // create payment with that ! 
-
-            /*public Payment(int userId, string reference, decimal price, int sessionId, int mentorId, PaymentStatus status)
+            
+            // Deduct from wallet if available
+            if (amountToBePaid > 0)
             {
-                Reference = reference;
-                UserId = userId;
-                MentorId = mentorId;
-                SessionId = sessionId;
-                Price = price;
-                Status = status;
-            }*/
+                menteeWallet.UpdateBalance(-amountToBePaid);
+                session.AddAmountPaid(amountToBePaid);
+            }
 
-            // we cant get the sessionId untill savechanges ! 
-            var payment = new Domain.Entities.Payments.Payment(command.MenteeId, "", amountLeftToPay, session.Id)
-            var paymentRef = konnectService.CreatePayment()
+            // Set session status based on payment status
+            if (amountLeftToPay > 0)
+            {
+                // Session needs additional payment - keep as WaitingForPayment
+                // The session status will be set to WaitingForPayment after creation
+            }
+            else
+            {
+                // Fully paid from wallet - mark as Confirmed
+                var meetLink = "https://meet.google.com/placeholder"; // TODO: Generate actual meet link
+                session.Confirm(meetLink);
+            }
 
-
+            // Add session first to get the ID
             await context.Sessions.AddAsync(session, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
+
+            // If there's remaining amount to pay, create payment and initiate Konnect payment
+            if (amountLeftToPay > 0)
+            {
+                // Update session status to waiting for payment
+                session.SetWaitingForPayment();
+                
+                // Create payment record with pending status
+                var payment = new Domain.Entities.Payments.Payment(
+                    command.MenteeId, 
+                    "", // Reference will be updated after Konnect response
+                    amountLeftToPay, 
+                    session.Id, 
+                    mentor.Id, 
+                    Domain.Entities.Payments.PaymentStatus.Pending);
+
+                await context.Payments.AddAsync(payment, cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
+
+                // Get mentee user details for payment
+                var menteeUser = await usersModuleApi.GetUserInfo(command.MenteeId, cancellationToken);
+                if (menteeUser == null)
+                {
+                    logger.LogError("Mentee user {MenteeId} not found for payment creation", command.MenteeId);
+                    return Result.Failure<int>(Error.NotFound("User.NotFound", "Mentee user not found"));
+                }
+
+                // Create payment with Konnect
+                var paymentResponse = await konnectService.CreatePayment(
+                    (int)(amountLeftToPay * 100), // Convert to cents
+                    payment.Id,
+                    menteeUser.FirstName,
+                    menteeUser.LastName,
+                    menteeUser.Email ?? "",
+                    ""); // Phone number not available in UserDto
+
+                if (paymentResponse.IsFailure)
+                {
+                    logger.LogError("Failed to create Konnect payment for session {SessionId}: {Error}", 
+                        session.Id, paymentResponse.Error.Description);
+                    // We could either fail the entire booking or continue with wallet payment only
+                    // For now, let's continue and mark session as waiting for payment
+                }
+                else
+                {
+                    // Update payment reference
+                    payment.UpdateReference(paymentResponse.Value.PaymentRef);
+                    await context.SaveChangesAsync(cancellationToken);
+                    
+                    logger.LogInformation("Payment created with reference {PaymentRef} for session {SessionId}", 
+                        paymentResponse.Value.PaymentRef, session.Id);
+                }
+            }
+            else
+            {
+                // Fully paid from wallet - create escrow immediately
+                var escrow = new Escrow(price.Value.Amount, session.Id, mentor.Id);
+                await context.Escrows.AddAsync(escrow, cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
+                
+                logger.LogInformation("Session {SessionId} fully paid from wallet and confirmed", session.Id);
+            }
 
             logger.LogInformation(
                 "Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",

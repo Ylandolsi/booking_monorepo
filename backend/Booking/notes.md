@@ -1,4 +1,4 @@
-update PaidValue object in session 
+update PaidValue object in session
 
 Added CSRF protection for form-based authentication
 
@@ -44,10 +44,9 @@ TODO / Roadmap
 - Configure EF Core domains and connection settings carefully.
 - Ensure correct handling of profile picture URL storage and delivery.
 - Fix notification delivery issues (investigate the linked report).
-- Fix Reselliency 
-- 
-Data model additions (suggested)
-Escrow
+- Fix Reselliency
+- Data model additions (suggested)
+  Escrow
 
 - escrow_id (PK)
 - booking_id (FK -> bookings)
@@ -118,8 +117,8 @@ Libraries / misc
 - Maintain a small simulation/test harness for payment gateway integration.
 - Add monitoring for token refresh failures and failed webhook deliveries.
 
+## outbox
 
-## outbox 
 ✅ Best Practices for Multiple Outboxes
 
 One Outbox per DB (per bounded context/module).
@@ -134,22 +133,25 @@ Outbox cleanup job (archive or delete dispatched events after N days).
 
 Running multiple outbox jobs across separate modules (each with its own schema) does not cause issues — in fact, it’s the recommended approach.
 The only thing to watch for is concurrency inside the same outbox table, but that’s solved with FOR UPDATE SKIP LOCKED or equivalent.
+
 ---
-learn azure cosmos db 
----
+
+## learn azure cosmos db
+
 The write path. We built a daemon that would select log entries that were older than two weeks, copy them into a file in S3, and delete the rows from the database.
 The read path. Our web application would look at the time period of the logs being queried and dynamically decide to query either the database or S3.
 
 ---
-In AWS terms, you can use a SNS topic to send messages to any subscriber (if a topic has many subscribers, each will receive the message) and SQS to queue messages (only the first* puller will receive the message)
-----
-hangfire for in memoryy events 
 
+## In AWS terms, you can use a SNS topic to send messages to any subscriber (if a topic has many subscribers, each will receive the message) and SQS to queue messages (only the first\* puller will receive the message)
+
+hangfire for in memoryy events
 
 That’s what I use for simpler, smaller messaging needs. And bonus, it can be transactionally consistent with the rest of your business data!
 Your problem description is textbook use-case for Hangfire. Scaling Hangfire is as simple as having all your jobs shared or part of a separate project, hosted independent from your main app (ideally). Or... just deploy your main app to multiple machines. Might seem lazy, but let monoliths do what monoliths are best at..
 
---- 
+---
+
 DB as queue instead of rabitmq :
 https://dagster.io/blog/skip-kafka-use-postgres-message-queue
 https://en.m.wikipedia.org/wiki/Change_data_capture
@@ -160,19 +162,33 @@ For smaller apps that aren't pushing mega-amounts of messages, this my preferenc
 
 I have done this, but by the time you have multiple servers interacting with the queue for failover/scalability and have dealt with edge cases relating to that I wouldn't call it trivial. I think in the future I would certainly take a hard look at something like rabbitmq rather than roll my own.
 
+---
 
-
---- 
 event : https://github.com/rebus-org/Rebus is pretty nice.
 https://wolverine.netlify.app/ is nice
 
 ---
+
 https://learn.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction
 https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-multi-tier-app-using-service-bus-queues
 
--- 
+--
 deployment :
 f you’re self hosting a web app on Windows and IIS then you need to tweak the IIS application pool to be always on. And you can can use a background task for the processing. Or you can deploy the worker as Windows Service.
 
 --
 https://github.com/zeromq/netmq
+
+Session Created (Booked)
+↓
+Wallet Check & Deduction
+↓
+Payment Required?
+├─ No → Confirm Session + Create Escrow
+└─ Yes → Create Payment + Set WaitingForPayment
+↓
+Konnect Payment Gateway
+↓
+Webhook Received → Payment Completed
+↓
+Session Confirmed + Meet Link + Escrow Created
