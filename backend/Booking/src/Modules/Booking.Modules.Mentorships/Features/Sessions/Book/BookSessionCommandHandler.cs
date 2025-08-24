@@ -14,37 +14,59 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Book;
 
 internal sealed class BookSessionCommandHandler(
     MentorshipsDbContext context,
-    KonnectService konnectService ,
+    KonnectService konnectService,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, int>
 {
+    private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(BookSessionCommand command)
+    {
+        if (!DateTime.TryParseExact(
+                command.Date, 
+                "yyyy-MM-dd", 
+                null, 
+                System.Globalization.DateTimeStyles.None, 
+                out var sessionDate))
+        {
+            logger.LogWarning("Invalid date format: {Date}", command.Date);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
+        }
+
+        if (!TimeOnly.TryParse(command.StartTime, out var startTime))
+        {
+            logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidStartTime", "Start time must be in HH:mm format"));
+        }
+
+        if (!TimeOnly.TryParse(command.EndTime, out var endTime))
+        {
+            logger.LogWarning("Invalid end time format: {EndTime}", command.EndTime);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
+        }
+
+        return Result.Success((sessionDate, startTime, endTime));
+    }
+
+
+
     public async Task<Result<int>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation(
             "Booking session for mentor {MentorSlug} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
             command.MentorSlug, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
-        if (!DateTime.TryParseExact(command.Date, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None,
-                out var sessionDate))
-        {
-            logger.LogWarning("Invalid date format: {Date}", command.Date);
-            return Result.Failure<int>(Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
-        }
 
-        if (!TimeOnly.TryParse(command.StartTime, out var startTime))
+        var result = ParseTimeInput(command);
+        if (result.IsFailure)
         {
-            logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
-            return Result.Failure<int>(Error.Problem("Session.InvalidStartTime", "Start time must be in HH:mm format"));
+            return Result.Failure<int>(result.Error);
         }
-
-        if (!TimeOnly.TryParse(command.EndTime, out var endTime))
-        {
-            logger.LogWarning("Invalid end time format: {EndTime}", command.EndTime);
-            return Result.Failure<int>(Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
-        }
-
+        var (sessionDate, startTime, endTime) = result.Value;
+        
         var sessionDateUtc = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
+        
         // todo  : maybe handle endtime and start time from the request as datetime .. 
-
         if (endTime <= startTime)
         {
             logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
@@ -167,9 +189,9 @@ internal sealed class BookSessionCommandHandler(
                 amountToBePaid,
                 command.Note ?? string.Empty);
 
-            var amountLeftToPay = price.Value.Amount - amountToBePaid; 
+            var amountLeftToPay = price.Value.Amount - amountToBePaid;
             // create payment with that ! 
-            
+
             /*public Payment(int userId, string reference, decimal price, int sessionId, int mentorId, PaymentStatus status)
             {
                 Reference = reference;
@@ -181,9 +203,9 @@ internal sealed class BookSessionCommandHandler(
             }*/
 
             // we cant get the sessionId untill savechanges ! 
-            var payment = new Domain.Entities.Payments.Payment(command.MenteeId ,"" , amountLeftToPay , session.Id)
+            var payment = new Domain.Entities.Payments.Payment(command.MenteeId, "", amountLeftToPay, session.Id)
             var paymentRef = konnectService.CreatePayment()
-            
+
 
             await context.Sessions.AddAsync(session, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
