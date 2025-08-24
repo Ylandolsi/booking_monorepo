@@ -33,13 +33,13 @@ Integrations & tokens
 
 TODO / Roadmap
 
--Session after being booked should not become available 
-- Create wallet for each user by default ! 
-- fix session price on frontend 
-- fix availbility on front 
+-Session after being booked should not become available
+
+- Create wallet for each user by default !
+- fix session price on frontend
+- fix availbility on front
 - Integrate with calendar; prevent switching to another account if already integrated.
 - Review upcoming meetings and previous meetings/mentors.
-- Simulation for the payment gateway.
 - Fix availability / booking flows.
 - ADD Mentor canot book with himself
 - Admin dashboard.
@@ -50,26 +50,21 @@ TODO / Roadmap
 - Add fallback objects that contain defaults for missing fields.
 - Configure EF Core domains and connection settings carefully.
 - Ensure correct handling of profile picture URL storage and delivery.
-- Fix notification delivery issues (investigate the linked report).
-- for availability : dont show today's slots when time has passed  : example :today at 15 don show me slots from 9 to 14 
+- for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 - Fix Reselliency
-- Data model additions (suggested)
-  Escrow
-- change all getting services to this :  ( with scope)
+- change all getting services to this : ( with scope)
 -         using var scope = _serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
 -         var httpClient = httpClientFactory.CreateClient();
-- confirgure life span of koonect 
-- test the global exception handler  
+- confirgure life span of koonect
+- test the global exception handler
 
 - handle this with UI :
-  [13:56:57 ERR] Email yassine.landolsi@converty.shop  already assigned to someone else
+  [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
   2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
-  when integrating with an account alraedy integrated ! 
+  when integrating with an account alraedy integrated !
 
-- COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and .. 
-
-
+- COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
 
 Notes
 
