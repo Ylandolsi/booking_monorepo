@@ -28,6 +28,7 @@ public sealed class MentorshipsDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Availability> Availabilities { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<Wallet> Wallets { get; set;  }
 
     // Outbox messages
     public DbSet<OutboxMessage> OutboxMessages { get; set; }

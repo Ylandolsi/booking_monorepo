@@ -142,7 +142,7 @@ public class GoogleCalendarService
         try
         {
             const string linkToVerify = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
-            using var httpClient = new HttpClient(); 
+            using var httpClient = new HttpClient();
             var response =
                 await httpClient.GetAsync($"{linkToVerify}{accessToken}");
 
@@ -233,10 +233,10 @@ public class GoogleCalendarService
             request.SingleEvents = true;
             request.MaxResults = maxResults;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-            
+
             var events = await request.ExecuteAsync(); // TODO : add polly here S
             var response = events.Items ?? new List<Event>();
-            
+
             return Result.Success(response);
         }
         catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Unauthorized)
@@ -335,7 +335,9 @@ public class GoogleCalendarService
 
     #region Meets
 
-    public async Task<Result<Event>> CreateEventWithMeetAsync(MeetingRequest meetingRequest,
+    public async Task<Result<Event>> CreateEventWithMeetAsync(
+        MeetingRequest meetingRequest,
+        CancellationToken cancellationToken,
         string calendarId = "primary")
     {
         if (CalendarService == null)
@@ -346,22 +348,42 @@ public class GoogleCalendarService
         MeetSettings meetSettings = new MeetSettings();
         try
         {
-            var meetEvent = CreateEventWithMeet(
+            var meetEvent = CreateEventDataWithMeet(
                 meetingRequest.Title,
                 meetingRequest.Description,
                 meetingRequest.StartTime,
                 meetingRequest.EndTime,
-                meetSettings,
                 meetingRequest.Location,
-                meetingRequest.AttendeeEmails
+                meetingRequest.AttendeeEmails,
+                meetSettings
             );
 
             var request = CalendarService.Events.Insert(meetEvent, calendarId);
             request.ConferenceDataVersion = 1;
             request.SendNotifications = meetingRequest.SendInvitations;
 
-            var createdEvent = await request.ExecuteAsync();
+            var createdEvent = await request.ExecuteAsync(cancellationToken);
             return Result.Success(createdEvent);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Unauthorized)
+        {
+            Logger.LogWarning("Unauthorized access - token may be invalid or expired");
+            return Result.Failure<Event>(GoogleCalendarErrors.Unauthorized);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+        {
+            Logger.LogWarning("Access forbidden - insufficient permissions");
+            return Result.Failure<Event>(GoogleCalendarErrors.Forbidden);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
+        {
+            Logger.LogWarning("Calendar not found: {CalendarId}", calendarId);
+            return Result.Failure<Event>(GoogleCalendarErrors.CalendarNotFound);
+        }
+        catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.TooManyRequests)
+        {
+            Logger.LogWarning("Rate limit exceeded");
+            return Result.Failure<Event>(GoogleCalendarErrors.RateLimitExceeded);
         }
         catch (Exception ex)
         {
@@ -370,10 +392,16 @@ public class GoogleCalendarService
         }
     }
 
-    public Event CreateEventWithMeet(string title, string description, DateTime startTime, DateTime endTime,
-        MeetSettings meetSettings,
-        string location = null, List<string> attendeeEmails = null)
+    public Event CreateEventDataWithMeet(
+        string title,
+        string description,
+        DateTime startTime,
+        DateTime endTime,
+        string? location = null,
+        List<string>? attendeeEmails = null,
+        MeetSettings? meetSettings = null)
     {
+        meetSettings ??= new MeetSettings();
         var calendarEvent = new Event
         {
             Summary = title,
@@ -428,11 +456,8 @@ public class GoogleCalendarService
 
         return calendarEvent;
     }
-    
 
     #endregion
-
-    
 }
 
 public class MeetInfo

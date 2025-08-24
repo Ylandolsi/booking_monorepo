@@ -52,7 +52,7 @@ public class WebhookCommandHandler(
         }
         
         payment.SetComplete();
-        session.
+        //  by event !  
 
         // query payment and update the status 
         // check if alread an exisiting payment exisits and already completed with the reference ! 

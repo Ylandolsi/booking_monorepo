@@ -1,8 +1,10 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
+using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Mentorships.Features.Utils;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ namespace Booking.Modules.Mentorships.Features.Sessions.Book;
 
 internal sealed class BookSessionCommandHandler(
     MentorshipsDbContext context,
+    KonnectService konnectService ,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, int>
 {
     public async Task<Result<int>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
@@ -75,10 +78,9 @@ internal sealed class BookSessionCommandHandler(
         }
 
 
-
         var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
             mentor.TimezoneId == "" ? "Africa/Tunis" : mentor.TimezoneId);
-        
+
         var requestedDayOfWeek = sessionStartDateTimeTimeZoneMentor.DayOfWeek;
 
         var sessionEndDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionEndDateTimeUtc,
@@ -126,6 +128,16 @@ internal sealed class BookSessionCommandHandler(
                 "The requested time slot conflicts with an existing session"));
         }
 
+
+        var menteeWallet =
+            await context.Wallets.FirstOrDefaultAsync(w => w.UserId == command.MenteeId, cancellationToken);
+
+        if (menteeWallet is null)
+        {
+            menteeWallet = new Wallet(command.MenteeId, 0);
+            await context.Wallets.AddAsync(menteeWallet, cancellationToken);
+        }
+
         // Create duration and price value objects
         var duration = Duration.Create(durationMinutes);
         if (duration.IsFailure)
@@ -144,13 +156,34 @@ internal sealed class BookSessionCommandHandler(
 
         try
         {
+            var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
+
             var session = Session.Create(
                 mentor.Id,
                 command.MenteeId,
                 sessionStartDateTimeUtc,
                 duration.Value,
                 price.Value,
+                amountToBePaid,
                 command.Note ?? string.Empty);
+
+            var amountLeftToPay = price.Value.Amount - amountToBePaid; 
+            // create payment with that ! 
+            
+            /*public Payment(int userId, string reference, decimal price, int sessionId, int mentorId, PaymentStatus status)
+            {
+                Reference = reference;
+                UserId = userId;
+                MentorId = mentorId;
+                SessionId = sessionId;
+                Price = price;
+                Status = status;
+            }*/
+
+            // we cant get the sessionId untill savechanges ! 
+            var payment = new Domain.Entities.Payments.Payment(command.MenteeId ,"" , amountLeftToPay , session.Id)
+            var paymentRef = konnectService.CreatePayment()
+            
 
             await context.Sessions.AddAsync(session, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);

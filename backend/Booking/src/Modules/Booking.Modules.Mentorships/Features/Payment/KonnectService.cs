@@ -59,9 +59,14 @@ public class KonnectService(
         public string Status { get; init; } = null!;
     }
 
-    public async Task<Result<PaymentResponse>> CreatePayment(int amount, int paymentId, string firstName,
-        string lastName, string email,
-        string phone)
+    public async Task<Result<PaymentResponse>> CreatePayment(
+        int amount,
+        int paymentId,
+        string firstName,
+        string lastName,
+        string email,
+        string phone
+        )
     {
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
         var paymentInfo = new
@@ -102,7 +107,7 @@ public class KonnectService(
 
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
 
-
+        // TODO : update paymentRef 
         /*
          const response = await axios.post(`${process.env.KONNECT_API_URL}/payments/init-payment`, paymentInfo, {
             headers: {

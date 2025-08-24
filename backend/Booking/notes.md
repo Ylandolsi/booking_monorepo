@@ -1,3 +1,5 @@
+update PaidValue object in session 
+
 Added CSRF protection for form-based authentication
 
 Secure webhook
@@ -171,3 +173,6 @@ https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet
 -- 
 deployment :
 f you’re self hosting a web app on Windows and IIS then you need to tweak the IIS application pool to be always on. And you can can use a background task for the processing. Or you can deploy the worker as Windows Service.
+
+--
+https://github.com/zeromq/netmq

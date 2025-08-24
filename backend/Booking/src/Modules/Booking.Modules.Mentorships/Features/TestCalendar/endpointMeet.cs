@@ -11,41 +11,42 @@ public class endpoint2test : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("test/calendar/meet", async (UserContext userContext, GoogleCalendarService service) =>
-        {
-            int userId = userContext.UserId;
-            
-            var initResult = await service.InitializeAsync(userId);
-            if (initResult.IsFailure)
+        app.MapGet("test/calendar/meet",
+            async (UserContext userContext, GoogleCalendarService service, CancellationToken cancellationToken) =>
             {
-                return Results.BadRequest(initResult.Error);
-            }
-            
-            var eventsResult = await service.GetEventsAsync(userId);
-            if (eventsResult.IsFailure)
-            {
-                return Results.BadRequest(eventsResult.Error);
-            }
+                int userId = userContext.UserId;
 
-            MeetingRequest req = new MeetingRequest
-            {
-                Title = "Check Title",
-                Description = "Check Description",
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now.AddHours(1),
-                AttendeeEmails = new List<string>() { "yesslandolsi@gmail.com", "monsef@gmail.com" },
-                Location = "USA",
-                SendInvitations = true,
-            }; 
+                var initResult = await service.InitializeAsync(userId);
+                if (initResult.IsFailure)
+                {
+                    return Results.BadRequest(initResult.Error);
+                }
 
-            var createResult = await service.CreateEventWithMeetAsync(req);
-            if (createResult.IsFailure)
-            {
-                return Results.BadRequest(createResult.Error);
-            }
-            
-            return Results.Ok(createResult.Value);
-        }).RequireAuthorization(); 
+                var eventsResult = await service.GetEventsAsync(userId);
+                if (eventsResult.IsFailure)
+                {
+                    return Results.BadRequest(eventsResult.Error);
+                }
+
+                MeetingRequest req = new MeetingRequest
+                {
+                    Title = "Check Title",
+                    Description = "Check Description",
+                    StartTime = DateTime.Now,
+                    EndTime = DateTime.Now.AddHours(1),
+                    AttendeeEmails = new List<string>() { "yesslandolsi@gmail.com", "monsef@gmail.com" },
+                    Location = "USA",
+                    SendInvitations = true,
+                };
+
+                var createResult = await service.CreateEventWithMeetAsync(req, cancellationToken);
+                if (createResult.IsFailure)
+                {
+                    return Results.BadRequest(createResult.Error);
+                }
+
+                return Results.Ok(createResult.Value);
+            }).RequireAuthorization();
     }
 }
 /*{

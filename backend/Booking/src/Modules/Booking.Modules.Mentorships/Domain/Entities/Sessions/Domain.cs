@@ -20,6 +20,7 @@ public class Session : Entity
     public Duration Duration { get; private set; } = null!;
 
     public Price Price { get; private set; } = null!;
+    public decimal AmountPaid { get; private set; }
 
     public string Note { get; private set; } = string.Empty;
 
@@ -83,6 +84,7 @@ public class Session : Entity
         DateTime scheduledAt,
         Duration duration,
         Price price,
+        decimal amountPaid,
         string note = ""
     )
     {
@@ -92,6 +94,7 @@ public class Session : Entity
             MenteeId = menteeId,
             Duration = duration,
             Price = price,
+            AmountPaid = amountPaid , 
             Note = note?.Trim() ?? string.Empty,
             Status = SessionStatus.Booked,
             CreatedAt = DateTime.UtcNow,
@@ -100,6 +103,11 @@ public class Session : Entity
         };
 
         return session;
+    }
+
+    public void AddAmountPaid(decimal amountPaid)
+    {
+        AmountPaid = Math.Min(AmountPaid + amountPaid, Price.Amount);
     }
 
     public Result Confirm(string googleMeetUrl)
