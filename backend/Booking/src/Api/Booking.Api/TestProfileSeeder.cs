@@ -1,13 +1,16 @@
-using System.Net.Http.Json;
+using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
+using Booking.Modules.Mentorships.Domain.Entities.Days;
+using Booking.Modules.Mentorships.Domain.Entities.Mentors;
+using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
-using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Booking.Modules.Users.Presistence.Seed.Users;
+namespace Booking.Api;
 
 public class TestProfileSeeder
 {
@@ -25,8 +28,8 @@ public class TestProfileSeeder
         var users = new List<User>
         {
             await CreateSoftwareEngineerProfileAsync(),
-            await CreateMarketingConsultantProfileAsync(),
-            await CreateFinanceAdvisorProfileAsync()
+            /*await CreateMarketingConsultantProfileAsync(),
+            await CreateFinanceAdvisorProfileAsync()*/
         };
 
         return users;
@@ -37,6 +40,7 @@ public class TestProfileSeeder
         using var scope = _serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var mentorShipContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
 
         // Create base user
         var user = User.Create(
@@ -125,14 +129,50 @@ public class TestProfileSeeder
                 endDate: new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
             )
         });
-       
-        
+
 
         await context.SaveChangesAsync();
+
+        var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
+        // set mentor and availability 
+
+        var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
+        await mentorShipContext.Mentors.AddAsync(mentor);
+        await mentorShipContext.SaveChangesAsync();
+
+        mentor = await mentorShipContext.Mentors.FirstOrDefaultAsync(m => m.Id == userDb.Id);
+
+        // reload days for the newly created mentor
+        var days = await mentorShipContext.Days
+            .Where(d => d.MentorId == mentor.Id)
+            .ToListAsync();
+        
+// activate all days 
+        foreach (var dday in days)
+        {
+            dday.ToggleDay();
+            
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(19, 0);
+
+            var availability = Availability.Create(
+                mentor.Id, // mentor id
+                dday.Id, // dday id
+                (System.DayOfWeek)dday.DayOfWeek, // day of week enum
+                startTime,
+                endTime,
+                "Africa/Tunis"
+            );
+
+            await mentorShipContext.Availabilities.AddAsync(availability);
+            await mentorShipContext.SaveChangesAsync();
+        }
+
+
         return user;
     }
 
-    private async Task<User> CreateMarketingConsultantProfileAsync()
+    /*private async Task<User> CreateMarketingConsultantProfileAsync()
     {
         using var scope = _serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
@@ -392,5 +432,5 @@ public class TestProfileSeeder
 
             await context.SaveChangesAsync();
         }
-    }
+    }*/
 }

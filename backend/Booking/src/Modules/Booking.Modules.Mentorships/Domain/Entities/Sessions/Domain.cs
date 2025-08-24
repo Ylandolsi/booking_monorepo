@@ -108,6 +108,10 @@ public class Session : Entity
     public void AddAmountPaid(decimal amountPaid)
     {
         AmountPaid = Math.Min(AmountPaid + amountPaid, Price.Amount);
+        if (AmountPaid >= Price.Amount)
+        {
+            
+        }
     }
 
     public Result Confirm(string googleMeetUrl)

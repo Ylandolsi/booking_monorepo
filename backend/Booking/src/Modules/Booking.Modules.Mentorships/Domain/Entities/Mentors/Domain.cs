@@ -39,10 +39,11 @@ public class Mentor : Entity
     }
 
 
-    public static Mentor Create(int userId,
+    public static Mentor Create(
+        int userId,
         decimal hourlyRateAmount,
         string userSlug,
-        int bufferTimeMinutes = 10,
+        int bufferTimeMinutes = 15,
         string currency = "USD",
         string timezoneId = "Africa/Tunis")
     {
@@ -63,6 +64,7 @@ public class Mentor : Entity
             LastActiveAt = DateTime.UtcNow,
             TimezoneId = timezoneId
         };
+        // TODO : FIND a better approach
         mentor.CreateAllDays();
         return mentor;
     }

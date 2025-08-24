@@ -10,4 +10,4 @@ public sealed record BookSessionCommand(
     string StartTime , 
     string EndTime ,
     string TimeZoneId,
-    string? Note ) : ICommand<int>;
+    string? Note ) : ICommand<string>;

@@ -60,6 +60,10 @@ internal sealed class IntegrateAccountCommandHandler(
                 return Result.Failure<LoginResponse>(
                     GoogleErrors.UserIntegrationFailed("Could not link Google account."));
             }
+            // TODO : TRY TO FIX THIS AND MAKE IT ONE save 
+            // why we are saving it here : because getuserCalendar will need googleTokens ToHandleThat
+            /*await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
+            await context.SaveChangesAsync(cancellationToken);
 
             var calendar = await mentorshipsModuleApi.GetUserCalendar(command.UserId);
             if (calendar.IsSuccess)
@@ -73,9 +77,16 @@ internal sealed class IntegrateAccountCommandHandler(
             }
 
             user.IntegrateWithGoogle();
-
+            
+            await context.SaveChangesAsync(cancellationToken);*/
+            
+            
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
+            user.IntegrateWithGoogle(claims.Email);
+            
             await context.SaveChangesAsync(cancellationToken);
+
+
         }
 
         logger.LogInformation("User {Email} integrated  successfully with google calendar !", claims.Email);

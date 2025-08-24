@@ -27,6 +27,8 @@ public sealed class User : IdentityUser<int>, IEntity
     public string Gender { get; private set; } = "Male";
     public SocialLinks SocialLinks { get; private set; } = null!;
     public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
+    // TODO : add limited lenght to this 
+    public string? GoogleEmail { get; private set; } = null;
     public bool IntegratedWithGoogle { get; private set; } = false;
     public string TimezoneId { get; private set; } = "Africa/Tunis";
     public string Bio { get; private set; } = string.Empty;
@@ -169,8 +171,9 @@ public sealed class User : IdentityUser<int>, IEntity
         return Status.BecomeMentor();
     }
 
-    public void IntegrateWithGoogle()
+    public void IntegrateWithGoogle( string googleEmail )
     {
+        GoogleEmail = googleEmail; 
         IntegratedWithGoogle = true;
     }
 

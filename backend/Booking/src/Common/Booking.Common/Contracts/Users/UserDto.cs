@@ -7,6 +7,7 @@ public class UserDto
     public required ProfilePictureDto ProfilePicture { get; set; }
     public required string TimzoneId { get; set; }
     public required string Email { get; set; }
+    public required string GoogleEmail { get; set; }
 }
 
 public class ProfilePictureDto

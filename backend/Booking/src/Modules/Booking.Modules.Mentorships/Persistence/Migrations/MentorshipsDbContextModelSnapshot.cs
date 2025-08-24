@@ -166,6 +166,48 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                     b.ToTable("days", "mentorships");
                 });
 
+            modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Escrow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("session_id");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer")
+                        .HasColumnName("state");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_escrows");
+
+                    b.HasIndex("SessionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_escrows_session_id");
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("ix_escrows_state");
+
+                    b.ToTable("escrows", "mentorships");
+                });
+
             modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Mentors.Mentor", b =>
                 {
                     b.Property<int>("Id")
@@ -272,6 +314,68 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                     b.ToTable("mentorship_relationships", "mentorships");
                 });
 
+            modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Payments.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("MentorId")
+                        .HasColumnType("integer")
+                        .HasColumnName("mentor_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("reference");
+
+                    b.Property<int>("SessionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("session_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payments");
+
+                    b.HasIndex("Reference")
+                        .IsUnique()
+                        .HasDatabaseName("ix_payments_reference");
+
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_payments_session_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_payments_status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_payments_user_id");
+
+                    b.ToTable("payments", "mentorships");
+                });
+
             modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -334,6 +438,10 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AmountPaid")
+                        .HasColumnType("numeric")
+                        .HasColumnName("amount_paid");
 
                     b.Property<DateTime?>("CancelledAt")
                         .HasColumnType("timestamp with time zone")
@@ -405,6 +513,81 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                     b.ToTable("sessions", "mentorships");
                 });
 
+            modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("EscrowId")
+                        .HasColumnType("integer")
+                        .HasColumnName("escrow_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("price");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_transactions");
+
+                    b.HasIndex("EscrowId")
+                        .HasDatabaseName("ix_transactions_escrow_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_transactions_status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_transactions_user_id");
+
+                    b.ToTable("transactions", "mentorships");
+                });
+
+            modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Wallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("balance");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_wallets");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_wallets_user_id");
+
+                    b.ToTable("wallets", "mentorships");
+                });
+
             modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Availabilities.Availability", b =>
                 {
                     b.HasOne("Booking.Modules.Mentorships.Domain.Entities.Days.Day", "Day")
@@ -462,6 +645,18 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                         .HasConstraintName("fk_days_mentors_mentor_id");
 
                     b.Navigation("Mentor");
+                });
+
+            modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Escrow", b =>
+                {
+                    b.HasOne("Booking.Modules.Mentorships.Domain.Entities.Sessions.Session", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_escrows_sessions_session_id");
+
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("Booking.Modules.Mentorships.Domain.Entities.Mentors.Mentor", b =>

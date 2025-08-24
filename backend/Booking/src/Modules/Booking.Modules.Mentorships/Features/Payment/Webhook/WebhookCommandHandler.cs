@@ -13,9 +13,30 @@ public class WebhookCommandHandler(
     KonnectService konnectService,
     ILogger<WebhookCommandHandler> logger) : ICommandHandler<WebhookCommand>
 {
+    // TODO : EMAIL VERIFICATION 
     public async Task<Result> Handle(WebhookCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Recieved webhook for paymentRef: {paymentRef}", command.PaymentRef);
+        var payment = await context.Payments.FirstOrDefaultAsync(
+            p => p.Reference == command.PaymentRef,
+            cancellationToken);
+        
+
+        if (payment == null)
+        {
+            logger.LogError("Payment with ref {Ref} doesnt exists in the db", command.PaymentRef);
+            return Result.Failure(Error.Failure("Payment.Dosent.Exists.In.Db",
+                $"Payment with ref {command.PaymentRef} doesnt exists in the db"));
+        }
+
+        if (payment.Status == PaymentStatus.Completed)
+        {
+            
+            logger.LogError("Payment with ref {Ref} already completed", command.PaymentRef);
+            return Result.Failure(Error.Failure("Payment.Already.Completed",
+                $"Payment with ref {command.PaymentRef} already completed"));
+        }
+        
 
         var paymentDetails = await konnectService.GetPaymentDetails(command.PaymentRef);
 
@@ -25,25 +46,11 @@ public class WebhookCommandHandler(
             return Result.Failure(paymentDetails.Error);
         }
 
-        var payment = await context.Payments.FirstOrDefaultAsync(
-            p => p.Reference == command.PaymentRef,
-            cancellationToken);
         
-        
-        if (payment == null)
-        {
-            logger.LogError("Payment with ref {Ref} doesnt exists in the db", command.PaymentRef);
-            return Result.Failure();
-        }
-
-        if (payment.Status == PaymentStatus.Completed)
-        {
-            logger.LogError("Payment with ref {Ref} already completed ", command.PaymentRef);
-        }
 
         // TODOD : add as no tracking
         var session = await context.Sessions.FirstOrDefaultAsync(
-            s => s.Id == payment.SessionId ,
+            s => s.Id == payment.SessionId,
             cancellationToken);
 
         if (session == null)
@@ -51,8 +58,8 @@ public class WebhookCommandHandler(
             logger.LogError("Session doesn't exist for the payment ref {Ref}", command.PaymentRef);
             return Result.Failure(Error.NotFound("Session.NotFound", "Session not found"));
         }
-        
-        payment.SetComplete();
+
+        payment.SetComplete(); // raised event inside 
         session.AddAmountPaid(payment.Price);
 
         // If session is now fully paid, confirm it
@@ -62,20 +69,14 @@ public class WebhookCommandHandler(
             session.Confirm(meetLink);
 
             // Create escrow for the session price
-            var escrow = new Escrow(session.Price.Amount, session.Id, session.MentorId);
-            await context.Escrows.AddAsync(escrow, cancellationToken);
+            /*var escrow = new Escrow(session.Price.Amount, session.Id, session.MentorId);
+            await context.Escrows.AddAsync(escrow, cancellationToken);*/
         }
 
         await context.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Payment {PaymentRef} completed successfully for session {SessionId}", 
+        logger.LogInformation("Payment {PaymentRef} completed successfully for session {SessionId}",
             command.PaymentRef, session.Id);
-        //  by event !  
-
-        // query payment and update the status 
-        // check if alread an exisiting payment exisits and already completed with the reference ! 
-        // check if mentorExists 
-        // check if sessions exists 
 
 
         // Find the successful transaction to get the amount with fees

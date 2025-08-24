@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Booking.Api;
 using Booking.Api.Extensions;
 using Booking.Api.Services;
 using Booking.Common;
@@ -152,6 +153,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapEndpoints();
+
 
 await app.RunAsync();
 

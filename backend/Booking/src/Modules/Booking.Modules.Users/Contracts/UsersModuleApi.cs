@@ -16,11 +16,15 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
     {
         var googleService = serviceProvider.GetService<GoogleTokenService>();
         var response = await googleService.GetUserTokensAsync(userId);
+        if (response is null) return null;
+
         return new GoogleTokensDto
         {
             AccessToken = response.AccessToken,
             RefreshToken = response.RefreshToken,
+            /*
             ExpiresAt = response.ExpiresAt,
+            */
         };
     }
 
@@ -31,7 +35,9 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
         {
             AccessToken = googleTokens.AccessToken,
             RefreshToken = googleTokens.RefreshToken,
+            /*
             ExpiresAt = googleTokens.ExpiresAt,
+        */
         };
         await googleService.StoreUserTokensAsyncById(userId, googleTokenMapped);
     }
@@ -54,6 +60,7 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
             FirstName = userData.Name.FirstName,
             LastName = userData.Name.LastName,
             Email = userData.Email,
+            GoogleEmail = userData.GoogleEmail,
             ProfilePicture = new ProfilePictureDto
             {
                 ProfilePictureLink = userData.ProfilePictureUrl.ProfilePictureLink,

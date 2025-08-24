@@ -64,7 +64,7 @@ internal sealed class CreateOrLoginCommandHandler(
                     claims.Picture ?? string.Empty);
                 user.EmailConfirmed = true;
 
-                user.IntegrateWithGoogle();
+                user.IntegrateWithGoogle(claims.Email);
 
                 IdentityResult createResult = await userManager.CreateAsync(user);
                 if (!createResult.Succeeded)
@@ -76,7 +76,7 @@ internal sealed class CreateOrLoginCommandHandler(
                             createResult.Errors.Select(e => e.Description))));
                 }
 
-                user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
+                /*user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);
                 if (calendar.IsSuccess)
                 {
@@ -86,7 +86,7 @@ internal sealed class CreateOrLoginCommandHandler(
                 {
                     // fallback to tunisia 
                     user.UpdateTimezone("Africa/Tunis");
-                }
+                }*/
 
                 logger.LogInformation("User registered successfully with email: {Email}", claims.Email);
             }
@@ -94,6 +94,7 @@ internal sealed class CreateOrLoginCommandHandler(
             // Add the external login to the user (either existing by email or newly created)
             IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
+            user.IntegrateWithGoogle(claims.Email);
             await context.SaveChangesAsync(cancellationToken);
 
             if (!addLoginResult.Succeeded)

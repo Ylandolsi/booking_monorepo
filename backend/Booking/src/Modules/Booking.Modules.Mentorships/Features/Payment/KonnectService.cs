@@ -68,7 +68,11 @@ public class KonnectService(
         string phone
         )
     {
+        /*
+         TODO : fix it , it always to refer to the old url 
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
+        */
+        var httpClient = httpClientFactory.CreateClient();
         var paymentInfo = new
         {
             receiverWalletId = KonnectOptions.WalletKey,
@@ -92,6 +96,8 @@ public class KonnectService(
             theme = "light" // theme= req.body.theme ? req.body.theme : "light",
         };
 
+
+        httpClient.DefaultRequestHeaders.Add("x-api-key", KonnectOptions.ApiKey);
         var response = await httpClient.PostAsJsonAsync(
             $"{KonnectOptions.ApiUrl}/payments/init-payment",
             paymentInfo,
@@ -133,8 +139,11 @@ public class KonnectService(
     {
         try
         {
+            /*
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
-            var response = await httpClient.GetAsync($"payments/{paymentRef}");
+            */
+            var httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}payments/{paymentRef}");
 
             switch (response.StatusCode)
             {

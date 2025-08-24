@@ -16,14 +16,14 @@ internal sealed class BookSession : IEndpoint
         string StartTime, // TIMEONLY  
         string EndTime,
         string TimeZoneId = "Africa/Tunis",
-        string? Note = ""); 
+        string? Note = "");
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(MentorshipEndpoints.Sessions.Book, async (
                 Request request,
                 UserContext userContext,
-                ICommandHandler<BookSessionCommand, int> handler,
+                ICommandHandler<BookSessionCommand, string> handler,
                 CancellationToken cancellationToken) =>
             {
                 int menteeId = userContext.UserId;
@@ -37,10 +37,11 @@ internal sealed class BookSession : IEndpoint
                     request.TimeZoneId,
                     request.Note);
 
-                Result<int> result = await handler.Handle(command, cancellationToken);
+                Result<string> result = await handler.Handle(command, cancellationToken);
+                // if there is amount to be paid : return link of payment 
 
                 return result.Match(
-                    sessionId => Results.Ok(new { SessionId = sessionId }),
+                    Results.Ok,
                     CustomResults.Problem);
             })
             .RequireAuthorization()

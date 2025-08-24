@@ -6,6 +6,7 @@ using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
 using Booking.Modules.Mentorships.Contracts;
 using Booking.Modules.Mentorships.Features.GoogleCalendar;
+using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -40,6 +41,7 @@ public static class MentorshipsModule
         services.AddScoped<GoogleCalendarService>();
 
         services.AddScoped<IMentorshipsModuleApi, MentorshipsModuleApi>();
+        services.AddScoped<KonnectService>();
 
 
         return services;

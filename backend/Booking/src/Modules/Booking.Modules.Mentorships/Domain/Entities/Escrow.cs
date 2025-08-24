@@ -12,7 +12,11 @@ public class Escrow : Entity
     
     public int SessionId { get; private set; }
     public Session Session { get; private set; }
-    
+
+    private Escrow()
+    {
+        
+    }
     public Escrow(decimal price, int sessionId , int mentorId )
     {
         Price = price;

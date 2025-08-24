@@ -37,6 +37,7 @@ public sealed class BecomeMentorCommandHandler(
         try
         {
             // Create mentor entity
+            // TODO : seed days with better approach 
             var mentor = Domain.Entities.Mentors.Mentor.Create(
                 command.UserId,
                 command.HourlyRate,

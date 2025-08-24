@@ -255,402 +255,402 @@ namespace Booking.Modules.Users.Presistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(2747),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7384),
                             Description = "Mentorship in web, backend, mobile, etc.",
                             Name = "Software Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(1843)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(6211)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3067),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7717),
                             Description = "Mentorship in machines, manufacturing, CAD, etc.",
                             Name = "Mechanical Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3065)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7714)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3069),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7719),
                             Description = "Mentorship in circuits, power systems, etc.",
                             Name = "Electrical Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3069)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7718)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3071),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7721),
                             Description = "Mentorship in construction, infrastructure, etc.",
                             Name = "Civil Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3071)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7721)
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3073),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7723),
                             Description = "Mentorship in chemical processes, materials, etc.",
                             Name = "Chemical Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3072)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7723)
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3080),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7732),
                             Description = "Mentorship in aircraft, spacecraft, etc.",
                             Name = "Aerospace Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3079)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7731)
                         },
                         new
                         {
                             Id = 7,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3081),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7734),
                             Description = "Mentorship in sustainability, environment, etc.",
                             Name = "Environmental Engineering",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3081)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7733)
                         },
                         new
                         {
                             Id = 8,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3083),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7736),
                             Description = "Frontend, backend, and fullstack web mentoring.",
                             Name = "Web Development",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3082)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7735)
                         },
                         new
                         {
                             Id = 9,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3085),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7738),
                             Description = "Android, iOS, cross-platform app mentoring.",
                             Name = "Mobile Development",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3084)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7737)
                         },
                         new
                         {
                             Id = 10,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3087),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7741),
                             Description = "Mentorship in data analysis, ML, statistics.",
                             Name = "Data Science",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3087)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7741)
                         },
                         new
                         {
                             Id = 11,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3089),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7743),
                             Description = "Mentorship in ethical hacking, defense, etc.",
                             Name = "Cybersecurity",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3089)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7743)
                         },
                         new
                         {
                             Id = 12,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3091),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7769),
                             Description = "AWS, Azure, CI/CD, and infrastructure mentoring.",
                             Name = "Cloud & DevOps",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3090)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7768)
                         },
                         new
                         {
                             Id = 13,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3093),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7771),
                             Description = "Mentorship in ML models, AI theory, etc.",
                             Name = "AI & Machine Learning",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3092)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7771)
                         },
                         new
                         {
                             Id = 14,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3094),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7774),
                             Description = "Mentorship in user experience and interface design.",
                             Name = "UI/UX Design",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3094)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7773)
                         },
                         new
                         {
                             Id = 15,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3096),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7776),
                             Description = "Mentorship for startup founders and entrepreneurs.",
                             Name = "Startup Coaching",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3095)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7775)
                         },
                         new
                         {
                             Id = 16,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3097),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7778),
                             Description = "Mentorship in business models and scaling.",
                             Name = "Business Strategy",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3097)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7777)
                         },
                         new
                         {
                             Id = 17,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3099),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7780),
                             Description = "Mentorship in digital marketing, social media, etc.",
                             Name = "Marketing & Branding",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3099)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7779)
                         },
                         new
                         {
                             Id = 18,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3102),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7784),
                             Description = "Mentorship in B2B, B2C, pitching, etc.",
                             Name = "Sales",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3101)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7783)
                         },
                         new
                         {
                             Id = 19,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3104),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7786),
                             Description = "Mentorship in online business and marketplaces.",
                             Name = "E-commerce",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3103)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7785)
                         },
                         new
                         {
                             Id = 20,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3105),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7788),
                             Description = "Mentorship in product lifecycle, agile, etc.",
                             Name = "Product Management",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3105)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7787)
                         },
                         new
                         {
                             Id = 21,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3107),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7790),
                             Description = "Mentorship in managing teams and tasks.",
                             Name = "Project Management",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3107)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7789)
                         },
                         new
                         {
                             Id = 22,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3109),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7792),
                             Description = "Mentorship in stocks, real estate, etc.",
                             Name = "Investment",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3108)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7791)
                         },
                         new
                         {
                             Id = 23,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3110),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7794),
                             Description = "Budgeting, saving, financial planning.",
                             Name = "Personal Finance",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3110)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7793)
                         },
                         new
                         {
                             Id = 24,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3112),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7796),
                             Description = "Corporate and freelance financial help.",
                             Name = "Accounting & Auditing",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3111)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7795)
                         },
                         new
                         {
                             Id = 25,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3114),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7798),
                             Description = "Medical school and residency mentorship.",
                             Name = "General Medicine",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3113)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7797)
                         },
                         new
                         {
                             Id = 26,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3115),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7800),
                             Description = "Clinical mentorship and nursing school support.",
                             Name = "Nursing",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3115)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7799)
                         },
                         new
                         {
                             Id = 27,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3117),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7802),
                             Description = "Pharmaceutical career and education guidance.",
                             Name = "Pharmacy",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3116)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7801)
                         },
                         new
                         {
                             Id = 28,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3119),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7804),
                             Description = "Psychology, therapy, and emotional support.",
                             Name = "Mental Health",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3118)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7803)
                         },
                         new
                         {
                             Id = 29,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3120),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7806),
                             Description = "Mentorship in epidemiology, policy, etc.",
                             Name = "Public Health",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3120)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7805)
                         },
                         new
                         {
                             Id = 30,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3122),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7808),
                             Description = "Mentorship in contracts, companies, etc.",
                             Name = "Corporate Law",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3121)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7807)
                         },
                         new
                         {
                             Id = 31,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3124),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7810),
                             Description = "Legal career coaching in criminal justice.",
                             Name = "Criminal Law",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3123)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7810)
                         },
                         new
                         {
                             Id = 32,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3125),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7812),
                             Description = "Mentorship in visa and immigration processes.",
                             Name = "Immigration Law",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3125)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7812)
                         },
                         new
                         {
                             Id = 33,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3127),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7814),
                             Description = "Mentorship in patents, copyrights, etc.",
                             Name = "Intellectual Property Law",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3126)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7814)
                         },
                         new
                         {
                             Id = 34,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3130),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7818),
                             Description = "Mentorship in team building and leading.",
                             Name = "Leadership & Management",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3129)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7817)
                         },
                         new
                         {
                             Id = 35,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3132),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7820),
                             Description = "Mentorship in effective communication.",
                             Name = "Communication Skills",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3131)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7819)
                         },
                         new
                         {
                             Id = 36,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3133),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7822),
                             Description = "Coaching on personal productivity.",
                             Name = "Time Management",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3133)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7821)
                         },
                         new
                         {
                             Id = 37,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3135),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7824),
                             Description = "Confidence building and speech coaching.",
                             Name = "Public Speaking",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3135)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7823)
                         },
                         new
                         {
                             Id = 38,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3137),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7826),
                             Description = "Mock interviews and job prep.",
                             Name = "Job Interview Coaching",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3136)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7826)
                         },
                         new
                         {
                             Id = 39,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3139),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7828),
                             Description = "Profile and resume optimization.",
                             Name = "Resume & LinkedIn Review",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3138)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7828)
                         },
                         new
                         {
                             Id = 40,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3141),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7830),
                             Description = "Long-term goal mentorship.",
                             Name = "Career Planning",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3140)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7830)
                         },
                         new
                         {
                             Id = 41,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3142),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7833),
                             Description = "Mentorship in tools like Photoshop, Figma.",
                             Name = "Graphic Design",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3142)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7832)
                         },
                         new
                         {
                             Id = 42,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3144),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7835),
                             Description = "Camera use, editing, and career advice.",
                             Name = "Photography",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3143)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7834)
                         },
                         new
                         {
                             Id = 43,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3145),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7837),
                             Description = "Mentorship in composition, mixing, etc.",
                             Name = "Music Production",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3145)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7836)
                         },
                         new
                         {
                             Id = 44,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3147),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7839),
                             Description = "Mentorship in writing books or articles.",
                             Name = "Writing & Publishing",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3147)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7838)
                         },
                         new
                         {
                             Id = 45,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3149),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7841),
                             Description = "Mentorship in Premiere Pro, storytelling, etc.",
                             Name = "Video Editing",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3148)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7840)
                         },
                         new
                         {
                             Id = 46,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3150),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7843),
                             Description = "Unity, Unreal, and career mentorship.",
                             Name = "Game Development",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3150)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7842)
                         },
                         new
                         {
                             Id = 47,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3152),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7845),
                             Description = "Mentorship for language fluency.",
                             Name = "Language Learning",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3152)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7844)
                         },
                         new
                         {
                             Id = 48,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3154),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7847),
                             Description = "Mentorship for international students.",
                             Name = "Study Abroad Guidance",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3153)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7846)
                         },
                         new
                         {
                             Id = 49,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3172),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7849),
                             Description = "Mentorship in motivation, habits, etc.",
                             Name = "Life Coaching",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3171)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7848)
                         },
                         new
                         {
                             Id = 50,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3174),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7851),
                             Description = "System building, discipline, deep work.",
                             Name = "Productivity Coaching",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 461, DateTimeKind.Utc).AddTicks(3173)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 961, DateTimeKind.Utc).AddTicks(7851)
                         });
                 });
 
@@ -686,23 +686,23 @@ namespace Booking.Modules.Users.Presistence.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1968),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(7228),
                             Name = "English",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1317)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(6602)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1991),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(7254),
                             Name = "French",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1989)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(7252)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1993),
+                            CreatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(7256),
                             Name = "Arabic",
-                            UpdatedAt = new DateTime(2025, 8, 23, 9, 1, 42, 462, DateTimeKind.Utc).AddTicks(1993)
+                            UpdatedAt = new DateTime(2025, 8, 24, 15, 26, 51, 962, DateTimeKind.Utc).AddTicks(7255)
                         });
                 });
 
@@ -815,6 +815,10 @@ namespace Booking.Modules.Users.Presistence.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")
                         .HasColumnName("gender");
+
+                    b.Property<string>("GoogleEmail")
+                        .HasColumnType("text")
+                        .HasColumnName("google_email");
 
                     b.Property<bool>("IntegratedWithGoogle")
                         .HasColumnType("boolean")

@@ -1,5 +1,7 @@
 update PaidValue object in session
 
+Use idempotency keys when calling external services (e.g., payment.Id) and retry policies for network errors.
+
 Added CSRF protection for form-based authentication
 
 Secure webhook
@@ -31,10 +33,14 @@ Integrations & tokens
 
 TODO / Roadmap
 
+- Create wallet for each user by default ! 
+- fix session price on frontend 
+- fix availbility on front 
 - Integrate with calendar; prevent switching to another account if already integrated.
 - Review upcoming meetings and previous meetings/mentors.
 - Simulation for the payment gateway.
 - Fix availability / booking flows.
+- ADD Mentor canot book with himself
 - Admin dashboard.
 - Manage auth metadata (currentIp, currentUserAgent).
 - Toggle mentor activity to disable receiving meeting requests.
@@ -44,44 +50,25 @@ TODO / Roadmap
 - Configure EF Core domains and connection settings carefully.
 - Ensure correct handling of profile picture URL storage and delivery.
 - Fix notification delivery issues (investigate the linked report).
+- for availability : dont show today's slots when time has passed  : example :today at 15 don show me slots from 9 to 14 
 - Fix Reselliency
 - Data model additions (suggested)
   Escrow
+- change all getting services to this :  ( with scope)
+-         using var scope = _serviceProvider.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
+-         var httpClient = httpClientFactory.CreateClient();
+- confirgure life span of koonect 
+- test the global exception handler  
 
-- escrow_id (PK)
-- booking_id (FK -> bookings)
-- diamond_amount (decimal)
-- status (held, released, refunded)
-- created_at, updated_at
+- handle this with UI :
+  [13:56:57 ERR] Email yassine.landolsi@converty.shop  already assigned to someone else
+  2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
+  when integrating with an account alraedy integrated ! 
 
-Disputes
+- COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and .. 
 
-- dispute_id (PK)
-- booking_id (FK -> bookings)
-- raised_by (mentee | mentor)
-- reason (text)
-- status (open, resolved, closed)
-- resolution (refund, release, partial, ban)
-- created_at, updated_at
 
-Feedback
-
-- feedback_id (PK)
-- booking_id (FK -> bookings)
-- mentee_id (FK -> users)
-- rating (integer, 1-5)
-- comment (text)
-- created_at
-
-Transactions
-
-- transaction_id (PK)
-- user_id (FK -> users)
-- escrow_id (FK -> escrow, nullable)
-- amount (decimal)
-- type (deduction, refund, release)
-- status (pending, completed, failed)
-- created_at
 
 Notes
 
