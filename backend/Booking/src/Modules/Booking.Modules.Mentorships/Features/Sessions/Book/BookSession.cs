@@ -16,7 +16,7 @@ internal sealed class BookSession : IEndpoint
         string StartTime, // TIMEONLY  
         string EndTime,
         string TimeZoneId = "Africa/Tunis",
-        string? Note = "");
+        string? Note = ""); 
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

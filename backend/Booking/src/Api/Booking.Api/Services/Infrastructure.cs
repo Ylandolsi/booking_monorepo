@@ -5,6 +5,7 @@ using Amazon.SimpleEmail;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
 using Booking.Common.Options;
+using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
@@ -19,24 +20,35 @@ public static class Infrastructure
         IConfiguration configuration) =>
         services
             .AddCors()
-            .AddServices()
+            .AddServices(configuration)
             .AddCache(configuration)
             //.AddResielenecPipelines(configuration)
             .AddOptions(configuration)
             .AddAWS(configuration)
-            .AddIdentityCore() 
+            .AddIdentityCore()
             .AddHealthChecks(configuration)
             .AddAuthenticationInternal(configuration)
-            .AddAuthorizationInternal(); 
+            .AddAuthorizationInternal();
 
-    private static IServiceCollection AddServices(this IServiceCollection services)
+    private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         //services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        
+
         //services.AddScoped<EmailVerificationSender>();
         //services.AddScoped<TokenHelper>();
 
-        services.AddFusionCache();
+        services.AddHttpClient();
+        // TODO : move clients name to static ! 
+        services.AddHttpClient("KonnectClient", client =>
+            {
+                // TODO : make this more reselllient 
+                client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
+                client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
+                client.Timeout = TimeSpan.FromSeconds(10);
+            })
+            .AddStandardResilienceHandler();
+
+
         return services;
     }
 
@@ -67,12 +79,15 @@ public static class Infrastructure
     private static IServiceCollection AddCache(this IServiceCollection services, IConfiguration config)
     {
         services.AddMemoryCache();
+        services.AddFusionCache();
+
+        /*
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = config.GetConnectionString("Cache") ??
                                     throw new InvalidOperationException(
                                         "Redis connection string is not configured.");
-        });
+        });*/
         return services;
     }
 
@@ -104,7 +119,6 @@ public static class Infrastructure
         return services;
     }
 
-  
 
     private static IServiceCollection AddHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
@@ -130,10 +144,10 @@ public static class Infrastructure
         services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.EmailOptionsKey));
         services.Configure<FrontendApplicationOptions>(
             configuration.GetSection(FrontendApplicationOptions.FrontEndOptionsKey));
+        services.Configure<KonnectOptions>(configuration.GetSection(KonnectOptions.OptionsKey));
         return services;
     }
 
-    
 
     private static IServiceCollection AddAWS(this IServiceCollection services,
         IConfiguration configuration)
@@ -159,5 +173,4 @@ public static class Infrastructure
 
         return services;
     }
-    
 }

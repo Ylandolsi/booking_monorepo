@@ -1,137 +1,173 @@
 Added CSRF protection for form-based authentication
 
-secure webhook by :  
-HMAC (Hash-based Message Authentication Code) ,every account has one ,
-then i compare hmac in request with my account's hmac
-and hmac is existing only in webhook (server to server ) not in callback so no one can extract this hmac from paymob request and try to brut force this hash
+Secure webhook
 
-add retry failure in webhook
+- Use HMAC per account (server-to-server only). Store the shared secret on your side and compare the HMAC from the request to the computed HMAC. Keep the secret out of any client-facing callback to prevent brute force.
+- Add retry/failure handling for webhook delivery (exponential backoff, max attempts, idempotency keys).
 
----
-TODO : 
-- intgerate with calendar  ( avoid user alraedy integrated with another account to switch it !)
-- need to test refresh token with real behavior after expiration !! 
-- review next meets 
-- review previous meets/mentors 
-- simulation for the gateway
-- Fix availability / booking 
-- Admin dashboard 
-- save tokens 
-- refactor refresh tokens 
-- manage auth ( string? currentIp,string? currentUserAgent ) 
-- toggle mentor activity  , to disable getting meets 
-- disable book session from profile if the user is not a mentor 
-- booing page : from md : show mobile version 
-- add fallback objects contains all the ... 
-- u have to configure the ef cong domains very carefully 
+Callback vs. Webhook
 
+- Callback: gateway -> front-end -> backend (subject to client visibility).
+- Webhook: gateway -> backend (server-to-server, preferred for confidential events).
 
-send notif problem: https://www.linkedin.com/posts/mohamed--thabet_%D8%A3%D9%88%D9%84-%D8%A8%D9%88%D8%B3%D8%AA-%D9%81%D9%8A-%D8%B3%D9%84%D8%B3%D9%84%D8%A9-%D9%85%D8%B4%D8%A7%D9%83%D9%84-backend-%D9%85%D9%86-%D8%A3%D8%B1%D8%B6-activity-7361008063882891264-rpyW?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg                                        
+Retry and idempotency
 
+- Implement idempotency keys for webhook events to avoid duplicate processing.
+- Retries: exponential backoff, jitter, and a dead-letter queue or alerting after max retries.
 
+Concurrency, locks and migrations
 
---
-callback vs webhook : callback : gatway -> front -> backend ->
------
-read about locks more , especially in migrations 
-concurrency and 
+- Review locking strategies (row-level vs. advisory locks) especially around migrations and concurrent operations.
+- Consider optimistic concurrency where appropriate (row version/timestamp).
 
-add booking :
+Integrations & tokens
 
+- Test refresh token behavior against real expiration scenarios.
+- Save tokens securely (encrypted at rest).
+- Consider refactoring refresh token logic (single-source-of-truth, revoke flows).
+- Manage auth info: store currentIp and currentUserAgent if needed for anomaly detection.
+
+TODO / Roadmap
+
+- Integrate with calendar; prevent switching to another account if already integrated.
+- Review upcoming meetings and previous meetings/mentors.
+- Simulation for the payment gateway.
+- Fix availability / booking flows.
+- Admin dashboard.
+- Manage auth metadata (currentIp, currentUserAgent).
+- Toggle mentor activity to disable receiving meeting requests.
+- Disable booking from profile if the user is not a mentor.
+- Booking page: improve mobile version.
+- Add fallback objects that contain defaults for missing fields.
+- Configure EF Core domains and connection settings carefully.
+- Ensure correct handling of profile picture URL storage and delivery.
+- Fix notification delivery issues (investigate the linked report).
+- Fix Reselliency 
+- 
+Data model additions (suggested)
 Escrow
 
-escrow_id (PK)
-booking_id (FK to Bookings)
-diamond_amount (decimal)
-status (held, released, refunded)
-created_at, updated_at
-
+- escrow_id (PK)
+- booking_id (FK -> bookings)
+- diamond_amount (decimal)
+- status (held, released, refunded)
+- created_at, updated_at
 
 Disputes
 
-dispute_id (PK)
-booking_id (FK to Bookings)
-raised_by (mentee/mentor)
-reason (text)
-status (open, resolved, closed)
-resolution (refund, release, partial, ban)
-created_at, updated_at
-
+- dispute_id (PK)
+- booking_id (FK -> bookings)
+- raised_by (mentee | mentor)
+- reason (text)
+- status (open, resolved, closed)
+- resolution (refund, release, partial, ban)
+- created_at, updated_at
 
 Feedback
 
-feedback_id (PK)
-booking_id (FK to Bookings)
-mentee_id (FK to Users)
-rating (integer, e.g., 1-5)
-comment (text)
-created_at
-
+- feedback_id (PK)
+- booking_id (FK -> bookings)
+- mentee_id (FK -> users)
+- rating (integer, 1-5)
+- comment (text)
+- created_at
 
 Transactions
 
-transaction_id (PK)
-user_id (FK to Users)
-escrow_id (FK to Escrow, nullable)
-amount (decimal)
-type (deduction, refund, release)
-status (pending, completed, failed)
-created_at
+- transaction_id (PK)
+- user_id (FK -> users)
+- escrow_id (FK -> escrow, nullable)
+- amount (decimal)
+- type (deduction, refund, release)
+- status (pending, completed, failed)
+- created_at
+
+Notes
+
+- Consider using a money/decimal type with fixed precision for amounts.
+- Store audit metadata for sensitive actions (who, when, why).
+
+Serialization guidance (C#)
+
+- Use ReadFromJsonAsync<T> for known models (most efficient and type-safe).
+  Example:
+  ```csharp
+  var data = await response.Content.ReadFromJsonAsync<MeData>();
+  ```
+- Use ReadFromJsonAsync<JsonElement> for dynamic or unknown structures.
+  Example:
+  ```csharp
+  var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+  var value = json.GetProperty("key").GetString();
+  ```
+- Use ReadAsStreamAsync() for large responses to reduce memory usage.
+  Example:
+  ```csharp
+  using var stream = await response.Content.ReadAsStreamAsync();
+  var data = await JsonSerializer.DeserializeAsync<MyData>(stream);
+  ```
+
+Libraries / misc
+
+- Consider NodaTime for reliable time handling across zones and DST.
+- Read about locks and concurrency in EF Core and database docs before applying migration or heavy concurrency changes.
+- Aim for clear telemetry and alerting around webhook failures and retries.
+- Keep secrets and HMAC keys out of client flows and public callbacks.
+- Maintain a small simulation/test harness for payment gateway integration.
+- Add monitoring for token refresh failures and failed webhook deliveries.
 
 
-So your model looks something like:
+## outbox 
+✅ Best Practices for Multiple Outboxes
 
-Day (e.g. Monday, Tuesday…)
+One Outbox per DB (per bounded context/module).
 
-TimeOnly (e.g. 14:00)
+One Processor per Outbox (can run multiple instances for scaling, but with row-level locks).
 
-TimeZoneId (e.g. "Africa/Tunis")
+Consumers are idempotent (must accept duplicates).
 
-This describes availability, not a concrete date.
-To actually book a slot, you need to combine:
+Events are immutable (never modify, only append).
 
-The chosen date (e.g. 2025-08-25 → Monday)
+Outbox cleanup job (archive or delete dispatched events after N days).
 
-The saved time (e.g. 14:00)
+Running multiple outbox jobs across separate modules (each with its own schema) does not cause issues — in fact, it’s the recommended approach.
+The only thing to watch for is concurrency inside the same outbox table, but that’s solved with FOR UPDATE SKIP LOCKED or equivalent.
+---
+learn azure cosmos db 
+---
+The write path. We built a daemon that would select log entries that were older than two weeks, copy them into a file in S3, and delete the rows from the database.
+The read path. Our web application would look at the time period of the logs being queried and dynamically decide to query either the database or S3.
 
-The mentor’s time zone
-
-Then convert that into an Instant so it’s globally consistent.
-
-Example with NodaTime
-using NodaTime;
-
-public Instant ToInstant(DateOnly date, TimeOnly time, string timeZoneId)
-{
-// 1. Convert DateOnly + TimeOnly into LocalDateTime
-var localDateTime = new LocalDateTime(
-date.Year, date.Month, date.Day,
-time.Hour, time.Minute, time.Second);
-
-    // 2. Get the time zone
-    var tz = DateTimeZoneProviders.Tzdb[timeZoneId];
-
-    // 3. Map to a ZonedDateTime and then to Instant
-    var zoned = tz.AtStrictly(localDateTime); // or AtLeniently if you want DST-safe fallback
-    return zoned.ToInstant();
-}
+---
+In AWS terms, you can use a SNS topic to send messages to any subscriber (if a topic has many subscribers, each will receive the message) and SQS to queue messages (only the first* puller will receive the message)
+----
+hangfire for in memoryy events 
 
 
-Usage:
+That’s what I use for simpler, smaller messaging needs. And bonus, it can be transactionally consistent with the rest of your business data!
+Your problem description is textbook use-case for Hangfire. Scaling Hangfire is as simple as having all your jobs shared or part of a separate project, hosted independent from your main app (ideally). Or... just deploy your main app to multiple machines. Might seem lazy, but let monoliths do what monoliths are best at..
 
-var date = new DateOnly(2025, 8, 25); // chosen Monday
-var time = new TimeOnly(14, 0);       // availability
-var timeZone = "Africa/Tunis";
+--- 
+DB as queue instead of rabitmq :
+https://dagster.io/blog/skip-kafka-use-postgres-message-queue
+https://en.m.wikipedia.org/wiki/Change_data_capture
 
-var instant = ToInstant(date, time, timeZone);
-// Save instant to DB when a booking happens
+It's pretty trivial to implement a good enough queue manually in a traditional database.
 
-Why this works
+For smaller apps that aren't pushing mega-amounts of messages, this my preference if it means reducing my external dependency count.
 
-You only store TimeOnly + TimeZoneId + DayOfWeek for availability.
+I have done this, but by the time you have multiple servers interacting with the queue for failover/scalability and have dealt with edge cases relating to that I wouldn't call it trivial. I think in the future I would certainly take a hard look at something like rabbitmq rather than roll my own.
 
-When a mentee books, you get the actual DateOnly of that week and combine them.
 
-Convert once to Instant → store it in DB as the actual booking time.
 
-Clients in different time zones just convert back from Instant → their local time zone.
+--- 
+event : https://github.com/rebus-org/Rebus is pretty nice.
+https://wolverine.netlify.app/ is nice
+
+---
+https://learn.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction
+https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-multi-tier-app-using-service-bus-queues
+
+-- 
+deployment :
+f you’re self hosting a web app on Windows and IIS then you need to tweak the IIS application pool to be always on. And you can can use a background task for the processing. Or you can deploy the worker as Windows Service.

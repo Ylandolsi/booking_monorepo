@@ -37,6 +37,12 @@ public static class MentorshipEndpoints
         public const string GetMine = $"{Base}/relationships/me";
         public const string GetMentorRelationships = $"{Base}/relationships/mentor";
     }
+
+    public static class Payment
+    {
+        public const string Create = $"{Base}/payments"; 
+        public const string Webhook = $"{Base}/payments/webhook";  //  payment_ref=5f9498735289e405fc7c18ac
+    }
     
     public static class Reviews
     {

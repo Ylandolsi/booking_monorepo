@@ -6,6 +6,7 @@ using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 using Booking.Modules.Mentorships.Domain.Entities.Days;
 using Booking.Modules.Mentorships.Domain.Entities.Mentors;
 using Booking.Modules.Mentorships.Domain.Entities.MentorshipRelationships;
+using Booking.Modules.Mentorships.Domain.Entities.Payments;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -22,10 +23,11 @@ public sealed class MentorshipsDbContext : DbContext
     // Entities
     public DbSet<Mentor> Mentors { get; set; }
     public DbSet<Session> Sessions { get; set; }
-    public DbSet<Day> Days { get; set;  }
+    public DbSet<Day> Days { get; set; }
     public DbSet<MentorshipRelationship> MentorshipRelationships { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Availability> Availabilities { get; set; }
+    public DbSet<Payment> Payments { get; set; }
 
     // Outbox messages
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
