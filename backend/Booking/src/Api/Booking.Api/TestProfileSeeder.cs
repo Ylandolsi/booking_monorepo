@@ -146,12 +146,12 @@ public class TestProfileSeeder
         var days = await mentorShipContext.Days
             .Where(d => d.MentorId == mentor.Id)
             .ToListAsync();
-        
+
 // activate all days 
         foreach (var dday in days)
         {
             dday.ToggleDay();
-            
+
             var startTime = new TimeOnly(10, 0);
             var endTime = new TimeOnly(19, 0);
 

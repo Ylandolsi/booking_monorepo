@@ -33,6 +33,7 @@ Integrations & tokens
 
 TODO / Roadmap
 
+-Session after being booked should not become available 
 - Create wallet for each user by default ! 
 - fix session price on frontend 
 - fix availbility on front 

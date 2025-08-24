@@ -57,24 +57,29 @@ public class GoogleCalendarService
         try
         {
             // Force token refresh check by accessing the token
+            /*
             GoogleTokensDto? newTokens = await RefreshTokenAsync(googleTokens.RefreshToken);
             newTokens ??= googleTokens; // keep old tokens if failed to refresh 
-
             var tokenResponse = new TokenResponse
             {
                 AccessToken = newTokens.AccessToken,
                 RefreshToken = newTokens.RefreshToken,
             };
 
+            */
+            var tokenResponse = new TokenResponse
+            {
+                AccessToken = googleTokens.AccessToken,
+                RefreshToken = googleTokens.RefreshToken,
+            };
             var credential = new UserCredential(flow, userId.ToString(), tokenResponse);
-            /*
-                bool refreshed = await credential.RefreshTokenAsync(default);
-                if (refreshed)
-                {
-                    var debg = credential.Token.AccessToken;
-                    var dbg2 = credential.Token.RefreshToken;
+            bool refreshed = await credential.RefreshTokenAsync(default);
+            if (refreshed)
+            {
+                
 
-                }
+            }
+            /*
             */
 
             var service = new CalendarService(new BaseClientService.Initializer()

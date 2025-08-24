@@ -112,27 +112,7 @@ public class KonnectService(
         }
 
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
-
-        // TODO : update paymentRef 
-        /*
-         const response = await axios.post(`${process.env.KONNECT_API_URL}/payments/init-payment`, paymentInfo, {
-            headers: {
-                "x-api-key": process.env.KONNECT_API_KEY,
-            },
-            timeout: 10000, // Timeout in milliseconds (e.g., 10000ms = 10 seconds)
-        });
-
-        if (response.data.success || response.data.payUrl) {
-            payment.paymentRef = response.data.paymentRef;
-            payment.paymentUrl = response.data.payUrl;
-            await payment.save();
-            return res.status(201).json({ success: true, data: response.data.payUrl });
-        } else {
-            // remove the payment
-            await Payment.findByIdAndDelete(paymentId);
-            return res.status(400).json({ success: false, message: response.data });
-        }
-        */
+        
     }
 
     public async Task<Result<PaymentInfo>> GetPaymentDetails(string paymentRef)
@@ -143,7 +123,7 @@ public class KonnectService(
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
             */
             var httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}payments/{paymentRef}");
+            var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}/payments/{paymentRef}");
 
             switch (response.StatusCode)
             {

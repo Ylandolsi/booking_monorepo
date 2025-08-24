@@ -19,7 +19,7 @@ internal sealed class BookSessionCommandHandler(
     KonnectService konnectService,
     IUsersModuleApi usersModuleApi,
     IUnitOfWork unitOfWork,
-    GoogleCalendarService googleCalendarService , 
+    GoogleCalendarService googleCalendarService,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, string>
 {
     private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(
@@ -78,7 +78,8 @@ internal sealed class BookSessionCommandHandler(
         {
             logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
                 command.StartTime);
-            return Result.Failure<string>(Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
+            return Result.Failure<string>(
+                Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
         }
 
 
@@ -162,9 +163,9 @@ internal sealed class BookSessionCommandHandler(
             await context.Wallets.FirstOrDefaultAsync(w => w.UserId == command.MenteeId, cancellationToken);
 
         if (menteeWallet is null)
-        {   
+        {
             // TODO: change this : make it default when create user create wallet 
-            menteeWallet = new Wallet(command.MenteeId ,1);// TODO : change default balance should be zero
+            menteeWallet = new Wallet(command.MenteeId, 1); // TODO : change default balance should be zero
             await context.Wallets.AddAsync(menteeWallet, cancellationToken);
         }
 
@@ -192,7 +193,7 @@ internal sealed class BookSessionCommandHandler(
                 logger.LogError("Mentee user {MenteeId} not found for payment creation", command.MenteeId);
                 return Result.Failure<string>(Error.NotFound("User.NotFound", "Mentee user not found"));
             }
-            
+
             var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
 
             var session = Session.Create(
@@ -238,7 +239,7 @@ internal sealed class BookSessionCommandHandler(
                 await context.SaveChangesAsync(cancellationToken);
 
                 // Get mentee user details for payment
-        
+
 
                 // Create payment with Konnect
                 var paymentResponse = await konnectService.CreatePayment(
@@ -263,9 +264,8 @@ internal sealed class BookSessionCommandHandler(
                     // Update payment reference
                     payment.UpdateReference(paymentResponse.Value.PaymentRef);
 
-                    await context.SaveChangesAsync(cancellationToken);
-                    paymentLink = paymentResponse.Value.PayUrl; 
-                    
+                    paymentLink = paymentResponse.Value.PayUrl;
+
                     logger.LogInformation("Payment created with reference {PaymentRef} for session {SessionId}",
                         paymentResponse.Value.PaymentRef, session.Id);
                 }
@@ -275,18 +275,19 @@ internal sealed class BookSessionCommandHandler(
                 // TODO extract this into function : used on webhookCommandHandler 
                 // Fully paid from wallet - create escrow immediately
 
-                
+
                 var sessionStartTime = session.ScheduledAt;
                 var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
 
-                var menteeData = menteeUser; 
+                var menteeData = menteeUser;
                 var mentorData = await usersModuleApi.GetUserInfo(mentor.Id, cancellationToken);
 
                 // TODO : maybe add original email as well , 
                 // TODO : show this message on front : if the the event is not found on calendar 
                 // check your email 
-                var emails = new List<string> { menteeData.GoogleEmail, mentorData.GoogleEmail , mentorData.Email , menteeData.Email };
+                var emails = new List<string>
+                    { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
 
                 var description =
                     $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} ";
@@ -303,31 +304,38 @@ internal sealed class BookSessionCommandHandler(
                         Location = "Online"
                     };
 
+                // TODO: logic shared with PaymentCOmpleteDdomainEventHandler : centralize it ! 
                 await googleCalendarService.InitializeAsync(mentor.Id);
-                var resEvent = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
-                if (resEvent.IsFailure)
+
+                var resEventMentor =
+                    await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+
+                await googleCalendarService.InitializeAsync(command.MenteeId);
+                var resEventMentee =
+                    await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+
+                if (resEventMentee.IsFailure || resEventMentor.IsFailure)
                 {
                     logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                        session.Id, resEvent.Error.Description);
+                        session.Id, resEventMentee.Error.Description);
                     // Continue without calendar event - session should still be confirmed
                 }
 
-                var meetLink = resEvent.IsSuccess ? resEvent.Value.HangoutLink : "https://meet.google.com/placeholder";
+                var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
+                    resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
                 session.Confirm(meetLink);
 
-                
-                
+
                 var escrow = new Escrow(price.Value.Amount, session.Id, mentor.Id);
                 await context.Escrows.AddAsync(escrow, cancellationToken);
-                
-                
 
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-                await unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 logger.LogInformation("Session {SessionId} fully paid from wallet and confirmed", session.Id);
             }
 
+            await context.SaveChangesAsync(cancellationToken);
+
+            await unitOfWork.CommitTransactionAsync(cancellationToken);
             logger.LogInformation(
                 "Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
                 session.Id, mentor.Id, command.MenteeId, command.Date, command.StartTime, command.EndTime);

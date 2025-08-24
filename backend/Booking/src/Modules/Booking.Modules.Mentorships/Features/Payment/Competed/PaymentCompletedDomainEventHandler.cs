@@ -72,7 +72,8 @@ await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationTo
         var mentorData = await usersModuleApi.GetUserInfo(mentorId, cancellationToken);
         var menteeData = await usersModuleApi.GetUserInfo(menteeId, cancellationToken);
 
-        var emails = new List<string> { menteeData.GoogleEmail, mentorData.GoogleEmail , mentorData.Email , menteeData.Email };
+        var emails = new List<string>
+            { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
 
         var description =
             $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} ";
@@ -90,15 +91,21 @@ await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationTo
             };
 
         await googleCalendarService.InitializeAsync(mentorId);
-        var resEvent = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
-        if (resEvent.IsFailure)
+        var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+
+        await googleCalendarService.InitializeAsync(menteeId);
+        var resEventMentee = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+
+        if (resEventMentee.IsFailure || resEventMentor.IsFailure)
         {
             logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                session.Id, resEvent.Error.Description);
+                session.Id, resEventMentee.Error.Description);
             // Continue without calendar event - session should still be confirmed
         }
 
-        var meetLink = resEvent.IsSuccess ? resEvent.Value.HangoutLink : "https://meet.google.com/placeholder";
+        var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
+            resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
+
         session.Confirm(meetLink);
     }
 }
