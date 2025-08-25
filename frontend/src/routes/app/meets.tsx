@@ -3,7 +3,8 @@ import { ROUTE_PATHS } from '@/config';
 import { createFileRoute } from '@tanstack/react-router';
 import { Copy } from 'lucide-react';
 import { Label } from '@radix-ui/react-label';
-import { Input } from '@/components';
+import { Button, Input } from '@/components';
+import { LazyImage } from '@/utils';
 
 export const Route = createFileRoute(ROUTE_PATHS.APP.MEETS.INDEX)({
   component: RouteComponent,
@@ -56,13 +57,14 @@ function RouteComponent() {
 
       {/* Upcoming Meetings */}
       <section>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col gap-4  mb-4">
           <h2 className="text-2xl font-semibold text-gray-900">
             Upcoming Meetings
           </h2>
           <div className="flex space-x-2">
             {['Today', 'Tomorrow', 'Next 3 Days', 'Next Week'].map((filter) => (
-              <button
+              <Button
+                variant={'ghost'}
                 key={filter}
                 className={`px-4 py-1 rounded-full text-sm ${
                   filter === 'Today'
@@ -71,7 +73,7 @@ function RouteComponent() {
                 }`}
               >
                 {filter}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -113,14 +115,14 @@ function MeetingCard({
 }) {
   return (
     <div className="flex items-center bg-white rounded-xl shadow px-4 py-3 space-x-4">
-      <img
+      <LazyImage
         src={avatar}
+        placeholder={avatar}
         alt={title}
         className="w-14 h-14 rounded-full object-cover"
       />
       <div>
         <h3 className="font-semibold text-gray-900">{title}</h3>
-        <p className="text-blue-600 text-sm">Meeting Link: {link}</p>
         <p className="text-gray-500 text-sm">{time}</p>
       </div>
     </div>

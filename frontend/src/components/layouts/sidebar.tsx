@@ -101,17 +101,17 @@ const Sidebar = ({
       click: async () => await googleOIDC(),
       name: 'Integrate With Google',
     },
-    {
-      name: 'Notifications',
-      icon: <Bell size={20} />,
-      click: () => {},
-      badge: '5',
-    },
-    {
-      name: 'Settings',
-      icon: <Settings size={20} />,
-      click: () => {},
-    },
+    // {
+    //   name: 'Notifications',
+    //   icon: <Bell size={20} />,
+    //   click: () => {},
+    //   badge: '5',
+    // },
+    // {
+    //   name: 'Settings',
+    //   icon: <Settings size={20} />,
+    //   click: () => {},
+    // },
   ];
   const handleItemClick = (item: Item) => {
     setItemActive(item.name);

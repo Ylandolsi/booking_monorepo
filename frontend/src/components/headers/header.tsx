@@ -32,7 +32,7 @@ export function Header() {
         {/* Right side - Profile and Notifications */}
         {
           <div className="flex items-center gap-2 lg:hidden">
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               className="h-10 w-10 p-0 hover:bg-muted relative"
@@ -44,7 +44,7 @@ export function Header() {
               >
                 3
               </Badge>
-            </Button>
+            </Button> */}
 
             <Button
               variant="ghost"

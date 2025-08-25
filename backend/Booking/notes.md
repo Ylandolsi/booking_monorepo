@@ -39,6 +39,12 @@ TODO / Roadmap
 - fix session price on frontend
 - fix availbility on front
 - Integrate with calendar; prevent switching to another account if already integrated.
+and handle this UI : 
+  - handle this with UI :
+    [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
+    2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
+    when integrating with an account alraedy integrated !
+  
 - Review upcoming meetings and previous meetings/mentors.
 - Fix availability / booking flows.
 - ADD Mentor canot book with himself
@@ -59,10 +65,7 @@ TODO / Roadmap
 - confirgure life span of koonect
 - test the global exception handler
 
-- handle this with UI :
-  [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
-  2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
-  when integrating with an account alraedy integrated !
+-maybe add tag of skills to the meeting to show it ! 
 
 - COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
 

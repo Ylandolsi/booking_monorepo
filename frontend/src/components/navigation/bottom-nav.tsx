@@ -31,19 +31,19 @@ export function BottomNav() {
       onClick: () => {},
       active: false,
     },
-    {
-      icon: <MessageCircle size={20} />,
-      label: 'Messages',
-      onClick: () => {},
-      badge: '2',
-      active: false,
-    },
-    {
-      icon: <UserSearch size={20} />,
-      label: 'Discover',
-      onClick: () => {},
-      active: false,
-    },
+    // {
+    //   icon: <MessageCircle size={20} />,
+    //   label: 'Messages',
+    //   onClick: () => {},
+    //   badge: '2',
+    //   active: false,
+    // },
+    // {
+    //   icon: <UserSearch size={20} />,
+    //   label: 'Discover',
+    //   onClick: () => {},
+    //   active: false,
+    // },
   ];
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg lg:hidden z-30">
