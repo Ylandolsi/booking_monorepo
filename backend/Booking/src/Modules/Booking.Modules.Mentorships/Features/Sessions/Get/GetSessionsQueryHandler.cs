@@ -40,6 +40,7 @@ internal sealed class GetSessionsQueryHandler(
                 {
                     Id = s.Id,
                     MentorId = s.MentorId,
+                    MenteeId = s.MenteeId,
                     Price = s.Price.Amount,
                     Status = s.Status,
                     GoogleMeetLink = s.GoogleMeetLink.Url,
@@ -60,6 +61,7 @@ internal sealed class GetSessionsQueryHandler(
                 {
                     Id = s.Id,
                     MentorId = s.MentorId,
+                    MenteeId = s.MenteeId, 
                     Price = s.Price.Amount,
                     Status = s.Status,
                     GoogleMeetLink = s.GoogleMeetLink.Url,
@@ -83,6 +85,13 @@ internal sealed class GetSessionsQueryHandler(
                 session.MentorLastName = mentorData.LastName;
                 session.MentorProfilePicture = mentorData.ProfilePicture.ProfilePictureLink;
                 session.MentorProfilePictureBlurry = mentorData.ProfilePicture.ThumbnailUrlPictureLink;
+                
+                var menteeData = await usersModuleApi.GetUserInfo(session.MenteeId, cancellationToken);
+                session.MentorEmail = menteeData.Email;
+                session.MentorFirstName = menteeData.FirstName;
+                session.MentorLastName = menteeData.LastName;
+                session.MentorProfilePicture = menteeData.ProfilePicture.ProfilePictureLink;
+                session.MentorProfilePictureBlurry = menteeData.ProfilePicture.ThumbnailUrlPictureLink;
 
                 session.ScheduledAt = TimeConvertion.ConvertInstantToTimeZone(session.ScheduledAt, query.TimeZoneId);
                 session.CreatedAt = TimeConvertion.ConvertInstantToTimeZone(session.CreatedAt, query.TimeZoneId);

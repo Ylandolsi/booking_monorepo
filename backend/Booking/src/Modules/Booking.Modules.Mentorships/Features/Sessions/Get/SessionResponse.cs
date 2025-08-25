@@ -13,6 +13,13 @@ public sealed record SessionResponse
     public string? MentorEmail { get; set; }
     public string? MentorProfilePicture { get; set; }
     public string? MentorProfilePictureBlurry { get; set; }
+    public int MenteeId { get; init; }
+    public string? MenteeFirstName { get; set; }
+    public string? MenteeLastName { get; set; }
+
+    public string? MenteeEmail { get; set; }
+    public string? MenteeProfilePicture { get; set; }
+    public string? MenteeProfilePictureBlurry { get; set; }
     public decimal Price { get; set; }
     public SessionStatus Status { get; set; }
     public string? GoogleMeetLink { get; set; }

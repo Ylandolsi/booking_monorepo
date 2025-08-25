@@ -1,3 +1,8 @@
+2025-08-30T10:45:00
+is an ISO 8601 date-time format,
+
+
+
 update PaidValue object in session
 
 Use idempotency keys when calling external services (e.g., payment.Id) and retry policies for network errors.
@@ -35,6 +40,8 @@ TODO / Roadmap
 
 -Session after being booked should not become available
 
+- add fallback for profiule pictire when showing session  , front and back 
+- add timezone in the frontend for each request 
 - Create wallet for each user by default !
 - fix session price on frontend
 - fix availbility on front

@@ -115,18 +115,34 @@ export function MeetsPage() {
         </div>
         <div className="space-y-4">
           {sessions?.map((session) => {
-            const mentorName =
+            let atendeeName =
               [session.mentorFirstName, session.mentorLastName]
                 .filter(Boolean)
                 .join(' ') || 'Mentor';
-            const title = `Session with ${mentorName}`;
-            const link = session.googleMeetLink ?? '';
-            const time = formatISODateTime(session.scheduledAt);
-            const avatar =
+
+            let atendeeProfilePic =
               session.mentorProfilePicture ??
               `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                mentorName,
+                atendeeName,
               )}&background=FFB085&co lor=fff&size=64`;
+
+            if (session.iamMentor) {
+              atendeeName =
+                [session.menteeFirstName, session.menteeLastName]
+                  .filter(Boolean)
+                  .join(' ') || 'Mentee';
+
+              atendeeProfilePic =
+                session.menteeProfilePicture ??
+                // TODO : add fallback for non profile picture
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                  atendeeName,
+                )}&background=FFB085&co lor=fff&size=64`;
+            }
+
+            const title = `Session with ${atendeeName}`;
+            const link = session.googleMeetLink ?? '';
+            const time = formatISODateTime(session.scheduledAt);
 
             return (
               <MeetingCard
@@ -134,7 +150,7 @@ export function MeetsPage() {
                 title={title}
                 link={link}
                 time={time}
-                avatar={avatar}
+                avatar={atendeeProfilePic}
                 setMeetingLink={setMeetingLink}
               />
             );
