@@ -55,7 +55,7 @@ internal sealed class GetSessionsQueryHandler(
             
             var sessionsIMentor = await context.Sessions
                 .AsNoTracking()
-                .Where(s => s.MentorId == query.MenteeId )
+                .Where(s => s.MentorId == query.MenteeId && DateOnly.FromDateTime(s.ScheduledAt) <= DateOnly.FromDateTime(parsedUpToDate) )
                 .OrderByDescending(s => s.ScheduledAt)
                 .Select(s => new SessionResponse
                 {

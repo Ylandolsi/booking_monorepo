@@ -23,7 +23,7 @@ export function useGetSessions(
     : undefined;
 
   const dateOnly = normalizedUpToDate?.slice(0, 10); // used for cache
-
+  console.log(dateOnly);
   return useQuery<Array<Session>, unknown, Array<Session>>({
     queryKey: sessionQueryKeys.session(dateOnly, timeZoneId),
     queryFn: () => getSessions(normalizedUpToDate, timeZoneId),
