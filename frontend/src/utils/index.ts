@@ -4,3 +4,4 @@ export * from './param-guard';
 export * from './cn';
 export * from './id';
 export * from './deep-copy';
+export * from './time';

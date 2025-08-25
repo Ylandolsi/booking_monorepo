@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/config/env';
 import { toast } from 'sonner';
-type RequestOptions = {
+export type RequestOptions = {
   method?: string;
   headers?: Record<string, string>;
   body?: any;

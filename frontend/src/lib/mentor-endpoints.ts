@@ -15,10 +15,15 @@ export const MentorshipEndpoints = {
 
   Sessions: {
     Book: 'mentorships/sessions',
-    Cancel: 'mentorships/sessions/{sessionId}/cancel',
-    GetDetails: 'mentorships/sessions/{sessionId}',
-    GetMySessions: 'mentorships/sessions/me',
-    GetMentorSessions: 'mentorships/sessions/mentor',
+    GetSessions: 'mentorships/sessions', // Query : daysFromNow  , timeZoneId
+    // Cancel: 'mentorships/sessions/{sessionId}/cancel',
+  },
+
+  Mentors: {
+    Become: 'mentorships/mentors/become',
+    UpdateProfile: 'mentorships/mentors/profile',
+    GetProfile: 'mentorships/mentors/{mentorSlug}',
+    // Search: "mentorships/mentors/search",
   },
 
   Relationships: {
@@ -34,12 +39,5 @@ export const MentorshipEndpoints = {
     Submit: 'mentorships/reviews',
     GetMentorReviews: 'entorships/reviews/{userSlug}',
     // GetDetails: "mentorships/reviews/{reviewId}",
-  },
-
-  Mentors: {
-    Become: 'mentorships/mentors/become',
-    UpdateProfile: 'mentorships/mentors/profile',
-    GetProfile: 'mentorships/mentors/{mentorSlug}',
-    // Search: "mentorships/mentors/search",
   },
 };

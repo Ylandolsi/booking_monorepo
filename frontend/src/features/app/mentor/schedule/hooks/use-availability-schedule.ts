@@ -5,7 +5,7 @@ import type {
   AvailabilityRangeType,
   DailySchedule,
 } from '@/features/app/mentor/schedule/types';
-import type { DayOfWeek } from '@/features/app/booking/shared';
+import type { DayOfWeek } from '@/features/app/session/booking/shared';
 import {
   useSetWeeklySchedule,
   useWeeklySchedule,

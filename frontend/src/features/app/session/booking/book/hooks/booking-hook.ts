@@ -5,9 +5,12 @@ import type {
   BookSessionRequestType,
   DayAvailabilityType,
   SessionSlotType,
-} from '@/features/app/booking';
+} from '@/features/app/session/booking';
 import { useMentorDetails } from '@/features/app/mentor/become';
-import { useBookSession, useMonthlyAvailability } from '@/features/app/booking';
+import {
+  useBookSession,
+  useMonthlyAvailability,
+} from '@/features/app/session/booking';
 import { useProfile } from '@/features/app/profile';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';

@@ -16,7 +16,7 @@ import {
   PREDEFINED_TIME_SLOTS,
   TIME_OPTIONS,
   type DayOfWeek,
-} from '@/features/app/booking/shared';
+} from '@/features/app/session/booking/shared';
 import type { AvailabilityRangeType } from '@/features/app/mentor/schedule/types';
 
 interface DayAvailabilityProps {

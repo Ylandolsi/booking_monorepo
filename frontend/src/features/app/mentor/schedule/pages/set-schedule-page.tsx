@@ -7,7 +7,7 @@ import {
   DayAvailability,
   SummaryCard,
 } from '@/features/app/mentor/schedule';
-import { DAYS_OF_WEEK } from '@/features/app/booking/shared';
+import { DAYS_OF_WEEK } from '@/features/app/session/booking/shared';
 import { mapDayToNumber } from '@/utils/enum-days-week';
 import { MentorGuard } from '@/components';
 

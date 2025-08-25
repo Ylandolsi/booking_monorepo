@@ -29,3 +29,9 @@ export const formatTimeRange = (start: string, end: string) => {
   return `${formatTime(start)} - ${formatTime(end)}`;
 };
 // const formatDate = (dateStr: string | undefined) => {
+
+export const formatISODateTime = (iso: string): string => {
+  return dayjs(iso).format('MMMM D, YYYY h:mm A');
+  // from : 2025-08-30T10:45:00
+  // to : August 30, 2025 10:45 AM
+};

@@ -9,8 +9,8 @@ import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
 import type {
   DayAvailabilityType,
   MonthAvailabilityType,
-} from '@/features/app/booking/availability/types';
-import { availabilityQueryKeys } from '@/features/app/booking/availability/api/availability-keys';
+} from '@/features/app/session/booking/availability/types';
+import { availabilityQueryKeys } from '@/features/app/session/booking/availability/api/availability-keys';
 
 // GET
 
