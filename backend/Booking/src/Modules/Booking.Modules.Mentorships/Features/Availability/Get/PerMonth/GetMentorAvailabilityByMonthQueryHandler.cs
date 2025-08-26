@@ -41,7 +41,7 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                 .SelectMany(m => m.Availabilities)
                 .Where(a => a.IsActive)
                 .ToListAsync(cancellationToken);
-            
+
             var allDaysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(query.Year, query.Month))
                 .Select(day => new DateOnly(query.Year, query.Month, day))
                 .ToList();
@@ -49,15 +49,15 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
             // Filter out past days if IncludePastDays is false
             var daysToProcess = query.IncludePastDays
                 ? allDaysInMonth
-                : allDaysInMonth.Where(date => date >= DateOnly.FromDateTime(DateTime.Now)).ToList();
+                : allDaysInMonth.Where(date => date >= DateOnly.FromDateTime(DateTime.UtcNow)).ToList();
 
             var monthlyAvailability = new List<DailyAvailabilityResponse>();
 
             foreach (var date in daysToProcess)
             {
-                var queryDay = new GetMentorAvailabilityByDayQuery(query.MentorSlug, date , query.TimeZoneId);
-                var responseDay = await dailyAvailabilityHandler.Handle(queryDay, cancellationToken); 
-                monthlyAvailability.Add( responseDay.Value);
+                var queryDay = new GetMentorAvailabilityByDayQuery(query.MentorSlug, date, query.TimeZoneId);
+                var responseDay = await dailyAvailabilityHandler.Handle(queryDay, cancellationToken);
+                monthlyAvailability.Add(responseDay.Value);
             }
 
             var response = new MonthlyAvailabilityResponse(

@@ -68,12 +68,17 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                             s.Status != Domain.Enums.SessionStatus.Cancelled)
                 .Select(s => new ScheduledAtWithDuration
                 {
-                    ScheduledAt = s.ScheduledAt,
+                    ScheduledAt = s.ScheduledAt, 
                     Minutes = s.Duration.Minutes
                 })
                 .OrderBy(s => s.ScheduledAt)
                 .ToListAsync(cancellationToken);
 
+            foreach (var bookedSess in bookedSessions)
+            {
+                var s = TimeConvertion.ConvertInstantToTimeZone(bookedSess.ScheduledAt, query.TimeZoneId);
+                bookedSess.ScheduledAt = s; 
+            }
 
             var timeSlots = new List<TimeSlotResponse>();
             var availableSlots = 0;

@@ -87,11 +87,11 @@ internal sealed class GetSessionsQueryHandler(
                 session.MentorProfilePictureBlurry = mentorData.ProfilePicture.ThumbnailUrlPictureLink;
                 
                 var menteeData = await usersModuleApi.GetUserInfo(session.MenteeId, cancellationToken);
-                session.MentorEmail = menteeData.Email;
-                session.MentorFirstName = menteeData.FirstName;
-                session.MentorLastName = menteeData.LastName;
-                session.MentorProfilePicture = menteeData.ProfilePicture.ProfilePictureLink;
-                session.MentorProfilePictureBlurry = menteeData.ProfilePicture.ThumbnailUrlPictureLink;
+                session.MenteeEmail = menteeData.Email;
+                session.MenteeFirstName = menteeData.FirstName;
+                session.MenteeLastName= menteeData.LastName;
+                session.MenteeProfilePicture = menteeData.ProfilePicture.ProfilePictureLink;
+                session.MenteeProfilePictureBlurry = menteeData.ProfilePicture.ThumbnailUrlPictureLink;
 
                 session.ScheduledAt = TimeConvertion.ConvertInstantToTimeZone(session.ScheduledAt, query.TimeZoneId);
                 session.CreatedAt = TimeConvertion.ConvertInstantToTimeZone(session.CreatedAt, query.TimeZoneId);
