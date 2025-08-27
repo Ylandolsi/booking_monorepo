@@ -9,7 +9,7 @@ export const allLanguages = async () => {
 };
 
 export function useAllLanguages(
-  overrides?: Partial<UseQueryOptions<any, unknown, any>>,
+  overrides?: Partial<UseQueryOptions<any, Error, any>>,
 ) {
   return useQuery({
     queryKey: profileQueryKeys.allLanguages(),

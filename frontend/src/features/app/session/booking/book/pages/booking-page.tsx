@@ -63,6 +63,21 @@ function BookingContent() {
     );
   }
 
+  if (mentorDetailsQuery.error?.message?.includes('not found')) {
+    return (
+      <ErrorComponenet
+        title="Mentor not found"
+        message="Mentor not found. Please check the link or select another mentor."
+      ></ErrorComponenet>
+      // <Alert variant="destructive">
+      //   {React.createElement(alertIconMap['destructive'])}
+      //   <AlertDescription>
+      //     Mentor not found. Please check the link or select another mentor.
+      //   </AlertDescription>
+      // </Alert>
+    );
+  }
+
   if (hasError) {
     return (
       <Alert variant="destructive">

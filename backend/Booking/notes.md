@@ -192,3 +192,8 @@ DONE :
     [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
     2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
     when integrating with an account alraedy integrated !
+
+
+## Future Enhancements
+
+- [ ] Multiple session duration options

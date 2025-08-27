@@ -49,8 +49,8 @@ export const getMonthlyAvailability = async (
 export function useDailyAvailability(
   mentorSlug?: string,
   date?: string,
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<DayAvailabilityType, unknown> {
+  overrides?: Partial<UseQueryOptions<any, Error>>,
+): UseQueryResult<DayAvailabilityType, Error> {
   return useQuery(
     queryOptions({
       queryKey: availabilityQueryKeys.dailyAvailability(mentorSlug, date),
@@ -65,8 +65,8 @@ export function useMonthlyAvailability(
   mentorSlug?: string,
   year?: number,
   month?: number,
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<MonthAvailabilityType, unknown> {
+  overrides?: Partial<UseQueryOptions<any, Error>>,
+): UseQueryResult<MonthAvailabilityType, Error> {
   return useQuery(
     queryOptions({
       queryKey: availabilityQueryKeys.monthlyAvailability(

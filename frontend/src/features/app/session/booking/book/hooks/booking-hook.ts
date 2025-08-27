@@ -27,7 +27,6 @@ export function useBooking() {
     mentorSlug?: string;
   };
 
-  // State management
   const [state, setState] = useState<BookingHookState>({
     selectedDate: new Date(),
     selectedSlot: null,
@@ -35,7 +34,6 @@ export function useBooking() {
     notes: '',
   });
 
-  // API queries
   const mentorInfoQuery = useProfile(mentorSlug!);
   const mentorDetailsQuery = useMentorDetails(mentorSlug, {
     enabled: !!mentorSlug,

@@ -272,8 +272,8 @@ ctrl + shift + p : toggle multicursor modfier to return to : ctrl + click open n
 ```ts
 export function useMentorDetails(
   userSlug?: string | null,
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<Mentor, unknown> {
+  overrides?: Partial<UseQueryOptions<any, Error>>,
+): UseQueryResult<Mentor, Error> {
   return useQuery(
     queryOptions({
       queryKey: mentorQueryKeys.mentorProfile(userSlug),

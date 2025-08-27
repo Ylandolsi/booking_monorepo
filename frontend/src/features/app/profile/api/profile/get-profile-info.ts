@@ -14,7 +14,7 @@ export const userInfo = async (userSlug?: string) => {
 
 export function useProfile(
   userSlug?: string,
-  overrides?: Partial<UseQueryOptions<User, unknown, User>>,
+  overrides?: Partial<UseQueryOptions<User, Error, User>>,
 ) {
   return useQuery({
     queryKey: profileQueryKeys.slug(userSlug!),

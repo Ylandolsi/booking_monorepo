@@ -22,9 +22,9 @@ export const mentorDetails = async (
 
 export function useMentorDetails(
   userSlug?: string | null,
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<Mentor, unknown> {
-  return useQuery(
+  overrides?: Partial<UseQueryOptions<Mentor, Error>>,
+): UseQueryResult<Mentor, Error> {
+  return useQuery<Mentor, Error>(
     queryOptions({
       queryKey: mentorQueryKeys.mentorProfile(userSlug),
       queryFn: () => mentorDetails(userSlug),

@@ -16,8 +16,8 @@ export const getWeeklySchedule = async (): Promise<DailySchedule[]> => {
 };
 
 export function useWeeklySchedule(
-  overrides?: Partial<UseQueryOptions<any, unknown>>,
-): UseQueryResult<DailySchedule[], unknown> {
+  overrides?: Partial<UseQueryOptions<any, Error>>,
+): UseQueryResult<DailySchedule[], Error> {
   return useQuery({
     queryKey: scheduleQueryKeys.weeklySchedule,
     queryFn: getWeeklySchedule,

@@ -16,6 +16,8 @@ export function useProfileBySlug() {
     enabled: !isSlugCurrent,
   });
 
+  // const
+
   return {
     user: isSlugCurrent ? currentUser : user,
     error: error || userError,

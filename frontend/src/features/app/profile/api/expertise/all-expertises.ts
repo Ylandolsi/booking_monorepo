@@ -8,7 +8,7 @@ export async function allExpertises() {
 }
 
 export function useAllExpertises(
-  overrides?: Partial<UseQueryOptions<any, unknown, any>>,
+  overrides?: Partial<UseQueryOptions<any, Error, any>>,
 ) {
   return useQuery({
     queryKey: profileQueryKeys.allExpertises(),
