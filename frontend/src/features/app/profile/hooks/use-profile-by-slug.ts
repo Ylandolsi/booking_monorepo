@@ -1,6 +1,7 @@
 import { useUser } from '@/features/auth';
 import { useProfile } from '@/features/app/profile/api';
-import { useRequiredParam } from '@/hooks';
+import { useMentor, useRequiredParam } from '@/hooks';
+import { useMentorDetails } from '@/features/app/mentor';
 
 export function useProfileBySlug() {
   const { data: currentUser, error, isLoading } = useUser();
@@ -16,12 +17,15 @@ export function useProfileBySlug() {
     enabled: !isSlugCurrent,
   });
 
-  // const
+  const { data: mentorData } = useMentorDetails(user?.slug, {
+    enabled: !isSlugCurrent,
+  });
 
   return {
     user: isSlugCurrent ? currentUser : user,
     error: error || userError,
     isLoading: isLoading || userLoading,
+    mentorData,
     isSlugCurrent,
   };
 }

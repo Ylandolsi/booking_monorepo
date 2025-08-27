@@ -11,7 +11,7 @@ export function ProfileActions({
   variant = 'vertical',
   className,
 }: ProfileActionsProps) {
-  const { isSlugCurrent, user } = useProfileBySlug();
+  const { isSlugCurrent, user, mentorData } = useProfileBySlug();
 
   const { setDefaultSection, openDialog } = useProfileEditStore();
 
@@ -40,7 +40,7 @@ export function ProfileActions({
         >
           Edit Profile
         </Button>
-      ) : (
+      ) : mentorData ? (
         <Link
           to={routes.paths.APP.BOOKING.SESSION}
           params={{ mentorSlug: user.slug }}
@@ -49,7 +49,7 @@ export function ProfileActions({
             Book a session
           </Button>
         </Link>
-      )}
+      ) : null}
     </div>
   );
 }
