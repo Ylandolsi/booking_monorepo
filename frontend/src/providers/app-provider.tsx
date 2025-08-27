@@ -91,6 +91,7 @@ declare module '@tanstack/react-router' {
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   return (
+    // TODO : add React.ErrorBoundary
     <React.Suspense fallback={<PageLoading />}>
       <HelmetProvider>
         <QueryClientProvider client={queryClient}>

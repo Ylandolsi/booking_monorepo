@@ -1,10 +1,60 @@
 import { Logo } from '@/components/logo';
-import { Badge, Button } from '@/components/ui';
+import { Badge, Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/features/auth';
-import { useSideBar } from '@/stores';
+import { useGlobalErrorStore, useSideBar } from '@/stores';
 import { LazyImage } from '@/utils';
-import { Bell, Menu } from 'lucide-react';
+import { Bell, CreditCard, Menu } from 'lucide-react';
 import { useAppNavigation } from '@/hooks';
+import { api } from '@/lib';
+import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import {
+  queryOptions,
+  useQuery,
+  type UseQueryOptions,
+  type UseQueryResult,
+} from '@tanstack/react-query';
+import { ErrorComponenet, GlobalErrorHandling } from '@/components/errors';
+
+type Wallet = {
+  balance: number;
+};
+
+async function getWallet(): Promise<Wallet> {
+  const res = await api.get<Wallet>(MentorshipEndpoints.Payments.Wallet);
+  return res;
+}
+
+function useGetWallet(
+  overrides?: Partial<UseQueryOptions<Wallet, Error>>,
+): UseQueryResult<Wallet, Error> {
+  return useQuery<Wallet, Error>(
+    queryOptions({
+      queryFn: getWallet,
+      queryKey: ['wallet'], // todo fix this
+      ...overrides,
+    }),
+  );
+}
+
+function BalanceHeader() {
+  const { data: walletData, isLoading } = useGetWallet();
+
+  if (isLoading) {
+    return <LoadingState type="dots"></LoadingState>;
+  }
+
+  return (
+    <Button className="bg-yellow-50 text-primary pl-5 pr-2 hover:bg-yellow-100/80 hidden md:inline-flex   ">
+      <div className="space-x-1">
+        <span className="font-semibold"> Balance </span>
+        <span className="font-bold">{`${walletData?.balance}$`}</span>
+      </div>
+      <div className="bg-yellow-300 ml-auto p-1 rounded-md ">
+        <CreditCard className="text-primary" />
+      </div>
+    </Button>
+  );
+}
 
 export function Header() {
   const { setSidebarOpen } = useSideBar();
@@ -22,7 +72,7 @@ export function Header() {
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="h-10 w-10 p-0 hover:bg-muted lg:hidden"
+            className="h-7.5 w-10 p-0 hover:bg-muted "
           >
             <Menu className="w-5 h-5" />
           </Button>
@@ -31,7 +81,7 @@ export function Header() {
 
         {/* Right side - Profile and Notifications */}
         {
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex h-7.5 items-center gap-2 ">
             {/* <Button
               variant="ghost"
               size="sm"
@@ -45,6 +95,7 @@ export function Header() {
                 3
               </Badge>
             </Button> */}
+            <BalanceHeader />
 
             <Button
               variant="ghost"

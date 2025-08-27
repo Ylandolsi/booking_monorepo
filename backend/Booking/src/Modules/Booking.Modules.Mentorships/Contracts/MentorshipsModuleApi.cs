@@ -1,6 +1,9 @@
 using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Results;
+using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Features.GoogleCalendar;
+using Booking.Modules.Mentorships.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Error = Booking.Common.Results.Error;
 
@@ -27,5 +30,18 @@ public class MentorshipsModuleApi(IServiceProvider serviceProvider) : IMentorshi
             TimezoneId = resultVal.TimeZone,
         };
         return Result.Success(dto);
+    }
+
+    public async Task<Result> CreateWalletForUserId(int userId , CancellationToken cancellationToken = default)
+    {
+        var scope = ServiceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+        var existingWallet = await dbContext.Wallets.FirstOrDefaultAsync(e => e.UserId == userId , cancellationToken);
+        if (existingWallet == null)
+        {
+            await dbContext.AddAsync(new Wallet(userId) , cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        return Result.Success();
     }
 }

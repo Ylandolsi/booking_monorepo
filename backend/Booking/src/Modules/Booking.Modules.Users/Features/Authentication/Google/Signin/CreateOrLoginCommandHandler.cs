@@ -68,6 +68,8 @@ internal sealed class CreateOrLoginCommandHandler(
                 user.IntegrateWithGoogle(claims.Email);
 
                 IdentityResult createResult = await userManager.CreateAsync(user);
+                
+
                 if (!createResult.Succeeded)
                 {
                     logger.LogWarning("Failed to register user with email: {Email}. Errors: {Errors}", claims.Email,
@@ -77,7 +79,10 @@ internal sealed class CreateOrLoginCommandHandler(
                             createResult.Errors.Select(e => e.Description))));
                 }
 
-                /*user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
+                 user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
+                 await mentorshipsModuleApi.CreateWalletForUserId(user.Id  ,cancellationToken);
+
+                /*
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);
                 if (calendar.IsSuccess)
                 {

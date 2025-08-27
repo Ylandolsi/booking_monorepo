@@ -6,12 +6,7 @@ public static class MentorshipEndpoints
     
     public static class Availability
     {
-        public const string Set = $"{Base}/availability";
         public const string SetBulk = $"{Base}/availability/bulk"; 
-        public const string Remove = $"{Base}/availability/{{availabilityId}}";
-        public const string Update = $"{Base}/availability/{{availabilityId}}";
-        public const string ToggleAvailability = $"{Base}/availability/{{availabilityId}}/toggle"; 
-        public const string ToggleDay = $"{Base}/availability/day/toggle"; // Query: dayOfWeek
         public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
         public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
         public const string GetSchedule = $"{Base}/availability/schedule";
@@ -27,22 +22,23 @@ public static class MentorshipEndpoints
         */
         public const string GetSessions = $"{Base}/sessions"; // 
     }
-    
-    public static class Relationships
-    {
-        public const string Request = $"{Base}/relationships";
-        public const string Accept = $"{Base}/relationships/{{relationshipId}}/accept";
-        public const string Reject = $"{Base}/relationships/{{relationshipId}}/reject";
-        public const string End = $"{Base}/relationships/{{relationshipId}}/end";
-        public const string GetMine = $"{Base}/relationships/me";
-        public const string GetMentorRelationships = $"{Base}/relationships/mentor";
-    }
 
     public static class Payment
     {
         public const string Create = $"{Base}/payments"; 
+        public const string GetWallet = "payments/wallet";
         public const string Webhook = $"{Base}/payments/webhook";  //  payment_ref=5f9498735289e405fc7c18ac
     }
+    
+
+    public static class Mentors
+    {
+        public const string Become = $"{Base}/mentors/become";
+        public const string UpdateProfile = $"{Base}/mentors/profile";
+        public const string GetProfile = $"{Base}/mentors/{{userSlug}}";
+        //public const string Search = $"{Base}/mentors/search";
+    }
+    
     
     public static class Reviews
     {
@@ -51,11 +47,16 @@ public static class MentorshipEndpoints
         //public const string GetDetails = $"{Base}/reviews/{{reviewId}}";
     }
     
-    public static class Mentors
+        
+    /*public static class Relationships
     {
-        public const string Become = $"{Base}/mentors/become";
-        public const string UpdateProfile = $"{Base}/mentors/profile";
-        public const string GetProfile = $"{Base}/mentors/{{userSlug}}";
-        //public const string Search = $"{Base}/mentors/search";
-    }
+        public const string Request = $"{Base}/relationships";
+        public const string Accept = $"{Base}/relationships/{{relationshipId}}/accept";
+        public const string Reject = $"{Base}/relationships/{{relationshipId}}/reject";
+        public const string End = $"{Base}/relationships/{{relationshipId}}/end";
+        public const string GetMine = $"{Base}/relationships/me";
+        public const string GetMentorRelationships = $"{Base}/relationships/mentor";
+    }*/
+
+
 }

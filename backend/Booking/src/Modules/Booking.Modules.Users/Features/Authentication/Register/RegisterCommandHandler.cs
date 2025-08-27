@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Booking.Common.Contracts.Mentorships;
+using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -15,6 +16,7 @@ internal sealed class RegisterCommandHandler(
     UsersDbContext context,
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
+    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<RegisterCommandHandler> logger)
     : ICommandHandler<RegisterCommand>
 {
@@ -69,7 +71,8 @@ internal sealed class RegisterCommandHandler(
 
             logger.LogInformation("User registered successfully with email: {Email}", command.Email);
 
-
+            await mentorshipsModuleApi.CreateWalletForUserId(user.Id  ,cancellationToken);
+            
             user.Raise(new UserRegisteredDomainEvent(user.Id));
             logger.LogInformation("UserRegisteredDomainEvent raised for user with ID: {UserId}", user.Id);
 
