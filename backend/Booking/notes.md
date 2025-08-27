@@ -43,12 +43,7 @@ remove all logDebug !
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 - Create wallet for each user by default !
-- Integrate with calendar; prevent switching to another account if already integrated.
-and handle this UI : 
-  - handle this with UI :
-    [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
-    2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
-    when integrating with an account alraedy integrated !
+
   
 - Fix availability / booking flows.
 - ADD Mentor canot book with himself
@@ -188,3 +183,12 @@ Konnect Payment Gateway
 Webhook Received → Payment Completed
 ↓
 Session Confirmed + Meet Link + Escrow Created
+
+---
+DONE :
+- Integrate with calendar; prevent switching to another account if already integrated.
+  and handle this UI :
+  - handle this with UI :
+    [13:56:57 ERR] Email yassine.landolsi@converty.shop already assigned to someone else
+    2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
+    when integrating with an account alraedy integrated !
