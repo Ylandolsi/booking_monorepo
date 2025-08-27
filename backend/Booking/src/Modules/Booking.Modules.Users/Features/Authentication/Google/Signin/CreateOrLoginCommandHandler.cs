@@ -64,6 +64,7 @@ internal sealed class CreateOrLoginCommandHandler(
                     claims.Picture ?? string.Empty);
                 user.EmailConfirmed = true;
 
+                // TODO Maybe delete this line if not needed
                 user.IntegrateWithGoogle(claims.Email);
 
                 IdentityResult createResult = await userManager.CreateAsync(user);

@@ -1,4 +1,5 @@
-﻿using Booking.Common.Authentication;
+﻿using System.Web;
+using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
@@ -40,11 +41,13 @@ internal sealed class LoginGoogleCallback : IEndpoint
 
                 if (!result.Succeeded)
                 {
-                    Results.Problem(
+                    var errorQuery = $"?error={HttpUtility.UrlEncode("Authentication with Google was not successful. Please try again.")}";
+                    return Results.Redirect($"{returnUrl}{errorQuery}");
+                    /*Results.Problem(
                         statusCode: StatusCodes.Status401Unauthorized,
                         title: "Google login failed",
                         detail: "Authentication with Google was not successful. Please try again."
-                    );
+                    );*/
                 }
 
                 var propeties = result.Properties.Items;
@@ -78,7 +81,9 @@ internal sealed class LoginGoogleCallback : IEndpoint
 
                     if (integrateResponse.IsFailure)
                     {
-                        return CustomResults.Problem(integrateResponse);
+                        var errorQuery = $"?error={HttpUtility.UrlEncode(integrateResponse.Error.Description ?? "Failed to integrate Google account.")}";
+                        return Results.Redirect($"{returnUrl}{errorQuery}");
+                        //return CustomResults.Problem(integrateResponse);
                     }
 
                     return Results.Redirect(returnUrl);
@@ -89,11 +94,13 @@ internal sealed class LoginGoogleCallback : IEndpoint
 
                 if (!loginResponseResult.IsSuccess)
                 {
-                    Results.Problem(
+                    var errorQuery = $"?error={HttpUtility.UrlEncode(loginResponseResult.Error?.Description ?? "Authentication with Google was not successful. Please try again.")}";
+                    return Results.Redirect($"{returnUrl}{errorQuery}");
+                    /*Results.Problem(
                         statusCode: StatusCodes.Status401Unauthorized,
                         title: "Google login failed",
                         detail: "Authentication with Google was not successful. Please try again."
-                    );
+                    );*/
                 }
 
 

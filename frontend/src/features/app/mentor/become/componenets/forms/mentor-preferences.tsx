@@ -59,7 +59,7 @@ export function MentorPreferences() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="hourlyRate" className="text-sm font-medium">
-                Hourly Rate (TND) *
+                Hourly Rate (USD) *
               </Label>
               <Input
                 id="hourlyRate"

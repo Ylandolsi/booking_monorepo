@@ -163,7 +163,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="hourlyRate">Hourly Rate (TND) *</Label>
+            <Label htmlFor="hourlyRate">Hourly Rate ($) *</Label>
             <Input
               id="hourlyRate"
               type="number"
@@ -244,7 +244,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">Hourly Rate:</span>
-                <span className="font-semibold">{mentor?.hourlyRate} TND</span>
+                <span className="font-semibold">{mentor?.hourlyRate} $</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">Buffer Time:</span>

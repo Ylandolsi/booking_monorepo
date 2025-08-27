@@ -40,13 +40,9 @@ TODO / Roadmap
 
 remove all logDebug ! 
 
-- add : naviagte to mentor or mentee when showing the meets 
--Session after being booked should not become available (done)
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 - Create wallet for each user by default !
-- fix session price on frontend
-- fix availbility on front
 - Integrate with calendar; prevent switching to another account if already integrated.
 and handle this UI : 
   - handle this with UI :
@@ -70,11 +66,13 @@ and handle this UI :
 -         var httpClient = httpClientFactory.CreateClient();
 - confirgure life span of koonect
 - test the global exception handler
-
-
-
 - COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
+
+
+- remove private route from mentor/calendar or profile
+but any action needs to be logged in ( with google or email )
 ------ LATER 
+- add : naviagte to mentor or mentee when showing the meets
 - previous meetings/mentors.
 - maybe add tag of skills to the meeting to show it !
 - Manage auth metadata (currentIp, currentUserAgent).
