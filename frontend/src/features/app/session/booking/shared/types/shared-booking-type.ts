@@ -9,16 +9,15 @@ export const DAYS_OF_WEEK: { key: DayOfWeek; label: string; short: string }[] =
     { key: 'saturday', label: 'Saturday', short: 'Sat' },
   ];
 
-export const PREDEFINED_TIME_SLOTS = [
-  { start: '09:00', end: '12:00', label: '9:00 AM - 11:00 AM' },
-  { start: '14:00', end: '17:00', label: '2:00 PM - 3:00 PM' },
-  { start: '10:00', end: '11:00', label: '10:00 AM - 11:00 AM' },
-  { start: '11:00', end: '12:00', label: '11:00 AM - 12:00 PM' },
-  { start: '13:00', end: '14:00', label: '1:00 PM - 2:00 PM' },
-  { start: '15:00', end: '16:00', label: '3:00 PM - 4:00 PM' },
-  { start: '16:00', end: '17:00', label: '4:00 PM - 5:00 PM' },
-  { start: '17:00', end: '18:00', label: '5:00 PM - 6:00 PM' },
-];
+export const PREDEFINED_TIME_SLOTS = Array.from({ length: 11 }, (_, i) => {
+  // Every hour from 8am untill 6 PM
+  const startHour = 8 + i;
+  const endHour = startHour + 1;
+  const start = startHour.toString().padStart(2, '0') + ':00';
+  const end = endHour.toString().padStart(2, '0') + ':00';
+  const label = `${startHour <= 12 ? startHour : startHour - 12}:00 ${startHour < 12 ? 'AM' : 'PM'} - ${endHour <= 12 ? endHour : endHour - 12}:00 ${endHour < 12 ? 'AM' : 'PM'}`;
+  return { start, end, label };
+});
 
 export const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => {
   const hour = i.toString().padStart(2, '0');

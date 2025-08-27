@@ -165,7 +165,7 @@ internal sealed class BookSessionCommandHandler(
         if (menteeWallet is null)
         {
             // TODO: change this : make it default when create user create wallet 
-            menteeWallet = new Wallet(command.MenteeId, 1); // TODO : change default balance should be zero
+            menteeWallet = new Wallet(command.MenteeId, 200); // TODO : change default balance should be zero
             await context.Wallets.AddAsync(menteeWallet, cancellationToken);
         }
 
@@ -320,9 +320,13 @@ internal sealed class BookSessionCommandHandler(
                         session.Id, resEventMentee.Error.Description);
                     // Continue without calendar event - session should still be confirmed
                 }
-
+                
                 var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
                     resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
+                logger.LogDebug("----- google meet link  mentor and mentee  -----");
+                logger.LogDebug(resEventMentee.Value.HangoutLink);
+                logger.LogDebug(resEventMentor.Value.HangoutLink);
+                logger.LogDebug("------------------------------------------------");
                 session.Confirm(meetLink);
 
 

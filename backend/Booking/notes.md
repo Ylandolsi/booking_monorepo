@@ -38,8 +38,11 @@ Integrations & tokens
 
 TODO / Roadmap
 
--Session after being booked should not become available
-- add fallback for profiule pictire when showing session  , front and back 
+remove all logDebug ! 
+
+- add : naviagte to mentor or mentee when showing the meets 
+-Session after being booked should not become available (done)
+- add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 - Create wallet for each user by default !
 - fix session price on frontend
@@ -51,13 +54,10 @@ and handle this UI :
     2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
     when integrating with an account alraedy integrated !
   
-- Review upcoming meetings and previous meetings/mentors.
 - Fix availability / booking flows.
 - ADD Mentor canot book with himself
-- Admin dashboard.
-- Manage auth metadata (currentIp, currentUserAgent).
-- Toggle mentor activity to disable receiving meeting requests.
 - Disable booking from profile if the user is not a mentor.
+- Toggle mentor activity to disable receiving meeting requests.
 - Booking page: improve mobile version.
 - Add fallback objects that contain defaults for missing fields.
 - Configure EF Core domains and connection settings carefully.
@@ -71,9 +71,15 @@ and handle this UI :
 - confirgure life span of koonect
 - test the global exception handler
 
--maybe add tag of skills to the meeting to show it ! 
+
 
 - COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
+------ LATER 
+- previous meetings/mentors.
+- maybe add tag of skills to the meeting to show it !
+- Manage auth metadata (currentIp, currentUserAgent).
+- eAdmin dashboard.
+
 
 Notes
 
