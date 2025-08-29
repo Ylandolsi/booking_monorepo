@@ -28,6 +28,8 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
         try
         {
+            // TODO : make sure date is on UTC or not 
+            
             var dayOfWeek = query.Date.DayOfWeek;
 
             // Get mentor with buffer time
@@ -83,14 +85,20 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             var timeSlots = new List<TimeSlotResponse>();
             var availableSlots = 0;
             var bookedSlots = 0;
+            
+            var currentTimeAtMentee = TimeConvertion.ConvertInstantToTimeZone(DateTime.UtcNow  , query.TimeZoneId);
 
+            var considerTime = query.Date == DateOnly.FromDateTime(DateTime.UtcNow);
             foreach (var availability in dayAvailabilities)
             {
+                
                 var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) = ConvertAvailability.Convert(
                     availability.TimeRange.StartTime, availability.TimeRange.EndTime,
                     query.Date, availability.TimezoneId, query.TimeZoneId);
-                
+
                 var availabilitySlots = CalculateAvailabilitySlots(
+                    currentTimeAtMentee,
+                    considerTime,
                     TimeOnly.FromDateTime(convertedToMenteeTimeZoneStart),
                     TimeOnly.FromDateTime(convertedToMenteeTimeZoneEnd),
                     bookedSessions,
@@ -141,6 +149,8 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
     }
 
     private List<TimeSlotResponse> CalculateAvailabilitySlots(
+        DateTime currentTimeAtMentee , 
+        bool considerTime,
         TimeOnly startTime,
         TimeOnly endTime,
         List<ScheduledAtWithDuration> bookedSessions,
@@ -150,6 +160,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
         var slots = new List<TimeSlotResponse>();
         var currentTime = startTime;
         var slotDuration = Duration.ThirtyMinutes.Minutes;
+
 
         int pointerSession = 0;
         while (currentTime <= endTime)
@@ -173,6 +184,12 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
 
             var isAvailable = !isBooked;
+            
+            if ( considerTime &&  currentTime < TimeOnly.FromDateTime(currentTimeAtMentee) )
+            {
+                isAvailable = false;
+                // TODO : or maybe dont include it at all ?
+            }
 
             slots.Add(new TimeSlotResponse(
                 currentTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),

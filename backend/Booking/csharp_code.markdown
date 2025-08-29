@@ -1,5 +1,9 @@
 # C# Code Snippets
 
+-         using var scope = _serviceProvider.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
+-         var httpClient = httpClientFactory.CreateClient();
+
 ## Handling UTC DateTime for PostgreSQL
 
 Ensure DateTime values are in UTC for PostgreSQL's `timestamp with time zone`:

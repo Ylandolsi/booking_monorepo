@@ -2,4 +2,4 @@
 
 namespace Booking.Modules.Mentorships.Features.Payment.Create;
 
-public record CreatePaymentCommand(int UsdAmount, int TndAmount, int MentorId , int MenteeId ) : ICommand;*/
+public record CreatePaymentCommand(int UsdAmount, int MentorId , int MenteeId ) : ICommand;*/

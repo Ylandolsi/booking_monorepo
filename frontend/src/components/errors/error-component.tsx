@@ -45,7 +45,7 @@ export const ErrorComponenet = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-200 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="max-w-md w-full text-center space-y-6">
         {/* 404 Icon */}
         <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">

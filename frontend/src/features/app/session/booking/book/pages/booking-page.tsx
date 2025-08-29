@@ -22,10 +22,19 @@ import { formatDate } from '@/utils';
 import { ErrorComponenet } from '@/components';
 import { BookingSummary } from '@/features/app/session/booking/book/components';
 import React from 'react';
+import { useParams } from '@tanstack/react-router';
+import { useAuth } from '@/features/auth';
 
 function BookingContent() {
   const nav = useAppNavigation();
   const isMobile = useIsMobile();
+  const { mentorSlug } = useParams({ strict: false }) as {
+    mentorSlug?: string;
+  };
+
+  const { currentUser } = useAuth();
+
+  const iamTheMentor = currentUser?.slug == mentorSlug;
   const {
     // State
     selectedDate,
@@ -52,7 +61,16 @@ function BookingContent() {
     setNotes,
     resetBooking,
     handleBookSession,
-  } = useBooking();
+  } = useBooking({ mentorSlug, iamTheMentor });
+
+  if (iamTheMentor) {
+    return (
+      <ErrorComponenet
+        title="You can not Book with youself"
+        message="You can not Book with youself"
+      ></ErrorComponenet>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -69,12 +87,6 @@ function BookingContent() {
         title="Mentor not found"
         message="Mentor not found. Please check the link or select another mentor."
       ></ErrorComponenet>
-      // <Alert variant="destructive">
-      //   {React.createElement(alertIconMap['destructive'])}
-      //   <AlertDescription>
-      //     Mentor not found. Please check the link or select another mentor.
-      //   </AlertDescription>
-      // </Alert>
     );
   }
 

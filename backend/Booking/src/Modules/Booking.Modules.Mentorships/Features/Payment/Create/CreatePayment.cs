@@ -10,7 +10,7 @@ namespace Booking.Modules.Mentorships.Features.Payment.Create;
 
 public class CreatePayment : IEndpoint
 {
-    public record Request(int UsdAmount, int TndAmount, int MentorId, int MenteeId);
+    public record Request(int UsdAmount,int MentorId, int MenteeId);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -26,7 +26,6 @@ public class CreatePayment : IEndpoint
 
                     var command = new CreatePaymentCommand(
                         request.UsdAmount,
-                        request.TndAmount,
                         request.MentorId,
                         request.MenteeId);
 

@@ -61,7 +61,16 @@ internal sealed class BookSessionCommandHandler(
             "Booking session for mentor {MentorSlug} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
             command.MentorSlug, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
+        
+        if (command.MentorSlug == command.MenteeSlug)
+        {
+            logger.LogCritical("Mentor cant book a session with himself , MentorSlug {MentorSlug}", command.MentorSlug);
+            return Result.Failure<string>(Error.Problem("Session.InvalidMentee", "Mentor cannot book a session with himself"));
+        }
+        
         await unitOfWork.BeginTransactionAsync(cancellationToken);
+        
+        
 
         var result = ParseTimeInput(command);
         if (result.IsFailure)
@@ -106,6 +115,7 @@ internal sealed class BookSessionCommandHandler(
             logger.LogWarning("Active mentor with SLUG {MentorSlug} not found", command.MentorSlug);
             return Result.Failure<string>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
+
 
 
         var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
@@ -323,10 +333,10 @@ internal sealed class BookSessionCommandHandler(
                 
                 var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
                     resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
-                logger.LogDebug("----- google meet link  mentor and mentee  -----");
+                /*logger.LogDebug("----- google meet link  mentor and mentee  -----");
                 logger.LogDebug(resEventMentee.Value.HangoutLink);
                 logger.LogDebug(resEventMentor.Value.HangoutLink);
-                logger.LogDebug("------------------------------------------------");
+                logger.LogDebug("------------------------------------------------");*/
                 session.Confirm(meetLink);
 
 

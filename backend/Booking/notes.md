@@ -38,27 +38,25 @@ Integrations & tokens
 
 TODO / Roadmap
 
+(done but make sure its okay)
+- for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
+
+
 remove all logDebug ! 
 
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
-- Create wallet for each user by default !
 
   
 - Fix availability / booking flows.
-- ADD Mentor canot book with himself
-- Disable booking from profile if the user is not a mentor.
+- add condition to book only when the google is linked and that s a step for mentor to be a mentor as well 
 - Toggle mentor activity to disable receiving meeting requests.
 - Booking page: improve mobile version.
 - Add fallback objects that contain defaults for missing fields.
 - Configure EF Core domains and connection settings carefully.
 - Ensure correct handling of profile picture URL storage and delivery.
-- for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 - Fix Reselliency
-- change all getting services to this : ( with scope)
--         using var scope = _serviceProvider.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
--         var httpClient = httpClientFactory.CreateClient();
+
 - confirgure life span of koonect
 - test the global exception handler
 - COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
@@ -72,6 +70,7 @@ but any action needs to be logged in ( with google or email )
 - maybe add tag of skills to the meeting to show it !
 - Manage auth metadata (currentIp, currentUserAgent).
 - eAdmin dashboard.
+- add user can have solde 
 
 
 Notes

@@ -35,7 +35,7 @@ const multiSelectVariants = cva(
         default:
           'border-foreground/10 text-foreground bg-card hover:bg-card/80',
         secondary:
-          'border-foreground/10 bg-secondary text-secondary-foreground hover:bg-secondary/80',
+          'border-foreground/10 bg-accent text-accent-foreground hover:bg-accent/80',
         destructive:
           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         inverted: 'inverted',

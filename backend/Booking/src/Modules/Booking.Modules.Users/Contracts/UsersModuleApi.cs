@@ -14,7 +14,9 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
 
     public async Task<GoogleTokensDto?> GetUserTokensAsync(int userId)
     {
-        var googleService = serviceProvider.GetService<GoogleTokenService>();
+        using var scope = ServiceProvider.CreateScope();
+
+        var googleService = scope.ServiceProvider.GetService<GoogleTokenService>();
         var response = await googleService.GetUserTokensAsync(userId);
         if (response is null) return null;
 
@@ -30,7 +32,9 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
 
     public async Task StoreUserTokensAsyncById(int userId, GoogleTokensDto googleTokens)
     {
-        var googleService = serviceProvider.GetService<GoogleTokenService>();
+        using var scope = ServiceProvider.CreateScope();
+
+        var googleService = scope.ServiceProvider.GetService<GoogleTokenService>();
         var googleTokenMapped = new GoogleTokens
         {
             AccessToken = googleTokens.AccessToken,
@@ -44,8 +48,10 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
 
     public async Task<UserDto> GetUserInfo(int userId, CancellationToken ctx = default)
     {
-        var usersDbContext = serviceProvider.GetService<UsersDbContext>();
-        var fusionCache = serviceProvider.GetService<IFusionCache>();
+        using var scope = ServiceProvider.CreateScope();
+
+        var usersDbContext = scope.ServiceProvider.GetService<UsersDbContext>();
+        var fusionCache = scope.ServiceProvider.GetService<IFusionCache>();
         var cacheKey = $"user_{userId}";
 
         var userData = await fusionCache.GetOrSetAsync<User>(

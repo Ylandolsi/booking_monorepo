@@ -13,7 +13,6 @@ import {
   type UseQueryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import { ErrorComponenet, GlobalErrorHandling } from '@/components/errors';
 
 type Wallet = {
   balance: number;
@@ -25,19 +24,20 @@ async function getWallet(): Promise<Wallet> {
 }
 
 function useGetWallet(
+  userSlug: string,
   overrides?: Partial<UseQueryOptions<Wallet, Error>>,
 ): UseQueryResult<Wallet, Error> {
   return useQuery<Wallet, Error>(
     queryOptions({
       queryFn: getWallet,
-      queryKey: ['wallet'], // todo fix this
+      queryKey: ['wallet', userSlug],
       ...overrides,
     }),
   );
 }
 
-function BalanceHeader() {
-  const { data: walletData, isLoading } = useGetWallet();
+function BalanceHeader({ userSlug }: { userSlug: string }) {
+  const { data: walletData, isLoading } = useGetWallet(userSlug);
 
   if (isLoading) {
     return <LoadingState type="dots"></LoadingState>;
@@ -95,7 +95,7 @@ export function Header() {
                 3
               </Badge>
             </Button> */}
-            <BalanceHeader />
+            <BalanceHeader userSlug={currentUser.slug} />
 
             <Button
               variant="ghost"

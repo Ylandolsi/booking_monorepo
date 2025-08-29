@@ -27,9 +27,11 @@ internal sealed class BookSession : IEndpoint
                 CancellationToken cancellationToken) =>
             {
                 int menteeId = userContext.UserId;
+                string menteeSlug = userContext.UserSlug;
 
                 var command = new BookSessionCommand(
                     request.MentorSlug,
+                    menteeSlug,
                     menteeId,
                     request.Date,
                     request.StartTime,

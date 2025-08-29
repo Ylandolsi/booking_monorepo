@@ -15,7 +15,9 @@ public class MentorshipsModuleApi(IServiceProvider serviceProvider) : IMentorshi
 
     public async Task<Result<CalendarDto>> GetUserCalendar(int userId)
     {
-        var calendarService = serviceProvider.GetService<GoogleCalendarService>();
+        using var scope = ServiceProvider.CreateScope();
+
+        var calendarService = scope.ServiceProvider.GetService<GoogleCalendarService>();
         var initResult = await calendarService.InitializeAsync(userId);
 
         var result = await calendarService.GetCalendarAsync();
@@ -34,7 +36,7 @@ public class MentorshipsModuleApi(IServiceProvider serviceProvider) : IMentorshi
 
     public async Task<Result> CreateWalletForUserId(int userId , CancellationToken cancellationToken = default)
     {
-        var scope = ServiceProvider.CreateScope();
+        using var scope = ServiceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
         var existingWallet = await dbContext.Wallets.FirstOrDefaultAsync(e => e.UserId == userId , cancellationToken);
         if (existingWallet == null)

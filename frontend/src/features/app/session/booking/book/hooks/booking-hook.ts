@@ -12,6 +12,7 @@ import {
   useMonthlyAvailability,
 } from '@/features/app/session/booking';
 import { useProfile } from '@/features/app/profile';
+import { useAuth } from '@/features/auth';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
 
@@ -22,11 +23,13 @@ export interface BookingHookState {
   notes: string;
 }
 
-export function useBooking() {
-  const { mentorSlug } = useParams({ strict: false }) as {
-    mentorSlug?: string;
-  };
-
+export function useBooking({
+  mentorSlug,
+  iamTheMentor,
+}: {
+  mentorSlug?: string;
+  iamTheMentor: boolean;
+}) {
   const [state, setState] = useState<BookingHookState>({
     selectedDate: new Date(),
     selectedSlot: null,
@@ -36,14 +39,14 @@ export function useBooking() {
 
   const mentorInfoQuery = useProfile(mentorSlug!);
   const mentorDetailsQuery = useMentorDetails(mentorSlug, {
-    enabled: !!mentorSlug,
+    enabled: !!mentorSlug && !iamTheMentor,
   });
 
   const monthlyAvailabilityQuery = useMonthlyAvailability(
     mentorSlug,
     state.selectedDate?.getFullYear(),
     state.selectedDate ? state.selectedDate.getMonth() + 1 : undefined,
-    { enabled: !!mentorSlug && !!state.selectedDate },
+    { enabled: !!mentorSlug && !!state.selectedDate && !iamTheMentor },
   );
 
   const bookSessionMutation = useBookSession();
