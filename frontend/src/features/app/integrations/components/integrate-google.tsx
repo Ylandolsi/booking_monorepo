@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui';
+import { googleOIDC } from '@/features/auth';
 import type { User } from '@/types/api';
 import { LazyImage } from '@/utils';
 
@@ -28,6 +29,7 @@ export function IntegrateGoogle({ user }: { user?: User }) {
         <Button
           className={`rounded-xl ${googleIntegrated ? 'bg-accent text-foreground disabled hover:cursor-none' : ''}`}
           disabled={!!googleIntegrated}
+          onClick={async () => await googleOIDC()}
         >
           {googleIntegrated ? 'Integrated' : 'Integrate'}
         </Button>

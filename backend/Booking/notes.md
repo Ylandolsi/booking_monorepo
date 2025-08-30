@@ -60,6 +60,7 @@ fix this aand timeout
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 
+-fix return url of google oauth from front : now it always return to home 
 - add method to retieve money : transfer balance to Konnect with fees 15% 
 - Fix availability / booking flows.
 - Booking page: improve mobile version.
