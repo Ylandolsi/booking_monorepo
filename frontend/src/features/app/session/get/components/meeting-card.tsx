@@ -38,17 +38,17 @@ export function MeetingCard({
   };
 
   return (
-    <div className="group relative flex items-center bg-white hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg border border-gray-100 px-6 py-4 space-x-4 transition-all duration-300">
+    <div className="group border border-border relative flex items-center bg-white hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg  px-6 py-4 space-x-4 transition-all duration-300">
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative z-10 flex items-center space-x-4 flex-1">
         {/* Enhanced Avatar */}
-        <div className="relative">
+        <div className="relative ">
           <LazyImage
             src={avatar}
             placeholder={avatar}
             alt={title}
-            className="w-16 h-16 rounded-2xl object-cover ring-2 ring-white shadow-md group-hover:shadow-lg transition-shadow duration-300"
+            className="w-16 h-16 rounded-full object-cover shadow-md group-hover:shadow-lg transition-shadow duration-300"
           />
           {/* Status indicator dot */}
           {/* <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full shadow-sm" /> */}
