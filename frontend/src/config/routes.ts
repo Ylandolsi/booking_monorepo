@@ -46,6 +46,9 @@ export const ROUTE_PATHS = {
     MEETS: {
       INDEX: `/app/meets`,
     },
+    PAYMENT: {
+      PAYOUT: `/app/payouts`,
+    },
   },
 
   // Error/Test routes
@@ -168,6 +171,10 @@ export const routeBuilder = {
   profile: {
     user: (userSlug: string) =>
       ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
+  },
+
+  payment: {
+    payout: () => ROUTE_PATHS.APP.PAYMENT.PAYOUT,
   },
 
   // Error/Test routes

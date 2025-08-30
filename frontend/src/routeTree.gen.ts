@@ -24,7 +24,9 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
+import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
+import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification.verified'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
@@ -107,9 +109,19 @@ const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   path: '/email-verification',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppPayoutsRoute = AppPayoutsRouteImport.update({
+  id: '/payouts',
+  path: '/payouts',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppMeetsRoute = AppMeetsRouteImport.update({
   id: '/meets',
   path: '/meets',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppIntegrationRoute = AppIntegrationRouteImport.update({
+  id: '/integration',
+  path: '/integration',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AuthEmailVerificationVerifiedRoute =
@@ -146,7 +158,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/payouts': typeof AppPayoutsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -168,7 +182,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/payouts': typeof AppPayoutsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -192,7 +208,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/payouts': typeof AppPayoutsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
@@ -217,7 +235,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/integration'
     | '/app/meets'
+    | '/app/payouts'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -239,7 +259,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/integration'
     | '/app/meets'
+    | '/app/payouts'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -262,7 +284,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/integration'
     | '/app/meets'
+    | '/app/payouts'
     | '/auth/email-verification'
     | '/auth/forgot-password'
     | '/auth/login'
@@ -399,11 +423,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/app/payouts': {
+      id: '/app/payouts'
+      path: '/payouts'
+      fullPath: '/app/payouts'
+      preLoaderRoute: typeof AppPayoutsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/meets': {
       id: '/app/meets'
       path: '/meets'
       fullPath: '/app/meets'
       preLoaderRoute: typeof AppMeetsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/integration': {
+      id: '/app/integration'
+      path: '/integration'
+      fullPath: '/app/integration'
+      preLoaderRoute: typeof AppIntegrationRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/auth/email-verification/verified': {
@@ -445,7 +483,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteRouteChildren {
+  AppIntegrationRoute: typeof AppIntegrationRoute
   AppMeetsRoute: typeof AppMeetsRoute
+  AppPayoutsRoute: typeof AppPayoutsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
@@ -454,7 +494,9 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppIntegrationRoute: AppIntegrationRoute,
   AppMeetsRoute: AppMeetsRoute,
+  AppPayoutsRoute: AppPayoutsRoute,
   AppIndexRoute: AppIndexRoute,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,

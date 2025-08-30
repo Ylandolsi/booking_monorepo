@@ -43,6 +43,10 @@ export function useAppNavigation() {
       navigate({ to: routes.to.app.root() });
     },
 
+    goToPayout: () => {
+      navigate({ to: routes.to.payment.payout() });
+    },
+
     goToSchedule: () => {
       navigate({ to: routes.to.mentor.setSchedule() });
     },
