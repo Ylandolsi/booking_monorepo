@@ -13,7 +13,6 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 
 public sealed class BecomeMentorCommandHandler(
     MentorshipsDbContext context,
-    KonnectService konnectService,
     IUsersModuleApi usersModuleApi,
     ILogger<BecomeMentorCommandHandler> logger) : ICommandHandler<BecomeMentorCommand>
 {
@@ -38,21 +37,12 @@ public sealed class BecomeMentorCommandHandler(
 
         try
         {
-            // verify mentor's wallet 
-            var valid = await konnectService.VerifyWalletId(command.KonnectWalletId);
-            if (!valid)
-            {
-                return Result.Failure(Error.Problem("Invalid.KonnectWalletId",
-                    "Your Konnect Wallet Id is invalid , please verify "));
-            }
-
             // Create mentor entity
             // TODO : seed days with better approach 
             var mentor = Domain.Entities.Mentors.Mentor.Create(
                 command.UserId,
                 command.HourlyRate,
                 command.UserSlug,
-                command.KonnectWalletId,
                 command.BufferTimeMinutes);
 
             /*

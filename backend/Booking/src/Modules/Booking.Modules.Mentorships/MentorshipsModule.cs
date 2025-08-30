@@ -41,7 +41,6 @@ public static class MentorshipsModule
         services.AddScoped<GoogleCalendarService>();
 
         services.AddScoped<IMentorshipsModuleApi, MentorshipsModuleApi>();
-        services.AddScoped<KonnectService>();
 
 
         return services;

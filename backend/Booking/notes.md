@@ -44,6 +44,19 @@ TODO / Roadmap
 
 remove all logDebug ! 
 
+fix this aand timeout 
+        services.AddHttpClient("KonnectClient", client =>
+            {
+                // TODO : make this more reselllient 
+                /*
+                client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
+                #1#
+                client.BaseAddress = new Uri("https://api.sandbox.konnect.network/api/v2");
+                client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
+                client.Timeout = TimeSpan.FromSeconds(10);
+            })
+            .AddStandardResilienceHandler();*/
+
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 

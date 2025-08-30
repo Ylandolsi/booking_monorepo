@@ -5,6 +5,7 @@ using Amazon.SimpleEmail;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
 using Booking.Common.Options;
+using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
@@ -38,18 +39,22 @@ public static class Infrastructure
         //services.AddScoped<TokenHelper>();
 
         services.AddHttpClient();
-        // TODO : move clients name to static ! 
+        /*// TODO : move clients name to static ! 
         services.AddHttpClient("KonnectClient", client =>
             {
                 // TODO : make this more reselllient 
                 /*
                 client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
-                */
+                #1#
                 client.BaseAddress = new Uri("https://api.sandbox.konnect.network/api/v2");
                 client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
                 client.Timeout = TimeSpan.FromSeconds(10);
             })
-            .AddStandardResilienceHandler();
+            .AddStandardResilienceHandler();*/
+        
+        
+        services.AddScoped<KonnectService>();
+
 
 
         return services;

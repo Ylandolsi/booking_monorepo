@@ -26,10 +26,13 @@ public sealed class User : IdentityUser<int>, IEntity
     public ProfilePicture ProfilePictureUrl { get; private set; } = null!;
     public string Gender { get; private set; } = "Male";
     public SocialLinks SocialLinks { get; private set; } = null!;
+
     public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
+
     // TODO : add limited lenght to this 
     public string? GoogleEmail { get; private set; } = null;
     public bool IntegratedWithGoogle { get; private set; } = false;
+    public string KonnectWalledId { get; private set; } = "";
     public string TimezoneId { get; private set; } = "Africa/Tunis";
     public string Bio { get; private set; } = string.Empty;
 
@@ -77,9 +80,11 @@ public sealed class User : IdentityUser<int>, IEntity
         {
             return Result.Failure(UserErrors.InvalidTimeZone(timezoneId));
         }
+
         TimezoneId = timezoneId;
         return Result.Success();
     }
+
     public Result UpdateSocialLinks(SocialLinks links)
     {
         if (links == null)
@@ -171,10 +176,15 @@ public sealed class User : IdentityUser<int>, IEntity
         return Status.BecomeMentor();
     }
 
-    public void IntegrateWithGoogle( string googleEmail )
+    public void IntegrateWithGoogle(string googleEmail)
     {
-        GoogleEmail = googleEmail; 
+        GoogleEmail = googleEmail;
         IntegratedWithGoogle = true;
+    }
+
+    public void IntegrateWithKonnect(string konnectWalledId)
+    {
+        KonnectWalledId = konnectWalledId;
     }
 
     // TODO : configure these one to many as readonly 

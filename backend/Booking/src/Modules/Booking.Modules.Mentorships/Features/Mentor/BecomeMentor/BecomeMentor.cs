@@ -11,7 +11,6 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 internal sealed class BecomeMentor : IEndpoint
 {
     public sealed record Request(
-        string KonnectWalletId,
         decimal HourlyRate,
         int BufferTimeMinutes = 15);
 
@@ -29,7 +28,6 @@ internal sealed class BecomeMentor : IEndpoint
                 var command = new BecomeMentorCommand(
                     userId,
                     userSlug,
-                    request.KonnectWalletId,
                     request.HourlyRate,
                     request.BufferTimeMinutes
                 );

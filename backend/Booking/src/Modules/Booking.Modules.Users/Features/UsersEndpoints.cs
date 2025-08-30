@@ -17,6 +17,8 @@ public static class UsersEndpoints
     public const string ForgotPassword = "/users/forgot-password";
     public const string ResetPassword = "/users/reset-password";
 
+    public const string InegrateKonnect = "users/integrate/konnect";
+
     // User Management
     public const string GetUser = "users/{userSlug}"; // TODO : implement this 
     public const string GetCurrentUser = "users/me";
