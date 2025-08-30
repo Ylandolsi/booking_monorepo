@@ -292,16 +292,19 @@ const Sidebar = ({
                     title={collapsed ? item.name : undefined}
                     variant="ghost"
                     className={`
-                 w-full flex items-center rounded-xl text-left transition-all duration-200 relative
-                    ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
+                 w-full flex items-center rounded-xl text-left transition-all duration-200 relative                    ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
-                      googleItem
-                        ? integratedWithGoogle
-                          ? 'bg-green-100 text-foreground  hover:bg-green-200 hover:text-foreground '
-                          : 'bg-destructive/50 text-background hover:bg-destructive/90'
-                        : itemActive === item.name
-                          ? 'bg-primary text-primary-foreground shadow-md'
-                          : 'hover:bg-secondary  text-muted-foreground hover:text-foreground'
+                      // googleItem
+                      //   ? integratedWithGoogle
+                      //     ? 'bg-green-100 text-foreground  hover:bg-green-200 hover:text-foreground '
+                      //     : 'bg-destructive/50 text-background hover:bg-destructive/90'
+                      //   : itemActive === item.name
+                      //     ? 'bg-primary text-primary-foreground shadow-md'
+                      //     : 'hover:bg-secondary  text-muted-foreground hover:text-foreground'
+                      itemActive === item.name
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'hover:bg-accent/20  text-muted-foreground hover:text-foreground'
+                    }
                     }
                   `}
                   >
@@ -309,13 +312,16 @@ const Sidebar = ({
                       className={`
                           text-base flex items-center
                           ${
-                            googleItem
-                              ? integratedWithGoogle
-                                ? 'text-foreground   '
-                                : 'text-background'
-                              : itemActive === item.name
-                                ? 'text-primary-foreground'
-                                : 'text-muted-foreground group-hover:text-foreground'
+                            // googleItem
+                            //   ? integratedWithGoogle
+                            //     ? 'text-foreground   '
+                            //     : 'text-background'
+                            //   : itemActive === item.name
+                            //     ? 'text-primary-foreground'
+                            //     : 'text-muted-foreground group-hover:text-foreground'
+                            itemActive === item.name
+                              ? 'text-primary-foreground'
+                              : 'text-muted-foreground group-hover:text-foreground'
                           }
                         `}
                     >
