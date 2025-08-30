@@ -21,6 +21,7 @@ import { useIsMobile } from '@/hooks';
 import { GiTeacher } from 'react-icons/gi';
 import { FaGoogle } from 'react-icons/fa';
 import { googleOIDC } from '@/features/auth';
+import { MdPayment } from 'react-icons/md';
 
 export type Item = {
   name:
@@ -33,7 +34,8 @@ export type Item = {
     | 'Become Mentor'
     | 'Set Availability'
     | 'Integrate With Google'
-    | 'Already Integrated';
+    | 'Already Integrated'
+    | 'Payout';
   icon: JSX.Element;
   click: () => void;
   badge?: string;
@@ -100,6 +102,13 @@ const Sidebar = ({
       icon: <FaGoogle size={20} />,
       click: async () => await googleOIDC(),
       name: 'Integrate With Google',
+    },
+    {
+      icon: <MdPayment size={20} />,
+      click: () => {
+        nav.goTo('');
+      },
+      name: 'Payout',
     },
     // {
     //   name: 'Notifications',
@@ -223,7 +232,7 @@ const Sidebar = ({
                     ${
                       itemActive == item.name
                         ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'hover:bg-accent/20 text-muted-foreground hover:text-foreground'
+                        : 'hover:bg-accent text-muted-foreground hover:text-foreground'
                     }
                   `}
                   title={collapsed ? item.name : undefined}
@@ -303,7 +312,7 @@ const Sidebar = ({
                       //     : 'hover:bg-secondary  text-muted-foreground hover:text-foreground'
                       itemActive === item.name
                         ? 'bg-primary text-primary-foreground shadow-md'
-                        : 'hover:bg-accent/20  text-muted-foreground hover:text-foreground'
+                        : 'hover:bg-accent  text-muted-foreground hover:text-foreground'
                     }
                     }
                   `}
