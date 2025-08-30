@@ -83,6 +83,7 @@ internal sealed class IntegrateAccountCommandHandler(
             
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
+            user.UpdateProfileCompletion();
             
             await context.SaveChangesAsync(cancellationToken);
 

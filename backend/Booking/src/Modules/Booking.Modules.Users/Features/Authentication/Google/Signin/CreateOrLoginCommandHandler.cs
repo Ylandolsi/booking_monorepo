@@ -101,6 +101,7 @@ internal sealed class CreateOrLoginCommandHandler(
             IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
+            user.UpdateProfileCompletion();
             await context.SaveChangesAsync(cancellationToken);
 
             if (!addLoginResult.Succeeded)

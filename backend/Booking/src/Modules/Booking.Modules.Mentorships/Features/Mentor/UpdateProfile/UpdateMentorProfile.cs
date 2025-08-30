@@ -17,25 +17,25 @@ internal sealed class UpdateMentorProfile : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut(MentorshipEndpoints.Mentors.UpdateProfile, async (
-            Request request,
-            UserContext userContext,
-            ICommandHandler<UpdateMentorProfileCommand> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int mentorId = userContext.UserId; // Assuming mentorId = userId for now
+                Request request,
+                UserContext userContext,
+                ICommandHandler<UpdateMentorProfileCommand> handler,
+                CancellationToken cancellationToken) =>
+            {
+                int mentorId = userContext.UserId; // Assuming mentorId = userId for now
 
-            var command = new UpdateMentorProfileCommand(
-                mentorId,
-                request.HourlyRate,
-                request.BufferTimeMinutes);
+                var command = new UpdateMentorProfileCommand(
+                    mentorId,
+                    request.HourlyRate,
+                    request.BufferTimeMinutes);
 
-            Result result = await handler.Handle(command, cancellationToken);
+                Result result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(
-                () => Results.NoContent(),
-                CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Mentor);
+                return result.Match(
+                    () => Results.NoContent(),
+                    CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Mentor);
     }
 }

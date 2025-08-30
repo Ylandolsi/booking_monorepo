@@ -6,6 +6,12 @@ internal sealed class BecomeMentorCommandValidator : AbstractValidator<BecomeMen
 {
     public BecomeMentorCommandValidator()
     {
+        RuleFor(c => c.KonnectWalletId)
+            .NotEmpty()
+            .WithMessage("Konnect wallet id cannot be empty")
+            .MaximumLength(200)
+            .WithMessage("Konnect wallet id cannot exceed 200 characters");
+        
         RuleFor(c => c.UserId)
             .GreaterThan(0)
             .WithMessage("User ID must be a positive integer.");

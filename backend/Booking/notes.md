@@ -47,14 +47,12 @@ remove all logDebug !
 - add fallback for profile picture when showing session  , front and back 
 - add timezone in the frontend for each request 
 
-  
+- add method to retieve money : transfer balance to Konnect with fees 15% 
 - Fix availability / booking flows.
-- add condition to book only when the google is linked and that s a step for mentor to be a mentor as well 
-- Toggle mentor activity to disable receiving meeting requests.
 - Booking page: improve mobile version.
 - Add fallback objects that contain defaults for missing fields.
-- Configure EF Core domains and connection settings carefully.
-- Ensure correct handling of profile picture URL storage and delivery.
+- Configure EF Core domains and connection settings carefully and validators for endpoints  
+- Ensure correct handling of profile picture URL storage and delivery. watch  milan video and cdn
 - Fix Reselliency
 
 - confirgure life span of koonect
@@ -65,6 +63,7 @@ remove all logDebug !
 - remove private route from mentor/calendar or profile
 but any action needs to be logged in ( with google or email )
 ------ LATER 
+- Toggle mentor activity to disable receiving meeting requests. for now its working by togglign days , so for future toggle it all
 - add : naviagte to mentor or mentee when showing the meets
 - previous meetings/mentors.
 - maybe add tag of skills to the meeting to show it !

@@ -11,8 +11,9 @@ namespace Booking.Modules.Mentorships.Features.Mentor.BecomeMentor;
 internal sealed class BecomeMentor : IEndpoint
 {
     public sealed record Request(
+        string KonnectWalletId,
         decimal HourlyRate,
-        int BufferTimeMinutes = 15 );
+        int BufferTimeMinutes = 15);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -28,6 +29,7 @@ internal sealed class BecomeMentor : IEndpoint
                 var command = new BecomeMentorCommand(
                     userId,
                     userSlug,
+                    request.KonnectWalletId,
                     request.HourlyRate,
                     request.BufferTimeMinutes
                 );
@@ -35,7 +37,7 @@ internal sealed class BecomeMentor : IEndpoint
                 Result result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
-                    () => Results.Ok() ,
+                    () => Results.Ok(),
                     CustomResults.Problem);
             })
             .RequireAuthorization()

@@ -65,22 +65,24 @@ public class KonnectService(
         string firstName,
         string lastName,
         string email,
-        string phone
-        )
+        string phone,
+        string? receiverWallet = null
+    )
     {
         /*
-         TODO : fix it , it always to refer to the old url 
+         TODO : fix it , it always to refer to the old url
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
         */
         var httpClient = httpClientFactory.CreateClient();
+        receiverWallet ??= KonnectOptions.WalletKey;
         var paymentInfo = new
         {
-            receiverWalletId = KonnectOptions.WalletKey,
+            receiverWalletId = receiverWallet,
             token = "USD",
-            amount = amount,
+            amount = amount, // 100 amount = 1$ 
             type = "immediate",
             description = "Pay for session ",
-            acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR" },
+            // acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR"  },
             lifespan = KonnectOptions.PaymentLifespan,
             checkoutForm = false,
             addPaymentFeesToAmount = true,
@@ -111,8 +113,22 @@ public class KonnectService(
             return Result.Success(responseDate!);
         }
 
+        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
+    }
+
+    public async Task<bool> VerifyWalletId(string walletId)
+    {
+        var res = await CreatePayment(100,
+            9399394,
+            "test",
+            "test",
+            "test@gmail.com",
+            "25202909",
+            walletId);
         
+        return res.IsSuccess;
     }
 
     public async Task<Result<PaymentInfo>> GetPaymentDetails(string paymentRef)

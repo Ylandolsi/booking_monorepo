@@ -22,6 +22,7 @@ public class Mentor : Entity
     public DateTime? LastActiveAt { get; private set; }
 
     public string TimezoneId { get; private set; }
+    public string KonnectWalletId { get; private set; }
 
 
     // Navigation properties
@@ -43,6 +44,7 @@ public class Mentor : Entity
         int userId,
         decimal hourlyRateAmount,
         string userSlug,
+        string konnectWalletId,
         int bufferTimeMinutes = 15,
         string currency = "USD",
         string timezoneId = "Africa/Tunis")
@@ -59,6 +61,7 @@ public class Mentor : Entity
             HourlyRate = new HourlyRate(hourlyRateAmount, currency),
             BufferTime = bufferTimeResult.Value,
             UserSlug = userSlug,
+            KonnectWalletId = konnectWalletId,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             LastActiveAt = DateTime.UtcNow,

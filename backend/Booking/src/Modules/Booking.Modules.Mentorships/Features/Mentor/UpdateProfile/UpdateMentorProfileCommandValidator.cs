@@ -6,6 +6,8 @@ internal sealed class UpdateMentorProfileCommandValidator : AbstractValidator<Up
 {
     public UpdateMentorProfileCommandValidator()
     {
+
+
         RuleFor(c => c.MentorId)
             .GreaterThan(0)
             .WithMessage("Mentor ID must be a positive integer.");

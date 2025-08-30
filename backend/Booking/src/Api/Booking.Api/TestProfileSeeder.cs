@@ -137,7 +137,7 @@ public class TestProfileSeeder
         var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         // set mentor and availability 
 
-        var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
+        /*var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
         await mentorShipContext.Mentors.AddAsync(mentor);
         await mentorShipContext.SaveChangesAsync();
 
@@ -148,7 +148,7 @@ public class TestProfileSeeder
             .Where(d => d.MentorId == mentor.Id)
             .ToListAsync();
 
-// activate all days 
+// activate all days
         foreach (var dday in days)
         {
             dday.ToggleDay();
@@ -168,6 +168,7 @@ public class TestProfileSeeder
             await mentorShipContext.Availabilities.AddAsync(availability);
             await mentorShipContext.SaveChangesAsync();
         }
+        */
 
 
         return user;

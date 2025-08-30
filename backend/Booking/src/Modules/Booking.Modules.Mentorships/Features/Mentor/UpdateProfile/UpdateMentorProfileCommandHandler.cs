@@ -2,6 +2,7 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.ValueObjects;
+using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ internal sealed class UpdateMentorProfileCommandHandler(
             return Result.Failure(Error.NotFound("Mentor.NotFound", "Mentor not found"));
         }
 
+
         var hourlyRate = HourlyRate.Create(command.HourlyRate);
         if (hourlyRate.IsFailure)
         {
@@ -33,8 +35,10 @@ internal sealed class UpdateMentorProfileCommandHandler(
 
         try
         {
+            // verify mentor's wallet 
+
             mentor.UpdateHourlyRate(hourlyRate.Value.Amount);
-            
+
             // Update buffer time if provided
             if (command.BufferTimeMinutes.HasValue)
             {
@@ -47,7 +51,8 @@ internal sealed class UpdateMentorProfileCommandHandler(
 
             await context.SaveChangesAsync(cancellationToken);
 
-            logger.LogInformation("Successfully updated mentor profile for mentor {MentorId} with hourly rate {HourlyRate} and buffer time {BufferTime}", 
+            logger.LogInformation(
+                "Successfully updated mentor profile for mentor {MentorId} with hourly rate {HourlyRate} and buffer time {BufferTime}",
                 command.MentorId, command.HourlyRate, command.BufferTimeMinutes ?? mentor.BufferTime.Minutes);
             return Result.Success();
         }
