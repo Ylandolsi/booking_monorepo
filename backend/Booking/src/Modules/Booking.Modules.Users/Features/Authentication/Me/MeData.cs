@@ -6,6 +6,7 @@ public record MeData(
     string Slug,
     string? FirstName,
     string? LastName,
+    string? Email,
     Status Status,
     ProfilePicture ProfilePicture,
     string Gender,
@@ -15,6 +16,8 @@ public record MeData(
     List<Domain.Entities.Education> Educations,
     List<Domain.Entities.Expertise> Expertises,
     List<Domain.Entities.Language> Languages,
-    ProfileCompletionStatus ProfileCompletionStatus ,
-    bool IntegratedWithGoogle);
-    
+    ProfileCompletionStatus ProfileCompletionStatus,
+    bool IntegratedWithGoogle,
+    string? GoogleEmail,
+    string KonnectWalletId
+);

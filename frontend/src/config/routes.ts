@@ -40,6 +40,7 @@ export const ROUTE_PATHS = {
     // Profile routes
     PROFILE: {
       USER: `/app/profile/${ROUTE_PARAMS.USER_SLUG}`,
+      INTEGRATIONS: `/app/integration`,
     },
 
     // meets
@@ -171,6 +172,8 @@ export const routeBuilder = {
   profile: {
     user: (userSlug: string) =>
       ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
+
+    integrations: () => ROUTE_PATHS.APP.PROFILE.INTEGRATIONS,
   },
 
   payment: {

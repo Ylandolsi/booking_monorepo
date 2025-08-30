@@ -1,9 +1,7 @@
 import { useAppNavigation } from '@/hooks/use-navigation';
 import {
   X,
-  Settings,
   LogOut,
-  Bell,
   Home,
   User as UserIcon,
   Calendar,
@@ -11,6 +9,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Timer,
+  Unplug,
 } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 import { Button, Badge, Separator, PageLoading } from '@/components/ui';
@@ -19,8 +18,6 @@ import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
 import { GiTeacher } from 'react-icons/gi';
-import { FaGoogle } from 'react-icons/fa';
-import { googleOIDC } from '@/features/auth';
 import { MdPayment } from 'react-icons/md';
 
 export type Item = {
@@ -33,8 +30,7 @@ export type Item = {
     | 'Settings'
     | 'Become Mentor'
     | 'Set Availability'
-    | 'Integrate With Google'
-    | 'Already Integrated'
+    | 'Integrations'
     | 'Payout';
   icon: JSX.Element;
   click: () => void;
@@ -99,9 +95,9 @@ const Sidebar = ({
 
   const accountItems: Item[] = [
     {
-      icon: <FaGoogle size={20} />,
-      click: async () => await googleOIDC(),
-      name: 'Integrate With Google',
+      icon: <Unplug size={20} />,
+      click: () => nav.goToIntegrations(),
+      name: 'Integrations',
     },
     {
       icon: <MdPayment size={20} />,
@@ -282,18 +278,6 @@ const Sidebar = ({
             )}
             <nav className="space-y-1">
               {accountItems.map(function (item) {
-                const googleItem = item.name.startsWith('Integrate');
-                const integratedWithGoogle =
-                  googleItem && currentUser?.integratedWithGoogle;
-                if (integratedWithGoogle) {
-                  item.name = 'Already Integrated';
-                  item.click = () => {};
-                }
-                // item.name.startsWith("Integrate") ?
-                // (
-                //   {currentUser.inte}
-                // )
-                // :
                 return (
                   <Button
                     key={item.name}
@@ -303,13 +287,6 @@ const Sidebar = ({
                     className={`
                  w-full flex items-center rounded-xl text-left transition-all duration-200 relative                    ${collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'}
                     ${
-                      // googleItem
-                      //   ? integratedWithGoogle
-                      //     ? 'bg-green-100 text-foreground  hover:bg-green-200 hover:text-foreground '
-                      //     : 'bg-destructive/50 text-background hover:bg-destructive/90'
-                      //   : itemActive === item.name
-                      //     ? 'bg-primary text-primary-foreground shadow-md'
-                      //     : 'hover:bg-secondary  text-muted-foreground hover:text-foreground'
                       itemActive === item.name
                         ? 'bg-primary text-primary-foreground shadow-md'
                         : 'hover:bg-accent  text-muted-foreground hover:text-foreground'
@@ -321,13 +298,6 @@ const Sidebar = ({
                       className={`
                           text-base flex items-center
                           ${
-                            // googleItem
-                            //   ? integratedWithGoogle
-                            //     ? 'text-foreground   '
-                            //     : 'text-background'
-                            //   : itemActive === item.name
-                            //     ? 'text-primary-foreground'
-                            //     : 'text-muted-foreground group-hover:text-foreground'
                             itemActive === item.name
                               ? 'text-primary-foreground'
                               : 'text-muted-foreground group-hover:text-foreground'

@@ -139,7 +139,7 @@ export const MultiSelect = React.forwardRef<
     const [isAnimating, setIsAnimating] = React.useState(false);
 
     const popoverContext = usePopoverContext?.();
-
+    // TODO : back to this
     React.useEffect(() => {
       if (popoverContext?.registerPopover) {
         popoverContext.registerPopover(isPopoverOpen);

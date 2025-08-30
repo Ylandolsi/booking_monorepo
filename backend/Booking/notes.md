@@ -1,7 +1,7 @@
 2025-08-30T10:45:00
 is an ISO 8601 date-time format,
 
-
+back to useContext  and go in depth in that multiselect dialog 
 
 update PaidValue object in session
 
@@ -208,3 +208,37 @@ DONE :
 ## Future Enhancements
 
 - [ ] Multiple session duration options
+
+
+```
+ts
+
+  useEffect(() => {
+    // Create a function to handle wheel events on the dialog/drawer content
+    const handleWheel = (e: WheelEvent) => {
+      if (hasOpenPopover) {
+        // If a popover is open inside the dialog, check if it's part of a command list
+        const target = e.target as HTMLElement;
+        const popoverElement = target.closest('[data-state="open"]'); // Find the open popover
+        const isCommandContent =
+          popoverElement &&
+          popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target); // Escape the class name
+
+        if (isCommandContent) {
+          // Let the command list handle its own scrolling
+          // stop the scroll of the dialog and let the select handle its scroll !
+          e.stopPropagation();
+        }
+      }
+    };
+
+    // Add the event listener when the dialog is open
+    if (open) {
+      document.addEventListener('wheel', handleWheel, { capture: true });
+    }
+
+    return () => {
+      document.removeEventListener('wheel', handleWheel, { capture: true });
+    };
+  }, [open, hasOpenPopover]);
+```

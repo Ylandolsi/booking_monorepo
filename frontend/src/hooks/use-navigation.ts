@@ -47,6 +47,10 @@ export function useAppNavigation() {
       navigate({ to: routes.to.payment.payout() });
     },
 
+    goToIntegrations: () => {
+      navigate({ to: routes.to.profile.integrations() });
+    },
+
     goToSchedule: () => {
       navigate({ to: routes.to.mentor.setSchedule() });
     },

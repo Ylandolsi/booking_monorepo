@@ -19,19 +19,17 @@ public class IntegrateKonnectCommandHandler(
         var valid = await konnectService.VerifyWalletId(command.KonnectWalletId);
         if (!valid)
         {
-            string log =
-                $"User with id {command.UserId} trying to integrated an invalid Konnect wallet id : {command.KonnectWalletId} ";
-            logger.LogError(log);
-            return Result.Failure<bool>(Error.Problem("Invalid.Konnect.Wallet.Id", log));
+            logger.LogError(
+                $"User with id {command.UserId} trying to integrated an invalid Konnect wallet id : {command.KonnectWalletId} ");
+            return Result.Failure<bool>(Error.Problem("Invalid.Konnect.Wallet.Id",
+                "Failed to integrate with konnect , please verify your walletId"));
         }
 
         var user = await context.Users.FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
         if (user is null)
         {
-            string log =
-                $"User with id {command.UserId} dosent exists ";
-            logger.LogError(log);
-            return Result.Failure<bool>(Error.Problem("User.Dosent.Exists", log));
+            logger.LogError($"User with id {command.UserId} dosent exists ");
+            return Result.Failure<bool>(Error.Problem("User.Dosent.Exists", "User dosent exists"));
         }
 
         user.IntegrateWithKonnect(command.KonnectWalletId);

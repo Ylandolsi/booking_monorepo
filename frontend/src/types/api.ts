@@ -43,6 +43,8 @@ export type User = {
   languages: LanguageType[];
   profileCompletionStatus: ProfileCompletionStatusType;
   integratedWithGoogle: boolean;
+  googleEmail?: string | null;
+  konnectWalletId?: string | null;
   // TODO  : add country !! country: string;
 };
 

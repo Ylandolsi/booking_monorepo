@@ -12,6 +12,8 @@ const ChangePassword = 'users/change-password';
 const ForgotPassword = 'users/forgot-password';
 const ResetPasword = 'users/reset-password';
 
+const IntegrateKonnectWallet = 'users/integrate/konnect';
+
 const GetUser = 'users/{userSlug}';
 const GetCurrentUser = 'users/me';
 
@@ -57,6 +59,7 @@ export {
   GetCurrentUser,
   GetUser,
   GetUserExperiences,
+  IntegrateKonnectWallet,
   AddExperience,
   UpdateExperience,
   DeleteExperience,

@@ -36,6 +36,7 @@ public sealed class MeQueryHandler(
             user.Slug,
             user.Name.FirstName,
             user.Name.LastName,
+            user.Email,
             user.Status,
             user.ProfilePictureUrl,
             user.Gender,
@@ -45,7 +46,9 @@ public sealed class MeQueryHandler(
             user.UserExpertises.Select(ue => ue.Expertise).ToList(),
             user.UserLanguages.Select(ul => ul.Language).ToList(),
             user.ProfileCompletionStatus,
-            user.IntegratedWithGoogle
+            user.IntegratedWithGoogle,
+            user.GoogleEmail,
+            user.KonnectWalledId
         ));
     }
 }
