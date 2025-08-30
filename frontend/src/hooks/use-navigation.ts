@@ -43,6 +43,10 @@ export function useAppNavigation() {
       navigate({ to: routes.to.app.root() });
     },
 
+    goToSchedule: () => {
+      navigate({ to: routes.to.mentor.setSchedule() });
+    },
+
     // Booking navigation
     goToBookingSession: (mentorSlug: string) => {
       navigate({ to: routes.to.booking.session(mentorSlug) });

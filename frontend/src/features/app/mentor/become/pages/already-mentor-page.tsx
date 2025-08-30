@@ -35,7 +35,7 @@ import {
   Save,
 } from 'lucide-react';
 import { type MentorUpdateFormData } from '@/features/app/mentor/become/schemas';
-import { useQueryState } from '@/hooks';
+import { useAppNavigation, useQueryState } from '@/hooks';
 import { mentorUpdateFormSchema } from '@/features/app/mentor/become/schemas/mentor-update-schema';
 
 type CombinedData = {
@@ -44,6 +44,7 @@ type CombinedData = {
 };
 
 function AlreadyMentorContent({ user, mentor }: CombinedData) {
+  const navigate = useAppNavigation();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const updateMentorMutation = useUpdateMentor();
 
@@ -88,35 +89,35 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
 
   const quickActions = [
     {
-      to: '/app' as const,
+      onClick: navigate.goToTestDashboard,
       icon: <BarChart3 className="w-5 h-5 mr-2" />,
       title: 'Go to Dashboard',
       description: 'Manage your sessions and students',
     },
+    // {
+    //   onClick:
+    //   icon: <Settings className="w-5 h-5 mr-2" />,
+    //   title: 'Mentor Settings',
+    //   description: 'Advanced preferences and settings',
+    // },
     {
-      to: '/app' as const,
-      icon: <Settings className="w-5 h-5 mr-2" />,
-      title: 'Mentor Settings',
-      description: 'Advanced preferences and settings',
-    },
-    {
-      to: '/app' as const,
+      onClick: navigate.goToSchedule,
       icon: <Calendar className="w-5 h-5 mr-3 text-blue-600" />,
       title: 'Schedule Session',
       description: 'Add new available time slots',
     },
-    {
-      to: '/app' as const,
-      icon: <MessageCircle className="w-5 h-5 mr-3 text-green-600" />,
-      title: 'Message Students',
-      description: 'Connect with your mentees',
-    },
-    {
-      to: '/app' as const,
-      icon: <DollarSign className="w-5 h-5 mr-3 text-purple-600" />,
-      title: 'View Earnings',
-      description: 'Track your income and payouts',
-    },
+    // {
+    //   to: '/app' as const,
+    //   icon: <MessageCircle className="w-5 h-5 mr-3 text-green-600" />,
+    //   title: 'Message Students',
+    //   description: 'Connect with your mentees',
+    // },
+    // {
+    //   to: '/app' as const,
+    //   icon: <DollarSign className="w-5 h-5 mr-3 text-purple-600" />,
+    //   title: 'View Earnings',
+    //   description: 'Track your income and payouts',
+    // },
   ];
 
   return (
@@ -298,7 +299,10 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
                 size="lg"
                 className="flex h-auto p-4 text-left justify-start"
               >
-                <Link to={action.to} className="w-full flex items-center">
+                <div
+                  className="w-full flex items-center"
+                  onClick={action.onClick}
+                >
                   {action.icon}
                   <div className="text-left">
                     <div className="font-medium">{action.title}</div>
@@ -307,7 +311,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
                     </div>
                   </div>
                   <ArrowRight className="w-4 h-4 ml-auto" />
-                </Link>
+                </div>
               </Button>
             ))}
           </div>
