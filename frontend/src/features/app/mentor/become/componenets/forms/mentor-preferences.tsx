@@ -9,8 +9,8 @@ import {
 } from '@/components';
 import { useBecomeMentor } from '@/features/app/mentor/become/api';
 import {
-  mentorFormSchema,
-  type MentorFormData,
+  mentorCreateFormSchema,
+  type MentorCreateFormData,
 } from '@/features/app/mentor/become/schemas';
 import type { Mentor } from '@/features/app/mentor/become/types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,18 +25,19 @@ export function MentorPreferences() {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<MentorFormData>({
-    resolver: zodResolver(mentorFormSchema),
+  } = useForm<MentorCreateFormData>({
+    resolver: zodResolver(mentorCreateFormSchema),
     defaultValues: {},
   });
 
-  const onSubmit = async (data: MentorFormData) => {
+  const onSubmit = async (data: MentorCreateFormData) => {
     try {
       console.log('mentor');
       await becomeMentorMutation.mutateAsync({
         mentor: {
           hourlyRate: data.hourlyRate,
           bufferTimeMinutes: data.bufferTimeMinutes,
+          konnectWalletId: data.konnectWalletId,
         } as Mentor,
       });
       reset();
@@ -56,50 +57,66 @@ export function MentorPreferences() {
         </Alert>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-4 max-w-120  ">
             <div className="space-y-2">
-              <Label htmlFor="hourlyRate" className="text-sm font-medium">
-                Hourly Rate (USD) *
-              </Label>
+              <Label htmlFor="konnectWalletId">Konnect Wallet Id</Label>
               <Input
-                id="hourlyRate"
-                step="0.01"
-                min="0"
-                type="number"
-                placeholder="20.00"
-                {...register('hourlyRate')}
+                id="konnectWalletId w-fit"
+                placeholder="68a88y5f30c78ae00bbadd2b"
+                {...register('konnectWalletId')}
                 className={errors.hourlyRate ? 'border-red-500' : ''}
-              />
+              ></Input>
               {errors.hourlyRate && (
                 <p className="text-sm text-red-600">
                   {errors.hourlyRate.message}
                 </p>
               )}
             </div>
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="space-y-2">
+                <Label htmlFor="hourlyRate" className="text-sm font-medium">
+                  Hourly Rate (USD) *
+                </Label>
+                <Input
+                  id="hourlyRate"
+                  step="1"
+                  min="1"
+                  type="number"
+                  placeholder="20.00"
+                  {...register('hourlyRate')}
+                  className={errors.hourlyRate ? 'border-red-500' : ''}
+                />
+                {errors.hourlyRate && (
+                  <p className="text-sm text-red-600">
+                    {errors.hourlyRate.message}
+                  </p>
+                )}
+              </div>
 
-            <div className="space-y-2">
-              <Label
-                htmlFor="bufferTimeMinutes"
-                className="text-sm font-medium"
-              >
-                Buffer Time (minutes) *
-              </Label>
-              <Input
-                id="bufferTimeMinutes"
-                min="0"
-                type="number"
-                placeholder="15"
-                {...register('bufferTimeMinutes')}
-                className={errors.bufferTimeMinutes ? 'border-red-500' : ''}
-              />
-              {errors.bufferTimeMinutes && (
-                <p className="text-sm text-red-600">
-                  {errors.bufferTimeMinutes.message}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="bufferTimeMinutes"
+                  className="text-sm font-medium"
+                >
+                  Buffer Time (minutes) *
+                </Label>
+                <Input
+                  id="bufferTimeMinutes"
+                  min="0"
+                  type="number"
+                  placeholder="15"
+                  {...register('bufferTimeMinutes')}
+                  className={errors.bufferTimeMinutes ? 'border-red-500' : ''}
+                />
+                {errors.bufferTimeMinutes && (
+                  <p className="text-sm text-red-600">
+                    {errors.bufferTimeMinutes.message}
+                  </p>
+                )}
+                <p className="text-xs text-gray-500">
+                  Time between sessions for preparation
                 </p>
-              )}
-              <p className="text-xs text-gray-500">
-                Time between sessions for preparation
-              </p>
+              </div>
             </div>
           </div>
 
@@ -119,7 +136,7 @@ export function MentorPreferences() {
           {React.createElement(alertIconMap['destructive'])}
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            Failed to register as a mentor. Please try again.
+            {becomeMentorMutation.error.message}
           </AlertDescription>
         </Alert>
       )}
@@ -128,9 +145,7 @@ export function MentorPreferences() {
         <Alert variant={'success'}>
           {React.createElement(alertIconMap['success'])}
           <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            Failed to register as a mentor. Please try again.
-          </AlertDescription>
+          <AlertDescription>Registed successfully</AlertDescription>
         </Alert>
       )}
     </>

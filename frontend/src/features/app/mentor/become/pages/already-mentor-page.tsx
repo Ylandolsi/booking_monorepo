@@ -34,11 +34,9 @@ import {
   AlertCircle,
   Save,
 } from 'lucide-react';
-import {
-  mentorFormSchema,
-  type MentorFormData,
-} from '@/features/app/mentor/become/schemas';
+import { type MentorUpdateFormData } from '@/features/app/mentor/become/schemas';
 import { useQueryState } from '@/hooks';
+import { mentorUpdateFormSchema } from '@/features/app/mentor/become/schemas/mentor-update-schema';
 
 type CombinedData = {
   user: any;
@@ -56,8 +54,8 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
     formState: { errors, isSubmitting },
     reset,
     setValue,
-  } = useForm<MentorFormData>({
-    resolver: zodResolver(mentorFormSchema),
+  } = useForm<MentorUpdateFormData>({
+    resolver: zodResolver(mentorUpdateFormSchema),
   });
 
   // Populate form when mentor data loads or dialog opens
@@ -68,7 +66,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
     }
   }, [mentor, isEditDialogOpen, setValue]);
 
-  const onSubmit = async (data: MentorFormData) => {
+  const onSubmit = async (data: MentorUpdateFormData) => {
     try {
       console.log(data);
       await updateMentorMutation.mutateAsync({

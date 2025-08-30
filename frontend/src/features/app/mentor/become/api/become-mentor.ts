@@ -17,7 +17,7 @@ export function useBecomeMentor() {
     meta: {
       invalidatesQuery: [mentorQueryKeys.mentorProfile(user?.slug)],
       successMessage: 'Successfully become mentor',
-      errorMessage: 'Failed to become mentor',
+      // errorMessage: 'Failed to become mentor',
     },
   });
 }

@@ -5,14 +5,17 @@ import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
 import { mentorQueryKeys } from '@/features/app/mentor/become/api';
 import { useUser } from '@/features/auth';
 
-export const updateMentor = async (mentor: Omit<Mentor, 'createdAt'>) => {
+export const updateMentor = async (
+  mentor: Omit<Mentor, 'createdAt' | 'konnectWalletId'>,
+) => {
   return await api.put<void>(MentorshipEndpoints.Mentors.UpdateProfile, mentor);
 };
 
 export function useUpdateMentor() {
   const { data: user } = useUser();
   return useMutation({
-    mutationFn: (mentor: Omit<Mentor, 'createdAt'>) => updateMentor(mentor),
+    mutationFn: (mentor: Omit<Mentor, 'createdAt' | 'konnectWalletId'>) =>
+      updateMentor(mentor),
     meta: {
       // TODO : invalidate mentor-data-slug key
 

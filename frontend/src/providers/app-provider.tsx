@@ -52,16 +52,7 @@ const queryClient = new QueryClient({
       if (mutation.meta?.successAction) {
         mutation.meta.successAction(data);
       }
-    },
-    onError: (error, _variables, _context, mutation) => {
-      if (mutation.meta?.errorMessage) {
-        toast.error(mutation.meta.errorMessage);
-      }
-      if (mutation.meta?.errorAction) {
-        mutation.meta.errorAction(error);
-      }
-    },
-    onSettled: (_data, _error, _variables, _context, mutation) => {
+
       if (mutation.meta?.invalidatesQuery) {
         const keys = Array.isArray(mutation.meta.invalidatesQuery)
           ? mutation.meta.invalidatesQuery
@@ -72,6 +63,24 @@ const queryClient = new QueryClient({
         });
       }
     },
+    onError: (error, _variables, _context, mutation) => {
+      if (mutation.meta?.errorMessage) {
+        toast.error(mutation.meta.errorMessage);
+      }
+      if (mutation.meta?.errorAction) {
+        mutation.meta.errorAction(error);
+      }
+    },
+    // onSettled: (_data, _error, _variables, _context, mutation) => {
+    // if (mutation.meta?.invalidatesQuery) {
+    //   const keys = Array.isArray(mutation.meta.invalidatesQuery)
+    //     ? mutation.meta.invalidatesQuery
+    //     : [mutation.meta.invalidatesQuery];
+    //   keys.forEach((key) => {
+    //     queryClient.invalidateQueries({ queryKey: key });
+    //   });
+    // }
+    // },
   }),
 });
 

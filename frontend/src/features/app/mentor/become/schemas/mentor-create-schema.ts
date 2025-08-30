@@ -1,6 +1,7 @@
 import z from 'zod';
 
-export const mentorFormSchema = z.object({
+export const mentorCreateFormSchema = z.object({
+  konnectWalletId: z.string().min(2, 'Konnect Wallet Id is required'),
   hourlyRate: z
     .string()
     .min(1, 'Hourly rate is required')
@@ -17,4 +18,4 @@ export const mentorFormSchema = z.object({
     .transform((val) => Number(val)),
 });
 
-export type MentorFormData = z.infer<typeof mentorFormSchema>;
+export type MentorCreateFormData = z.infer<typeof mentorCreateFormSchema>;
