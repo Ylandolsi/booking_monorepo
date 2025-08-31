@@ -5,6 +5,7 @@ using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
+using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -179,6 +180,7 @@ public class TestProfileSeeder
         using var scope = _serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
         var mentorShipContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
 
         // Create base user
@@ -269,9 +271,10 @@ public class TestProfileSeeder
             )
         });
 
-
+    
         await context.SaveChangesAsync();
-
+        await roleService.AssignRoleToUserAsync("Admin", user.Id.ToString());
+        
         //var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         // set mentor and availability 
 

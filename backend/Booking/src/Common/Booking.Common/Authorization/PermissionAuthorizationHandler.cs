@@ -11,12 +11,9 @@ public sealed class PermissionAuthorizationHandler(IServiceScopeFactory serviceS
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        // TODO: You definitely want to reject unauthenticated users here.
-        if (context.User is { Identity.IsAuthenticated: true })
+        if (context.User is { Identity.IsAuthenticated: false })
         {
-            // TODO: Remove this call when you implement the PermissionProvider.GetForUserIdAsync
-            context.Succeed(requirement);
-
+            context.Fail();
             return;
         }
 

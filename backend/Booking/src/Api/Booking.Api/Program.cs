@@ -8,6 +8,7 @@ using Booking.Modules.Mentorships;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
+using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Presistence;
 using Booking.Modules.Users.Presistence.Seed.Users;
 using Booking.Modules.Users.RecurringJobs;
@@ -34,14 +35,13 @@ builder.Services.AddProblemDetails();
 
 Assembly[] moduleApplicationAssemblies =
 [
-    Booking.Modules.Mentorships.AssemblyReference.Assembly ,
-    Booking.Modules.Users.AssemblyReference.Assembly 
+    Booking.Modules.Mentorships.AssemblyReference.Assembly,
+    Booking.Modules.Users.AssemblyReference.Assembly
 ];
 
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication(moduleApplicationAssemblies);
-
 
 
 builder.Services.AddEmailSender(builder.Configuration);
@@ -64,7 +64,6 @@ builder.Services.AddHostedService<SeedHostedService>();
 */
 
 
-
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
@@ -79,11 +78,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
     var mentorshipsDb = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+    var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
+
+
 
     // Drop databases
     await usersDb.Database.EnsureDeletedAsync();
     await mentorshipsDb.Database.EnsureDeletedAsync();
-
     app.ApplyMigrations();
 
 
@@ -92,24 +93,24 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         .ToListAsync();
 
 
-
     foreach (var user in testUsers)
     {
         await userManager.DeleteAsync(user);
-        
     }
-    
+
+    await roleService.CreateRoleAsync("Admin");
+    await roleService.CreateRoleAsync("User");
+
 
     var testUser = User.Create("test-user-slg",
         "Test",
         "User",
         "yesslandolsi@gmail.com",
         "");
-    
-    
+
+
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
     await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
-
 
 
     var result = await userManager.CreateAsync(testUser, "Password123!");
@@ -145,7 +146,6 @@ app.UseExceptionHandler();
 app.UseCancellationMiddleware();
 
 RecurringJobs.AddRecurringJobs();
-
 
 
 app.UseAuthentication();

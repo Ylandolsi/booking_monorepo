@@ -9,7 +9,6 @@
     <ItemGroup>
       <Folder Include="Domain\Events\" />
       <Folder Include="Exceptions\" />
-      <Folder Include="Features\Payment\Payout\TreatRequest\" />
       <Folder Include="Features\Sessions\Ignore\" />
       <Folder Include="Persistence\Seed\" />
     </ItemGroup>

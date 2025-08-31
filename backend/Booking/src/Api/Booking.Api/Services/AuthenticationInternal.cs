@@ -78,7 +78,7 @@ public static class AuthenticationExtensions
                 options.ClientSecret = googleOptions.ClientSecret!;
                 options.AccessType = "offline";
                 options.SaveTokens = true;
-    
+
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("https://www.googleapis.com/auth/calendar");
@@ -88,10 +88,10 @@ public static class AuthenticationExtensions
                 {
                     var uriBuilder = new UriBuilder(context.RedirectUri);
                     var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
-        
+
                     query["prompt"] = "consent";
                     query["access_type"] = "offline";
-        
+
                     uriBuilder.Query = query.ToString();
                     context.Response.Redirect(uriBuilder.ToString());
                     return Task.CompletedTask;
@@ -101,9 +101,7 @@ public static class AuthenticationExtensions
                 options.ClaimActions.MapJsonKey("given_name", "given_name");
                 options.ClaimActions.MapJsonKey("family_name", "family_name");
                 options.ReturnUrlParameter = "/auth/login/google/callback";
-
             });
-            
 
 
         services.AddHttpContextAccessor();

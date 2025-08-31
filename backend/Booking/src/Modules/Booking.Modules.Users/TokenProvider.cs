@@ -44,7 +44,7 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
                     new Claim(ClaimsIdentifiers.Email, user.Email!),
                     new Claim(ClaimsIdentifiers.IsEmailVerified, user.EmailConfirmed.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimsIdentifiers.UserSlug, user.Slug) ,
+                    new Claim(ClaimsIdentifiers.UserSlug, user.Slug)
                 ]),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpirationInMinutes),
                 SigningCredentials = credentials,
@@ -52,7 +52,6 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
                 Audience = _jwtOptions.Audience,
                 NotBefore = DateTime.UtcNow,
                 IssuedAt = DateTime.UtcNow,
-
             };
 
             var handler = new JsonWebTokenHandler();
@@ -62,8 +61,8 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
         catch (Exception e)
         {
             Console.WriteLine($"Error generating JWT token: {e.Message}");
-
         }
+
         return String.Empty;
     }
 

@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace Booking.Common.Authentication;
 
-internal static class ClaimsPrincipalExtensions
+public static class ClaimsPrincipalExtensions
 {
 
     public static int? GetUserId(this ClaimsPrincipal? principal)
@@ -24,7 +24,7 @@ internal static class ClaimsPrincipalExtensions
             parsedUserId :
             null;
     }
-
+   
     public static string? GetUserSlug(this ClaimsPrincipal? principal)
     {
 

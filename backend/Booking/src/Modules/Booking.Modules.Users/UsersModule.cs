@@ -46,6 +46,8 @@ public static class UsersModule
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<RoleService>();
+        
         services.AddTransient<DomainEventsDispatcher>();
         services.AddScoped<AwsSesEmailService>();
         services.AddSingleton<EmailTemplateProvider>();

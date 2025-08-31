@@ -39,10 +39,10 @@ public static class Infrastructure
         //services.AddScoped<TokenHelper>();
 
         services.AddHttpClient();
-        /*// TODO : move clients name to static ! 
+        /*// TODO : move clients name to static !
         services.AddHttpClient("KonnectClient", client =>
             {
-                // TODO : make this more reselllient 
+                // TODO : make this more reselllient
                 /*
                 client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
                 #1#
@@ -51,10 +51,9 @@ public static class Infrastructure
                 client.Timeout = TimeSpan.FromSeconds(10);
             })
             .AddStandardResilienceHandler();*/
-        
-        
-        services.AddScoped<KonnectService>();
 
+
+        services.AddScoped<KonnectService>();
 
 
         return services;
@@ -88,6 +87,8 @@ public static class Infrastructure
     {
         services.AddMemoryCache();
         services.AddFusionCache();
+        
+        
 
         /*
         services.AddStackExchangeRedisCache(options =>

@@ -14,11 +14,6 @@ Secure webhook
 - Use HMAC per account (server-to-server only). Store the shared secret on your side and compare the HMAC from the request to the computed HMAC. Keep the secret out of any client-facing callback to prevent brute force.
 - Add retry/failure handling for webhook delivery (exponential backoff, max attempts, idempotency keys).
 
-Callback vs. Webhook
-
-- Callback: gateway -> front-end -> backend (subject to client visibility).
-- Webhook: gateway -> backend (server-to-server, preferred for confidential events).
-
 Retry and idempotency
 
 - Implement idempotency keys for webhook events to avoid duplicate processing.
@@ -28,6 +23,9 @@ Concurrency, locks and migrations
 
 - Review locking strategies (row-level vs. advisory locks) especially around migrations and concurrent operations.
 - Consider optimistic concurrency where appropriate (row version/timestamp).
+  // Concurrency check — prevents overwriting changes made by others
+  if (!string.Equals(role.ConcurrencyStamp, model.ConcurrencyStamp, StringComparison.Ordinal))
+
 
 Integrations & tokens
 
@@ -46,6 +44,11 @@ remove all logDebug !
 
 
 cloudflare ? 
+
+
+configureAwait : false 
+
+await userRoleStore.IsInRoleAsync(user, normalizedRole, CancellationToken).ConfigureAwait(false)
 
 all entity updaed add should be configured !
 
@@ -82,6 +85,7 @@ fix this aand timeout
 - remove private route from mentor/calendar or profile
 but any action needs to be logged in ( with google or email )
 ------ LATER 
+- pagination for the getPayouts and getSessiosn 
 - Toggle mentor activity to disable receiving meeting requests. for now its working by togglign days , so for future toggle it all
 - add : naviagte to mentor or mentee when showing the meets
 - previous meetings/mentors.
