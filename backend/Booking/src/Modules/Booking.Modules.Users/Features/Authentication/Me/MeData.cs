@@ -19,5 +19,6 @@ public record MeData(
     ProfileCompletionStatus ProfileCompletionStatus,
     bool IntegratedWithGoogle,
     string? GoogleEmail,
-    string KonnectWalletId
+    string KonnectWalletId,
+    List<string> Roles
 );

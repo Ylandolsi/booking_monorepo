@@ -1,5 +1,5 @@
 import { AuthGuard } from '@/components/guards';
-import Sidebar from './sidebar';
+import Sidebar from '../navigation/side-bar/sidebar';
 import { PageLoading } from '@/components/ui/index';
 import { BottomNav } from '../navigation/bottom-nav';
 import { useAuth } from '@/features/auth/hooks';

@@ -1,14 +1,18 @@
 ﻿using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
+using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Modules.Users.Features.Authentication.Me;
 
 public sealed class MeQueryHandler(
     UsersDbContext context,
+    UserManager<User> userManager,
     ILogger<MeQueryHandler> logger) : IQueryHandler<MeQuery, MeData>
 {
     public async Task<Result<MeData>> Handle(MeQuery query, CancellationToken cancellationToken)
@@ -24,6 +28,7 @@ public sealed class MeQueryHandler(
             .ThenInclude(ul => ul.Language)
             .FirstOrDefaultAsync(cancellationToken);
 
+
         if (user is null)
         {
             logger.LogWarning("User with ID {UserId} not found", query.Id);
@@ -31,6 +36,9 @@ public sealed class MeQueryHandler(
         }
 
         user.UpdateProfileCompletion();
+
+        var roles = (await userManager.GetRolesAsync(user)).ToList();
+
         return Result.Success(new MeData
         (
             user.Slug,
@@ -48,7 +56,8 @@ public sealed class MeQueryHandler(
             user.ProfileCompletionStatus,
             user.IntegratedWithGoogle,
             user.GoogleEmail,
-            user.KonnectWalledId
+            user.KonnectWalledId,
+            roles
         ));
     }
 }

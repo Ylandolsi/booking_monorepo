@@ -30,6 +30,7 @@ public class TestProfileSeeder
         {
             await CreateSoftwareEngineerProfileAsync(),
             await CreateAnotherUser(),
+            await CreateAdmin(),
             /*await CreateMarketingConsultantProfileAsync(),
             await CreateFinanceAdvisorProfileAsync()*/
         };
@@ -188,6 +189,144 @@ public class TestProfileSeeder
             "mohsen-3ifa",
             "Mohsen",
             "3ifa",
+            "yesslandolsi@gmail.com",
+            "https://randomuser.me/api/portraits/men/10.jpg"
+        );
+
+        // Set password and create user
+        var result = await userManager.CreateAsync(user, "Password123!");
+        if (result.Succeeded)
+            await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
+
+        // Update additional properties
+        user.UpdateBio(
+            "Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
+        user.UpdateGender(Genders.Male);
+        user.UpdateSocialLinks(new SocialLinks(
+            "https://github.com/mohsen",
+            "https://linkedin.com/in/mohsen",
+            "https://twitter.com/mohsen"
+        ));
+
+        // Add expertise (4 items max)
+        var expertises = await context.Expertises.Take(4).ToListAsync();
+        foreach (var expertise in expertises)
+        {
+            await context.UserExpertises.AddAsync(new UserExpertise
+            {
+                UserId = user.Id,
+                ExpertiseId = expertise.Id
+            });
+        }
+
+        // Add languages (4 items max)
+        var languages = await context.Languages.Take(3).ToListAsync();
+        foreach (var language in languages)
+        {
+            await context.UserLanguages.AddAsync(new UserLanguage
+            {
+                UserId = user.Id,
+                LanguageId = language.Id,
+            });
+        }
+
+        // Add experience
+        await context.Experiences.AddRangeAsync(new List<Experience>
+        {
+            new Experience(
+                title: "Senior Software Engineer",
+                description: "Leading development of cloud-native applications using microservices architecture.",
+                userId: user.Id,
+                company: "Tech Solutions Inc.",
+                startDate: new DateTime(2018, 5, 15, 0, 0, 0, DateTimeKind.Utc),
+                endDate: null
+            ),
+            new Experience(
+                title: "Software Developer",
+                description: "Developed and maintained web applications using React and ASP.NET Core.",
+                userId: user.Id,
+                company: "Digital Innovations",
+                startDate: new DateTime(2015, 3, 1, 0, 0, 0, DateTimeKind.Utc),
+                endDate: new DateTime(2018, 5, 1, 0, 0, 0, DateTimeKind.Utc)
+            )
+        });
+
+        // Add education
+        await context.Educations.AddRangeAsync(new List<Education>
+        {
+            new Education(
+                field: "Computer Science",
+                description: "Specialized in Artificial Intelligence and Machine Learning",
+                university: "University of Technology",
+                userId: user.Id,
+                startDate: new DateTime(2013, 9, 1, 0, 0, 0, DateTimeKind.Utc),
+                endDate: new DateTime(2015, 6, 30, 0, 0, 0, DateTimeKind.Utc)
+            ),
+            new Education(
+                field: "Computer Science",
+                description: "Focus on Software Engineering",
+                university: "State University",
+                userId: user.Id,
+                startDate: new DateTime(2009, 9, 1, 0, 0, 0, DateTimeKind.Utc),
+                endDate: new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
+            )
+        });
+
+
+        await context.SaveChangesAsync();
+
+        //var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
+        // set mentor and availability 
+
+        /*var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
+        await mentorShipContext.Mentors.AddAsync(mentor);
+        await mentorShipContext.SaveChangesAsync();
+
+        mentor = await mentorShipContext.Mentors.FirstOrDefaultAsync(m => m.Id == userDb.Id);
+
+        // reload days for the newly created mentor
+        var days = await mentorShipContext.Days
+            .Where(d => d.MentorId == mentor.Id)
+            .ToListAsync();
+
+// activate all days
+        foreach (var dday in days)
+        {
+            dday.ToggleDay();
+
+            var startTime = new TimeOnly(10, 0);
+            var endTime = new TimeOnly(19, 0);
+
+            var availability = Availability.Create(
+                mentor.Id, // mentor id
+                dday.Id, // dday id
+                (System.DayOfWeek)dday.DayOfWeek, // day of week enum
+                startTime,
+                endTime,
+                "Africa/Tunis"
+            );
+
+            await mentorShipContext.Availabilities.AddAsync(availability);
+            await mentorShipContext.SaveChangesAsync();
+        }*/
+
+
+        return user;
+    }
+
+    private async Task<User> CreateAdmin()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
+        var mentorShipContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        // Create base user
+        var user = User.Create(
+            "admin-1",
+            "Admin",
+            "Landolsi",
             "ylandolsi66@gmail.com",
             "https://randomuser.me/api/portraits/men/10.jpg"
         );
@@ -271,10 +410,10 @@ public class TestProfileSeeder
             )
         });
 
-    
+
         await context.SaveChangesAsync();
         await roleService.AssignRoleToUserAsync("Admin", user.Id.ToString());
-        
+
         //var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         // set mentor and availability 
 

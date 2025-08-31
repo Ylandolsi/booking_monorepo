@@ -45,6 +45,7 @@ export type User = {
   integratedWithGoogle: boolean;
   googleEmail?: string | null;
   konnectWalletId?: string | null;
+  roles: string[];
   // TODO  : add country !! country: string;
 };
 
