@@ -13,7 +13,7 @@ export function AdminSection(props: {
     {
       name: 'Payouts Requests',
       icon: <FaMoneyCheck size={20} />,
-      click: () => nav.goToApp(),
+      click: () => nav.goToAdminPayoutRequests(),
     },
   ];
 

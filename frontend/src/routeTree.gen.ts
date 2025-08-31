@@ -32,7 +32,9 @@ import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
+import { Route as AppAdminPayoutRequestsRouteImport } from './routes/app/admin/payout-requests'
 import { Route as AppBookingSessionMentorSlugRouteImport } from './routes/app/booking/session.$mentorSlug'
+import { Route as AppAdminPayoutRequestsRequestIdRouteImport } from './routes/app/admin/payout-requests.$requestId'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -151,11 +153,22 @@ const AppMentorBecomeRoute = AppMentorBecomeRouteImport.update({
   path: '/mentor/become',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppAdminPayoutRequestsRoute = AppAdminPayoutRequestsRouteImport.update({
+  id: '/admin/payout-requests',
+  path: '/admin/payout-requests',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppBookingSessionMentorSlugRoute =
   AppBookingSessionMentorSlugRouteImport.update({
     id: '/booking/session/$mentorSlug',
     path: '/booking/session/$mentorSlug',
     getParentRoute: () => AppRouteRoute,
+  } as any)
+const AppAdminPayoutRequestsRequestIdRoute =
+  AppAdminPayoutRequestsRequestIdRouteImport.update({
+    id: '/$requestId',
+    path: '/$requestId',
+    getParentRoute: () => AppAdminPayoutRequestsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -178,10 +191,12 @@ export interface FileRoutesByFullPath {
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
+  '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRoutesByTo {
@@ -203,10 +218,12 @@ export interface FileRoutesByTo {
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
+  '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRoutesById {
@@ -230,10 +247,12 @@ export interface FileRoutesById {
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
+  '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
+  '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
 export interface FileRouteTypes {
@@ -258,10 +277,12 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/mentor-required'
     | '/app/'
+    | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
+    | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -283,10 +304,12 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/mentor-required'
     | '/app'
+    | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
+    | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   id:
     | '__root__'
@@ -309,10 +332,12 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/mentor-required'
     | '/app/'
+    | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
     | '/auth/email-verification/verified'
+    | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesById: FileRoutesById
 }
@@ -492,6 +517,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMentorBecomeRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/admin/payout-requests': {
+      id: '/app/admin/payout-requests'
+      path: '/admin/payout-requests'
+      fullPath: '/app/admin/payout-requests'
+      preLoaderRoute: typeof AppAdminPayoutRequestsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/booking/session/$mentorSlug': {
       id: '/app/booking/session/$mentorSlug'
       path: '/booking/session/$mentorSlug'
@@ -499,14 +531,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBookingSessionMentorSlugRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/admin/payout-requests/$requestId': {
+      id: '/app/admin/payout-requests/$requestId'
+      path: '/$requestId'
+      fullPath: '/app/admin/payout-requests/$requestId'
+      preLoaderRoute: typeof AppAdminPayoutRequestsRequestIdRouteImport
+      parentRoute: typeof AppAdminPayoutRequestsRoute
+    }
   }
 }
+
+interface AppAdminPayoutRequestsRouteChildren {
+  AppAdminPayoutRequestsRequestIdRoute: typeof AppAdminPayoutRequestsRequestIdRoute
+}
+
+const AppAdminPayoutRequestsRouteChildren: AppAdminPayoutRequestsRouteChildren =
+  {
+    AppAdminPayoutRequestsRequestIdRoute: AppAdminPayoutRequestsRequestIdRoute,
+  }
+
+const AppAdminPayoutRequestsRouteWithChildren =
+  AppAdminPayoutRequestsRoute._addFileChildren(
+    AppAdminPayoutRequestsRouteChildren,
+  )
 
 interface AppRouteRouteChildren {
   AppIntegrationRoute: typeof AppIntegrationRoute
   AppMeetsRoute: typeof AppMeetsRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
   AppProfileUserSlugRoute: typeof AppProfileUserSlugRoute
@@ -518,6 +572,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMeetsRoute: AppMeetsRoute,
   AppPayoutsRoute: AppPayoutsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
   AppProfileUserSlugRoute: AppProfileUserSlugRoute,

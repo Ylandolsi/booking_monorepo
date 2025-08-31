@@ -78,6 +78,15 @@ export function useAppNavigation() {
       navigate({ to: routes.to.meets.index() });
     },
 
+    // Admin navigation
+    goToAdminPayoutRequests: () => {
+      navigate({ to: routes.to.admin.payoutRequests() });
+    },
+
+    goToAdminPayoutRequestDetails: (requestId: string) => {
+      navigate({ to: routes.to.admin.payoutRequestDetails(requestId) });
+    },
+
     // Test navigation
     goToTestDashboard: () => {
       navigate({ to: routes.to.test.dashboard() });

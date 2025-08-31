@@ -7,6 +7,7 @@
 export const ROUTE_PARAMS = {
   MENTOR_SLUG: '$mentorSlug',
   USER_SLUG: '$userSlug',
+  REQUEST_ID: '$requestId',
 } as const;
 
 // Route path constants
@@ -50,6 +51,12 @@ export const ROUTE_PATHS = {
     PAYMENT: {
       PAYOUT: `/app/payouts`,
     },
+
+    // Admin routes
+    ADMIN: {
+      PAYOUT_REQUESTS: '/app/admin/payout-requests',
+      PAYOUT_REQUEST_DETAILS: `/app/admin/payout-requests/${ROUTE_PARAMS.REQUEST_ID}`,
+    },
   },
 
   // Error/Test routes
@@ -77,6 +84,7 @@ export type RoutePath = typeof ROUTE_PATHS;
 export interface RouteParams {
   mentorSlug?: string;
   userSlug?: string;
+  requestId?: string;
 }
 
 // Query parameter types
@@ -178,6 +186,16 @@ export const routeBuilder = {
 
   payment: {
     payout: () => ROUTE_PATHS.APP.PAYMENT.PAYOUT,
+  },
+
+  // Admin routes
+  admin: {
+    payoutRequests: () => ROUTE_PATHS.APP.ADMIN.PAYOUT_REQUESTS,
+    payoutRequestDetails: (requestId: string) =>
+      ROUTE_PATHS.APP.ADMIN.PAYOUT_REQUEST_DETAILS.replace(
+        ROUTE_PARAMS.REQUEST_ID,
+        requestId,
+      ),
   },
 
   // Error/Test routes
