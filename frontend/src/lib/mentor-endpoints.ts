@@ -23,6 +23,8 @@ export const MentorshipEndpoints = {
 
   Payments: {
     Wallet: 'payments/wallet',
+    Payout: 'mentorships/payments/payout',
+    PayoutHistory: 'mentorships/payments/payout/history',
   },
 
   // Relationships: {

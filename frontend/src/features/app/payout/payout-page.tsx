@@ -13,10 +13,37 @@ import {
   TableHeader,
   TableRow,
   Badge,
+  Alert,
 } from '@/components';
-import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
+import { DrawerDialog } from '@/components/ui/drawer-dialog';
+import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
+import { PayoutRequestForm } from './components';
+import { useRequestPayout } from './api';
+import { useState } from 'react';
 
 export function PayoutPage() {
+  const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
+  const [payoutSuccess, setPayoutSuccess] = useState(false);
+  const requestPayoutMutation = useRequestPayout();
+  
+  // Mock data - in a real app, this would come from an API
+  const availableBalance = 2222.00;
+
+  const handlePayoutRequest = async (amount: number) => {
+    try {
+      await requestPayoutMutation.mutateAsync(amount);
+      setPayoutSuccess(true);
+      setIsPayoutDialogOpen(false);
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => {
+        setPayoutSuccess(false);
+      }, 5000);
+    } catch (error) {
+      console.error('Payout request failed:', error);
+      // Error handling is managed by the mutation
+    }
+  };
   return (
     <div className="mx-auto p-6 space-y-8">
       {/* Header Section */}
@@ -26,6 +53,21 @@ export function PayoutPage() {
           Manage your payout methods and view your transaction history
         </p>
       </div>
+
+      {/* Success Alert */}
+      {payoutSuccess && (
+        <Alert className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900">
+          <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <div className="ml-2">
+            <p className="text-sm text-green-800 dark:text-green-200">
+              <strong>Payout request submitted successfully!</strong>
+            </p>
+            <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+              Your payout request is being processed and will be completed within 3-5 business days.
+            </p>
+          </div>
+        </Alert>
+      )}
 
       {/* Available Balance Card */}
       <Card className="bg-gradient-to-r from-white to-indigo-50/40 dark:from-blue-950/50 dark:to-indigo-950/50 border-ring dark:border-ring">
@@ -38,18 +80,52 @@ export function PayoutPage() {
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center justify-between">
             <div className="space-y-1">
-              <div className="text-4xl font-bold text-primary">$2,222.00</div>
+              <div className="text-4xl font-bold text-primary">${availableBalance.toFixed(2)}</div>
               <div className="text-sm text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="h-4 w-4" />
                 Ready to withdraw
               </div>
             </div>
-            <Button size="lg" className="bg-primary hover:bg-primary/80">
-              Request Payout
-            </Button>
+            <DrawerDialog
+              open={isPayoutDialogOpen}
+              onOpenChange={setIsPayoutDialogOpen}
+              trigger={
+                <Button 
+                  size="lg" 
+                  className="bg-primary hover:bg-primary/80"
+                  disabled={availableBalance < 20}
+                >
+                  Request Payout
+                </Button>
+              }
+              title="Request Payout"
+              description="Withdraw funds from your available balance"
+            >
+              <PayoutRequestForm
+                availableBalance={availableBalance}
+                onSubmit={handlePayoutRequest}
+                isLoading={requestPayoutMutation.isPending}
+                onCancel={() => setIsPayoutDialogOpen(false)}
+              />
+            </DrawerDialog>
           </div>
         </CardContent>
       </Card>
+
+      {/* Low Balance Notice */}
+      {availableBalance < 20 && (
+        <Alert className="bg-yellow-50 border-yellow-200 dark:bg-yellow-950/20 dark:border-yellow-900">
+          <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+          <div className="ml-2">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              <strong>Minimum payout requirement:</strong> You need at least $20.00 to request a payout.
+            </p>
+            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+              Continue earning through mentoring sessions to reach the minimum threshold.
+            </p>
+          </div>
+        </Alert>
+      )}
 
       {/* Payout History Section */}
       <div className="space-y-4">
