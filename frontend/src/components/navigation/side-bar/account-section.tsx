@@ -56,14 +56,7 @@ export function AccountSection(props: {
                     }
                   `}
             >
-              <span
-                className={`
-                          text-base flex items-center
-                          ${props.itemActive === item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}
-                        `}
-              >
-                {item.icon}
-              </span>
+              <span>{item.icon}</span>
               {!props.collapsed && (
                 <>
                   <span className="font-medium flex-1">{item.name}</span>

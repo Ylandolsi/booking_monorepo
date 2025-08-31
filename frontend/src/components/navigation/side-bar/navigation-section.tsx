@@ -1,6 +1,5 @@
 import type { Item } from '@/components/navigation/side-bar';
 import { Button } from '@/components/ui';
-import { useAuth } from '@/features';
 import { useAppNavigation } from '@/hooks';
 import {
   Badge,
@@ -17,9 +16,8 @@ export function NavigationSection(props: {
   handleItemClick: (item: Item) => void;
   itemActive: string;
   collapsed: boolean;
+  currentUser: User;
 }) {
-  const { currentUser } = useAuth();
-
   const nav = useAppNavigation();
   const navigationItems: Item[] = [
     {
@@ -76,11 +74,7 @@ export function NavigationSection(props: {
                   `}
             title={props.collapsed ? item.name : undefined}
           >
-            <span
-              className={`${props.itemActive == item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
-            >
-              {item.icon}
-            </span>
+            <span>{item.icon}</span>
             {!props.collapsed && (
               <>
                 <span className="font-medium flex-1">{item.name}</span>

@@ -18,10 +18,10 @@ import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 
 export function PayoutPage() {
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="mx-auto p-6 space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Payouts</h1>
+        <h1 className="text-4xl font-bold tracking-light">Payouts</h1>
         <p className="text-muted-foreground text-lg">
           Manage your payout methods and view your transaction history
         </p>

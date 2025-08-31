@@ -1,26 +1,14 @@
 import { useAppNavigation } from '@/hooks/use-navigation';
-import {
-  X,
-  LogOut,
-  Home,
-  User as UserIcon,
-  Calendar,
-  Search,
-  ChevronRight,
-  ChevronLeft,
-  Timer,
-  Unplug,
-} from 'lucide-react';
+import { X, LogOut, ChevronRight, ChevronLeft } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
-import { Button, Badge, Separator, PageLoading } from '@/components/ui';
+import { Button, Separator, PageLoading } from '@/components/ui';
 import { useAuth } from '@/features/auth/hooks';
 import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
-import { GiTeacher } from 'react-icons/gi';
-import { MdPayment } from 'react-icons/md';
 import { AccountSection } from '@/components/navigation/side-bar/account-section';
 import { NavigationSection } from '@/components/navigation/side-bar/navigation-section';
+import { AdminSection } from '@/components/navigation/side-bar/admin-section';
 
 export type Item = {
   name:
@@ -33,7 +21,8 @@ export type Item = {
     | 'Become Mentor'
     | 'Set Availability'
     | 'Integrations'
-    | 'Payout';
+    | 'Payout'
+    | 'Payouts Requests';
 
   icon: JSX.Element;
   click: () => void;
@@ -154,10 +143,11 @@ const Sidebar = ({
         {/* Navigation Section */}
         <div className={`flex-1 overflow-y-auto ${collapsed ? 'p-2' : 'p-4'}`}>
           <NavigationSection
+            currentUser={currentUser}
             itemActive={itemActive}
             collapsed={collapsed}
             handleItemClick={handleItemClick}
-          ></NavigationSection>
+          />
 
           {!collapsed && <Separator className="my-4" />}
 
@@ -166,7 +156,15 @@ const Sidebar = ({
             itemActive={itemActive}
             handleItemClick={handleItemClick}
             collapsed={collapsed}
-          ></AccountSection>
+          />
+
+          {currentUser?.roles?.includes('Admin') && (
+            <AdminSection
+              itemActive={itemActive}
+              handleItemClick={handleItemClick}
+              collapsed={collapsed}
+            />
+          )}
 
           {!collapsed && <Separator className="my-4" />}
 
