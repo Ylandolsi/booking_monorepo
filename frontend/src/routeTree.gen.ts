@@ -18,6 +18,7 @@ import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
+import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -76,6 +77,11 @@ const TestImgRoute = TestImgRouteImport.update({
 const TestDashboardRoute = TestDashboardRouteImport.update({
   id: '/test/dashboard',
   path: '/test/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestBookingDemoRoute = TestBookingDemoRouteImport.update({
+  id: '/test/booking-demo',
+  path: '/test/booking-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ErrorExpSimpleLoadingDemoRoute =
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/test/mentor-required': typeof TestMentorRequiredRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
     | '/test/mentor-required'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
+  TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   TestMentorRequiredRoute: typeof TestMentorRequiredRoute
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/test/dashboard'
       fullPath: '/test/dashboard'
       preLoaderRoute: typeof TestDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/booking-demo': {
+      id: '/test/booking-demo'
+      path: '/test/booking-demo'
+      fullPath: '/test/booking-demo'
+      preLoaderRoute: typeof TestBookingDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/error-exp/simple-loading-demo': {
@@ -548,6 +568,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
+  TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   TestMentorRequiredRoute: TestMentorRequiredRoute,

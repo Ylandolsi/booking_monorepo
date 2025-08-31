@@ -570,3 +570,5 @@ export const Route = createFileRoute(ROUTE_PATHS.APP.PROFILE.USER)({
 learn more about prefetech and prelaod ( tantaskc route r)
 
 avoid bareel export and do package export https://claude.ai/share/3c6ded80-c263-4d76-a942-6b27263e1aea
+
+from-blue-50 to-indigo-50

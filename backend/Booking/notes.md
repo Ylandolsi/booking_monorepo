@@ -44,6 +44,11 @@ TODO / Roadmap
 
 remove all logDebug ! 
 
+
+cloudflare ? 
+
+all entity updaed add should be configured !
+
 fix this aand timeout 
         services.AddHttpClient("KonnectClient", client =>
             {

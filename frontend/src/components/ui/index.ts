@@ -10,7 +10,7 @@ export * from './textarea';
 export * from './dropdown-menu';
 export * from './select';
 export * from './alert';
-
+export * from './table';
 export * from './form/index';
 export * from './drawer-dialog/index';
 

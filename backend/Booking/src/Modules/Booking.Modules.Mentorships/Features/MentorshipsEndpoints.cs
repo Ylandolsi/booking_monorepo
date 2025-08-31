@@ -28,6 +28,9 @@ public static class MentorshipEndpoints
         public const string Create = $"{Base}/payments"; 
         public const string GetWallet = "payments/wallet";
         public const string Webhook = $"{Base}/payments/webhook";  //  payment_ref=5f9498735289e405fc7c18ac
+        public const string Payout = $"{Base}/payments/payout";
+        public const string PayoutHistory =  $"{Base}/payments/payout";
+        public const string TreatPayout = $"{Base}/payments/payout/treat";
     }
     
 

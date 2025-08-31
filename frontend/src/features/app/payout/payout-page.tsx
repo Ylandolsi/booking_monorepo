@@ -1,93 +1,160 @@
-import { Card, CardDescription, CardHeader } from '@/components';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Badge,
+} from '@/components';
+import { DollarSign, Calendar, TrendingUp } from 'lucide-react';
 
 export function PayoutPage() {
   return (
-    <>
-      <div className="space-y-8">
-        <div className="text space-y-2">
-          <div className="font-semibold text-xl">Payouts</div>
-          <div className="text-muted-foreground">
-            {' '}
-            Manage your payout methods and view your transaction history
-          </div>
-        </div>
-
-        <div className="flex gap-3 flex-col md:flex-row">
-          <Card className="flex justify-center  flex-col flex-1 bg-accent/50 p-4 ">
-            <CardDescription className="">
-              <div className="font-semibold text-foreground/80 text-lg mb-2">
-                Last Payout
-              </div>
-              <div className="font-bold text-2xl text-foreground">
-                $ 1,250.00
-              </div>
-              <div className="text-muted-foreground">May 25 , 2024</div>
-            </CardDescription>
-          </Card>
-          <Card className="flex  justify-center flex-col flex-1 bg-accent/50 p-4 ">
-            <CardDescription className="h-full flex flex-col">
-              <div className=" font-semibold text-foreground/80 text-lg ">
-                Current Balance
-              </div>
-              <div className="flex flex-1 flex-col justify-center font-bold text-2xl text-foreground">
-                $ 1,250.00
-              </div>
-            </CardDescription>
-          </Card>
-        </div>
-
-        <div className="space-y-2">
-          <div className="font-semibold text-xl">Integration</div>
-          <svg
-            width="140"
-            height="50"
-            viewBox="0 0 802 223"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M140.482 95.812H160.934C165.76 95.812 169.734 91.8376 169.734 87.0122V60.0222C169.734 55.1969 165.76 51.2225 160.934 51.2225H133.954C129.129 51.2225 125.155 55.1969 125.155 60.0222V81.3259C125.155 86.1512 121.18 90.1257 116.355 90.1257H95.9021C91.0768 90.1257 87.1024 94.1001 87.1024 98.9254V125.905C87.1024 130.731 91.0768 134.705 95.9021 134.705H116.355C121.18 134.705 125.155 138.68 125.155 143.505V163.097C125.155 167.922 129.129 171.896 133.954 171.896H160.934C165.76 171.896 169.734 167.922 169.734 163.097V136.117C169.734 131.291 165.76 127.317 160.934 127.317H140.482C135.656 127.317 131.682 123.343 131.682 118.517V104.602C131.962 99.7764 135.656 95.802 140.482 95.802V95.812Z"
-              fill="#C3FA16"
-            ></path>
-            <path
-              d="M65.7898 51.5029H38.7998C33.9744 51.5029 30 55.4873 30 60.3127V87.2926C30 92.118 33.9744 96.0924 38.7998 96.0924H65.7798C70.6051 96.0924 74.5795 92.118 74.5795 87.2926V60.0223C74.5795 55.4773 70.6051 51.5029 65.7798 51.5029H65.7898Z"
-              fill="#C3FA16"
-            ></path>
-            <path
-              d="M65.7898 127.056H38.7998C33.9744 127.056 30 131.031 30 135.856V162.836C30 167.662 33.9744 171.636 38.7998 171.636H65.7798C70.6051 171.636 74.5795 167.662 74.5795 162.836V135.856C74.5795 131.031 70.6051 127.056 65.7798 127.056H65.7898Z"
-              fill="#C3FA16"
-            ></path>
-            <path
-              d="M237.786 134.278H231.819V169.206H209.955V51.3454H231.819V120.923L236.935 118.65L256.246 85.1329H280.393L260.231 117.229L251.711 123.756L261.082 130.283L283.807 169.477H258.809L237.796 134.257L237.786 134.278Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M286.639 127.182C286.639 112.987 290.043 101.904 297.151 94.2357C303.969 86.5672 313.91 82.5928 326.404 82.5928C333.221 82.5928 338.897 83.724 344.013 85.7162C348.838 87.9888 353.103 90.8319 356.227 94.8063C359.35 98.7808 361.903 103.326 363.615 108.722C365.317 114.118 366.168 120.365 366.168 126.902C366.168 141.098 362.764 152.18 355.946 159.849C349.129 167.517 339.188 171.492 326.694 171.492C319.876 171.492 314.2 170.36 309.084 168.368C304.259 166.376 299.994 163.252 296.59 159.278C293.187 155.304 290.914 150.759 289.202 145.363C287.49 139.967 286.649 133.72 286.649 127.182H286.639ZM309.365 127.182C309.365 130.876 309.645 134.28 310.496 137.404C311.066 140.527 312.198 143.37 313.619 145.643C315.041 147.915 316.743 149.908 319.015 151.039C321.288 152.46 323.841 153.031 326.964 153.031C332.64 153.031 336.905 151.039 339.748 146.784C342.592 142.519 344.013 135.992 344.013 127.192C344.013 119.524 342.592 113.277 340.039 108.452C337.486 103.626 333.221 101.354 326.974 101.354C321.578 101.354 317.313 103.346 314.48 107.32C310.786 111.295 309.365 118.112 309.365 127.202V127.182Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M432.616 169.205V121.492C432.616 114.675 431.766 109.849 429.773 106.726C427.781 103.602 424.377 102.181 419.832 102.181C415.567 102.181 412.164 103.312 409.321 105.875C406.477 108.428 404.495 111.271 403.074 114.965V169.496H381.209V85.4223H398.539L401.091 96.4946H401.662C404.215 92.8005 407.629 89.677 411.883 87.1242C416.138 84.5713 421.544 83.1497 428.352 83.1497C432.616 83.1497 436.301 83.7204 439.424 84.8516C442.547 85.9829 445.391 87.6948 447.663 90.5279C449.936 93.0808 451.638 96.4946 452.779 101.04C453.91 105.585 454.481 110.981 454.481 117.508V169.766H432.616V169.195V169.205Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M524.353 169.205V121.492C524.353 114.675 523.502 109.849 521.509 106.726C519.517 103.602 516.114 102.181 511.568 102.181C507.304 102.181 503.9 103.312 501.057 105.875C498.214 108.428 496.231 111.271 494.81 114.965V169.496H472.946V85.4223H490.275L492.828 96.4946H493.398C495.951 92.8005 499.365 89.677 503.62 87.1242C507.884 84.5713 513.28 83.1497 520.088 83.1497C524.353 83.1497 528.037 83.7204 531.16 84.8516C534.284 85.9829 537.127 87.6948 539.399 90.5279C541.672 93.0808 543.374 96.4946 544.515 101.04C545.646 105.585 546.217 110.981 546.217 117.508V169.766H524.353V169.195V169.205Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M631.712 162.11C628.308 164.663 623.763 166.936 618.077 168.928C612.4 170.92 606.143 171.771 599.616 171.771C585.981 171.771 576.04 167.797 569.793 159.838C563.546 151.889 560.423 141.097 560.423 127.181C560.423 112.415 563.826 101.333 570.934 93.9545C578.032 86.5663 587.973 82.8822 600.757 82.8822C605.022 82.8822 609.277 83.4528 613.251 84.5841C617.226 85.7153 620.92 87.4272 624.043 90.2604C627.167 92.8132 629.72 96.227 631.712 100.772C633.704 105.037 634.555 110.713 634.555 116.96C634.555 119.233 634.555 121.785 634.275 124.629C633.994 127.181 633.704 130.025 633.143 133.148H582.878C583.158 140.246 585.15 145.642 588.274 149.056C591.677 152.75 596.793 154.452 604.181 154.452C608.726 154.452 612.981 153.881 616.395 152.459C620.089 151.038 622.922 149.616 624.634 148.195L631.732 162.11H631.712ZM600.467 100.201C594.791 100.201 590.526 101.903 587.973 105.317C585.13 108.721 583.708 113.266 583.148 118.952H614.393C614.963 112.986 613.822 108.16 611.549 105.037C608.997 101.913 605.583 100.211 600.477 100.211L600.467 100.201Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M708.678 164.103C705.274 166.656 701.29 168.368 696.464 169.78C691.639 171.201 686.804 171.772 681.698 171.772C674.88 171.772 669.204 170.641 664.659 168.648C660.114 166.656 656.139 163.533 653.296 159.558C650.453 155.584 648.181 151.039 647.049 145.643C645.628 140.247 645.057 134 645.057 127.463C645.057 113.267 648.181 102.185 654.718 94.5161C661.245 86.8476 670.335 82.8732 682.549 82.8732C688.796 82.8732 693.621 83.4438 697.315 84.2947C701.009 85.426 704.413 86.5673 707.537 88.2692L702.421 106.159C699.868 105.028 697.305 103.887 694.752 103.316C692.2 102.745 689.356 102.185 685.953 102.185C679.986 102.185 675.161 104.177 672.037 108.151C668.914 112.126 667.212 118.373 667.212 127.182C667.212 130.876 667.492 134 668.343 137.123C669.194 140.247 670.335 142.8 671.747 145.072C673.449 147.345 675.441 149.047 677.994 150.468C680.547 151.89 683.39 152.46 686.793 152.46C690.488 152.46 693.611 151.89 696.164 151.039C698.717 150.188 700.989 149.047 702.981 147.635L708.658 164.103H708.678Z"
-              fill="currentColor"
-            ></path>
-            <path
-              d="M713.217 85.1425H724.86V69.2348L746.724 62.9879V85.1425H767.177V103.603H746.724V135.979C746.724 141.946 747.295 145.92 748.426 148.473C749.557 151.026 751.83 152.167 754.953 152.167C757.226 152.167 759.218 151.887 760.63 151.596C762.331 151.026 764.033 150.465 766.026 149.604L770 166.363C766.877 167.784 763.473 168.916 759.488 170.057C755.514 171.188 751.249 171.478 747.275 171.478C739.606 171.478 733.93 169.486 730.236 165.512C726.542 161.537 724.84 155 724.84 145.92V103.603H713.197V85.1425H713.217Z"
-              fill="currentColor"
-            ></path>
-          </svg>
-        </div>
+    <div className="container mx-auto p-6 space-y-8">
+      {/* Header Section */}
+      <div className="space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Payouts</h1>
+        <p className="text-muted-foreground text-lg">
+          Manage your payout methods and view your transaction history
+        </p>
       </div>
-    </>
+
+      {/* Available Balance Card */}
+      <Card className="bg-gradient-to-r from-white to-indigo-50/40 dark:from-blue-950/50 dark:to-indigo-950/50 border-ring dark:border-ring">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2text-primary">
+            <DollarSign className="h-5 w-5" />
+            Available for Payout
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center justify-between">
+            <div className="space-y-1">
+              <div className="text-4xl font-bold text-primary">$2,222.00</div>
+              <div className="text-sm text-muted-foreground flex items-center gap-1">
+                <TrendingUp className="h-4 w-4" />
+                Ready to withdraw
+              </div>
+            </div>
+            <Button size="lg" className="bg-primary hover:bg-primary/80">
+              Request Payout
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Payout History Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <h2 className="text-2xl font-semibold">Payout History</h2>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Transactions</CardTitle>
+            <CardDescription>
+              Your complete payout transaction history
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableCaption className="text-left">
+                A list of your recent payout transactions.
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Transaction ID</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">May 15, 2024</TableCell>
+                  <TableCell className="font-semibold">$1,234.56</TableCell>
+                  <TableCell>Bank Transfer</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="default"
+                      className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+                    >
+                      Completed
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
+                    TXN-001234
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">April 28, 2024</TableCell>
+                  <TableCell className="font-semibold">$892.30</TableCell>
+                  <TableCell>Bank Transfer</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="default"
+                      className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+                    >
+                      Completed
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
+                    TXN-001189
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">April 10, 2024</TableCell>
+                  <TableCell className="font-semibold">$567.89</TableCell>
+                  <TableCell>PayPal</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100"
+                    >
+                      Processing
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
+                    TXN-001156
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Total Earned</CardDescription>
+            <CardTitle className="text-2xl">$12,845.67</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>This Month</CardDescription>
+            <CardTitle className="text-2xl">$2,222.00</CardTitle>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Pending</CardDescription>
+            <CardTitle className="text-2xl">$567.89</CardTitle>
+          </CardHeader>
+        </Card>
+      </div>
+    </div>
   );
 }
