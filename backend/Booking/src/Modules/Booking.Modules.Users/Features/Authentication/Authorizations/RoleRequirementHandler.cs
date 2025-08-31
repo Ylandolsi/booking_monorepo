@@ -30,12 +30,12 @@ public class RoleRequirementHandler(IServiceScopeFactory serviceScopeFactory) : 
             return;
         }
 
-        if (await userManager.IsInRoleAsync(user, "Admin"))
+        foreach (var role in requirement.RequiredRoles)
         {
-            context.Succeed(requirement);
-            return;
+            if (!await userManager.IsInRoleAsync(user, requirement.RequiredRoles[0]))
+                context.Fail();
         }
 
-        context.Fail();
+        context.Succeed(requirement);
     }
 }
