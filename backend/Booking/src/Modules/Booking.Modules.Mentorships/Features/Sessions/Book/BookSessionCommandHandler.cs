@@ -258,7 +258,7 @@ internal sealed class BookSessionCommandHandler(
                     menteeUser.FirstName,
                     menteeUser.LastName,
                     menteeUser.Email ?? "",
-                    ""); // Phone number not available in UserDto
+                    ""); // TODO , Phone number not available in UserDto
 
                 if (paymentResponse.IsFailure)
                 {

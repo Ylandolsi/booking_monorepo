@@ -5,7 +5,7 @@
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class KonnectWalletIdToMentorPreferences : Migration
+    public partial class KonnectWalletIdToMentorPreferences : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

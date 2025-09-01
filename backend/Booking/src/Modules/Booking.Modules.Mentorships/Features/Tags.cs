@@ -9,5 +9,6 @@ public static class Tags
     public const string Availability = "Availability";
     public const string Payment = "Payment";
     public const string Relationships = "Relationships";
+    public const string Admin = "Admin";
     
 }

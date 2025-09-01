@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.Request;
+namespace Booking.Modules.Mentorships.Features.Payout.User.Request;
 
 public class PayoutCommandValidator : AbstractValidator<PayoutCommand>
 {

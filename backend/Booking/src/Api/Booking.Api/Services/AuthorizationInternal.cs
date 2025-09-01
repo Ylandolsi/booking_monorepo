@@ -12,7 +12,7 @@ public static class AuthorizationInternal
     {
         services.AddAuthorization(options =>
         {
-            options.AddPolicy("RequireAdminRole",
+            options.AddPolicy("Admin",
                 policy => policy.Requirements.Add(new RoleRequirement("Admin")));
         });
 

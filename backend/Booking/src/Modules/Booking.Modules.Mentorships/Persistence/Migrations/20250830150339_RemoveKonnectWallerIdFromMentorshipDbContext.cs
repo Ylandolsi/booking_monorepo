@@ -5,7 +5,7 @@
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveKonnectWallerIdFromMentorshipDbContext : Migration
+    public partial class RemoveKonnectWallerIdFromMentorshipDbContext : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

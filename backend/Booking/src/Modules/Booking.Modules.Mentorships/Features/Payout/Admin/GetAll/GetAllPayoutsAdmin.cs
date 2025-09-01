@@ -6,24 +6,23 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.History;
+namespace Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
 
-public class GetPayoutHistory : IEndpoint
+public class GetAllPayoutsAdmin : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipEndpoints.Payment.PayoutHistory,
-                async (
-                    UserContext userContext,
-                    IQueryHandler<GetPayoutHistoryQuery, List<Domain.Entities.Payout>> handler,
+        app.MapGet(MentorshipEndpoints.Payment.Admin.GetAllPayouts,
+                async (UserContext userContext,
+                    IQueryHandler<GetAllPayoutsAdminQuery,
+                        List<Domain.Entities.Payout>> handler,
                     CancellationToken cancellationToken) =>
                 {
-                    int userId = userContext.UserId;
-                    var query = new GetPayoutHistoryQuery(userId);
-
+                    var query = new GetAllPayoutsAdminQuery();
                     var result = await handler.Handle(query, cancellationToken);
                     return result.Match(Results.Ok, CustomResults.Problem);
-                })
-            .RequireAuthorization();
+                }).RequireAuthorization()
+            .RequireAuthorization("Admin")
+            .WithTags(Tags.Admin);
     }
 }

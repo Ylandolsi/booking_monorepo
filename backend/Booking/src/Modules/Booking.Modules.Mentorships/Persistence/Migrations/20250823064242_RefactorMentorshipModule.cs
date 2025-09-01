@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class RefactorMentorshipModule : Migration
+    public partial class RefactorMentorshipModule : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

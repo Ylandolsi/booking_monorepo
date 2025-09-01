@@ -1,11 +1,10 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Persistence;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.History;
+namespace Booking.Modules.Mentorships.Features.Payout.User.History;
 
 public class GetPayoutHistoryQueryHandler(
     MentorshipsDbContext dbContext,

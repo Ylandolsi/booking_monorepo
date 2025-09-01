@@ -5,7 +5,7 @@
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class addedMinuteToTimeRange : Migration
+    public partial class addedMinuteToTimeRange : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

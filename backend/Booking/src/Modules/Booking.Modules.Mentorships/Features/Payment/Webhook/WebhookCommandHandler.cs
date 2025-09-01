@@ -16,7 +16,7 @@ public class WebhookCommandHandler(
     // TODO : EMAIL VERIFICATION 
     public async Task<Result> Handle(WebhookCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Recieved webhook for paymentRef: {paymentRef}", command.PaymentRef);
+        logger.LogInformation("Received webhook (MenteePayment) for paymentRef: {paymentRef}", command.PaymentRef);
         var payment = await context.Payments.FirstOrDefaultAsync(
             p => p.Reference == command.PaymentRef,
             cancellationToken);
@@ -79,6 +79,7 @@ public class WebhookCommandHandler(
             command.PaymentRef, session.Id);
 
 
+        // TODO debug response of webhook konnect 
         // Find the successful transaction to get the amount with fees
         /*let amountWithFees;
         if (response.data.payment.transactions && response.data.payment.transactions.length > 0) {

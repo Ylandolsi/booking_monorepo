@@ -5,7 +5,7 @@
 namespace Booking.Modules.Mentorships.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateSchedule : Migration
+    public partial class UpdateSchedule : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

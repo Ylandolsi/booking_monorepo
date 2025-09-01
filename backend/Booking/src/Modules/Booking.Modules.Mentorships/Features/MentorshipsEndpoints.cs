@@ -30,8 +30,17 @@ public static class MentorshipEndpoints
         public const string Webhook = $"{Base}/payments/webhook";  //  payment_ref=5f9498735289e405fc7c18ac
         public const string Payout = $"{Base}/payments/payout";
         public const string PayoutHistory =  $"{Base}/payments/payout";
-        public const string TreatPayout = $"{Base}/payments/payout/treat";
+
+        public static class Admin
+        {
+            public const string ApprovePayout = $"{Base}/admin/payout/approve"; // body : payoutId
+            public const string WebhookPayout = $"{Base}/admin/payout/webhook";
+            public const string RejectPayout =  $"{Base}/admin/payout/reject"; // body : payoutId 
+            public const string GetAllPayouts = $"{Base}/admin/payments/payout";
+            public const string GetDetailled = $"{Base}/admin/payments/payout/{{payoutId}}"; 
+        }
     }
+    
     
 
     public static class Mentors

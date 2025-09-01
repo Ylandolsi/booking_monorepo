@@ -1,13 +1,15 @@
+using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.Request;
+namespace Booking.Modules.Mentorships.Features.Payout.User.Request;
 
 public class PayoutCommandHandler(
     MentorshipsDbContext dbContext,
+    IUsersModuleApi usersModuleApi,
     ILogger<PayoutCommandHandler> logger)
     : ICommandHandler<PayoutCommand>
 {
@@ -17,7 +19,18 @@ public class PayoutCommandHandler(
             command.UserId,
             command.Amount);
 
-        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == command.UserId, cancellationToken);
+        var userDataAndWalletKonnectInfo = await usersModuleApi.GetUserInfo(command.UserId, cancellationToken);
+        var konnectWalletId = userDataAndWalletKonnectInfo.KonnectWalletId;
+        if (konnectWalletId == "")
+        {
+            logger.LogInformation(
+                "User with id : {userId} tried to request a payout with having a konnectWallet integrated",
+                command.UserId);
+            return Result.Failure(Error.Failure("Konnect.Is.Not.Integrated",
+                "Integrate your account with konnect before trying to request a payout"));
+        }
+
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == command.UserId, cancellationToken);
         if (wallet is null)
         {
             logger.LogError("Wallet is not found for User with id : {userId}", command.UserId);
@@ -35,14 +48,14 @@ public class PayoutCommandHandler(
         }
 
         wallet.UpdateBalance(-command.Amount);
-        Domain.Entities.Payout payout = new(command.UserId, wallet.Id, command.Amount);
+        Domain.Entities.Payout payout = new(command.UserId, konnectWalletId, wallet.Id, command.Amount);
         await dbContext.AddAsync(payout, cancellationToken);
-        
+
         logger.LogInformation("Wallet balance reduced by {amount} for user {userId}. Payout of {payoutAmount} created.",
             command.Amount,
             command.UserId,
             command.Amount);
-        
+
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

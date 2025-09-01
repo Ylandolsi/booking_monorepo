@@ -1,5 +1,5 @@
 using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.Request;
+namespace Booking.Modules.Mentorships.Features.Payout.User.Request;
 
 public record PayoutCommand(int UserId, int Amount) : ICommand;

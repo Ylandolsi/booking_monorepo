@@ -66,7 +66,8 @@ public class KonnectService(
         string lastName,
         string email,
         string phone,
-        string? receiverWallet = null
+        string? receiverWallet = null,
+        bool isPayout = false
     )
     {
         /*
@@ -91,7 +92,7 @@ public class KonnectService(
             phoneNumber = phone,
             email = email,
             orderId = paymentId, // 
-            webhook = KonnectOptions.Webhook,
+            webhook = isPayout ? KonnectOptions.PayoutWebhook : KonnectOptions.Webhook,
             silentWebhook = true,
             successUrl = KonnectOptions.SuccessUrl,
             failUrl = KonnectOptions.FailureUrl,
@@ -118,6 +119,19 @@ public class KonnectService(
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
     }
 
+    public async Task<Result<PaymentResponse>> CreatePaymentPayout(
+        int amount,
+        int paymentId,
+        string firstName,
+        string lastName,
+        string email,
+        string phone,
+        string? receiverWallet = null,
+        bool isPayout = true)
+    {
+        return await CreatePayment(amount, paymentId, firstName, lastName, email, phone, receiverWallet, isPayout);
+    }
+
     public async Task<bool> VerifyWalletId(string walletId)
     {
         var res = await CreatePayment(100,
@@ -127,7 +141,7 @@ public class KonnectService(
             "test@gmail.com",
             "25202909",
             walletId);
-        
+
         return res.IsSuccess;
     }
 

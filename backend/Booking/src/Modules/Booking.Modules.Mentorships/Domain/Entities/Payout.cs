@@ -6,18 +6,21 @@ public class Payout : Entity
 {
     public int Id { get; private set; }
     public int UserId { get; private set; }
+    public string KonnectWalletId { get; private set; }
     public int WalletId { get; private set; }
     public decimal Amount { get; private set; }
 
-    public PayoutStatus  Status { get; private set; }
+    public string PaymentRef { get; private set; } = ""; // from Konnect
+    public PayoutStatus Status { get; private set; }
 
-    public Payout(int userId, int walletId, decimal amount)
+    public Payout(int userId, string konnectWalletId, int walletId, decimal amount)
     {
         UserId = userId;
+        KonnectWalletId = konnectWalletId;
         WalletId = walletId;
         Amount = amount;
         Status = PayoutStatus.Pending;
-        CreatedAt =  DateTime.UtcNow;        
+        CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -32,13 +35,19 @@ public class Payout : Entity
         Status = PayoutStatus.Rejected;
         UpdatedAt = DateTime.UtcNow;
     }
-    
-    
+
+    public void Approve(string paymentRef)
+    {
+        PaymentRef = paymentRef;
+        Status = PayoutStatus.Approved;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
 
 public enum PayoutStatus
 {
     Pending,
-    Completed,
+    Approved,
     Rejected,
+    Completed,
 }

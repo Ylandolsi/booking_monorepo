@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Payment.Payout.Request;
+namespace Booking.Modules.Mentorships.Features.Payout.User.Request;
 
 public class Payout : IEndpoint
 {
@@ -25,8 +25,8 @@ public class Payout : IEndpoint
                      var command = new PayoutCommand(userId, request.Amount);
  
                      var result = await handler.Handle(command, cancellationToken);
- 
-                     result.Match(() => Results.Ok(), CustomResults.Problem);
+                     
+                     return result.Match(() => Results.Ok(), CustomResults.Problem);
                  })
              .RequireAuthorization();
      }
