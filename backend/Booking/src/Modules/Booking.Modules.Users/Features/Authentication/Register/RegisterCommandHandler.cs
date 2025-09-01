@@ -5,6 +5,7 @@ using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
 using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Domain.Entities;
+using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ internal sealed class RegisterCommandHandler(
     UsersDbContext context,
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
+    EmailVerificationSender emailVerificationSender,
     IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<RegisterCommandHandler> logger)
     : ICommandHandler<RegisterCommand>
@@ -71,10 +73,14 @@ internal sealed class RegisterCommandHandler(
 
             logger.LogInformation("User registered successfully with email: {Email}", command.Email);
 
+            user = (await context.Users.FirstOrDefaultAsync(u => u.Email == command.Email, cancellationToken))!;
+            
             await mentorshipsModuleApi.CreateWalletForUserId(user.Id  ,cancellationToken);
             
-            user.Raise(new UserRegisteredDomainEvent(user.Id));
-            logger.LogInformation("UserRegisteredDomainEvent raised for user with ID: {UserId}", user.Id);
+            
+            await emailVerificationSender.SendVerificationEmailAsync(user);
+            
+            logger.LogInformation("email verification background job triggered for user with ID: {UserId}", user.Id);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
             await unitOfWork.CommitTransactionAsync(cancellationToken);

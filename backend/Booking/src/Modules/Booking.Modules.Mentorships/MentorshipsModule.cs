@@ -1,13 +1,12 @@
 using Booking.Common.Contracts.Mentorships;
-using Booking.Common.Domain.Events;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
+using Booking.Modules.Mentorships.BackgroundJobs.Payment;
 using Booking.Modules.Mentorships.BackgroundJobs.Payout;
 using Booking.Modules.Mentorships.Contracts;
 using Booking.Modules.Mentorships.Features.GoogleCalendar;
 using Booking.Modules.Mentorships.Persistence;
-using Booking.Modules.Users.BackgroundJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -34,7 +33,6 @@ public static class MentorshipsModule
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddTransient<DomainEventsDispatcher>();
         services.AddScoped<AwsSesEmailService>();
         services.AddSingleton<EmailTemplateProvider>();
 
@@ -69,59 +67,15 @@ public static class MentorshipsModule
 
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
-        services.AddScoped<ProcessOutboxMessagesJobMentorShipModule>();
-        services.AddScoped<ProcessOutboxMessagesJobMentorShipModule>();
         services.AddScoped<PayoutJob>();
         services.AddScoped<EscrowJob>();
+        services.AddScoped<CompleteWebhook>();
         return services;
     }
 
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddResiliencePipeline(ProcessOutboxMessagesJobMentorShipModule.OutboxProcessorPipelineKey,
-            builder =>
-            {
-                // polly : add resilience for executing outbox messages
-                builder.AddRetry(new RetryStrategyOptions
-                {
-                    Delay = TimeSpan.FromSeconds(1),
-                    MaxRetryAttempts = 3,
-                    BackoffType = DelayBackoffType.Exponential,
-                    UseJitter = true, // Helps prevent "thundering herd" issues.
-                    // This will add a random delay to each retry attempt, which can help distribute load more evenly.
-                    // to avoid overwhelming the system with retries at the same time.
-
-                    OnRetry = args =>
-                    {
-                        Console.WriteLine(
-                            $"Retrying operation due to: {args.Outcome.Exception?.Message}. Attempt #{args.AttemptNumber}");
-                        return ValueTask.CompletedTask;
-                    }
-                });
-
-                builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions
-                {
-                    ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-                    FailureRatio = 0.5, // Break the circuit if 50% of requests fail...
-                    MinimumThroughput =
-                        5, // at least 5 request must be made before ( 1 request = complete process with retry )
-                    SamplingDuration = TimeSpan.FromSeconds(60), // within a 60-second window.
-                    BreakDuration = TimeSpan.FromSeconds(30),
-                    OnOpened = args =>
-                    {
-                        Console.WriteLine(
-                            $"Circuit breaker opened for {args.BreakDuration.TotalSeconds}s due to: {args.Outcome.Exception?.Message}");
-                        return ValueTask.CompletedTask;
-                    },
-                    OnClosed = _ =>
-                    {
-                        Console.WriteLine("Circuit breaker closed. Operations have resumed.");
-                        return ValueTask.CompletedTask;
-                    }
-                });
-            });
-
         return services;
     }
 }

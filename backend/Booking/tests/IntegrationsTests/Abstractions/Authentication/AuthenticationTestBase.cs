@@ -19,12 +19,6 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
     }
 
-    protected async Task TriggerOutboxProcess()
-    {
-        var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
-        await outboxProcessor.ExecuteAsync(null);
-    }
-
     protected async Task<MeData> GetCurrenUserInfo( HttpClient? arrangeClient = null)
     {
         arrangeClient ??= ArrangeClient;
@@ -65,7 +59,6 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
         };
 
         var registerResponse = await arrangeClient.PostAsJsonAsync("/users/register", registerPayload);
-        await TriggerOutboxProcess();
         await Task.Delay(TimeSpan.FromSeconds(2));
         if (!verify) return; 
 

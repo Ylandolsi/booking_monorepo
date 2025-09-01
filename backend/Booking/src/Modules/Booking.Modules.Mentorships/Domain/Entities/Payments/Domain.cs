@@ -27,11 +27,10 @@ public class Payment : Entity
         Status = status;
     }
 
-    public void SetComplete( decimal? price = null)
+    public void SetComplete(decimal? price = null)
     {
         price = price ?? Price;
         Status = PaymentStatus.Completed;
-        Raise(new PaymentCompletedDomainEvent(UserId, MentorId, SessionId, Price));
     }
 
     public void UpdateReference(string reference)

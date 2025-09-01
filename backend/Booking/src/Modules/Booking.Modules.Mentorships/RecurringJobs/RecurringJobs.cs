@@ -10,32 +10,10 @@ public static class RecurringJobsMentorShipModules
 {
     public static void AddRecurringJobs()
     {
-        UseOutboxMessagesProcessor();
-        UseOutboxMessagesCleanUp();
         useEscrowJob();
         usePayoutJob();
     }
 
-
-    public static void UseOutboxMessagesCleanUp()
-    {
-        RecurringJob.AddOrUpdate<OutboxCleanupJobMentorshipsModule>(
-            "outbox-cleanup-job-mentorship-module",
-            job => job.CleanUpAsync(null),
-            Cron.Daily(2, 0), // Runs daily at 3:00 AM GMT+1 
-            new RecurringJobOptions
-            {
-                TimeZone = TimeZoneInfo.Utc // timezone = GMT (UTC)
-            });
-    }
-
-    public static void UseOutboxMessagesProcessor()
-    {
-        RecurringJob.AddOrUpdate<ProcessOutboxMessagesJobMentorShipModule>(
-            "process-outbox-messages-job-mentorship-module",
-            job => job.ExecuteAsync(null),
-            Cron.Minutely());
-    }
 
     public static void usePayoutJob()
     {
@@ -48,7 +26,7 @@ public static class RecurringJobsMentorShipModules
                 TimeZone = TimeZoneInfo.Utc // timezone = GMT (UTC)
             });
     }
-    
+
     public static void useEscrowJob()
     {
         RecurringJob.AddOrUpdate<EscrowJob>(

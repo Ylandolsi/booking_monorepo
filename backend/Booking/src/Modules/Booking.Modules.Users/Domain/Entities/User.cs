@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using Booking.Common.Domain.DomainEvent;
 using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain.JoinTables;
@@ -208,14 +207,5 @@ public sealed class User : IdentityUser<int>, IEntity
     // MAX 4 
     public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
 
-
-    // Domain Events
-    private DomainEventContainer _domainContainer = new DomainEventContainer();
-
-    [NotMapped] // for ef core 
-    [JsonIgnore] // even though it wont get mapped , we need to ignore it for serialization
-    public List<IDomainEvent> DomainEvents => _domainContainer.DomainEvents;
-
-    public void ClearDomainEvents() => _domainContainer.ClearDomainEvents();
-    public void Raise(IDomainEvent domainEvent) => _domainContainer.Raise(domainEvent);
+    
 }

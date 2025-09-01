@@ -1,67 +1,66 @@
+using System.ComponentModel;
 using Booking.Common.Contracts.Users;
-using Booking.Common.Domain.DomainEvent;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Payments;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Features.GoogleCalendar;
 using Booking.Modules.Mentorships.Persistence;
 using Hangfire;
+using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Payment;
+namespace Booking.Modules.Mentorships.BackgroundJobs.Payment;
 
-public class PaymentCompletedDomainEventHandler(
-    MentorshipsDbContext context,
-    IBackgroundJobClient backgroundJobClient,
+public class CompleteWebhook(
+    MentorshipsDbContext dbContext,
+    ILogger<CompleteWebhook> logger,
     GoogleCalendarService googleCalendarService,
-    IUsersModuleApi usersModuleApi,
-    ILogger<PaymentCompletedDomainEventHandler> logger) : IDomainEventHandler<PaymentCompletedDomainEvent>
+    IUsersModuleApi usersModuleApi)
 {
-    // TODO : send link to mentor and mentee for confirmation 
-    // TODO : recurring job to handle all escrow and send to wallet and create a transaction 
-    public async Task Handle(PaymentCompletedDomainEvent domainEvent, CancellationToken cancellationToken)
+    [DisplayName("Complete Webhook Jobs messages")]
+    [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
+    public async Task SendAsync(Session session, PerformContext? context)
     {
+        // TODO : send link to mentor and mentee for confirmation 
+        // TODO : recurring job to handle all escrow and send to wallet and create a transaction 
         logger.LogInformation(
             "Handling PaymentCompletedDomainEvent for menteeId:{mentee} , mentorId:{mentor} ,sessionId:{session} with price : {Price} ",
-            domainEvent.MenteeId,
-            domainEvent.MentorId,
-            domainEvent.SessionId,
-            domainEvent.Price);
+            session.MenteeId,
+            session.MentorId,
+            session.Id,
+            session.Price.Amount);
 
-        var session = await context.Sessions.FirstOrDefaultAsync(s => s.Id == domainEvent.SessionId, cancellationToken);
-        if (session == null)
-        {
-            logger.LogError("Session {SessionId} not found for payment completion", domainEvent.SessionId);
-            return;
-        }
+        var cancellationToken = context?.CancellationToken.ShutdownToken ?? CancellationToken.None;
+
 
         // Only proceed if session is not already confirmed
         if (session.Status == SessionStatus.Confirmed) // session.Status != SessionStatus.WaitingForPayment
         {
-            logger.LogInformation("Session {SessionId} is already confirmed", domainEvent.SessionId);
+            logger.LogInformation("Session {SessionId} is already confirmed", session.Id);
             return;
         }
 
-        await CreateMeetAndConfirmSession(session, domainEvent.MentorId, domainEvent.MenteeId, cancellationToken);
+        await CreateMeetAndConfirmSession(session, session.MentorId, session.MenteeId, cancellationToken);
 
 
         // Create escrow for the full session price
-        var escrowCreated = new Escrow(domainEvent.Price, domainEvent.SessionId, domainEvent.MentorId);
-        await context.AddAsync(escrowCreated, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        var escrowCreated =
+            new Domain.Entities.Escrow(session.Price.Amount, session.Id, session.MentorId);
+        await dbContext.AddAsync(escrowCreated, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Session {SessionId} confirmed with meeting link and escrow created",
-            domainEvent.SessionId);
+            session.Id);
 
-        /*await googleCalendarService.InitializeAsync(domainEvent.MenteeId);
+        /*await googleCalendarService.InitializeAsync(data.MenteeId);
 await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);*/
 
 
         /*backgroundJobClient.Enqueue<SendingPasswordResetToken>(
             job => job.SendAsync(command.Email, resetUrl, null));*/
     }
+
 
     public async Task CreateMeetAndConfirmSession(Session session, int mentorId, int menteeId,
         CancellationToken cancellationToken)
