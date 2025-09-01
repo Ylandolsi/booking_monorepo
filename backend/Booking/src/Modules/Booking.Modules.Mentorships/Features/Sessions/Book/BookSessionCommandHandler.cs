@@ -20,7 +20,7 @@ internal sealed class BookSessionCommandHandler(
     IUsersModuleApi usersModuleApi,
     IUnitOfWork unitOfWork,
     GoogleCalendarService googleCalendarService,
-    ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, string>
+    ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>
 {
     private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(
         BookSessionCommand command)
@@ -55,7 +55,7 @@ internal sealed class BookSessionCommandHandler(
     }
 
 
-    public async Task<Result<string>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
+    public async Task<Result<BookSessionRepsonse>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation(
             "Booking session for mentor {MentorSlug} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
@@ -65,7 +65,7 @@ internal sealed class BookSessionCommandHandler(
         if (command.MentorSlug == command.MenteeSlug)
         {
             logger.LogCritical("Mentor cant book a session with himself , MentorSlug {MentorSlug}", command.MentorSlug);
-            return Result.Failure<string>(Error.Problem("Session.InvalidMentee", "Mentor cannot book a session with himself"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidMentee", "Mentor cannot book a session with himself"));
         }
         
         await unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -75,7 +75,7 @@ internal sealed class BookSessionCommandHandler(
         var result = ParseTimeInput(command);
         if (result.IsFailure)
         {
-            return Result.Failure<string>(result.Error);
+            return Result.Failure<BookSessionRepsonse>(result.Error);
         }
 
         var (sessionDate, startTime, endTime) = result.Value;
@@ -87,7 +87,7 @@ internal sealed class BookSessionCommandHandler(
         {
             logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
                 command.StartTime);
-            return Result.Failure<string>(
+            return Result.Failure<BookSessionRepsonse>(
                 Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
         }
 
@@ -104,7 +104,7 @@ internal sealed class BookSessionCommandHandler(
         if (sessionStartDateTimeUtc <= DateTime.UtcNow)
         {
             logger.LogWarning("Attempted to book session in the past: {SessionDateTime}", sessionStartDateTimeUtc);
-            return Result.Failure<string>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
         }
 
         Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
@@ -113,7 +113,7 @@ internal sealed class BookSessionCommandHandler(
         if (mentor == null)
         {
             logger.LogWarning("Active mentor with SLUG {MentorSlug} not found", command.MentorSlug);
-            return Result.Failure<string>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
+            return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
 
 
@@ -141,7 +141,7 @@ internal sealed class BookSessionCommandHandler(
         {
             logger.LogWarning("Mentor {MentorId} is not available on {DayOfWeek} from {StartTime} to {EndTime}",
                 mentor.Id, requestedDayOfWeek, command.StartTime, command.EndTime);
-            return Result.Failure<string>(Error.Problem("Session.MentorNotAvailable",
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.MentorNotAvailable",
                 "Mentor is not available at the requested time"));
         }
 
@@ -164,7 +164,7 @@ internal sealed class BookSessionCommandHandler(
         {
             logger.LogWarning("Session conflict detected for mentor {MentorId} on {Date} from {StartTime} to {EndTime}",
                 mentor.Id, command.Date, command.StartTime, command.EndTime);
-            return Result.Failure<string>(Error.Problem("Session.TimeConflict",
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.TimeConflict",
                 "The requested time slot conflicts with an existing session"));
         }
 
@@ -182,7 +182,7 @@ internal sealed class BookSessionCommandHandler(
         var duration = Duration.Create(durationMinutes);
         if (duration.IsFailure)
         {
-            return Result.Failure<string>(duration.Error);
+            return Result.Failure<BookSessionRepsonse>(duration.Error);
         }
 
         // Calculate price based on mentor's hourly rate and duration
@@ -191,7 +191,7 @@ internal sealed class BookSessionCommandHandler(
         var price = Price.Create(totalPrice);
         if (price.IsFailure)
         {
-            return Result.Failure<string>(price.Error);
+            return Result.Failure<BookSessionRepsonse>(price.Error);
         }
 
         string paymentLink = "paid";
@@ -201,7 +201,7 @@ internal sealed class BookSessionCommandHandler(
             if (menteeUser is null)
             {
                 logger.LogError("Mentee user {MenteeId} not found for payment creation", command.MenteeId);
-                return Result.Failure<string>(Error.NotFound("User.NotFound", "Mentee user not found"));
+                return Result.Failure<BookSessionRepsonse>(Error.NotFound("User.NotFound", "Mentee user not found"));
             }
 
             var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
@@ -354,7 +354,7 @@ internal sealed class BookSessionCommandHandler(
                 "Successfully booked session {SessionId} for mentor {MentorId} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
                 session.Id, mentor.Id, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
-            return Result.Success(paymentLink);
+            return Result.Success(new BookSessionRepsonse(paymentLink));
         }
         catch (Exception ex)
         {
@@ -363,7 +363,7 @@ internal sealed class BookSessionCommandHandler(
 
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
 
-            return Result.Failure<string>(Error.Problem("Session.BookingFailed", "Failed to book session"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.BookingFailed", "Failed to book session"));
         }
     }
 }

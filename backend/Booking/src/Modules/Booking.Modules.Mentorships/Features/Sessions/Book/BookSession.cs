@@ -23,7 +23,7 @@ internal sealed class BookSession : IEndpoint
         app.MapPost(MentorshipEndpoints.Sessions.Book, async (
                 Request request,
                 UserContext userContext,
-                ICommandHandler<BookSessionCommand, string> handler,
+                ICommandHandler<BookSessionCommand, BookSessionRepsonse> handler,
                 CancellationToken cancellationToken) =>
             {
                 int menteeId = userContext.UserId;
@@ -39,7 +39,7 @@ internal sealed class BookSession : IEndpoint
                     request.TimeZoneId,
                     request.Note);
 
-                Result<string> result = await handler.Handle(command, cancellationToken);
+                Result<BookSessionRepsonse> result = await handler.Handle(command, cancellationToken);
                 // if there is amount to be paid : return link of payment 
 
                 return result.Match(
