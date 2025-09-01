@@ -1,6 +1,3 @@
-using Booking.Common;
-using Booking.Common.Domain.DomainEvent;
-using Booking.Common.Domain.Entity;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 using Booking.Modules.Mentorships.Domain.Entities.Days;
@@ -10,7 +7,6 @@ using Booking.Modules.Mentorships.Domain.Entities.Payments;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace Booking.Modules.Mentorships.Persistence;
 
@@ -33,8 +29,6 @@ public sealed class MentorshipsDbContext : DbContext
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Payout> Payouts { get; set; }
 
-    // Outbox messages
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,48 +49,9 @@ public sealed class MentorshipsDbContext : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await ConvertDomainEventsToOutboxMessages();
-
         int result = await base.SaveChangesAsync(cancellationToken);
-
         return result;
     }
 
-    private async Task ConvertDomainEventsToOutboxMessages()
-    {
-        var domainEvents = new List<IDomainEvent>();
-
-        // Domain events from all entities that implement IEntity
-        var entityEntries = ChangeTracker
-            .Entries()
-            .Where(entry => entry.Entity is IEntity)
-            .Select(entry => entry.Entity as IEntity)
-            .Where(entity => entity != null)
-            .ToList();
-
-        foreach (var entity in entityEntries)
-        {
-            domainEvents.AddRange(entity.DomainEvents);
-            entity.ClearDomainEvents();
-        }
-
-        if (!domainEvents.Any())
-        {
-            return;
-        }
-
-
-        var outboxMessages = domainEvents.Select(domainEvent => new OutboxMessage(
-            domainEvent.GetType().FullName!,
-            JsonConvert.SerializeObject(
-                domainEvent,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                }),
-            DateTime.UtcNow
-        )).ToList();
-
-        await OutboxMessages.AddRangeAsync(outboxMessages);
-    }
+   
 }

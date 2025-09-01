@@ -1,8 +1,4 @@
-﻿using Booking.Common;
-using Booking.Common.Domain.DomainEvent;
-using Booking.Common.Domain.Entity;
-using Booking.Common.Domain.Events;
-using Booking.Modules.Users.Domain.Entities;
+﻿using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Presistence.Seed.Users;
 using Microsoft.AspNetCore.Identity;
@@ -34,11 +30,7 @@ public sealed class UsersDbContext
     public DbSet<UserExpertise> UserExpertises { get; set; }
     public DbSet<MentorMentee> UserMentors { get; set; }
 
-
-    // outbox messages
-    public DbSet<OutboxMessage> OutboxMessages { get; set; }
-
-
+    
     // 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -67,62 +59,9 @@ public sealed class UsersDbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        await ConvertDomainEventsToOutboxMessages();
         var result = await base.SaveChangesAsync(cancellationToken);
-
         return result;
     }
 
-    private async Task ConvertDomainEventsToOutboxMessages()
-    {
-        var domainEvents = new List<IDomainEvent>();
-
-        // domain events from all entities that implement IEntity (including User)
-        var entityEntries = ChangeTracker
-            .Entries()
-            .Where(entry => entry.Entity is IEntity)
-            .Select(entry => entry.Entity as IEntity)
-            .Where(entity => entity != null)
-            .ToList();
-
-        foreach (var entity in entityEntries)
-        {
-            domainEvents.AddRange(entity.DomainEvents);
-            entity.ClearDomainEvents();
-        }
-
-        if (!domainEvents.Any())
-        {
-            return;
-        }
-
-
-        // TODO : check this approach instead of jsonConvert : 
-        // var typeInfo = new Dictionary<string, string>
-        // {
-        //     ["Type"] = domainEvent.GetType().FullName!
-        // };
-        // var serializedData = JsonConvert.SerializeObject(domainEvent);
-        // var metadata = JsonConvert.SerializeObject(typeInfo);
-
-        // Store type info separately
-        // var outboxMessages = domainEvents.Select(domainEvent => new OutboxMessage(
-        // domainEvent.GetType().AssemblyQualifiedName!,
-        // JsonConvert.SerializeObject(domainEvent),
-        // DateTime.UtcNow
-        // )).ToList();
-
-        var outboxMessages = domainEvents.Select(domainEvent => new OutboxMessage(
-            domainEvent.GetType().FullName!,
-            JsonConvert.SerializeObject(
-                domainEvent,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                }),
-            DateTime.UtcNow
-        )).ToList();
-
-        await OutboxMessages.AddRangeAsync(outboxMessages);
-    }
+ 
 }

@@ -1,5 +1,4 @@
 using Booking.Common.Contracts.Users;
-using Booking.Common.Domain.Events;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
@@ -47,8 +46,6 @@ public static class UsersModule
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<RoleService>();
-        
-        services.AddTransient<DomainEventsDispatcher>();
         services.AddScoped<AwsSesEmailService>();
         services.AddSingleton<EmailTemplateProvider>();
         // AWS UPLOAD
@@ -92,8 +89,6 @@ public static class UsersModule
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
         services.AddScoped<VerificationEmailForRegistrationJob>();
-        services.AddScoped<ProcessOutboxMessagesJob>();
-        services.AddScoped<OutboxCleanupJob>();
         services.AddScoped<TokenCleanupJob>();
         services.AddScoped<SendingPasswordResetToken>();
 
@@ -103,48 +98,7 @@ public static class UsersModule
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddResiliencePipeline(ProcessOutboxMessagesJob.OutboxProcessorPipelineKey,
-            builder =>
-            {
-                // polly : add resilience for executing outbox messages
-                builder.AddRetry(new RetryStrategyOptions
-                {
-                    Delay = TimeSpan.FromSeconds(1),
-                    MaxRetryAttempts = 3,
-                    BackoffType = DelayBackoffType.Exponential,
-                    UseJitter = true, // Helps prevent "thundering herd" issues.
-                    // This will add a random delay to each retry attempt, which can help distribute load more evenly.
-                    // to avoid overwhelming the system with retries at the same time.
-
-                    OnRetry = args =>
-                    {
-                        Console.WriteLine(
-                            $"Retrying operation due to: {args.Outcome.Exception?.Message}. Attempt #{args.AttemptNumber}");
-                        return ValueTask.CompletedTask;
-                    }
-                });
-
-                builder.AddCircuitBreaker(new CircuitBreakerStrategyOptions
-                {
-                    ShouldHandle = new PredicateBuilder().Handle<Exception>(),
-                    FailureRatio = 0.5, // Break the circuit if 50% of requests fail...
-                    MinimumThroughput =
-                        5, // at least 5 request must be made before ( 1 request = complete process with retry )
-                    SamplingDuration = TimeSpan.FromSeconds(60), // within a 60-second window.
-                    BreakDuration = TimeSpan.FromSeconds(30),
-                    OnOpened = args =>
-                    {
-                        Console.WriteLine(
-                            $"Circuit breaker opened for {args.BreakDuration.TotalSeconds}s due to: {args.Outcome.Exception?.Message}");
-                        return ValueTask.CompletedTask;
-                    },
-                    OnClosed = _ =>
-                    {
-                        Console.WriteLine("Circuit breaker closed. Operations have resumed.");
-                        return ValueTask.CompletedTask;
-                    }
-                });
-            });
+        
 
         return services;
     }

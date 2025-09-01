@@ -34,7 +34,6 @@ public class UserRegistrationTests : AuthenticationTestBase
         response.EnsureSuccessStatusCode();
 
 
-        await TriggerOutboxProcess();
 
         await Task.Delay(TimeSpan.FromSeconds(2));
         var sentEmail = EmailCapturer.FirstOrDefault(e => e.Destination.ToAddresses.Contains(registrationPayload.Email));

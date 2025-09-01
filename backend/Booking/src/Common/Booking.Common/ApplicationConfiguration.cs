@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Booking.Common.Behaviors;
-using Booking.Common.Domain.DomainEvent;
 using Booking.Common.Messaging;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,12 +27,6 @@ public static class ApplicationConfiguration
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
 
-            // Register domain event handlers
-            services.Scan(scan => scan
-                .FromAssemblies(moduleAssembly)
-                .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
 
             // Register all validators from the current assembly
             services.AddValidatorsFromAssembly(moduleAssembly, includeInternalTypes: true);

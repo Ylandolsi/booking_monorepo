@@ -37,11 +37,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     protected readonly HttpClient _authenticatedVerifiedUserClient;
     private readonly Func<Task> _resetDatabase;
 
-    protected async Task TriggerOutboxProcess()
-    {
-        var outboxProcessor = _scope.ServiceProvider.GetRequiredService<ProcessOutboxMessagesJob>();
-        await outboxProcessor.ExecuteAsync(null);
-    }
+
 
     public BaseIntegrationTest(IntegrationTestsWebAppFactory factory)
     {
