@@ -1,13 +1,21 @@
 2025-08-30T10:45:00
 is an ISO 8601 date-time format,
 
----
+Database Locks: Consider using SET LOCK_TIMEOUT for long-running queries
+Memory Usage: Monitor memory consumption with large batch operations
+
+Must read for async operations !!!
+
+## https://www.reddit.com/r/dotnet/comments/1g9c8lu/looking_for_a_solution_for_async_processing_of/
+
 ## Test ressources :
+
 https://antondevtips.com/blog/asp-net-core-integration-testing-best-practises
 https://blog.markvincze.com/overriding-configuration-in-asp-net-core-integration-tests/
 
 ---
-back to useContext  and go in depth in that multiselect dialog 
+
+back to useContext and go in depth in that multiselect dialog
 
 update PaidValue object in session
 
@@ -32,7 +40,6 @@ Concurrency, locks and migrations
   // Concurrency check — prevents overwriting changes made by others
   if (!string.Equals(role.ConcurrencyStamp, model.ConcurrencyStamp, StringComparison.Ordinal))
 
-
 Integrations & tokens
 
 - Test refresh token behavior against real expiration scenarios.
@@ -43,63 +50,60 @@ Integrations & tokens
 TODO / Roadmap
 
 (done but make sure its okay)
+
 - for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 
+remove all logDebug !
 
-remove all logDebug ! 
+cloudflare ?
 
-
-cloudflare ? 
-
-
-configureAwait : false 
+configureAwait : false
 
 await userRoleStore.IsInRoleAsync(user, normalizedRole, CancellationToken).ConfigureAwait(false)
 
 all entity updaed add should be configured !
 
-fix this aand timeout 
-        services.AddHttpClient("KonnectClient", client =>
-            {
-                // TODO : make this more reselllient 
-                /*
-                client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
-                #1#
-                client.BaseAddress = new Uri("https://api.sandbox.konnect.network/api/v2");
-                client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
-                client.Timeout = TimeSpan.FromSeconds(10);
-            })
-            .AddStandardResilienceHandler();*/
+fix this aand timeout
+services.AddHttpClient("KonnectClient", client =>
+{
+// TODO : make this more reselllient
+/_
+client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
+#1#
+client.BaseAddress = new Uri("https://api.sandbox.konnect.network/api/v2");
+client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
+client.Timeout = TimeSpan.FromSeconds(10);
+})
+.AddStandardResilienceHandler();_/
 
-- add fallback for profile picture when showing session  , front and back 
-- add timezone in the frontend for each request 
+- add fallback for profile picture when showing session , front and back
+- add timezone in the frontend for each request
 
--fix return url of google oauth from front : now it always return to home 
-- add method to retieve money : transfer balance to Konnect with fees 15% 
+-fix return url of google oauth from front : now it always return to home
+
+- add method to retieve money : transfer balance to Konnect with fees 15%
 - Fix availability / booking flows.
 - Booking page: improve mobile version.
 - Add fallback objects that contain defaults for missing fields.
-- Configure EF Core domains and connection settings carefully and validators for endpoints  
-- Ensure correct handling of profile picture URL storage and delivery. watch  milan video and cdn
+- Configure EF Core domains and connection settings carefully and validators for endpoints
+- Ensure correct handling of profile picture URL storage and delivery. watch milan video and cdn
 - Fix Reselliency
 
 - confirgure life span of koonect
 - test the global exception handler
 - COnfigure the expired for the google tokns GoogleTokenService and UsersModuleApi and ..
 
-
 - remove private route from mentor/calendar or profile
-but any action needs to be logged in ( with google or email )
------- LATER 
-- pagination for the getPayouts and getSessiosn 
+  but any action needs to be logged in ( with google or email )
+  ------ LATER
+- pagination for the getPayouts and getSessiosn
 - Toggle mentor activity to disable receiving meeting requests. for now its working by togglign days , so for future toggle it all
 - add : naviagte to mentor or mentee when showing the meets
 - previous meetings/mentors.
 - maybe add tag of skills to the meeting to show it !
 - Manage auth metadata (currentIp, currentUserAgent).
 - eAdmin dashboard.
-- add user can have solde 
-
+- add user can have solde
 
 Notes
 
@@ -212,7 +216,9 @@ Webhook Received → Payment Completed
 Session Confirmed + Meet Link + Escrow Created
 
 ---
+
 DONE :
+
 - Integrate with calendar; prevent switching to another account if already integrated.
   and handle this UI :
   - handle this with UI :
@@ -220,11 +226,9 @@ DONE :
     2025-08-24T13:56:57.246704927Z [13:56:57 ERR] Completed command IntegrateAccountCommand with error
     when integrating with an account alraedy integrated !
 
-
 ## Future Enhancements
 
 - [ ] Multiple session duration options
-
 
 ```
 ts
