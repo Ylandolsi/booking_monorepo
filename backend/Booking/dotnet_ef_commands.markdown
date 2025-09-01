@@ -2,6 +2,14 @@
 
 In EF Core, if you don’t configure anything, it uses your C# property names (usually PascalCase).
 
+Check wallet balance with row-level locking
+
+```c#
+ var wallet = await _dbContext.Wallets.
+    Where(w => w.UserId == request.UserId).
+    ExecuteUpdateAsync(w => w.SetProperty(x => x.Balance, x => x.Balance), cancellationToken);
+```
+
 ## Entity Framework Migrations
 
 Add migrations for the Users module:
