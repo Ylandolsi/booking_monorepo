@@ -332,7 +332,6 @@ public class SessionRetrievalTests : MentorshipTestBase
         Assert.Equal(initialCount + 1, newSessionsArray.Count);
         
         // Find the newest session (should be the one with the matching scheduled time)
-        var expectedScheduledTime = DateTime.Parse($"{targetDate:yyyy-MM-dd}T{startTime}:00.000");
         var newSession = newSessionsArray
             .OrderByDescending(s => s.GetProperty("id").GetInt32())
             .FirstOrDefault();
