@@ -178,7 +178,12 @@ public class SessionStressTests : MentorshipTestBase
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-                    successfulBookings.Add(result.GetProperty("sessionId").GetInt32());
+                    // Verify we got a payUrl (indicating successful booking)
+                    if (result.TryGetProperty("payUrl", out var payUrl) && !string.IsNullOrEmpty(payUrl.GetString()))
+                    {
+                        // For stress testing, we just count successful bookings without needing the session ID
+                        successfulBookings.Add(i); // Use booking index as a simple identifier
+                    }
                 }
             }
             catch (Exception ex)

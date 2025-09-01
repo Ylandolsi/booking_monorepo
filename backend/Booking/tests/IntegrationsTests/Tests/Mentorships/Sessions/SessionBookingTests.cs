@@ -43,8 +43,8 @@ public class SessionBookingTests : MentorshipTestBase
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.True(result.TryGetProperty("sessionId", out var sessionId));
-        Assert.True(sessionId.GetInt32() > 0);
+        Assert.True(result.TryGetProperty("payUrl", out var payUrl));
+        Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
     }
 
     [Fact]
