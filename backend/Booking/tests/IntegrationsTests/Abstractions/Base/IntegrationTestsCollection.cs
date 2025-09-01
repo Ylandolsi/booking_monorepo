@@ -1,4 +1,4 @@
-﻿namespace IntegrationsTests.Abstractions;
+﻿namespace IntegrationsTests.Abstractions.Base;
 // Share the same instance of the IntegrationTestsWebAppFactory
 // across all tests in this assembly ( containers , config .. ) 
 

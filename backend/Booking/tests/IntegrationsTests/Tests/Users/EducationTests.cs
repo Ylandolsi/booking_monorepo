@@ -2,6 +2,8 @@ using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Utils;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Authentication;
+using IntegrationsTests.Abstractions.Base;
 using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Users;

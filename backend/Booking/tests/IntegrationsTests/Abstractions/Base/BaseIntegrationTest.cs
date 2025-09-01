@@ -1,18 +1,16 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using Amazon.SimpleEmail.Model;
 using Bogus;
 using Booking.Modules.Users.BackgroundJobs;
-using Booking.Modules.Users.Features;
-using Booking.Modules.Users.Features.Utils;
+using IntegrationsTests.Abstractions.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter;
 using Snapshooter.Xunit;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Abstractions.Base;
 
 [Collection(nameof(IntegrationTestsCollection))]
 public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime

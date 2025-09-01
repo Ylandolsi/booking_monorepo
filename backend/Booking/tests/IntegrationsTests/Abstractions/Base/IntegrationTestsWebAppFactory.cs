@@ -1,21 +1,22 @@
+using System.Data.Common;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
+using Booking.Api;
+using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Users.Presistence;
+using IntegrationsTests.Mocking;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
-using System.Data.Common;
-using Booking.Api;
-using Booking.Modules.Users.Presistence;
-using Booking.Modules.Mentorships.Persistence;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Testcontainers.PostgreSql;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Abstractions.Base;
 
 // docker pull datalust/seq:latest
 // docker ps 
@@ -56,6 +57,12 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            config
+                .AddJsonFile("appsettings.Test.json")
+                .AddEnvironmentVariables();
+        });
       
         builder.ConfigureAppConfiguration((context, config) =>
         {

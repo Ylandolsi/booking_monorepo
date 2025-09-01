@@ -9,6 +9,4 @@ public class KonnectOptions
     public int PaymentLifespan { get; set; }
     public string Webhook { get; set; }
     public string PayoutWebhook { get; set; }
-    public string SuccessUrl { get; set; }
-    public string FailureUrl { get; set; }
 }

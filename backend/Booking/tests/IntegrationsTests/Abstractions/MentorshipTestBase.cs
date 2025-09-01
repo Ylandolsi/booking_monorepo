@@ -2,6 +2,8 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Booking.Modules.Mentorships.Features;
 using Booking.Modules.Users.Features.Utils;
+using IntegrationsTests.Abstractions.Authentication;
+using IntegrationsTests.Abstractions.Base;
 
 namespace IntegrationsTests.Abstractions;
 

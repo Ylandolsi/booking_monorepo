@@ -94,8 +94,6 @@ public class KonnectService(
             orderId = paymentId, // 
             webhook = isPayout ? KonnectOptions.PayoutWebhook : KonnectOptions.Webhook,
             silentWebhook = true,
-            successUrl = KonnectOptions.SuccessUrl,
-            failUrl = KonnectOptions.FailureUrl,
             theme = "light" // theme= req.body.theme ? req.body.theme : "light",
         };
 

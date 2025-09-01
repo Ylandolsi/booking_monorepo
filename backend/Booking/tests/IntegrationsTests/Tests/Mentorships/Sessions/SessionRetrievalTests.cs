@@ -4,6 +4,7 @@ using System.Text.Json;
 using Booking.Modules.Mentorships.Features;
 using Booking.Modules.Users.Features;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Base;
 
 namespace IntegrationsTests.Tests.Mentorships.Sessions;
 

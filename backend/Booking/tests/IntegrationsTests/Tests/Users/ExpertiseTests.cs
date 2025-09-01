@@ -2,6 +2,9 @@ using System.Net.Http.Json;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Authentication;
+using IntegrationsTests.Abstractions.Base;
+
 namespace IntegrationsTests.Tests.Users;
 
 public class ExpertiseTests : AuthenticationTestBase

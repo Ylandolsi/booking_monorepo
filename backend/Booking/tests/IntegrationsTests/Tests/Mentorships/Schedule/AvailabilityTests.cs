@@ -1,15 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 using Booking.Modules.Mentorships.Features;
-using Booking.Modules.Mentorships.Features.Availability.Get.PerMonth;
-using Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
-using Booking.Modules.Users.Features;
-using Booking.Modules.Users.Features.Authentication.Me;
 using IntegrationsTests.Abstractions;
-using Snapshooter.Xunit;
+using IntegrationsTests.Abstractions.Base;
 
-namespace IntegrationsTests.Tests.Mentorships.Availability;
+namespace IntegrationsTests.Tests.Mentorships.Schedule;
 
 public class ScheduleTests : MentorshipTestBase
 {

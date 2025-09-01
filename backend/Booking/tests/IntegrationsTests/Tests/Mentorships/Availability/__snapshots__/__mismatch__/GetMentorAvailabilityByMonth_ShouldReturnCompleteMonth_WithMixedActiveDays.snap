@@ -1,0 +1,1063 @@
+﻿{
+  "year": 2025,
+  "month": 9,
+  "days": [
+    {
+      "date": "2025-09-01",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "09:00",
+          "endTime": "09:30",
+          "isBooked": false,
+          "isAvailable": false
+        },
+        {
+          "startTime": "09:45",
+          "endTime": "10:15",
+          "isBooked": false,
+          "isAvailable": false
+        },
+        {
+          "startTime": "10:30",
+          "endTime": "11:00",
+          "isBooked": false,
+          "isAvailable": false
+        },
+        {
+          "startTime": "11:15",
+          "endTime": "11:45",
+          "isBooked": false,
+          "isAvailable": false
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "12:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:45",
+          "endTime": "13:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:30",
+          "endTime": "14:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:15",
+          "endTime": "14:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:45",
+          "endTime": "16:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 11,
+        "availableSlots": 7,
+        "bookedSlots": 4,
+        "availabilityPercentage": 63.636363636363636363636363640
+      }
+    },
+    {
+      "date": "2025-09-02",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-03",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "10:00",
+          "endTime": "10:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:45",
+          "endTime": "11:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:30",
+          "endTime": "12:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:15",
+          "endTime": "12:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "13:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:45",
+          "endTime": "14:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:30",
+          "endTime": "15:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:15",
+          "endTime": "15:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-04",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "08:00",
+          "endTime": "08:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "08:45",
+          "endTime": "09:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:30",
+          "endTime": "10:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:15",
+          "endTime": "10:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "11:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:45",
+          "endTime": "12:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:30",
+          "endTime": "13:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:15",
+          "endTime": "13:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-05",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-06",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-07",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-08",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "09:00",
+          "endTime": "09:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:45",
+          "endTime": "10:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:30",
+          "endTime": "11:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:15",
+          "endTime": "11:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "12:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:45",
+          "endTime": "13:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:30",
+          "endTime": "14:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:15",
+          "endTime": "14:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:45",
+          "endTime": "16:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 11,
+        "availableSlots": 11,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-09",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-10",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "10:00",
+          "endTime": "10:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:45",
+          "endTime": "11:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:30",
+          "endTime": "12:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:15",
+          "endTime": "12:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "13:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:45",
+          "endTime": "14:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:30",
+          "endTime": "15:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:15",
+          "endTime": "15:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-11",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "08:00",
+          "endTime": "08:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "08:45",
+          "endTime": "09:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:30",
+          "endTime": "10:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:15",
+          "endTime": "10:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "11:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:45",
+          "endTime": "12:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:30",
+          "endTime": "13:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:15",
+          "endTime": "13:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-12",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-13",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-14",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-15",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "09:00",
+          "endTime": "09:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:45",
+          "endTime": "10:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:30",
+          "endTime": "11:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:15",
+          "endTime": "11:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "12:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:45",
+          "endTime": "13:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:30",
+          "endTime": "14:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:15",
+          "endTime": "14:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:45",
+          "endTime": "16:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 11,
+        "availableSlots": 11,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-16",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-17",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "10:00",
+          "endTime": "10:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:45",
+          "endTime": "11:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:30",
+          "endTime": "12:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:15",
+          "endTime": "12:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "13:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:45",
+          "endTime": "14:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:30",
+          "endTime": "15:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:15",
+          "endTime": "15:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-18",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "08:00",
+          "endTime": "08:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "08:45",
+          "endTime": "09:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:30",
+          "endTime": "10:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:15",
+          "endTime": "10:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "11:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:45",
+          "endTime": "12:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:30",
+          "endTime": "13:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:15",
+          "endTime": "13:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-19",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-20",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-21",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-22",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "09:00",
+          "endTime": "09:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:45",
+          "endTime": "10:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:30",
+          "endTime": "11:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:15",
+          "endTime": "11:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "12:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:45",
+          "endTime": "13:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:30",
+          "endTime": "14:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:15",
+          "endTime": "14:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:45",
+          "endTime": "16:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 11,
+        "availableSlots": 11,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-23",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-24",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "10:00",
+          "endTime": "10:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:45",
+          "endTime": "11:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:30",
+          "endTime": "12:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:15",
+          "endTime": "12:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:00",
+          "endTime": "13:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:45",
+          "endTime": "14:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:30",
+          "endTime": "15:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:15",
+          "endTime": "15:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-25",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "08:00",
+          "endTime": "08:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "08:45",
+          "endTime": "09:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:30",
+          "endTime": "10:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:15",
+          "endTime": "10:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:00",
+          "endTime": "11:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:45",
+          "endTime": "12:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:30",
+          "endTime": "13:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:15",
+          "endTime": "13:45",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 8,
+        "availableSlots": 8,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-26",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-27",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-28",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    },
+    {
+      "date": "2025-09-29",
+      "isAvailable": true,
+      "timeSlots": [
+        {
+          "startTime": "09:00",
+          "endTime": "09:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "09:45",
+          "endTime": "10:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "10:30",
+          "endTime": "11:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "11:15",
+          "endTime": "11:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:00",
+          "endTime": "12:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "12:45",
+          "endTime": "13:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "13:30",
+          "endTime": "14:00",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "14:15",
+          "endTime": "14:45",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:00",
+          "endTime": "15:30",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "15:45",
+          "endTime": "16:15",
+          "isBooked": false,
+          "isAvailable": true
+        },
+        {
+          "startTime": "16:30",
+          "endTime": "17:00",
+          "isBooked": false,
+          "isAvailable": true
+        }
+      ],
+      "summary": {
+        "totalSlots": 11,
+        "availableSlots": 11,
+        "bookedSlots": 0,
+        "availabilityPercentage": 100
+      }
+    },
+    {
+      "date": "2025-09-30",
+      "isAvailable": false,
+      "timeSlots": [],
+      "summary": {
+        "totalSlots": 0,
+        "availableSlots": 0,
+        "bookedSlots": 0,
+        "availabilityPercentage": 0
+      }
+    }
+  ]
+}

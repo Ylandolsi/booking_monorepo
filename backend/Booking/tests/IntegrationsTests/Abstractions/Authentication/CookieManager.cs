@@ -1,8 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
-using System.Net.Http.Headers;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Abstractions.Authentication;
 
 /// <summary>
 /// Manages cookies for different user contexts in integration tests

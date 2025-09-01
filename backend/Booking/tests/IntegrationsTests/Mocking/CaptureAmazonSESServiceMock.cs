@@ -2,7 +2,7 @@
 using Amazon.SimpleEmail.Model;
 using Moq;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Mocking;
 
 public static class CaptureAmazonSESServiceMock
 {

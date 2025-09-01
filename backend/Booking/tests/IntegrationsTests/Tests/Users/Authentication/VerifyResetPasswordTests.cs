@@ -3,6 +3,8 @@ using System.Net.Http.Json;
 using System.Web;
 using Booking.Modules.Users.Features;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Authentication;
+using IntegrationsTests.Abstractions.Base;
 
 namespace IntegrationsTests.Tests.Users.Authentication;
 

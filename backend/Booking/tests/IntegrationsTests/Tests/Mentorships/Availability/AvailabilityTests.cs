@@ -7,6 +7,7 @@ using Booking.Modules.Mentorships.Features.Availability.Get.PerDay;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication.Me;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Base;
 using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Mentorships.Availability;

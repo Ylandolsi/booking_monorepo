@@ -1,9 +1,8 @@
 using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Mvc.Testing;
-using System.Net.Http.Headers;
 using Booking.Api;
+using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Abstractions.Authentication;
 
 /// <summary>
 /// Factory for creating HTTP clients with cookie management for different users

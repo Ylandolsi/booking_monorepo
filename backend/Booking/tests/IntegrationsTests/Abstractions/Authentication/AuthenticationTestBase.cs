@@ -1,13 +1,14 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
+using IntegrationsTests.Abstractions.Base;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace IntegrationsTests.Abstractions;
+namespace IntegrationsTests.Abstractions.Authentication;
 
 public abstract class AuthenticationTestBase : BaseIntegrationTest
 {
