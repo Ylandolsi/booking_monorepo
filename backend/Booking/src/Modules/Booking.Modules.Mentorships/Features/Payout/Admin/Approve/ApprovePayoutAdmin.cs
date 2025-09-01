@@ -27,6 +27,6 @@ public class ApprovePayoutAdmin : IEndpoint
                 })
             .RequireAuthorization()
             .RequireAuthorization("Admin")
-            .WithTags(Tags.Admin);
+            .WithTags(Tags.Admin ,Tags.Payout);
     }
 }

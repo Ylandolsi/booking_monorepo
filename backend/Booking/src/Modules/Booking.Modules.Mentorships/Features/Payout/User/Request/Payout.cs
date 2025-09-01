@@ -28,6 +28,8 @@ public class Payout : IEndpoint
                      
                      return result.Match(() => Results.Ok(), CustomResults.Problem);
                  })
-             .RequireAuthorization();
+             .RequireAuthorization()
+             .WithTags(Tags.Payout);
+
      }
  }

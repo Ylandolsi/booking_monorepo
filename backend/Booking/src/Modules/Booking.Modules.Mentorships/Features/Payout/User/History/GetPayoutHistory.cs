@@ -24,6 +24,7 @@ public class GetPayoutHistory : IEndpoint
                     var result = await handler.Handle(query, cancellationToken);
                     return result.Match(Results.Ok, CustomResults.Problem);
                 })
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithTags(Tags.Payout);
     }
 }

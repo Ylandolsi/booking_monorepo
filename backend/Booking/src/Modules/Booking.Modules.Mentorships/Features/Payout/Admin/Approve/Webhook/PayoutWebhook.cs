@@ -25,7 +25,8 @@ public class PayoutWebhook : IEndpoint
             var command = new PayoutWebhookCommand(payment_ref);
             var result = await handler.Handle(command, cancellationToken);
             return result.Match(() => Results.Ok(), CustomResults.Problem);
-        });
+        })
+        .WithTags(Tags.Payout , Tags.Webhook);
     }
 }
 

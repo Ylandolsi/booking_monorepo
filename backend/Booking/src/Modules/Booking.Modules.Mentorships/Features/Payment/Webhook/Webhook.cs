@@ -22,7 +22,8 @@ public class Webhook : IEndpoint
             await handler.Handle(command, cancellationToken);
 
             return Results.Ok();
-        });
+        })
+        .WithTags(Tags.Payment , Tags.Webhook);
         // TODO: add rate limiter here ! 
     }
 }

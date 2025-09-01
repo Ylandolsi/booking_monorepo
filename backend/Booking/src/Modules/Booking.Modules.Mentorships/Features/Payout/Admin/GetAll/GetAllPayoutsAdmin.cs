@@ -23,6 +23,6 @@ public class GetAllPayoutsAdmin : IEndpoint
                     return result.Match(Results.Ok, CustomResults.Problem);
                 }).RequireAuthorization()
             .RequireAuthorization("Admin")
-            .WithTags(Tags.Admin);
+            .WithTags(Tags.Admin ,Tags.Payout);
     }
 }
