@@ -59,19 +59,21 @@ public class WebhookCommandHandler(
             return Result.Failure(Error.NotFound("Session.NotFound", "Session not found"));
         }
 
-        payment.SetComplete(); // raised event inside 
         session.AddAmountPaid(payment.Price);
+        payment.SetComplete(session.Price.Amount); // raised event inside , with the total price of the session !  
 
-        // If session is now fully paid, confirm it
+        /*
+         * Handled in paymentCompletedDomainEventHandler 
+         * // If session is now fully paid, confirm it
         if (session.AmountPaid >= session.Price.Amount)
         {
             var meetLink = "https://meet.google.com/placeholder"; // TODO: Generate actual meet link  
             session.Confirm(meetLink);
 
             // Create escrow for the session price
-            /*var escrow = new Escrow(session.Price.Amount, session.Id, session.MentorId);
-            await context.Escrows.AddAsync(escrow, cancellationToken);*/
-        }
+            var escrow = new Escrow(session.Price.Amount, session.Id, session.MentorId);
+            await context.Escrows.AddAsync(escrow, cancellationToken);
+        }*/
 
         await context.SaveChangesAsync(cancellationToken);
 
