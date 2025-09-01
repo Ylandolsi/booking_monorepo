@@ -21,6 +21,7 @@ public class Escrow : Entity
     {
         Price = price;
         SessionId = sessionId;
+        State = EscrowState.Held; 
     }
 
     

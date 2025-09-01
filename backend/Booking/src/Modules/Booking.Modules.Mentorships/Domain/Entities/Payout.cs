@@ -42,6 +42,12 @@ public class Payout : Entity
         Status = PayoutStatus.Approved;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public void Pending()
+    {
+        Status = PayoutStatus.Pending;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }
 
 public enum PayoutStatus

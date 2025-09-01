@@ -6,6 +6,7 @@ using Booking.Api.Services;
 using Booking.Common;
 using Booking.Modules.Mentorships;
 using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Mentorships.RecurringJobs;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
@@ -124,7 +125,7 @@ app.UseExceptionHandler();
 app.UseCancellationMiddleware();
 
 RecurringJobs.AddRecurringJobs();
-
+RecurringJobsMentorShipModules.AddRecurringJobs();
 
 app.UseAuthentication();
 
