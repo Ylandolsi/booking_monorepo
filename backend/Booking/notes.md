@@ -1,6 +1,12 @@
 2025-08-30T10:45:00
 is an ISO 8601 date-time format,
 
+---
+## Test ressources :
+https://antondevtips.com/blog/asp-net-core-integration-testing-best-practises
+https://blog.markvincze.com/overriding-configuration-in-asp-net-core-integration-tests/
+
+---
 back to useContext  and go in depth in that multiselect dialog 
 
 update PaidValue object in session

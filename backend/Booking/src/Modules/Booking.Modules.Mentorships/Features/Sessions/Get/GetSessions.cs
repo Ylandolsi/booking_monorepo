@@ -20,16 +20,15 @@ internal sealed class GetSessions : IEndpoint
                 IQueryHandler<GetSessionsQuery, List<SessionResponse>> handler,
                 CancellationToken cancellationToken) =>
             {
-
                 timeZoneId = timeZoneId is "" or null ? "Africa/Tunis" : timeZoneId;
 
                 int menteeId = userContext.UserId;
-                var query = new GetSessionsQuery(menteeId, upToDate , timeZoneId);
+                var query = new GetSessionsQuery(menteeId, upToDate, timeZoneId);
 
                 Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(
-                    sessions => Results.Ok(sessions),
+                    Results.Ok,
                     CustomResults.Problem);
             })
             .RequireAuthorization()

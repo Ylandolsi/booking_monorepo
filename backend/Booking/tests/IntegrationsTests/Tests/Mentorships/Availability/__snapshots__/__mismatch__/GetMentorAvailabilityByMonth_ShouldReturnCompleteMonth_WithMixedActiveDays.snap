@@ -34,13 +34,13 @@
           "startTime": "12:00",
           "endTime": "12:30",
           "isBooked": false,
-          "isAvailable": true
+          "isAvailable": false
         },
         {
           "startTime": "12:45",
           "endTime": "13:15",
           "isBooked": false,
-          "isAvailable": true
+          "isAvailable": false
         },
         {
           "startTime": "13:30",
@@ -75,9 +75,9 @@
       ],
       "summary": {
         "totalSlots": 11,
-        "availableSlots": 7,
-        "bookedSlots": 4,
-        "availabilityPercentage": 63.636363636363636363636363640
+        "availableSlots": 5,
+        "bookedSlots": 6,
+        "availabilityPercentage": 45.454545454545454545454545450
       }
     },
     {

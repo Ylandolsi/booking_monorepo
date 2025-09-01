@@ -86,4 +86,8 @@
         <ProjectReference Include="..\..\Modules\Booking.Modules.Users\Booking.Modules.Users.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="appsettings.Test.json" />
+    </ItemGroup>
+
 </Project>
