@@ -407,6 +407,12 @@ public class SessionCancellationTests : MentorshipTestBase
         var targetDate = GetNextWeekday(dayOfWeek);
         var mentorSlug = await GetMentorSlug(mentorClient);
 
+        // Store initial session count
+        var initialSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
+        initialSessionsResponse.EnsureSuccessStatusCode();
+        var initialSessions = await initialSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var initialCount = initialSessions.EnumerateArray().Count();
+
         var bookingRequest = new
         {
             MentorSlug = mentorSlug,
@@ -421,13 +427,39 @@ public class SessionCancellationTests : MentorshipTestBase
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return result.GetProperty("sessionId").GetInt32();
+        // Verify we got a payUrl (indicating successful booking)
+        Assert.True(result.TryGetProperty("payUrl", out var payUrl));
+        Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
+
+        // Get the newly created session by finding the session that wasn't there before
+        var newSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
+        newSessionsResponse.EnsureSuccessStatusCode();
+        var newSessions = await newSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var newSessionsArray = newSessions.EnumerateArray().ToList();
+        
+        // Should have one more session now
+        Assert.Equal(initialCount + 1, newSessionsArray.Count);
+        
+        // Find the newest session (should be the one with the matching scheduled time)
+        var expectedScheduledTime = DateTime.Parse($"{targetDate:yyyy-MM-dd}T{startTime}:00.000");
+        var newSession = newSessionsArray
+            .OrderByDescending(s => s.GetProperty("id").GetInt32())
+            .FirstOrDefault();
+            
+        Assert.True(newSession.ValueKind != JsonValueKind.Undefined, "Could not find the newly created session");
+        return newSession.GetProperty("id").GetInt32();
     }
 
     private async Task<int> BookSessionAtSpecificTime(HttpClient mentorClient, HttpClient menteeClient, 
         DateTime specificDateTime, string timeZoneId = "Africa/Tunis")
     {
         var mentorSlug = await GetMentorSlug(mentorClient);
+
+        // Store initial session count
+        var initialSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
+        initialSessionsResponse.EnsureSuccessStatusCode();
+        var initialSessions = await initialSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var initialCount = initialSessions.EnumerateArray().Count();
 
         var bookingRequest = new
         {
@@ -443,7 +475,27 @@ public class SessionCancellationTests : MentorshipTestBase
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return result.GetProperty("sessionId").GetInt32();
+        // Verify we got a payUrl (indicating successful booking)
+        Assert.True(result.TryGetProperty("payUrl", out var payUrl));
+        Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
+
+        // Get the newly created session by finding the session that wasn't there before
+        var newSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
+        newSessionsResponse.EnsureSuccessStatusCode();
+        var newSessions = await newSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
+        var newSessionsArray = newSessions.EnumerateArray().ToList();
+        
+        // Should have one more session now
+        Assert.Equal(initialCount + 1, newSessionsArray.Count);
+        
+        // Find the newest session (should be the one with the matching scheduled time)
+        var expectedScheduledTime = DateTime.Parse($"{specificDateTime:yyyy-MM-dd}T{specificDateTime:HH:mm}:00.000");
+        var newSession = newSessionsArray
+            .OrderByDescending(s => s.GetProperty("id").GetInt32())
+            .FirstOrDefault();
+            
+        Assert.True(newSession.ValueKind != JsonValueKind.Undefined, "Could not find the newly created session");
+        return newSession.GetProperty("id").GetInt32();
     }
 
     private static DateTime GetNextWeekday(DayOfWeek dayOfWeek)

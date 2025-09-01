@@ -1,3 +1,5 @@
+
+EnumerateArray
 # C# Code Snippets
 
 -         using var scope = _serviceProvider.CreateScope();
