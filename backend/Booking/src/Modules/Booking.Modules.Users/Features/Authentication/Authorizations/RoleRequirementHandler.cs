@@ -17,7 +17,7 @@ public class RoleRequirementHandler(IServiceScopeFactory serviceScopeFactory) : 
             context.Fail();
             return;
         }
-
+        // TODO : or we can replace this by checking the claims of user 
         var userManager = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
         int userId = context.User.GetUserId() ??
                      throw new Exception("IdUser Claim doesnt exists , user is not authenticated");
