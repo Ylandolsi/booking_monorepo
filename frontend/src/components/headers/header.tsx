@@ -1,43 +1,14 @@
 import { Logo } from '@/components/logo';
-import { Badge, Button, LoadingState } from '@/components/ui';
+import { Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/features/auth';
-import { useGlobalErrorStore, useSideBar } from '@/stores';
+import { useSideBar } from '@/stores';
 import { LazyImage } from '@/utils';
-import { Bell, CreditCard, Menu } from 'lucide-react';
+import { CreditCard, Menu } from 'lucide-react';
 import { useAppNavigation } from '@/hooks';
-import { api } from '@/lib';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
-import {
-  queryOptions,
-  useQuery,
-  type UseQueryOptions,
-  type UseQueryResult,
-} from '@tanstack/react-query';
+import { useGetWallet } from '@/features/shared/get-wallet';
 
-type Wallet = {
-  balance: number;
-};
-
-async function getWallet(): Promise<Wallet> {
-  const res = await api.get<Wallet>(MentorshipEndpoints.Payments.Wallet);
-  return res;
-}
-
-function useGetWallet(
-  userSlug: string,
-  overrides?: Partial<UseQueryOptions<Wallet, Error>>,
-): UseQueryResult<Wallet, Error> {
-  return useQuery<Wallet, Error>(
-    queryOptions({
-      queryFn: getWallet,
-      queryKey: ['wallet', userSlug],
-      ...overrides,
-    }),
-  );
-}
-
-function BalanceHeader({ userSlug }: { userSlug: string }) {
-  const { data: walletData, isLoading } = useGetWallet(userSlug);
+function BalanceHeader() {
+  const { data: walletData, isLoading } = useGetWallet();
 
   if (isLoading) {
     return <LoadingState type="dots"></LoadingState>;
@@ -95,7 +66,7 @@ export function Header() {
                 3
               </Badge>
             </Button> */}
-            <BalanceHeader userSlug={currentUser.slug} />
+            <BalanceHeader />
 
             <Button
               variant="ghost"
