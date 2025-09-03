@@ -26,18 +26,17 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_full_flow", 100.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_full_flow");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "10:00",
-            EndTime = "11:00",
-            TimeZoneId = "Africa/Tunis",
-            Note = "Integration test session"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextMonday.ToString("yyyy-MM-dd"),
+            "10:00",
+            "11:00",
+            MentorshipTestUtilities.TimeZones.Tunisia,
+            "Integration test session"
+        );
 
         // Act - Step 1: Book the session
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -74,17 +73,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_payment_fail", 50.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_payment_fail");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
 
-        var nextTuesday = GetNextWeekday(DayOfWeek.Tuesday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextTuesday.ToString("yyyy-MM-dd"),
-            StartTime = "14:00",
-            EndTime = "15:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextTuesday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Tuesday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextTuesday.ToString("yyyy-MM-dd"),
+            "14:00",
+            "15:00",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act - Book session
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -116,17 +114,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         // Charge test wallet with sufficient balance
         await ChargeTestWallet("test-wallet-1", 10000); // $100
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Wednesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Wednesday, "09:00", "17:00");
 
-        var nextWednesday = GetNextWeekday(DayOfWeek.Wednesday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextWednesday.ToString("yyyy-MM-dd"),
-            StartTime = "11:00",
-            EndTime = "12:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextWednesday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Wednesday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextWednesday.ToString("yyyy-MM-dd"),
+            "11:00",
+            "12:00",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -154,17 +151,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_insufficient");
 
         // Use wallet with insufficient balance (test-wallet-2 has only $100)
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Thursday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Thursday, "09:00", "17:00");
 
-        var nextThursday = GetNextWeekday(DayOfWeek.Thursday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextThursday.ToString("yyyy-MM-dd"),
-            StartTime = "15:00",
-            EndTime = "15:30",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextThursday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Thursday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextThursday.ToString("yyyy-MM-dd"),
+            "15:00",
+            "15:30",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -186,17 +182,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_expired", 80.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_expired");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Friday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Friday, "09:00", "17:00");
 
-        var nextFriday = GetNextWeekday(DayOfWeek.Friday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextFriday.ToString("yyyy-MM-dd"),
-            StartTime = "16:00",
-            EndTime = "17:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextFriday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Friday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextFriday.ToString("yyyy-MM-dd"),
+            "16:00",
+            "17:00",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act - Book session
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -224,17 +219,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_escrow", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_escrow");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "13:00",
-            EndTime = "14:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextMonday.ToString("yyyy-MM-dd"),
+            "13:00",
+            "14:00",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -259,17 +253,16 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_calendar_fail", 60.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_calendar_fail");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "12:00",
-            EndTime = "13:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            nextMonday.ToString("yyyy-MM-dd"),
+            "12:00",
+            "13:00",
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
@@ -421,46 +414,5 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         return escrow?.Price ?? 0;
     }
-
-    private async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek dayOfWeek, string startTime, string endTime)
-    {
-        var bulkRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = dayOfWeek,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = startTime, EndTime = endTime},
-                    }
-                }
-            }
-        };
-
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
-
-        response.EnsureSuccessStatusCode();
-    }
-
-    private async Task<string> GetMentorSlug(HttpClient mentorClient)
-    {
-        var response = await mentorClient.GetAsync(UsersEndpoints.GetCurrentUser);
-        response.EnsureSuccessStatusCode();
-        
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return result.GetProperty("slug").GetString()!;
-    }
-
-    private static DateTime GetNextWeekday(DayOfWeek dayOfWeek)
-    {
-        var today = DateTime.Today;
-        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilTarget == 0) daysUntilTarget = 7; // If today is the target day, get next week
-        return today.AddDays(daysUntilTarget);
-    }
-
     #endregion
 }
