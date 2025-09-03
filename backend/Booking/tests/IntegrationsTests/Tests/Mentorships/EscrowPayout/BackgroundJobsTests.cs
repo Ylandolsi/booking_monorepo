@@ -2,6 +2,7 @@
 using Booking.Modules.Mentorships.BackgroundJobs.Payout;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.Domain.Entities;
+using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;

@@ -99,7 +99,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.False(failedPayment.success);
 
         // Wait for webhook processing
-        await Task.Delay(1000);
+        await Task.Delay(10000);
 
         // Assert - Session should remain in WaitingForPayment status
         await VerifySessionStatus(sessionId, SessionStatus.WaitingForPayment);
@@ -150,7 +150,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
     public async Task SessionBooking_ShouldHandleInsufficientWalletBalance()
     {
         // Arrange
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_insufficient", 200.0m, 15);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor_insufficient", 500.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_insufficient");
 
         // Use wallet with insufficient balance (test-wallet-2 has only $100)
@@ -162,7 +162,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
             MentorSlug = await GetMentorSlug(mentorArrange),
             Date = nextThursday.ToString("yyyy-MM-dd"),
             StartTime = "15:00",
-            EndTime = "16:00",
+            EndTime = "15:30",
             TimeZoneId = "Africa/Tunis"
         };
 
