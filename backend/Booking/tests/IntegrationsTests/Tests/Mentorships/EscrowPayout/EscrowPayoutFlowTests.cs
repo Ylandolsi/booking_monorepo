@@ -25,7 +25,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     #region Escrow Flow Tests
 
     [Fact]
-    public async Task CompleteEscrowFlow_ShouldCreateEscrow_After24HoursSessionCompleted()
+    public async Task CompleteEscrowFlow_ShouldCreateEscrow_AfterSessionCompleted()
     {
         // Arrange
         var sessionPrice = 120.0m;
@@ -39,10 +39,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextMonday();
         var sessionId = await MentorshipTestUtilities.BookAndCompleteSession(mentorArrange, menteeAct, nextMonday);
 
-        // Assert - Verify escrow is created with correct amount
         await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
-        
-        // Note: Additional escrow release logic will be implemented when session completion endpoints are available
     }
 
     [Fact]
@@ -79,18 +76,18 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     public async Task EscrowAmount_ShouldBe85Percent_OfSessionPrice()
     {
         // Arrange - Test different session prices
-        var testCases = new[] 
+        var testCases = new decimal[]
         {
-            new { Price = 50.0m, Expected = 42.5m },
-            new { Price = 100.0m, Expected = 85.0m },
-            new { Price = 150.0m, Expected = 127.5m },
-            new { Price = 200.0m, Expected = 170.0m }
+            50.0m,
+            100.0m,
+            150.0m,
+            200.0m,
         };
 
         foreach (var testCase in testCases)
         {
-            var (mentorArrange, mentorAct) = await CreateMentor($"mentor_price_{testCase.Price}", testCase.Price, 15);
-            var (menteeArrange, menteeAct) = await CreateMentee($"mentee_price_{testCase.Price}");
+            var (mentorArrange, mentorAct) = await CreateMentor($"mentor_price_{testCase}", testCase, 15);
+            var (menteeArrange, menteeAct) = await CreateMentee($"mentee_price_{testCase}");
 
             await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
@@ -98,7 +95,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
             var sessionId = await MentorshipTestUtilities.BookAndCompleteSession(mentorArrange, menteeAct, nextMonday);
 
             // Assert - Verify correct escrow amount (85% of session price)
-            await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, testCase.Expected);
+            await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, testCase * 0.85m);
         }
     }
 
@@ -113,7 +110,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_no_wallet", 100.0m, 15);
         
         // Try to request payout without linking Konnect wallet
-        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 50.0m, "not-linked-wallet");
+        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 50.0m);
         
         // Assert - Should fail with appropriate error
         // Note: Exact status code may vary based on implementation
@@ -123,24 +120,14 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     [Fact]
     public async Task PayoutRequest_ShouldFail_WhenAmountBelowMinimum()
     {
-        // Arrange
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_min_amount", 100.0m, 15);
         
-        // Link Konnect wallet first (if endpoint exists)
         var walletId = "test-wallet-123";
-        try
-        {
-            await MentorshipTestUtilities.LinkKonnectWallet(mentorAct, walletId);
-        }
-        catch
-        {
-            // Wallet linking endpoint might not exist yet
-        }
+        await MentorshipTestUtilities.LinkKonnectWallet(mentorArrange, walletId);
         
-        // Try to request payout with amount below minimum (assuming minimum is $20)
-        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 10.0m, walletId);
+        // minimum is $20
+        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 10.0m );
         
-        // Assert - Should fail with appropriate error
         Assert.True(response.StatusCode == HttpStatusCode.BadRequest || response.StatusCode == HttpStatusCode.UnprocessableEntity);
     }
 

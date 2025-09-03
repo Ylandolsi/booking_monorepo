@@ -76,7 +76,7 @@ public static class MentorshipTestUtilities
     {
         var response = await mentorClient.GetAsync(UsersEndpoints.GetCurrentUser);
         response.EnsureSuccessStatusCode();
-        
+
         var userInfo = await response.Content.ReadFromJsonAsync<JsonElement>();
         return userInfo.GetProperty("slug").GetString()!;
     }
@@ -90,7 +90,7 @@ public static class MentorshipTestUtilities
     {
         var response = await userClient.GetAsync(UsersEndpoints.GetCurrentUser);
         response.EnsureSuccessStatusCode();
-        
+
         return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
 
@@ -105,7 +105,8 @@ public static class MentorshipTestUtilities
     /// <param name="dayOfWeek">The day to set availability for</param>
     /// <param name="startTime">Start time in HH:mm format</param>
     /// <param name="endTime">End time in HH:mm format</param>
-    public static async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek dayOfWeek, string startTime, string endTime)
+    public static async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek dayOfWeek, string startTime,
+        string endTime)
     {
         var availabilityRequest = new
         {
@@ -123,7 +124,8 @@ public static class MentorshipTestUtilities
             }
         };
 
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
+        var response =
+            await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
         response.EnsureSuccessStatusCode();
     }
 
@@ -134,7 +136,8 @@ public static class MentorshipTestUtilities
     /// <param name="daysOfWeek">The days to set availability for</param>
     /// <param name="startTime">Start time in HH:mm format</param>
     /// <param name="endTime">End time in HH:mm format</param>
-    public static async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek[] daysOfWeek, string startTime, string endTime)
+    public static async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek[] daysOfWeek, string startTime,
+        string endTime)
     {
         var dayAvailabilities = daysOfWeek.Select(day => new
         {
@@ -151,7 +154,8 @@ public static class MentorshipTestUtilities
             DayAvailabilities = dayAvailabilities
         };
 
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
+        var response =
+            await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
         response.EnsureSuccessStatusCode();
     }
 
@@ -161,7 +165,8 @@ public static class MentorshipTestUtilities
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     public static async Task SetupDefaultWeekdayAvailability(HttpClient mentorClient)
     {
-        var weekdays = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+        var weekdays = new[]
+            { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
         await SetupMentorAvailability(mentorClient, weekdays, "09:00", "17:00");
     }
 
@@ -171,7 +176,8 @@ public static class MentorshipTestUtilities
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     /// <param name="dayOfWeek">The day to set availability for</param>
     /// <param name="ranges">Array of time ranges (startTime, endTime)</param>
-    public static async Task SetupMentorAvailabilityWithRanges(HttpClient mentorClient, DayOfWeek dayOfWeek, (string startTime, string endTime)[] ranges)
+    public static async Task SetupMentorAvailabilityWithRanges(HttpClient mentorClient, DayOfWeek dayOfWeek,
+        (string startTime, string endTime)[] ranges)
     {
         var availabilityRanges = ranges.Select(range => new
         {
@@ -192,7 +198,8 @@ public static class MentorshipTestUtilities
             }
         };
 
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
+        var response =
+            await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
         response.EnsureSuccessStatusCode();
     }
 
@@ -212,12 +219,12 @@ public static class MentorshipTestUtilities
     /// <param name="note">Optional note for the session</param>
     /// <returns>The session ID of the booked session</returns>
     public static async Task<int> BookValidSession(
-        HttpClient mentorClient, 
-        HttpClient menteeClient, 
-        DayOfWeek dayOfWeek, 
-        string startTime, 
-        string endTime, 
-        string timeZoneId = "Africa/Tunis", 
+        HttpClient mentorClient,
+        HttpClient menteeClient,
+        DayOfWeek dayOfWeek,
+        string startTime,
+        string endTime,
+        string timeZoneId = "Africa/Tunis",
         string? note = null)
     {
         var mentorSlug = await GetMentorSlug(mentorClient);
@@ -254,23 +261,24 @@ public static class MentorshipTestUtilities
         newSessionsResponse.EnsureSuccessStatusCode();
         var newSessions = await newSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
         var newSessionsArray = newSessions.EnumerateArray().ToList();
-        
+
         // Should have one more session now
         if (newSessionsArray.Count != initialCount + 1)
         {
-            throw new InvalidOperationException($"Expected {initialCount + 1} sessions after booking, but found {newSessionsArray.Count}");
+            throw new InvalidOperationException(
+                $"Expected {initialCount + 1} sessions after booking, but found {newSessionsArray.Count}");
         }
-        
+
         // Find the newest session (should be the one with the highest ID)
         var newSession = newSessionsArray
             .OrderByDescending(s => s.GetProperty("id").GetInt32())
             .FirstOrDefault();
-            
+
         if (newSession.ValueKind == JsonValueKind.Undefined)
         {
             throw new InvalidOperationException("Could not find the newly created session");
         }
-        
+
         return newSession.GetProperty("id").GetInt32();
     }
 
@@ -285,11 +293,11 @@ public static class MentorshipTestUtilities
     /// <param name="note">Optional note for the session</param>
     /// <returns>An anonymous object representing the booking request</returns>
     public static object CreateBookingRequest(
-        string mentorSlug, 
-        string date, 
-        string startTime, 
-        string endTime, 
-        string timeZoneId = "Africa/Tunis", 
+        string mentorSlug,
+        string date,
+        string startTime,
+        string endTime,
+        string timeZoneId = "Africa/Tunis",
         string? note = null)
     {
         var request = new
@@ -318,6 +326,43 @@ public static class MentorshipTestUtilities
         return request;
     }
 
+    public static async Task<int> GetLatestSessionId(HttpClient client)
+    {
+        var response = await client.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
+        response.EnsureSuccessStatusCode();
+
+        var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var sessionsArray = sessions.EnumerateArray().ToList();
+
+        if (sessionsArray.Count == 0)
+            throw new InvalidOperationException("No sessions found");
+
+        // Get the most recent session (assuming they're ordered by creation time)
+        var latestSession = sessionsArray.First();
+        return latestSession.GetProperty("id").GetInt32();
+    }
+
+    public static async Task VerifySessionStatus(IntegrationTestsWebAppFactory factory, int sessionId,
+        SessionStatus expectedStatus)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var session = await dbContext.Sessions.FindAsync(sessionId);
+        Assert.NotNull(session);
+        Assert.Equal(expectedStatus, session.Status);
+    }
+
+    public static async Task VerifySessionHasMeetingLink(IntegrationTestsWebAppFactory factory, int sessionId)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var session = await dbContext.Sessions.FindAsync(sessionId);
+        Assert.NotNull(session);
+        Assert.False(string.IsNullOrEmpty(session.GoogleMeetLink?.Value));
+    }
+
     #endregion
 
     #region Bulk Operations
@@ -332,20 +377,20 @@ public static class MentorshipTestUtilities
     /// <param name="bufferTimeMinutes">Buffer time in minutes</param>
     /// <returns>List of mentor client tuples</returns>
     public static async Task<List<(HttpClient arrange, HttpClient act)>> CreateMultipleMentors(
-        MentorshipTestBase testBase, 
-        int count, 
-        string basePrefix = "mentor", 
-        decimal hourlyRate = 75.0m, 
+        MentorshipTestBase testBase,
+        int count,
+        string basePrefix = "mentor",
+        decimal hourlyRate = 75.0m,
         int bufferTimeMinutes = 15)
     {
         var mentors = new List<(HttpClient arrange, HttpClient act)>();
-        
+
         for (int i = 0; i < count; i++)
         {
             var mentor = await testBase.CreateMentor($"{basePrefix}_{i}", hourlyRate, bufferTimeMinutes);
             mentors.Add(mentor);
         }
-        
+
         return mentors;
     }
 
@@ -357,18 +402,18 @@ public static class MentorshipTestUtilities
     /// <param name="basePrefix">Base prefix for mentee usernames</param>
     /// <returns>List of mentee client tuples</returns>
     public static async Task<List<(HttpClient arrange, HttpClient act)>> CreateMultipleMentees(
-        MentorshipTestBase testBase, 
-        int count, 
+        MentorshipTestBase testBase,
+        int count,
         string basePrefix = "mentee")
     {
         var mentees = new List<(HttpClient arrange, HttpClient act)>();
-        
+
         for (int i = 0; i < count; i++)
         {
             var mentee = await testBase.CreateMentee($"{basePrefix}_{i}");
             mentees.Add(mentee);
         }
-        
+
         return mentees;
     }
 
@@ -420,17 +465,38 @@ public static class MentorshipTestUtilities
         return new object[]
         {
             // Invalid date formats
-            new { MentorSlug = mentorSlug, Date = "2025-13-45", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
-            new { MentorSlug = mentorSlug, Date = "invalid-date", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
-            
+            new
+            {
+                MentorSlug = mentorSlug, Date = "2025-13-45", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC"
+            },
+            new
+            {
+                MentorSlug = mentorSlug, Date = "invalid-date", StartTime = "10:00", EndTime = "11:00",
+                TimeZoneId = "UTC"
+            },
+
             // Invalid time formats
-            new { MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "25:00", EndTime = "26:00", TimeZoneId = "UTC" },
-            new { MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "invalid", EndTime = "11:00", TimeZoneId = "UTC" },
-            
+            new
+            {
+                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "25:00", EndTime = "26:00", TimeZoneId = "UTC"
+            },
+            new
+            {
+                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "invalid", EndTime = "11:00",
+                TimeZoneId = "UTC"
+            },
+
             // Invalid timezones
-            new { MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "Invalid/Zone" },
-            new { MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "" },
-            
+            new
+            {
+                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00",
+                TimeZoneId = "Invalid/Zone"
+            },
+            new
+            {
+                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = ""
+            },
+
             // Missing required fields
             new { MentorSlug = "", Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
             new { MentorSlug = mentorSlug, Date = "", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
@@ -454,7 +520,7 @@ public static class MentorshipTestUtilities
         }
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
+
         if (!result.TryGetProperty("payUrl", out var payUrl) || string.IsNullOrEmpty(payUrl.GetString()))
         {
             throw new InvalidOperationException("Successful booking should contain a payUrl");
@@ -469,7 +535,8 @@ public static class MentorshipTestUtilities
     /// <param name="response">The HTTP response</param>
     /// <param name="expectedMinCount">Minimum expected number of sessions</param>
     /// <returns>The sessions array as a list</returns>
-    public static async Task<List<JsonElement>> VerifySessionsList(HttpResponseMessage response, int expectedMinCount = 0)
+    public static async Task<List<JsonElement>> VerifySessionsList(HttpResponseMessage response,
+        int expectedMinCount = 0)
     {
         if (response.StatusCode != System.Net.HttpStatusCode.OK)
         {
@@ -477,17 +544,18 @@ public static class MentorshipTestUtilities
         }
 
         var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
+
         if (sessions.ValueKind != JsonValueKind.Array)
         {
             throw new InvalidOperationException("Sessions response should be an array");
         }
 
         var sessionsList = sessions.EnumerateArray().ToList();
-        
+
         if (sessionsList.Count < expectedMinCount)
         {
-            throw new InvalidOperationException($"Expected at least {expectedMinCount} sessions but got {sessionsList.Count}");
+            throw new InvalidOperationException(
+                $"Expected at least {expectedMinCount} sessions but got {sessionsList.Count}");
         }
 
         return sessionsList;
@@ -534,6 +602,83 @@ public static class MentorshipTestUtilities
 
     #endregion
 
+    #region Payment
+
+    public static async Task<dynamic> CompletePaymentViaMockKonnect(string paymentRef, HttpClient client)
+    {
+        var paymentRequest = new { paymentMethod = "card" };
+
+        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        return new
+        {
+            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
+            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
+        };
+    }
+
+    public static async Task<dynamic> CompletePaymentWithWallet(string paymentRef, string walletId, HttpClient client)
+    {
+        var paymentRequest = new { paymentMethod = "wallet", walletId = walletId };
+
+        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        return new
+        {
+            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
+            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
+        };
+    }
+
+    public static async Task<dynamic> SimulatePaymentFailure(string paymentRef, HttpClient client)
+    {
+        var paymentRequest = new { paymentMethod = "fail" };
+
+        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        return new
+        {
+            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
+            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
+        };
+    }
+
+    public static async Task ChargeTestWallet(string walletId, int amount, HttpClient client)
+    {
+        var chargeRequest = new { Amount = amount };
+
+        await client.PostAsJsonAsync($"wallets/{walletId}/charge", chargeRequest);
+    }
+
+    public static async Task<dynamic> GetPaymentDetails(string paymentRef, HttpClient client)
+    {
+        var response = await client.GetAsync($"payments/{paymentRef}");
+        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
+
+        return new
+        {
+            status = result.TryGetProperty("status", out var status) ? status.GetString() : null,
+            amount = result.TryGetProperty("amount", out var amount) ? amount.GetInt32() : 0
+        };
+    }
+
+    /// <summary>
+    /// Extracts payment reference from payment URL
+    /// </summary>
+    /// <param name="payUrl">The payment URL</param>
+    /// <returns>Payment reference string</returns>
+    public static string ExtractPaymentRefFromUrl(string payUrl)
+    {
+        // Extract payment reference from URL like: https://localhostpay/PAY_abc123
+        var parts = payUrl.Split('/');
+        return parts.LastOrDefault() ?? string.Empty;
+    }
+
+    #endregion
+
     #region Escrow and Payout Utilities
 
     /// <summary>
@@ -555,7 +700,7 @@ public static class MentorshipTestUtilities
         string timeZoneId = DefaultTimeZone)
     {
         var mentorSlug = await GetMentorSlug(mentorClient);
-        
+
         var bookingRequest = CreateBookingRequest(
             mentorSlug,
             targetDate.ToString("yyyy-MM-dd"),
@@ -568,52 +713,21 @@ public static class MentorshipTestUtilities
         // Book the session
         var response = await menteeClient.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
         response.EnsureSuccessStatusCode();
-        
+
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
         var paymentRef = ExtractPaymentRefFromUrl(result.GetProperty("payUrl").GetString()!);
-        
-        // Complete payment via mock system (placeholder)
-        // await CompletePaymentViaMockKonnect(paymentRef);
-        
+
+        await CompletePaymentViaMockKonnect(paymentRef, menteeClient);
+
         // Wait for webhook processing
         await Task.Delay(2000);
-        
+
         // Get the session ID
         var sessionId = await GetLatestSessionId(menteeClient);
-        
+
         return sessionId;
     }
 
-    /// <summary>
-    /// Extracts payment reference from payment URL
-    /// </summary>
-    /// <param name="payUrl">The payment URL</param>
-    /// <returns>Payment reference string</returns>
-    public static string ExtractPaymentRefFromUrl(string payUrl)
-    {
-        var parts = payUrl.Split('/');
-        return parts.LastOrDefault() ?? string.Empty;
-    }
-
-    /// <summary>
-    /// Gets the latest session ID for a user
-    /// </summary>
-    /// <param name="userClient">The user's HTTP client</param>
-    /// <returns>Latest session ID</returns>
-    public static async Task<int> GetLatestSessionId(HttpClient userClient)
-    {
-        var response = await userClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
-        response.EnsureSuccessStatusCode();
-        
-        var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
-        var sessionsArray = sessions.EnumerateArray().ToList();
-        
-        if (sessionsArray.Count == 0)
-            throw new InvalidOperationException("No sessions found");
-            
-        var latestSession = sessionsArray.OrderByDescending(s => s.GetProperty("id").GetInt32()).First();
-        return latestSession.GetProperty("id").GetInt32();
-    }
 
     /// <summary>
     /// Marks a session as completed by both mentor and mentee
@@ -627,7 +741,7 @@ public static class MentorshipTestUtilities
         // For now, we'll simulate completion by directly updating the database
         // await mentorClient.PostAsJsonAsync($"/mentorships/sessions/{sessionId}/complete", new { });
         // await menteeClient.PostAsJsonAsync($"/mentorships/sessions/{sessionId}/complete", new { });
-        
+
         // TODO: Replace with actual endpoint calls when implemented
         await Task.CompletedTask;
     }
@@ -640,17 +754,17 @@ public static class MentorshipTestUtilities
     public static async Task<HttpClient> CreateAdminClient(IntegrationTestsWebAppFactory factory)
     {
         var client = factory.CreateClient();
-        
+
         // Login as admin
         var loginRequest = new
         {
             Email = "ylandol66@gmail.com",
             Password = "Password123!"
         };
-        
+
         var response = await client.PostAsJsonAsync("/api/users/authentication/login", loginRequest);
         response.EnsureSuccessStatusCode();
-        
+
         return client;
     }
 
@@ -672,13 +786,13 @@ public static class MentorshipTestUtilities
     /// <param name="amount">Amount to request payout for</param>
     /// <param name="walletId">Konnect wallet ID</param>
     /// <returns>Payout request response</returns>
-    public static async Task<HttpResponseMessage> RequestPayout(HttpClient mentorClient, decimal amount, string walletId)
+    public static async Task<HttpResponseMessage> RequestPayout(HttpClient mentorClient, decimal amount)
     {
         var payoutRequest = new
         {
             Amount = amount
         };
-        
+
         return await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Payment.Payout, payoutRequest);
     }
 
@@ -694,9 +808,8 @@ public static class MentorshipTestUtilities
         {
             KonnectWalletId = walletId
         };
-        
-        // Note: This endpoint might not exist yet - placeholder for when it's implemented
-        return await mentorClient.PostAsJsonAsync("/integrations/konnect/link", linkRequest);
+
+        return await mentorClient.PostAsJsonAsync(UsersEndpoints.InegrateKonnect, linkRequest);
     }
 
     #endregion
@@ -709,11 +822,12 @@ public static class MentorshipTestUtilities
     /// <param name="factory">Test factory for database access</param>
     /// <param name="sessionId">Session ID</param>
     /// <param name="expectedAmount">Expected escrow amount</param>
-    public static async Task VerifyEscrowCreated(IntegrationTestsWebAppFactory factory, int sessionId, decimal expectedAmount)
+    public static async Task VerifyEscrowCreated(IntegrationTestsWebAppFactory factory, int sessionId,
+        decimal expectedAmount)
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         Assert.NotNull(escrow);
         Assert.Equal(expectedAmount, escrow.Price);
@@ -728,7 +842,7 @@ public static class MentorshipTestUtilities
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         Assert.NotNull(escrow);
         Assert.Equal(EscrowState.Released, escrow.State);
@@ -740,35 +854,21 @@ public static class MentorshipTestUtilities
     /// <param name="factory">Test factory for database access</param>
     /// <param name="mentorId">Mentor ID</param>
     /// <param name="expectedAmount">Expected payout amount</param>
-    public static async Task VerifyPayoutRequestCreated(IntegrationTestsWebAppFactory factory, string mentorId, decimal expectedAmount)
+    public static async Task VerifyPayoutRequestCreated(IntegrationTestsWebAppFactory factory, string mentorId,
+        decimal expectedAmount)
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var payout = await dbContext.Payouts
             .Where(p => p.UserId.ToString() == mentorId && p.Amount == expectedAmount)
             .OrderByDescending(p => p.CreatedAt)
             .FirstOrDefaultAsync();
-            
+
         Assert.NotNull(payout);
         Assert.Equal(PayoutStatus.Pending, payout.Status);
     }
 
-    /// <summary>
-    /// Verifies session status in database
-    /// </summary>
-    /// <param name="factory">Test factory for database access</param>
-    /// <param name="sessionId">Session ID</param>
-    /// <param name="expectedStatus">Expected session status</param>
-    public static async Task VerifySessionStatus(IntegrationTestsWebAppFactory factory, int sessionId, SessionStatus expectedStatus)
-    {
-        using var scope = factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var session = await dbContext.Sessions.FindAsync(sessionId);
-        Assert.NotNull(session);
-        Assert.Equal(expectedStatus, session.Status);
-    }
 
     /// <summary>
     /// Gets mentor balance from database
@@ -780,11 +880,30 @@ public static class MentorshipTestUtilities
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var mentor = await dbContext.Mentors.FirstOrDefaultAsync(m => m.Id.ToString() == mentorId);
         // Note: Balance property might not exist yet in Mentor entity
         // return mentor?.Balance ?? 0;
         return 0; // Placeholder until Balance property is added to Mentor entity
+    }
+
+
+    public static  async Task VerifyNoEscrowCreated(IntegrationTestsWebAppFactory factory , int sessionId)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
+        Assert.Null(escrow?.Price);
+    }
+
+    public static  async Task<decimal> GetEscrowAmount(IntegrationTestsWebAppFactory factory ,int sessionId)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
+        return escrow?.Price ?? 0;
     }
 
     #endregion
@@ -799,12 +918,12 @@ public static class MentorshipTestUtilities
     {
         using var scope = factory.Services.CreateScope();
         var backgroundJobClient = scope.ServiceProvider.GetRequiredService<IBackgroundJobClient>();
-        
+
         // Trigger the escrow processing job
         backgroundJobClient.Enqueue<EscrowJob>(job => job.ExecuteAsync(null));
-        
+
         // Wait for job processing
-        await Task.Delay(3000);
+        await Task.Delay(4000);
     }
 
     /// <summary>
@@ -816,7 +935,7 @@ public static class MentorshipTestUtilities
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var session = await dbContext.Sessions.FindAsync(sessionId);
         if (session != null)
         {

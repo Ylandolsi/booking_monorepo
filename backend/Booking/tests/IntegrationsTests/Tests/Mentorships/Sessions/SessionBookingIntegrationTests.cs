@@ -22,8 +22,10 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
     [Fact]
     public async Task CompleteSessionBookingFlow_ShouldSucceed_WithPaymentAndCalendarIntegration()
     {
+        var sessionPrice = 120.0m;
+        var expectedEscrowAmount = sessionPrice * 0.85m; // 15% platform fee
         // Arrange
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_full_flow", 100.0m, 15);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor_full_flow", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_full_flow");
 
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
@@ -46,24 +48,24 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
         Assert.True(bookingResult.TryGetProperty("payUrl", out var payUrl));
         Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
-        var paymentRef = ExtractPaymentRefFromUrl(payUrl.GetString()!);
+        var paymentRef = MentorshipTestUtilities.ExtractPaymentRefFromUrl(payUrl.GetString()!);
         Assert.False(string.IsNullOrEmpty(paymentRef));
 
         // Verify session is created with WaitingForPayment status
-        var sessionId = await GetLatestSessionId(menteeAct);
-        await VerifySessionStatus(sessionId, SessionStatus.WaitingForPayment);
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.WaitingForPayment);
 
         // Act - Step 2: Complete payment via mock Konnect
-        var paymentResponse = await CompletePaymentViaMockKonnect(paymentRef);
+        var paymentResponse = await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
         Assert.True(paymentResponse.success);
 
         // Wait a bit for webhook processing
         await Task.Delay(100000);
 
         // Assert - Session should be confirmed with meeting link and escrow created
-        await VerifySessionStatus(sessionId, SessionStatus.Confirmed);
-        await VerifySessionHasMeetingLink(sessionId);
-        await VerifyEscrowCreated(sessionId);
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
+        await MentorshipTestUtilities.VerifySessionHasMeetingLink(Factory, sessionId);
+        await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
     }
 
     [Fact]
@@ -89,30 +91,34 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
 
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
-        var sessionId = await GetLatestSessionId(menteeAct);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
 
         // Simulate payment failure
-        var failedPayment = await SimulatePaymentFailure(paymentRef);
+        var failedPayment = await MentorshipTestUtilities.SimulatePaymentFailure(paymentRef, menteeAct);
         Assert.False(failedPayment.success);
 
         // Wait for webhook processing
         await Task.Delay(10000);
 
         // Assert - Session should remain in WaitingForPayment status
-        await VerifySessionStatus(sessionId, SessionStatus.WaitingForPayment);
-        await VerifyNoEscrowCreated(sessionId);
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.WaitingForPayment);
+        await MentorshipTestUtilities.VerifyNoEscrowCreated(Factory, sessionId);
     }
 
     [Fact]
     public async Task SessionBooking_ShouldHandleWalletPayment_Successfully()
     {
+        var sessionPrice = 120.0m;
+        var expectedEscrowAmount = sessionPrice * 0.85m; // 15% platform fee
+
         // Arrange
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_wallet", 75.0m, 15);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor_wallet", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_wallet");
 
         // Charge test wallet with sufficient balance
-        await ChargeTestWallet("test-wallet-1", 10000); // $100
+        await MentorshipTestUtilities.ChargeTestWallet("test-wallet-1", 10000, menteeAct); // $100
 
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Wednesday, "09:00", "17:00");
 
@@ -130,17 +136,19 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
 
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
         // Complete payment with wallet
-        var paymentResponse = await CompletePaymentWithWallet(paymentRef, "test-wallet-1");
+        var paymentResponse =
+            await MentorshipTestUtilities.CompletePaymentWithWallet(paymentRef, "test-wallet-1", menteeAct);
         Assert.True(paymentResponse.success);
 
         await Task.Delay(10000);
 
-        var sessionId = await GetLatestSessionId(menteeAct);
-        await VerifySessionStatus(sessionId, SessionStatus.Confirmed);
-        await VerifyEscrowCreated(sessionId);
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
+        await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
     }
 
     [Fact]
@@ -167,10 +175,12 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
 
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
         // Try to pay with insufficient wallet balance
-        var paymentResponse = await CompletePaymentWithWallet(paymentRef, "test-wallet-2");
+        var paymentResponse =
+            await MentorshipTestUtilities.CompletePaymentWithWallet(paymentRef, "test-wallet-2", menteeAct);
         Assert.False(paymentResponse.success);
         Assert.Contains("insufficient", paymentResponse.error.ToLower());
     }
@@ -198,11 +208,12 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
 
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
         // Wait for payment to expire (mock Konnect has 10 minute lifespan, we can manipulate this for testing)
         // For testing, we'll check the payment status to see if expiration handling works
-        var paymentDetails = await GetPaymentDetails(paymentRef);
+        var paymentDetails = await MentorshipTestUtilities.GetPaymentDetails(paymentRef, menteeAct);
         Assert.Equal("pending", paymentDetails.status);
 
         // Simulate expired payment by waiting or manipulating time
@@ -233,14 +244,15 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         // Act
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
-        await CompletePaymentViaMockKonnect(paymentRef);
+        await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
         await Task.Delay(10000);
 
         // Assert
-        var sessionId = await GetLatestSessionId(menteeAct);
-        var escrowAmount = await GetEscrowAmount(sessionId);
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
+        var escrowAmount = await MentorshipTestUtilities.GetEscrowAmount(Factory, sessionId);
         Assert.Equal(expectedEscrowAmount, escrowAmount);
     }
 
@@ -249,7 +261,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
     {
         // This test would require mocking Google Calendar service to simulate failures
         // For now, we'll test that the session is still confirmed even if calendar fails
-        
+
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_calendar_fail", 60.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_calendar_fail");
 
@@ -266,153 +278,14 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+        var paymentRef =
+            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
-        await CompletePaymentViaMockKonnect(paymentRef);
+        await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
         await Task.Delay(10000);
 
-        var sessionId = await GetLatestSessionId(menteeAct);
-        await VerifySessionStatus(sessionId, SessionStatus.Confirmed);
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
         // Session should be confirmed even if calendar integration fails
     }
-
-    #region Helper Methods
-
-    private async Task<dynamic> CompletePaymentViaMockKonnect(string paymentRef)
-    {
-        var client = Factory.CreateClient();
-        var paymentRequest = new { paymentMethod = "card" };
-        
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
-        return new
-        {
-            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
-            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
-        };
-    }
-
-    private async Task<dynamic> CompletePaymentWithWallet(string paymentRef, string walletId)
-    {
-        var client = Factory.CreateClient();
-        var paymentRequest = new { paymentMethod = "wallet", walletId = walletId };
-        
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
-        return new
-        {
-            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
-            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
-        };
-    }
-
-    private async Task<dynamic> SimulatePaymentFailure(string paymentRef)
-    {
-        var client = Factory.CreateClient();
-        var paymentRequest = new { paymentMethod = "fail" };
-        
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
-        return new
-        {
-            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
-            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
-        };
-    }
-
-    private async Task ChargeTestWallet(string walletId, int amount)
-    {
-        var client = Factory.CreateClient();
-        var chargeRequest = new { Amount = amount };
-        
-        await client.PostAsJsonAsync($"wallets/{walletId}/charge", chargeRequest);
-    }
-
-    private async Task<dynamic> GetPaymentDetails(string paymentRef)
-    {
-        var client = Factory.CreateClient();
-        var response = await client.GetAsync($"payments/{paymentRef}");
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        
-        return new
-        {
-            status = result.TryGetProperty("status", out var status) ? status.GetString() : null,
-            amount = result.TryGetProperty("amount", out var amount) ? amount.GetInt32() : 0
-        };
-    }
-
-    private string ExtractPaymentRefFromUrl(string payUrl)
-    {
-        // Extract payment reference from URL like: https://localhostpay/PAY_abc123
-        var parts = payUrl.Split('/');
-        return parts.LastOrDefault() ?? string.Empty;
-    }
-
-    private async Task<int> GetLatestSessionId(HttpClient client)
-    {
-        var response = await client.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
-        response.EnsureSuccessStatusCode();
-        
-        var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
-        var sessionsArray = sessions.EnumerateArray().ToList();
-        
-        if (sessionsArray.Count == 0)
-            throw new InvalidOperationException("No sessions found");
-            
-        // Get the most recent session (assuming they're ordered by creation time)
-        var latestSession = sessionsArray.First();
-        return latestSession.GetProperty("id").GetInt32();
-    }
-
-    private async Task VerifySessionStatus(int sessionId, SessionStatus expectedStatus)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var session = await dbContext.Sessions.FindAsync(sessionId);
-        Assert.NotNull(session);
-        Assert.Equal(expectedStatus, session.Status);
-    }
-
-    private async Task VerifySessionHasMeetingLink(int sessionId)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var session = await dbContext.Sessions.FindAsync(sessionId);
-        Assert.NotNull(session);
-        Assert.False(string.IsNullOrEmpty(session.GoogleMeetLink?.Value));
-    }
-
-    private async Task VerifyEscrowCreated(int sessionId)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
-        Assert.NotNull(escrow);
-        Assert.True(escrow.Price > 0);
-    }
-
-    private async Task VerifyNoEscrowCreated(int sessionId)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
-        Assert.Null(escrow?.Price);
-    }
-
-    private async Task<decimal> GetEscrowAmount(int sessionId)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
-        return escrow?.Price ?? 0;
-    }
-    #endregion
 }
