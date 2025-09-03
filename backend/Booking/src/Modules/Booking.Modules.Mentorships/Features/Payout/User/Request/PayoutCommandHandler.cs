@@ -48,6 +48,7 @@ public class PayoutCommandHandler(
         }
 
         wallet.UpdateBalance(-command.Amount);
+        wallet.UpdatePendingBalance(command.Amount);
         Domain.Entities.Payout payout = new(command.UserId, konnectWalletId, wallet.Id, command.Amount);
         await dbContext.AddAsync(payout, cancellationToken);
 

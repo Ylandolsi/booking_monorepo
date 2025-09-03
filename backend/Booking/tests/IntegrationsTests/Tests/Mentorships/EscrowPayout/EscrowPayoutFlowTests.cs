@@ -188,11 +188,15 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         await AddBalanceToUser(mentorFullInfo.Id.ToString(), 200m);
 
-        var balanceBeforePayout = await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+        var walletBeforePayout = await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
 
         await MentorshipTestUtilities.RequestPayout(mentorArrange, 100m);
 
         var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
+        var walletDuringPayout =
+            await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
+
+        Assert.Equal(100, walletDuringPayout.PendingBalance);
 
         var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
         Assert.NotNull(content);
@@ -210,10 +214,11 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, mentorArrange);
         await Task.Delay(5000);
 
-        var userBalanceAfterPayout =
-            await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+        var walletAfterPayout =
+            await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
 
-        Assert.Equal(balanceBeforePayout - 100, userBalanceAfterPayout);
+        Assert.Equal(walletBeforePayout.Balance - 100, walletAfterPayout.Balance);
+        Assert.Equal(0, walletAfterPayout.PendingBalance);
     }
 
     [Fact]
@@ -226,10 +231,15 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         var mentorFullInfo = await GetFullUserInfoBySlug(mentorSlug);
 
         await AddBalanceToUser(mentorFullInfo.Id.ToString(), 200m);
+        var walletBeforePayout = await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
 
-        var balanceBeforePayout = await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
 
         await MentorshipTestUtilities.RequestPayout(mentorArrange, 100m);
+
+        var walletDuringPayout =
+            await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
+
+        Assert.Equal(100, walletDuringPayout.PendingBalance);
 
         var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
 
@@ -243,9 +253,11 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
                 PayoutId = content[0].Id,
             });
 
-        var userBalanceAfterPayout =
-            await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
-        Assert.Equal(balanceBeforePayout, userBalanceAfterPayout);
+        var walletAfterPayout =
+            await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
+
+        Assert.Equal(walletBeforePayout.Balance, walletAfterPayout.Balance);
+        Assert.Equal(0, walletAfterPayout.PendingBalance);
     }
 
     #endregion

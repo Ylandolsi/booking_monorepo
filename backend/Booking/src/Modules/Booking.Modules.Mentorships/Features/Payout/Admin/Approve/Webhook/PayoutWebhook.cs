@@ -60,7 +60,6 @@ public class PayoutWebhookCommandHandler(
 
             return Result.Failure(Error.None);
         }
-        
 
         var paymentDetails = await konnectService.GetPaymentDetails(command.PaymentRef);
         if (paymentDetails.IsFailure)
@@ -68,7 +67,21 @@ public class PayoutWebhookCommandHandler(
             logger.LogError(paymentDetails.Error.Description);
             return Result.Failure(paymentDetails.Error);
         }
-        
+
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == payout.WalletId, cancellationToken)
+            ;
+
+
+        if (wallet is null)
+        {
+            logger.LogError(
+                "Admin is trying to reject payout with id {id}  , but Failed to find wallet of user with id{userId} ",
+                payout.Id, payout.UserId);
+
+            return Result.Failure(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
+        }
+
+        wallet.UpdatePendingBalance(-payout.Amount);
         payout.Complete();
 
         await dbContext.SaveChangesAsync(cancellationToken);

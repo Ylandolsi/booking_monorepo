@@ -37,6 +37,7 @@ public class RejectPayoutAdminCommandHandler(
 
         payout.Reject();
         wallet.UpdateBalance(payout.Amount);
+        wallet.UpdatePendingBalance(-payout.Amount);
         await dbContext.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Admin rejected payout with id {id} successfully ", command.PayoutId);
         return Result.Success();

@@ -793,8 +793,8 @@ public static class MentorshipTestUtilities
         {
             KonnectWalletId = "connect-with-konnect",
         });
-        
-        
+
+
         var payoutRequest = new
         {
             Amount = amount
@@ -885,11 +885,17 @@ public static class MentorshipTestUtilities
     /// <returns>Current mentor balance</returns>
     public static async Task<decimal> GetUserBalance(IntegrationTestsWebAppFactory factory, string userId)
     {
+        var wallet = await GetUserWallet(factory, userId);
+        return wallet.Balance;
+    }
+
+    public static async Task<Wallet> GetUserWallet(IntegrationTestsWebAppFactory factory, string userId)
+    {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
 
         var wallet = await dbContext.Wallets.FirstOrDefaultAsync(m => m.UserId.ToString() == userId);
-        return wallet.Balance;
+        return wallet;
     }
 
 
