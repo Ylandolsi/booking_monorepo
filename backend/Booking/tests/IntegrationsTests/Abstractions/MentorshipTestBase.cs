@@ -22,7 +22,7 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     /// Usage: var mentor = await CreateMentor("mentor1", 50.0m, "Expert in .NET");
     /// Then: await mentor.act.PostAsync(...);
     /// </summary>
-    protected async Task<(HttpClient arrange, HttpClient act)> CreateMentor(
+    public async Task<(HttpClient arrange, HttpClient act)> CreateMentor(
         string userId = "mentor1", 
         decimal hourlyRate = 75.0m,
         int bufferTimeMinutes = 15 , 
@@ -49,7 +49,7 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     /// <summary>
     /// Creates an authenticated mentee with a unique userId
     /// </summary>
-    protected async Task<(HttpClient arrange, HttpClient act)> CreateMentee(string userId, string? email = null)
+    public async Task<(HttpClient arrange, HttpClient act)> CreateMentee(string userId, string? email = null)
     {
         var (arrange, act) = GetClientsForUser(userId);
         var loginData = await CreateUserAndLogin(null,null, arrange);

@@ -25,32 +25,17 @@ public class AvailabilityTests : MentorshipTestBase
     {
         var (userArrange, userAct) = await CreateMentor("mentor_daily_checkt");
 
-        var currentUser = await GetCurrenUserInfo(userArrange);
+        var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(userArrange);
 
-        var bulkRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" },
-                        new { StartTime = "14:00", EndTime = "17:00" }
-                    }
-                }
-            }
-        };
-        await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
+        await MentorshipTestUtilities.SetupMentorAvailabilityWithRanges(userArrange, DayOfWeek.Monday, 
+            new[] { ("09:00", "12:00"), ("14:00", "17:00") });
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
 
         // Act
         var (publicArrange, publicAct) = GetClientsForUser("public_user");
         var response = await publicAct.GetAsync(
-            $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={currentUser.Slug}&date={nextMonday:yyyy-MM-dd}");
+            $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={currentUser.GetProperty("slug").GetString()}&date={nextMonday:yyyy-MM-dd}");
         
         await MatchSnapshotAsync(response, "GetMentorAvailabilityByDay_ShouldReturnCorrectSlots_WhenDayHasAvailability" , matchOptions => matchOptions.IgnoreAllFields("date"));
 
@@ -67,8 +52,9 @@ public class AvailabilityTests : MentorshipTestBase
     {
         var (userArrange, userAct) = await CreateMentor("mentor_daily_checkt");
 
-        var currentUser = await GetCurrenUserInfo(userArrange);
-
+        var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(userArrange);
+        
+        // Set Thursday as inactive
         var bulkRequest = new
         {
             DayAvailabilities = new[]
@@ -76,19 +62,19 @@ public class AvailabilityTests : MentorshipTestBase
                 new
                 {
                     DayOfWeek = DayOfWeek.Thursday,
-                    IsActive = false, // Day is inactive
+                    IsActive = false,
                     AvailabilityRanges = new object[0]
                 }
             }
         };
         await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
 
-        var nextThursday = GetNextWeekday(DayOfWeek.Thursday);
+        var nextThursday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Thursday);
 
         // Act
         var (publicArrange, publicAct) = GetClientsForUser("public_user_2");
         var response = await publicAct.GetAsync(
-            $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={currentUser.Slug}&date={nextThursday:yyyy-MM-dd}");
+            $"{MentorshipEndpoints.Availability.GetDaily}?mentorSlug={currentUser.GetProperty("slug").GetString()}&date={nextThursday:yyyy-MM-dd}");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -108,31 +94,10 @@ public class AvailabilityTests : MentorshipTestBase
         // Arrange
         var (userArrange, userAct) = await CreateMentor("mentor_daily_checkt");
 
-        var currentUser = await GetCurrenUserInfo(userArrange);
-        var bulkRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "09:00", EndTime = "17:00" } }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Wednesday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "10:00", EndTime = "16:00" } }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Thursday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "08:00", EndTime = "14:00" } }
-                },
-                /*
-                new { DayOfWeek = DayOfWeek.Friday, IsActive = false, AvailabilityRanges = new object[0] }
-            */
-            }
-        };
+        var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(userArrange);
+        
+        // Use the shared utility for mixed availability
+        var bulkRequest = MentorshipTestUtilities.CreateMixedAvailabilityData();
         await userArrange.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, bulkRequest);
 
         var currentDate = DateTime.Now;
@@ -140,7 +105,7 @@ public class AvailabilityTests : MentorshipTestBase
         // Act
         var (publicArrange, publicAct) = GetClientsForUser("public_monthly");
         var response = await publicAct.GetAsync(
-            $"{MentorshipEndpoints.Availability.GetMonthly}?mentorSlug={currentUser.Slug}&year={currentDate.Year}&month={currentDate.Month}");
+            $"{MentorshipEndpoints.Availability.GetMonthly}?mentorSlug={currentUser.GetProperty("slug").GetString()}&year={currentDate.Year}&month={currentDate.Month}");
         // await MatchSnapshotAsync(response, "GetMentorAvailabilityByMonth_ShouldReturnCompleteMonth_WithMixedActiveDays" , matchOptions => matchOptions.IgnoreAllFields("date"));
 
         // Assert
@@ -155,27 +120,4 @@ public class AvailabilityTests : MentorshipTestBase
     #endregion
 
 
-    private DateTime GetNextWeekday(DayOfWeek dayOfWeek)
-    {
-        var today = DateTime.Now.Date;
-        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week
-        return today.AddDays(daysUntilTarget);
-    }
-    
-    private DateTime GetNextMonday()
-    {
-        var today = DateTime.Now.Date;
-        var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilMonday == 0) daysUntilMonday = 7;
-        return today.AddDays(daysUntilMonday);
-    }
-
-    private DateTime GetNextSunday()
-    {
-        var today = DateTime.Now.Date;
-        var daysUntilSunday = ((int)DayOfWeek.Sunday - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilSunday == 0) daysUntilSunday = 7;
-        return today.AddDays(daysUntilSunday);
-    }
 }

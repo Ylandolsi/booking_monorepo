@@ -23,12 +23,12 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentor2Arrange, mentor2Act) = await CreateMentor("mentor2_list");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_list");
 
-        await SetupMentorAvailability(mentor1Arrange, DayOfWeek.Monday, "09:00", "17:00");
-        await SetupMentorAvailability(mentor2Arrange, DayOfWeek.Tuesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentor1Arrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
+        await MentorshipTestUtilities.SetupMentorAvailability(mentor2Arrange, DayOfWeek.Tuesday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
-        // Book multiple sessions
-        var session1Id = await BookValidSession(mentor1Arrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
-        var session2Id = await BookValidSession(mentor2Arrange, menteeAct, DayOfWeek.Tuesday, "14:00", "15:00");
+        // Book multiple sessions using utility
+        var session1Id = await MentorshipTestUtilities.BookValidSession(mentor1Arrange, menteeAct, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning10AM, MentorshipTestUtilities.TimeFormats.Morning11AM);
+        var session2Id = await MentorshipTestUtilities.BookValidSession(mentor2Arrange, menteeAct, DayOfWeek.Tuesday, MentorshipTestUtilities.TimeFormats.Afternoon2PM, MentorshipTestUtilities.TimeFormats.Afternoon3PM);
 
         // Act
         var response = await menteeAct.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
@@ -55,14 +55,13 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentee1Arrange, mentee1Act) = await CreateMentee("mentee1_list_mentor");
         var (mentee2Arrange, mentee2Act) = await CreateMentee("mentee2_list_mentor");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-        await SetupMentorAvailability(mentor2Arrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
+        await MentorshipTestUtilities.SetupMentorAvailability(mentor2Arrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
-        // Book sessions with different mentees
-        var session1Id = await BookValidSession(mentorArrange, mentee1Act, DayOfWeek.Monday, "10:00", "11:00");
-        var session2Id = await BookValidSession(mentorArrange, mentee2Act, DayOfWeek.Monday, "12:00", "13:00");
-        
-        var session3Id = await BookValidSession(mentor2Arrange , mentorAct ,  DayOfWeek.Monday, "14:00", "15:00");
+        // Book sessions with different mentees using utility
+        var session1Id = await MentorshipTestUtilities.BookValidSession(mentorArrange, mentee1Act, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning10AM, MentorshipTestUtilities.TimeFormats.Morning11AM);
+        var session2Id = await MentorshipTestUtilities.BookValidSession(mentorArrange, mentee2Act, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Noon, "13:00");
+        var session3Id = await MentorshipTestUtilities.BookValidSession(mentor2Arrange, mentorAct, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Afternoon2PM, MentorshipTestUtilities.TimeFormats.Afternoon3PM);
         
         
         var response = await mentorAct.GetAsync($"{MentorshipEndpoints.Sessions.GetSessions}");
@@ -122,12 +121,12 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_filter_date");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_filter_date");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
 
         // Book sessions on different days
-        var session1Id = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
-        var session2Id = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Tuesday, "10:00", "11:00");
+        var session1Id = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
+        var session2Id = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Tuesday, "10:00", "11:00");
 
         // Act - request sessions for next 14 days to ensure we capture sessions booked for next week
         var dateAfter14days = DateTime.Today.AddDays(14);
@@ -149,10 +148,10 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_filter_timezone");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_filter_timezone");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
         // Book session in specific timezone
-        var sessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00", "Europe/Paris");
+        var sessionId = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00", "Europe/Paris");
 
         // Act - request sessions with timezone parameter for next 14 days
         var dateAfter14days = DateTime.Today.AddDays(14);
@@ -178,12 +177,12 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_sort_time");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_sort_time");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
 
         // Book sessions in different order (not chronological)
-        var laterSessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Tuesday, "14:00", "15:00");
-        var earlierSessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
+        var laterSessionId = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Tuesday, "14:00", "15:00");
+        var earlierSessionId = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
 
         // Act
         var response = await menteeAct.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
@@ -211,8 +210,8 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_include_timezone");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_include_timezone");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-        var sessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00", "Europe/Paris");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        var sessionId = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00", "Europe/Paris");
 
         // Act
         var response = await menteeAct.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
@@ -237,8 +236,8 @@ public class SessionRetrievalTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_status_booked");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_status_booked");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-        var sessionId = await BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        var sessionId = await MentorshipTestUtilities.BookValidSession(mentorArrange, menteeAct, DayOfWeek.Monday, "10:00", "11:00");
 
         // Act
         var response = await menteeAct.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
@@ -259,94 +258,4 @@ public class SessionRetrievalTests : MentorshipTestBase
 
     #endregion
 
-    #region Helper Methods
-
-    private async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek dayOfWeek, string startTime, string endTime)
-    {
-        var availabilityRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = dayOfWeek,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = startTime, EndTime = endTime }
-                    }
-                }
-            }
-        };
-
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
-        response.EnsureSuccessStatusCode();
-    }
-
-    private async Task<string> GetMentorSlug(HttpClient mentorClient)
-    {
-        var response = await mentorClient.GetAsync(UsersEndpoints.GetCurrentUser);
-        response.EnsureSuccessStatusCode();
-        
-        var userInfo = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return userInfo.GetProperty("slug").GetString()!;
-    }
-
-    private async Task<int> BookValidSession(HttpClient mentorClient, HttpClient menteeClient, DayOfWeek dayOfWeek, 
-        string startTime, string endTime, string timeZoneId = "Africa/Tunis")
-    {
-        var targetDate = GetNextWeekday(dayOfWeek);
-        var mentorSlug = await GetMentorSlug(mentorClient);
-
-        // Store initial session count
-        var initialSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
-        initialSessionsResponse.EnsureSuccessStatusCode();
-        var initialSessions = await initialSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var initialCount = initialSessions.EnumerateArray().Count();
-
-        var bookingRequest = new
-        {
-            MentorSlug = mentorSlug,
-            Date = targetDate.ToString("yyyy-MM-dd"),
-            StartTime = startTime,
-            EndTime = endTime,
-            TimeZoneId = timeZoneId,
-            Note = "Test session for retrieval"
-        };
-
-        var response = await menteeClient.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
-        response.EnsureSuccessStatusCode();
-
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        // Verify we got a payUrl (indicating successful booking)
-        Assert.True(result.TryGetProperty("payUrl", out var payUrl));
-        Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
-
-        // Get the newly created session by finding the session that wasn't there before
-        var newSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
-        newSessionsResponse.EnsureSuccessStatusCode();
-        var newSessions = await newSessionsResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var newSessionsArray = newSessions.EnumerateArray().ToList();
-        
-        // Should have one more session now
-        Assert.Equal(initialCount + 1, newSessionsArray.Count);
-        
-        // Find the newest session (should be the one with the matching scheduled time)
-        var newSession = newSessionsArray
-            .OrderByDescending(s => s.GetProperty("id").GetInt32())
-            .FirstOrDefault();
-            
-        Assert.True(newSession.ValueKind != JsonValueKind.Undefined, "Could not find the newly created session");
-        return newSession.GetProperty("id").GetInt32();
-    }
-
-    private static DateTime GetNextWeekday(DayOfWeek dayOfWeek)
-    {
-        var today = DateTime.UtcNow.Date;
-        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week to avoid past dates
-        return today.AddDays(daysUntilTarget);
-    }
-
-    #endregion
 }

@@ -1,6 +1,9 @@
 2025-08-30T10:45:00
 is an ISO 8601 date-time format,
+--
+cd "c:\Users\USER\Desktop\me\booking_monorepo\backend\Booking"; dotnet test tests\IntegrationsTests\IntegrationsTests.csproj --filter "FullyQualifiedName~AvailabilityTests" --verbosity normal
 
+---
 Database Locks: Consider using SET LOCK_TIMEOUT for long-running queries
 Memory Usage: Monitor memory consumption with large batch operations
 

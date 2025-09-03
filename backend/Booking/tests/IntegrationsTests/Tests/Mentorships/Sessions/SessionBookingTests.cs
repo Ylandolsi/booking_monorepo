@@ -24,27 +24,25 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_basic", 75.0m, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_basic");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "10:00",
-            EndTime = "11:00",
-            TimeZoneId = "Africa/Tunis",
-            Note = "First session"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            mentorSlug,
+            nextMonday.ToString("yyyy-MM-dd"),
+            MentorshipTestUtilities.TimeFormats.Morning10AM,
+            MentorshipTestUtilities.TimeFormats.Morning11AM,
+            MentorshipTestUtilities.TimeZones.Tunisia,
+            "First session"
+        );
 
         // Act
         var response = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.True(result.TryGetProperty("payUrl", out var payUrl));
-        Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
+        await MentorshipTestUtilities.VerifySuccessfulBooking(response);
     }
 
     [Fact]
@@ -52,17 +50,17 @@ public class SessionBookingTests : MentorshipTestBase
     {
         // Arrange
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_unauth");
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "10:00",
-            EndTime = "11:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            mentorSlug,
+            nextMonday.ToString("yyyy-MM-dd"),
+            MentorshipTestUtilities.TimeFormats.Morning10AM,
+            MentorshipTestUtilities.TimeFormats.Morning11AM,
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         var unauthClient = Factory.CreateClient();
 
@@ -79,15 +77,14 @@ public class SessionBookingTests : MentorshipTestBase
         // Arrange
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_not_found");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var bookingRequest = new
-        {
-            MentorSlug = "non-existent-mentor",
-            Date = nextMonday.ToString("yyyy-MM-dd"),
-            StartTime = "10:00",
-            EndTime = "11:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            "non-existent-mentor",
+            nextMonday.ToString("yyyy-MM-dd"),
+            MentorshipTestUtilities.TimeFormats.Morning10AM,
+            MentorshipTestUtilities.TimeFormats.Morning11AM,
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act
         var response = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -107,17 +104,17 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_past");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_past");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
         var pastDate = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
-        var bookingRequest = new
-        {
-            MentorSlug = await GetMentorSlug(mentorArrange),
-            Date = pastDate,
-            StartTime = "10:00",
-            EndTime = "11:00",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+            mentorSlug,
+            pastDate,
+            MentorshipTestUtilities.TimeFormats.Morning10AM,
+            MentorshipTestUtilities.TimeFormats.Morning11AM,
+            MentorshipTestUtilities.TimeZones.Tunisia
+        );
 
         // Act
         var response = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
@@ -133,12 +130,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_invalid_time");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_invalid_time");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "11:00",
             EndTime = "10:00", // End before start
@@ -159,12 +156,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_format");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_format");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "25:00", // Invalid time
             EndTime = "26:00",   // Invalid time
@@ -185,11 +182,11 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_date_format");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_date_format");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = "2025/01/15", // Wrong format
             StartTime = "10:00",
             EndTime = "11:00",
@@ -215,13 +212,13 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_unavailable");
 
         // Set availability for Tuesday only
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "09:00", "17:00");
 
         // Try to book on Monday (not available)
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -243,12 +240,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_outside_hours");
 
         // Set availability 9-17
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "18:00", // Outside available hours
             EndTime = "19:00",
@@ -274,10 +271,10 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentee1Arrange, mentee1Act) = await CreateMentee("mentee1_conflict");
         var (mentee2Arrange, mentee2Act) = await CreateMentee("mentee2_conflict");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await GetMentorSlug(mentorArrange);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
 
         // First booking
         var firstBooking = new
@@ -317,10 +314,10 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentee1Arrange, mentee1Act) = await CreateMentee("mentee1_buffer");
         var (mentee2Arrange, mentee2Act) = await CreateMentee("mentee2_buffer");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await GetMentorSlug(mentorArrange);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
 
         // First booking
         var firstBooking = new
@@ -363,12 +360,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_asia_tz");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_asia_tz");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "17:00", // 5 PM tokyo : equivalent to 9 AM Tunisia 
             EndTime = "23:00",
@@ -390,14 +387,14 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_conversion");
 
         // Mentor available 14:00-18:00 in Africa/Tunis
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "14:00", "18:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "14:00", "18:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         
         // Mentee books 14:00-15:00 in UTC (which should be 15:00-16:00 in Africa/Tunis)
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "14:00", // 2 PM UTC = 3 PM Africa/Tunis
             EndTime = "15:00",   // 3 PM UTC = 4 PM Africa/Tunis
@@ -420,12 +417,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_invalid_tz");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_invalid_tz");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -450,12 +447,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_min_duration");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_min_duration");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "10:15", // 15 minutes - minimum duration
@@ -476,12 +473,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_max_duration");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_max_duration");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "09:00",
             EndTime = "17:00", // 8 hours - maximum session
@@ -502,12 +499,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_note");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_note");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -529,12 +526,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_no_note");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_no_note");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -557,12 +554,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_weekend");
 
         // Set availability for Saturday
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Saturday, "10:00", "16:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Saturday, "10:00", "16:00");
 
-        var nextSaturday = GetNextWeekday(DayOfWeek.Saturday);
+        var nextSaturday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Saturday);
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextSaturday.ToString("yyyy-MM-dd"),
             StartTime = "11:00",
             EndTime = "12:00",
@@ -584,14 +581,14 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_cross_day");
 
         // Mentor available Monday in Africa/Tunis
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "02:00", "06:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "02:00", "06:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         
         // Mentee books in Pacific timezone (Sunday evening = Monday early morning in Tunis)
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = nextMonday.AddDays(-1).ToString("yyyy-MM-dd"), // Sunday in Pacific = Monday in Tunis
             StartTime = "21:00", // 9 PM PST Sunday = ~2 AM Monday in Tunis
             EndTime = "22:00",
@@ -613,12 +610,12 @@ public class SessionBookingTests : MentorshipTestBase
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_consecutive");
 
         // Set availability for Monday and Tuesday
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "10:00", "16:00");
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "10:00", "16:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "10:00", "16:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Tuesday, "10:00", "16:00");
 
-        var nextMonday = GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var nextTuesday = nextMonday.AddDays(1);
-        var mentorSlug = await GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
 
         // Book Monday session
         var mondayBooking = new
@@ -659,13 +656,13 @@ public class SessionBookingTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_dst");
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_dst");
 
-        await SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
         // Use a date during DST transition (last Sunday of March for Europe)
         var dstTransitionDate = new DateTime(2025, 3, 30); // Typical DST transition date
         var bookingRequest = new
         {
-            MentorSlug = await GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
             Date = dstTransitionDate.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -682,46 +679,4 @@ public class SessionBookingTests : MentorshipTestBase
 
     #endregion
 
-    #region Helper Methods
-
-    private async Task SetupMentorAvailability(HttpClient mentorClient, DayOfWeek dayOfWeek, string startTime, string endTime)
-    {
-        var availabilityRequest = new
-        {
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = dayOfWeek,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = startTime, EndTime = endTime }
-                    }
-                }
-            }
-        };
-
-        var response = await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Availability.SetBulk, availabilityRequest);
-        response.EnsureSuccessStatusCode();
-    }
-
-    private async Task<string> GetMentorSlug(HttpClient mentorClient)
-    {
-        var response = await mentorClient.GetAsync(UsersEndpoints.GetCurrentUser);
-        response.EnsureSuccessStatusCode();
-        
-        var userInfo = await response.Content.ReadFromJsonAsync<JsonElement>();
-        return userInfo.GetProperty("slug").GetString()!;
-    }
-
-    private static DateTime GetNextWeekday(DayOfWeek dayOfWeek)
-    {
-        var today = DateTime.UtcNow.Date;
-        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week to avoid past dates
-        return today.AddDays(daysUntilTarget);
-    }
-
-    #endregion
 }
