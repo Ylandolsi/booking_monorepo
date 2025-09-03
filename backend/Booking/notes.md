@@ -3,6 +3,9 @@ is an ISO 8601 date-time format,
 --
 cd "c:\Users\USER\Desktop\me\booking_monorepo\backend\Booking"; dotnet test tests\IntegrationsTests\IntegrationsTests.csproj --filter "FullyQualifiedName~AvailabilityTests" --verbosity normal
 
+----
+MUST read DB 
+https://www.linkedin.com/posts/ahmed-emad-abdelall_%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%AA%D9%88%D8%B1%D8%B4%D9%8A%D8%A8-%D9%81%D9%8A-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%AE%D8%A7%D8%B5-%D8%A8%D8%A7%D9%84%D9%80-database-activity-7368965607087607810-qdrH?originalSubdomain=ae
 ---
 Database Locks: Consider using SET LOCK_TIMEOUT for long-running queries
 Memory Usage: Monitor memory consumption with large batch operations

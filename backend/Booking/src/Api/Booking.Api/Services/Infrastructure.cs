@@ -35,9 +35,6 @@ public static class Infrastructure
     {
         //services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
-        //services.AddScoped<EmailVerificationSender>();
-        //services.AddScoped<TokenHelper>();
-
         services.AddHttpClient();
         /*// TODO : move clients name to static !*/
         var konnectOptions = configuration.GetSection(KonnectOptions.OptionsKey)?.Get<KonnectOptions>() ??
@@ -47,7 +44,7 @@ public static class Infrastructure
             {
                 // TODO : make this more reselllient
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
-                client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
+                client.DefaultRequestHeaders.Add("x-api-key",konnectOptions.ApiUrl);
                 // TOdo : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
             })
             .AddStandardResilienceHandler();

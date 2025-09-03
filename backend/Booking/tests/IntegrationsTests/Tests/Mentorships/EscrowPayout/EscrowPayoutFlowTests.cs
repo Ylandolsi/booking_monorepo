@@ -1,4 +1,4 @@
- /*using System.Net;
+ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Booking.Modules.Mentorships.Features;
@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Hangfire;
+using IntegrationsTests.Abstractions;
 
 namespace IntegrationsTests.Tests.Mentorships.EscrowPayout;
 
@@ -21,8 +22,20 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     {
     }
 
+    /**
+     * CompleteEscrowFlow_ShouldUpdateUserBalance_After24SessionCompleted
+     * EscrowShouldNotBeComplete_AfterLessThan24OfEssionCompletion
+     * user cannot request payout unless their account is linked with konnect Wallet 
+     * user request payout with money less than the minimum required for the payout should be refused
+     * user ................                                                        should be passed
+     * Admin accept user payout , balance reduced from user balance and found in the history of payout
+     * Admin rject user payout
+     * Admin can see all pending the payouts
+     * User can see the history of its payouts
+     * 
+     */
     [Fact]
-    public async Task CompleteEscrowFlow_ShouldCreatePayoutRequest_WhenSessionCompleted()
+    public async Task CompleteEscrowFlow_ShouldUpdateUserBalance_After24SessionCompleted()
     {
         // Arrange
         var sessionPrice = 120.0m;
@@ -601,4 +614,4 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     }
 
     #endregion
-}*/
+}

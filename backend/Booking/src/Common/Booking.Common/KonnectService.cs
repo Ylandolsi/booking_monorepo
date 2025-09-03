@@ -72,13 +72,8 @@ public class KonnectService(
         bool isPayout = false
     )
     {
-        /*
-         TODO : fix it , it always to refer to the old url
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
-        */
-        var httpClient = httpClientFactory.CreateClient("KonnectClient");
-     
-
+        
         receiverWallet ??= KonnectOptions.WalletKey;
         var paymentInfo = new
         {
@@ -102,7 +97,6 @@ public class KonnectService(
         };
 
 
-        // httpClient.DefaultRequestHeaders.Add("x-api-key", KonnectOptions.ApiKey);
 
         var response = await httpClient.PostAsJsonAsync(
             "payments/init-payment",
@@ -117,8 +111,6 @@ public class KonnectService(
 
             return Result.Success(responseDate );
         }
-
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
     }
@@ -155,8 +147,6 @@ public class KonnectService(
         {
             
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
-            //var httpClient = httpClientFactory.CreateClient();
-            //var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}/payments/{paymentRef}");
             var response = await httpClient.GetAsync($"payments/{paymentRef}");
             switch (response.StatusCode)
             {
