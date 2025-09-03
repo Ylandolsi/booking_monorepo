@@ -15,7 +15,7 @@ public class GetAllPayoutsAdmin : IEndpoint
         app.MapGet(MentorshipEndpoints.Payouts.Admin.GetAllPayouts,
                 async (UserContext userContext,
                     IQueryHandler<GetAllPayoutsAdminQuery,
-                        List<GetAllPayoutsResponse>> handler,
+                        List<PayoutResponse>> handler,
                     CancellationToken cancellationToken) =>
                 {
                     var query = new GetAllPayoutsAdminQuery();

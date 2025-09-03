@@ -1,8 +1,8 @@
 using Booking.Modules.Mentorships.Domain.Entities;
 
-namespace Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
+namespace Booking.Modules.Mentorships.Features.Payout;
 
-public record GetAllPayoutsResponse
+public record PayoutResponse
 {
     public int Id { get; init; }
     public int UserId { get; init; }

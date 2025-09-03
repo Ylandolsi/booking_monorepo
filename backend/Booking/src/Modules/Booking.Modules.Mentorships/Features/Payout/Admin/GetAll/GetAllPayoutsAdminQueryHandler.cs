@@ -10,16 +10,16 @@ namespace Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
 public class GetAllPayoutsAdminQueryHandler(
     MentorshipsDbContext dbContext,
     ILogger<GetAllPayoutsAdminQueryHandler> logger)
-    : IQueryHandler<GetAllPayoutsAdminQuery, List<GetAllPayoutsResponse>>
+    : IQueryHandler<GetAllPayoutsAdminQuery, List<PayoutResponse>>
 {
     // TODO : add pagination here ! 
-    public async Task<Result<List<GetAllPayoutsResponse>>> Handle(GetAllPayoutsAdminQuery query,
+    public async Task<Result<List<PayoutResponse>>> Handle(GetAllPayoutsAdminQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Admin is retrieving all pending  payouts.");
         var payouts = await dbContext.Payouts.AsNoTracking()
             .Where(p => p.Status == PayoutStatus.Pending)
-            .Select(p => new GetAllPayoutsResponse
+            .Select(p => new PayoutResponse
             {
                 Id = p.Id,
                 UserId = p.UserId,

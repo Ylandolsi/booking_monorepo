@@ -7,6 +7,7 @@ using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
 using Booking.Modules.Mentorships.BackgroundJobs.Payout;
+using Booking.Modules.Mentorships.Features.Payout;
 using Booking.Modules.Mentorships.Features.Payout.Admin.Approve;
 using Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
 using IntegrationsTests.Abstractions.Base;
@@ -198,7 +199,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         Assert.Equal(100, walletDuringPayout.PendingBalance);
 
-        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
+        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<PayoutResponse>>();
         Assert.NotNull(content);
         Assert.True(content.Count != 0);
 
@@ -243,7 +244,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payouts.Admin.GetAllPayouts);
 
-        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
+        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<PayoutResponse>>();
         Assert.NotNull(content);
         Assert.True(content.Count != 0);
 

@@ -15,7 +15,7 @@ public class GetPayoutHistory : IEndpoint
         app.MapGet(MentorshipEndpoints.Payouts.PayoutHistory,
                 async (
                     UserContext userContext,
-                    IQueryHandler<GetPayoutHistoryQuery, List<Domain.Entities.Payout>> handler,
+                    IQueryHandler<GetPayoutHistoryQuery, List<PayoutResponse>> handler,
                     CancellationToken cancellationToken) =>
                 {
                     int userId = userContext.UserId;
