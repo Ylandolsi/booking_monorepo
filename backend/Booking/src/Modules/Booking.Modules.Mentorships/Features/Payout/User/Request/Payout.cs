@@ -14,7 +14,7 @@ public class Payout : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipEndpoints.Payment.Payout,
+        app.MapPost(MentorshipEndpoints.Payouts.Payout,
                 async (Request request,
                      UserContext userContext,
                      ICommandHandler<PayoutCommand> handler,

@@ -21,10 +21,23 @@ export const MentorshipEndpoints = {
     // Search: "mentorships/mentors/search",
   },
 
-  Payments: {
-    Wallet: 'payments/wallet',
-    Payout: 'mentorships/payments/payout',
-    PayoutHistory: 'mentorships/payments/payout/history',
+  Payouts: {
+    Payout: 'mentorships/payout',
+    PayoutHistory: 'mentorships/payout',
+
+    Admin: {
+      ApprovePayout: 'mentorships/admin/payout/approve', // body : payoutId
+      WebhookPayout: 'mentorships/admin/payout/webhook',
+      RejectPayout: 'mentorships/admin/payout/reject', // body : payoutId
+      GetAllPayouts: 'mentorships/admin/payout',
+      GetDetailled: 'mentorships/admin/payout/{payoutId}',
+    },
+  },
+
+  Payment: {
+    GetWallet: 'mentorships/payments/wallet',
+    //Create: 'mentorships/payments',
+    //Webhook: 'mentorships/payments/webhook', // payment_ref=5f9498735289e405fc7c18ac
   },
 
   // Relationships: {

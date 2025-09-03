@@ -14,7 +14,7 @@ public class RejectPayoutAdmin : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipEndpoints.Payment.Admin.RejectPayout,
+        app.MapPost(MentorshipEndpoints.Payouts.Admin.RejectPayout,
                 async (Request request,
                     UserContext userContext,
                     ICommandHandler<RejectPayoutAdminCommand> handler,

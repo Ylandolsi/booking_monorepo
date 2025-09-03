@@ -12,7 +12,7 @@ public class GetPayoutHistory : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipEndpoints.Payment.PayoutHistory,
+        app.MapGet(MentorshipEndpoints.Payouts.PayoutHistory,
                 async (
                     UserContext userContext,
                     IQueryHandler<GetPayoutHistoryQuery, List<Domain.Entities.Payout>> handler,

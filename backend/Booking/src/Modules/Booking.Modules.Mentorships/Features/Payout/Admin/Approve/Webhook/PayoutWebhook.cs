@@ -17,7 +17,7 @@ public class PayoutWebhook : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipEndpoints.Payment.Admin.WebhookPayout, async (
+        app.MapGet(MentorshipEndpoints.Payouts.Admin.WebhookPayout, async (
                 [FromQuery] string payment_ref,
                 ICommandHandler<PayoutWebhookCommand> handler,
                 CancellationToken cancellationToken) =>

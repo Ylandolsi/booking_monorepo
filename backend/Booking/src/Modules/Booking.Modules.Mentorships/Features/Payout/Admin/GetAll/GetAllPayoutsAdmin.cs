@@ -12,7 +12,7 @@ public class GetAllPayoutsAdmin : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(MentorshipEndpoints.Payment.Admin.GetAllPayouts,
+        app.MapGet(MentorshipEndpoints.Payouts.Admin.GetAllPayouts,
                 async (UserContext userContext,
                     IQueryHandler<GetAllPayoutsAdminQuery,
                         List<GetAllPayoutsResponse>> handler,

@@ -14,7 +14,7 @@ public class ApprovePayoutAdmin : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipEndpoints.Payment.Admin.ApprovePayout,
+        app.MapPost(MentorshipEndpoints.Payouts.Admin.ApprovePayout,
                 async (Request request,
                     UserContext userContext,
                     ICommandHandler<ApprovePayoutAdminCommand, ApprovePayoutAdminResponse> handler,

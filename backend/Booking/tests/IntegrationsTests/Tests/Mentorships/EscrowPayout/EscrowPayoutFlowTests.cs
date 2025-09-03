@@ -192,7 +192,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         await MentorshipTestUtilities.RequestPayout(mentorArrange, 100m);
 
-        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
+        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payouts.Admin.GetAllPayouts);
         var walletDuringPayout =
             await MentorshipTestUtilities.GetUserWallet(Factory, mentorFullInfo.Id.ToString());
 
@@ -202,7 +202,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         Assert.NotNull(content);
         Assert.True(content.Count != 0);
 
-        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payment.Admin.ApprovePayout,
+        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payouts.Admin.ApprovePayout,
             new
             {
                 PayoutId = content[0].Id,
@@ -241,13 +241,13 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         Assert.Equal(100, walletDuringPayout.PendingBalance);
 
-        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
+        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payouts.Admin.GetAllPayouts);
 
         var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
         Assert.NotNull(content);
         Assert.True(content.Count != 0);
 
-        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payment.Admin.RejectPayout,
+        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payouts.Admin.RejectPayout,
             new
             {
                 PayoutId = content[0].Id,

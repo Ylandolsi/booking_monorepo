@@ -800,7 +800,7 @@ public static class MentorshipTestUtilities
             Amount = amount
         };
 
-        return await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Payment.Payout, payoutRequest);
+        return await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Payouts.Payout, payoutRequest);
     }
 
     /// <summary>
