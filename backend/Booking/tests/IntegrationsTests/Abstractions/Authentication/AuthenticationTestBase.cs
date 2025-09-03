@@ -58,7 +58,7 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
             LastName = "User"
         };
 
-        var registerResponse = await arrangeClient.PostAsJsonAsync("/users/register", registerPayload);
+        var registerResponse = await arrangeClient.PostAsJsonAsync(UsersEndpoints.Register, registerPayload);
         await Task.Delay(TimeSpan.FromSeconds(2));
         if (!verify) return; 
 
@@ -87,7 +87,7 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
             Password = password
         };
 
-        var loginResponse = await arrangeClient.PostAsJsonAsync("/users/login", loginPayload);
+        var loginResponse = await arrangeClient.PostAsJsonAsync(UsersEndpoints.Login, loginPayload);
         loginResponse.EnsureSuccessStatusCode();
 
         var loginData = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();

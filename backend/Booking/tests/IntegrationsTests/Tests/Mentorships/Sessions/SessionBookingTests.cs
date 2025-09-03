@@ -27,7 +27,7 @@ public class SessionBookingTests : MentorshipTestBase
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
             mentorSlug,
             nextMonday.ToString("yyyy-MM-dd"),
@@ -53,7 +53,7 @@ public class SessionBookingTests : MentorshipTestBase
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
             mentorSlug,
             nextMonday.ToString("yyyy-MM-dd"),
@@ -107,7 +107,7 @@ public class SessionBookingTests : MentorshipTestBase
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, MentorshipTestUtilities.TimeFormats.Morning9AM, MentorshipTestUtilities.TimeFormats.Afternoon5PM);
 
         var pastDate = DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
             mentorSlug,
             pastDate,
@@ -135,7 +135,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "11:00",
             EndTime = "10:00", // End before start
@@ -161,7 +161,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "25:00", // Invalid time
             EndTime = "26:00",   // Invalid time
@@ -186,7 +186,7 @@ public class SessionBookingTests : MentorshipTestBase
 
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = "2025/01/15", // Wrong format
             StartTime = "10:00",
             EndTime = "11:00",
@@ -218,7 +218,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -245,7 +245,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "18:00", // Outside available hours
             EndTime = "19:00",
@@ -274,7 +274,7 @@ public class SessionBookingTests : MentorshipTestBase
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
 
         // First booking
         var firstBooking = new
@@ -317,7 +317,7 @@ public class SessionBookingTests : MentorshipTestBase
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
 
         // First booking
         var firstBooking = new
@@ -365,7 +365,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "17:00", // 5 PM tokyo : equivalent to 9 AM Tunisia 
             EndTime = "23:00",
@@ -394,7 +394,7 @@ public class SessionBookingTests : MentorshipTestBase
         // Mentee books 14:00-15:00 in UTC (which should be 15:00-16:00 in Africa/Tunis)
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "14:00", // 2 PM UTC = 3 PM Africa/Tunis
             EndTime = "15:00",   // 3 PM UTC = 4 PM Africa/Tunis
@@ -452,7 +452,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "10:15", // 15 minutes - minimum duration
@@ -478,7 +478,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "09:00",
             EndTime = "17:00", // 8 hours - maximum session
@@ -504,7 +504,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -531,7 +531,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.ToString("yyyy-MM-dd"),
             StartTime = "10:00",
             EndTime = "11:00",
@@ -559,7 +559,7 @@ public class SessionBookingTests : MentorshipTestBase
         var nextSaturday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Saturday);
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextSaturday.ToString("yyyy-MM-dd"),
             StartTime = "11:00",
             EndTime = "12:00",
@@ -588,7 +588,7 @@ public class SessionBookingTests : MentorshipTestBase
         // Mentee books in Pacific timezone (Sunday evening = Monday early morning in Tunis)
         var bookingRequest = new
         {
-            MentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            MentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             Date = nextMonday.AddDays(-1).ToString("yyyy-MM-dd"), // Sunday in Pacific = Monday in Tunis
             StartTime = "21:00", // 9 PM PST Sunday = ~2 AM Monday in Tunis
             EndTime = "22:00",
@@ -615,7 +615,7 @@ public class SessionBookingTests : MentorshipTestBase
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var nextTuesday = nextMonday.AddDays(1);
-        var mentorSlug = await MentorshipTestUtilities.GetMentorSlug(mentorArrange);
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
 
         // Book Monday session
         var mondayBooking = new

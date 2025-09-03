@@ -18,15 +18,15 @@ public class PayoutWebhook : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(MentorshipEndpoints.Payment.Admin.WebhookPayout, async (
-            [FromQuery] string payment_ref,
-            ICommandHandler<PayoutWebhookCommand> handler,
-            CancellationToken cancellationToken) =>
-        {
-            var command = new PayoutWebhookCommand(payment_ref);
-            var result = await handler.Handle(command, cancellationToken);
-            return result.Match(() => Results.Ok(), CustomResults.Problem);
-        })
-        .WithTags(Tags.Payout , Tags.Webhook);
+                [FromQuery] string payment_ref,
+                ICommandHandler<PayoutWebhookCommand> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var command = new PayoutWebhookCommand(payment_ref);
+                var result = await handler.Handle(command, cancellationToken);
+                return result.Match(() => Results.Ok(), CustomResults.Problem);
+            })
+            .WithTags(Tags.Payout, Tags.Webhook);
     }
 }
 
@@ -44,6 +44,7 @@ public class PayoutWebhookCommandHandler(
         var payout =
             await dbContext.Payouts.FirstOrDefaultAsync(p => p.PaymentRef == command.PaymentRef, cancellationToken);
 
+
         if (payout is null)
         {
             logger.LogError("Webhook ( admin approve payout ) paymentRef :{ref}, dosent exists in payout table",
@@ -59,6 +60,7 @@ public class PayoutWebhookCommandHandler(
 
             return Result.Failure(Error.None);
         }
+        
 
         var paymentDetails = await konnectService.GetPaymentDetails(command.PaymentRef);
         if (paymentDetails.IsFailure)
@@ -66,8 +68,9 @@ public class PayoutWebhookCommandHandler(
             logger.LogError(paymentDetails.Error.Description);
             return Result.Failure(paymentDetails.Error);
         }
-
+        
         payout.Complete();
+
         await dbContext.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

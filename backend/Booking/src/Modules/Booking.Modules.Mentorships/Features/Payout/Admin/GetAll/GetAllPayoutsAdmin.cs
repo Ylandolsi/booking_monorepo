@@ -15,7 +15,7 @@ public class GetAllPayoutsAdmin : IEndpoint
         app.MapGet(MentorshipEndpoints.Payment.Admin.GetAllPayouts,
                 async (UserContext userContext,
                     IQueryHandler<GetAllPayoutsAdminQuery,
-                        List<Domain.Entities.Payout>> handler,
+                        List<GetAllPayoutsResponse>> handler,
                     CancellationToken cancellationToken) =>
                 {
                     var query = new GetAllPayoutsAdminQuery();
@@ -23,6 +23,6 @@ public class GetAllPayoutsAdmin : IEndpoint
                     return result.Match(Results.Ok, CustomResults.Problem);
                 }).RequireAuthorization()
             .RequireAuthorization("Admin")
-            .WithTags(Tags.Admin ,Tags.Payout);
+            .WithTags(Tags.Admin, Tags.Payout);
     }
 }

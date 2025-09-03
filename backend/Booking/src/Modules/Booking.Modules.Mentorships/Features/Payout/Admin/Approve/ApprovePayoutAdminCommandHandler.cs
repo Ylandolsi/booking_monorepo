@@ -25,6 +25,26 @@ public class ApprovePayoutAdminCommandHandler(
             return Result.Failure<ApprovePayoutAdminResponse>(Error.NotFound("Payout.NotFound", "Payout is not found"));
         }
 
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == payout.WalletId, cancellationToken);
+
+        if (wallet is null)
+        {
+            logger.LogError("Admin is trying to approve payout of wallet of user with id:{ref}, dosent exists ",
+                payout.UserId);
+            return Result.Failure<ApprovePayoutAdminResponse>(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
+        }
+
+        if (wallet.Balance < payout.Amount)
+        {
+            logger.LogError(
+                "Admin is trying to approve payout : wallet.balance is less than the payout requested , user with id:{ref} ",
+                payout.UserId);
+
+            return Result.Failure<ApprovePayoutAdminResponse>(Error.Failure("Wallet.Balance.IsNotSufficent",
+                "Wallet Balance is not sufficent "));
+        }
+
+
         // generate payment link here :
         // change webhook 
         var resultKonnect = await konnectService.CreatePaymentPayout(

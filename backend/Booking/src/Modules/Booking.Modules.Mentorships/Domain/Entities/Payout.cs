@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
 
 namespace Booking.Modules.Mentorships.Domain.Entities;
 
 public class Payout : Entity
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
     public int UserId { get; private set; }
     public string KonnectWalletId { get; private set; }

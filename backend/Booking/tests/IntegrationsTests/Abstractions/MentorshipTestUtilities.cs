@@ -68,13 +68,13 @@ public static class MentorshipTestUtilities
     #region Mentor and User Utilities
 
     /// <summary>
-    /// Retrieves the slug for the current authenticated mentor
+    /// Retrieves the slug for the current authenticated user
     /// </summary>
-    /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
-    /// <returns>The mentor's slug</returns>
-    public static async Task<string> GetMentorSlug(HttpClient mentorClient)
+    /// <param name="userClient">The authenticated user's HTTP client</param>
+    /// <returns>The user's slug</returns>
+    public static async Task<string> GetUserSlug(HttpClient userClient)
     {
-        var response = await mentorClient.GetAsync(UsersEndpoints.GetCurrentUser);
+        var response = await userClient.GetAsync(UsersEndpoints.GetCurrentUser);
         response.EnsureSuccessStatusCode();
 
         var userInfo = await response.Content.ReadFromJsonAsync<JsonElement>();
@@ -227,7 +227,7 @@ public static class MentorshipTestUtilities
         string timeZoneId = "Africa/Tunis",
         string? note = null)
     {
-        var mentorSlug = await GetMentorSlug(mentorClient);
+        var mentorSlug = await GetUserSlug(mentorClient);
         var targetDate = GetNextWeekday(dayOfWeek);
 
         // Store initial session count to identify the new session
@@ -699,7 +699,7 @@ public static class MentorshipTestUtilities
         string endTime = "11:00",
         string timeZoneId = DefaultTimeZone)
     {
-        var mentorSlug = await GetMentorSlug(mentorClient);
+        var mentorSlug = await GetUserSlug(mentorClient);
 
         var bookingRequest = CreateBookingRequest(
             mentorSlug,
@@ -762,7 +762,7 @@ public static class MentorshipTestUtilities
             Password = "Password123!"
         };
 
-        var response = await client.PostAsJsonAsync("/api/users/authentication/login", loginRequest);
+        var response = await client.PostAsJsonAsync(UsersEndpoints.Login, loginRequest);
         response.EnsureSuccessStatusCode();
 
         return client;
@@ -784,10 +784,17 @@ public static class MentorshipTestUtilities
     /// </summary>
     /// <param name="mentorClient">Mentor's HTTP client</param>
     /// <param name="amount">Amount to request payout for</param>
-    /// <param name="walletId">Konnect wallet ID</param>
     /// <returns>Payout request response</returns>
     public static async Task<HttpResponseMessage> RequestPayout(HttpClient mentorClient, decimal amount)
     {
+        // integrate with konenct if not integrated 
+
+        await mentorClient.PostAsJsonAsync(UsersEndpoints.InegrateKonnect, new
+        {
+            KonnectWalletId = "connect-with-konnect",
+        });
+        
+        
         var payoutRequest = new
         {
             Amount = amount
@@ -871,24 +878,22 @@ public static class MentorshipTestUtilities
 
 
     /// <summary>
-    /// Gets mentor balance from database
+    /// Gets yser balance from database
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
-    /// <param name="mentorId">Mentor ID</param>
+    /// <param name="userId">User ID</param>
     /// <returns>Current mentor balance</returns>
-    public static async Task<decimal> GetMentorBalance(IntegrationTestsWebAppFactory factory, string mentorId)
+    public static async Task<decimal> GetUserBalance(IntegrationTestsWebAppFactory factory, string userId)
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
 
-        var mentor = await dbContext.Mentors.FirstOrDefaultAsync(m => m.Id.ToString() == mentorId);
-        // Note: Balance property might not exist yet in Mentor entity
-        // return mentor?.Balance ?? 0;
-        return 0; // Placeholder until Balance property is added to Mentor entity
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(m => m.UserId.ToString() == userId);
+        return wallet.Balance;
     }
 
 
-    public static  async Task VerifyNoEscrowCreated(IntegrationTestsWebAppFactory factory , int sessionId)
+    public static async Task VerifyNoEscrowCreated(IntegrationTestsWebAppFactory factory, int sessionId)
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
@@ -897,7 +902,7 @@ public static class MentorshipTestUtilities
         Assert.Null(escrow?.Price);
     }
 
-    public static  async Task<decimal> GetEscrowAmount(IntegrationTestsWebAppFactory factory ,int sessionId)
+    public static async Task<decimal> GetEscrowAmount(IntegrationTestsWebAppFactory factory, int sessionId)
     {
         using var scope = factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();

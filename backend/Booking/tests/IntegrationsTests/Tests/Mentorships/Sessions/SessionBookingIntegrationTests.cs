@@ -32,7 +32,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextMonday.ToString("yyyy-MM-dd"),
             "10:00",
             "11:00",
@@ -79,7 +79,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextTuesday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Tuesday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextTuesday.ToString("yyyy-MM-dd"),
             "14:00",
             "15:00",
@@ -124,7 +124,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextWednesday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Wednesday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextWednesday.ToString("yyyy-MM-dd"),
             "11:00",
             "12:00",
@@ -163,7 +163,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextThursday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Thursday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextThursday.ToString("yyyy-MM-dd"),
             "15:00",
             "15:30",
@@ -196,7 +196,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextFriday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Friday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextFriday.ToString("yyyy-MM-dd"),
             "16:00",
             "17:00",
@@ -234,7 +234,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextMonday.ToString("yyyy-MM-dd"),
             "13:00",
             "14:00",
@@ -269,7 +269,7 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
 
         var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetMentorSlug(mentorArrange),
+            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextMonday.ToString("yyyy-MM-dd"),
             "12:00",
             "13:00",

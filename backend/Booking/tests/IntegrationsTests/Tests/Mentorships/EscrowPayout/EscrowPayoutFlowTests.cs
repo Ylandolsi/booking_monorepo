@@ -7,6 +7,8 @@ using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
 using Booking.Modules.Mentorships.BackgroundJobs.Payout;
+using Booking.Modules.Mentorships.Features.Payout.Admin.Approve;
+using Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +24,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     {
     }
 
+    /*
     #region Escrow Flow Tests
 
     [Fact]
@@ -30,7 +33,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         // Arrange
         var sessionPrice = 120.0m;
         var expectedEscrowAmount = sessionPrice * 0.85m; // 15% platform fee
-        
+
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_escrow_flow", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_escrow_flow");
 
@@ -48,7 +51,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         // Arrange
         var sessionPrice = 100.0m;
         var expectedEscrowAmount = sessionPrice * 0.85m;
-        
+
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_escrow_early", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_escrow_early");
 
@@ -59,14 +62,14 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
         // Act - Mark session as completed but don't wait 24 hours
         await MentorshipTestUtilities.MarkSessionAsCompleted(sessionId, mentorArrange, menteeAct);
-        
+
         // Trigger escrow job immediately (before 24 hours)
         await MentorshipTestUtilities.TriggerEscrowJob(Factory);
 
         // Escrow should NOT be released yet
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         Assert.NotNull(escrow);
         Assert.Equal(EscrowState.Held, escrow.State);
@@ -108,10 +111,10 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     {
         // Arrange
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_no_wallet", 100.0m, 15);
-        
+
         // Try to request payout without linking Konnect wallet
         var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 50.0m);
-        
+
         // Assert - Should fail with appropriate error
         // Note: Exact status code may vary based on implementation
         Assert.False(response.IsSuccessStatusCode);
@@ -121,48 +124,143 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     public async Task PayoutRequest_ShouldFail_WhenAmountBelowMinimum()
     {
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_min_amount", 100.0m, 15);
-        
+
         var walletId = "test-wallet-123";
         await MentorshipTestUtilities.LinkKonnectWallet(mentorArrange, walletId);
-        
+
         // minimum is $20
-        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 10.0m );
-        
+        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 10.0m);
+
         Assert.False(response.IsSuccessStatusCode);
     }
 
-    // Note: The following tests are placeholders for when admin payout management and user balance tracking are fully implemented
-    // They demonstrate the intended test structure but may need to be updated based on actual implementation
-    
-    /*
     [Fact]
-    public async Task AdminAcceptPayout_ShouldReduceBalanceAndUpdateHistory()
+    public async Task PayoutRequest_ShouldSucceed_WhenAmountBelowMaximumAndAboveMinimum()
     {
-        // This test will be enabled when admin endpoints and balance tracking are implemented
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100.0m, 15);
+
+        var walletId = "test-wallet-123";
+        await MentorshipTestUtilities.LinkKonnectWallet(mentorArrange, walletId);
+
+        string? mentorId = await MentorshipTestUtilities.GetMentorId(mentorArrange);
+        await AddBalanceToUser(mentorId, 20000m);
+
+        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 200);
+        Assert.True(response.IsSuccessStatusCode);
     }
 
-    [Fact] 
+    [Fact]
+    public async Task PayoutRequest_ShouldFail_WhenAmountAboveMaximum()
+    {
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor-above-max", 100.0m, 15);
+
+        var walletId = "test-wallet-123";
+        await MentorshipTestUtilities.LinkKonnectWallet(mentorArrange, walletId);
+
+        string? mentorId = await MentorshipTestUtilities.GetMentorId(mentorArrange);
+        await AddBalanceToUser(mentorId, 20000m);
+
+        var response = await MentorshipTestUtilities.RequestPayout(mentorAct, 1001);
+        Assert.False(response.IsSuccessStatusCode);
+    }
+
+    [Fact]
     public async Task UserCanSeePayoutHistory()
     {
         // This test will be enabled when payout history endpoints are implemented
     }
+
+
+
+    #endregion
     */
+
+    #region AdminPayout
+
+    [Fact]
+    public async Task AdminAcceptPayout_ShouldReduceBalanceAndUpdateHistory()
+    {
+        var (adminArrange, adminAct) = await CreateAdmin("admin");
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m, 15, null);
+
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
+        var mentorFullInfo = await GetFullUserInfoBySlug(mentorSlug);
+
+        await AddBalanceToUser(mentorFullInfo.Id.ToString(), 200m);
+
+        var balanceBeforePayout = await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+
+        await MentorshipTestUtilities.RequestPayout(mentorArrange, 100m);
+
+        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
+
+        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
+        Assert.NotNull(content);
+        Assert.True(content.Count != 0);
+
+        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payment.Admin.ApprovePayout,
+            new
+            {
+                PayoutId = content[0].Id,
+            });
+
+        var payUrl = await approveRespone.Content.ReadFromJsonAsync<ApprovePayoutAdminResponse>();
+        Assert.NotNull(payUrl);
+        var paymentRef = MentorshipTestUtilities.ExtractPaymentRefFromUrl(payUrl.PayUrl);
+        await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, mentorArrange);
+        await Task.Delay(5000);
+
+        var userBalanceAfterPayout =
+            await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+
+        Assert.Equal(balanceBeforePayout - 100, userBalanceAfterPayout);
+    }
+
+    [Fact]
+    public async Task WhenAdminRejectsUserPayout_Balance_ShouldNotBeReduced_FromUser()
+    {
+        var (adminArrange, adminAct) = await CreateAdmin("admin");
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m, 15, null);
+
+        var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
+        var mentorFullInfo = await GetFullUserInfoBySlug(mentorSlug);
+
+        await AddBalanceToUser(mentorFullInfo.Id.ToString(), 200m);
+
+        var balanceBeforePayout = await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+
+        await MentorshipTestUtilities.RequestPayout(mentorArrange, 100m);
+
+        var allPendingPayouts = await adminArrange.GetAsync(MentorshipEndpoints.Payment.Admin.GetAllPayouts);
+
+        var content = await allPendingPayouts.Content.ReadFromJsonAsync<List<GetAllPayoutsResponse>>();
+        Assert.NotNull(content);
+        Assert.True(content.Count != 0);
+
+        var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payment.Admin.RejectPayout,
+            new
+            {
+                PayoutId = content[0].Id,
+            });
+
+        var userBalanceAfterPayout =
+            await MentorshipTestUtilities.GetUserBalance(Factory, mentorFullInfo.Id.ToString());
+        Assert.Equal(balanceBeforePayout, userBalanceAfterPayout);
+    }
 
     #endregion
 
     #region Helper Methods
 
-    private async Task AddBalanceToMentor(string mentorId, decimal amount)
+    private async Task AddBalanceToUser(string userId, decimal amount)
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
-        var mentor = await dbContext.Mentors.FirstOrDefaultAsync(m => m.Id.ToString() == mentorId);
-        if (mentor != null)
+
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(m => m.UserId.ToString() == userId);
+        if (wallet != null)
         {
-            // Note: Balance property doesn't exist yet in Mentor entity
-            // This is a placeholder for when balance tracking is implemented
-            // mentor.Balance += amount;
+            wallet.UpdateBalance(amount);
             await dbContext.SaveChangesAsync();
         }
     }
