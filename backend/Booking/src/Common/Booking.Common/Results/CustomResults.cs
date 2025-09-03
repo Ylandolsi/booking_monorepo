@@ -37,6 +37,7 @@ public static class CustomResults
                 ErrorType.NotFound => error.Description,
                 ErrorType.Conflict => error.Description,
                 ErrorType.Unauthorized => error.Description,
+                ErrorType.Failure => error.Description, // TODO maybe delete this 
                 _ => "An unexpected error occurred"
             };
 

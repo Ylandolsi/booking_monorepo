@@ -10,7 +10,7 @@ namespace Booking.Modules.Mentorships.Features.Payout.User.Request;
 
 public class Payout : IEndpoint
 {
-    public record Request(int Amount);
+    public record Request(decimal Amount);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
