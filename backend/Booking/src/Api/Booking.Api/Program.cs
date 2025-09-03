@@ -21,7 +21,10 @@ using Scalar.AspNetCore;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);  // Binds to 0.0.0.0:5000 (IPv4) and [::]:5000 (IPv6)
+});
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.ConfigureHttpJsonOptions(options =>
@@ -29,7 +32,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     // ignore circular references in JSON serialization 
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
-
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
@@ -130,10 +133,8 @@ RecurringJobsMentorShipModules.AddRecurringJobs();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
+app.MapControllers();
 app.MapEndpoints();
-
-
 await app.RunAsync();
 
 

@@ -3,6 +3,8 @@ using Booking.Common.Results;
 using Booking.Modules.Mentorships.BackgroundJobs.Payment;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Payments;
+using Booking.Modules.Mentorships.Domain.Entities.Sessions;
+using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +51,6 @@ public class WebhookCommandHandler(
         }
 
 
-        // TODOD : add as no tracking
         var session = await context.Sessions.FirstOrDefaultAsync(
             s => s.Id == payment.SessionId,
             cancellationToken);
@@ -63,18 +64,18 @@ public class WebhookCommandHandler(
         session.AddAmountPaid(payment.Price);
         payment.SetComplete(session.Price.Amount);
 
-        
+
         await context.SaveChangesAsync(cancellationToken);
 
 
-        backgroundJobClient.Enqueue<CompleteWebhook>(job => job.SendAsync(session, null));
+        backgroundJobClient.Enqueue<CompleteWebhook>(job =>
+            job.SendAsync(session.Id, null));
 
 
         logger.LogInformation("Payment {PaymentRef} completed successfully for session {SessionId}",
             command.PaymentRef, session.Id);
 
-        
-        
+
         // TODO debug response of webhook konnect 
         // Find the successful transaction to get the amount with fees
         /*let amountWithFees;

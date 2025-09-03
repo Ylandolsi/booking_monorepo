@@ -20,8 +20,10 @@ public class CompleteWebhook(
 {
     [DisplayName("Complete Webhook Jobs messages")]
     [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
-    public async Task SendAsync(Session session, PerformContext? context)
+    public async Task SendAsync(int sessionId, PerformContext? context)
     {
+        // TODO : optimize this and pass session not sesionId 
+        var session = await dbContext.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId);
         // TODO : send link to mentor and mentee for confirmation 
         // TODO : recurring job to handle all escrow and send to wallet and create a transaction 
         logger.LogInformation(
@@ -47,19 +49,12 @@ public class CompleteWebhook(
         // Create escrow for the full session price
         var priceAfterReducing = session.Price.Amount - (session.Price.Amount * 0.15m);
         var escrowCreated =
-            new Domain.Entities.Escrow(priceAfterReducing  , session.Id, session.MentorId);
+            new Domain.Entities.Escrow(priceAfterReducing, session.Id, session.MentorId);
         await dbContext.AddAsync(escrowCreated, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Session {SessionId} confirmed with meeting link and escrow created",
             session.Id);
-
-        /*await googleCalendarService.InitializeAsync(data.MenteeId);
-await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);*/
-
-
-        /*backgroundJobClient.Enqueue<SendingPasswordResetToken>(
-            job => job.SendAsync(command.Email, resetUrl, null));*/
     }
 
 

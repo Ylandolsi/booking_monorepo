@@ -55,22 +55,23 @@ internal sealed class BookSessionCommandHandler(
     }
 
 
-    public async Task<Result<BookSessionRepsonse>> Handle(BookSessionCommand command, CancellationToken cancellationToken)
+    public async Task<Result<BookSessionRepsonse>> Handle(BookSessionCommand command,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation(
             "Booking session for mentor {MentorSlug} and mentee {MenteeId} on {Date} from {StartTime} to {EndTime}",
             command.MentorSlug, command.MenteeId, command.Date, command.StartTime, command.EndTime);
 
-        
+
         if (command.MentorSlug == command.MenteeSlug)
         {
             logger.LogCritical("Mentor cant book a session with himself , MentorSlug {MentorSlug}", command.MentorSlug);
-            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidMentee", "Mentor cannot book a session with himself"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidMentee",
+                "Mentor cannot book a session with himself"));
         }
-        
+
         await unitOfWork.BeginTransactionAsync(cancellationToken);
-        
-        
+
 
         var result = ParseTimeInput(command);
         if (result.IsFailure)
@@ -104,7 +105,8 @@ internal sealed class BookSessionCommandHandler(
         if (sessionStartDateTimeUtc <= DateTime.UtcNow)
         {
             logger.LogWarning("Attempted to book session in the past: {SessionDateTime}", sessionStartDateTimeUtc);
-            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidTime", "Cannot book sessions in the past"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidTime",
+                "Cannot book sessions in the past"));
         }
 
         Domain.Entities.Mentors.Mentor? mentor = await context.Mentors
@@ -115,7 +117,6 @@ internal sealed class BookSessionCommandHandler(
             logger.LogWarning("Active mentor with SLUG {MentorSlug} not found", command.MentorSlug);
             return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
-
 
 
         var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
@@ -174,8 +175,7 @@ internal sealed class BookSessionCommandHandler(
 
         if (menteeWallet is null)
         {
-            // TODO: change this : make it default when create user create wallet 
-            menteeWallet = new Wallet(command.MenteeId, 200); // TODO : change default balance should be zero
+            menteeWallet = new Wallet(command.MenteeId);
             await context.Wallets.AddAsync(menteeWallet, cancellationToken);
         }
 
@@ -330,7 +330,7 @@ internal sealed class BookSessionCommandHandler(
                         session.Id, resEventMentee.Error.Description);
                     // Continue without calendar event - session should still be confirmed
                 }
-                
+
                 var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
                     resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
                 /*logger.LogDebug("----- google meet link  mentor and mentee  -----");
@@ -363,7 +363,8 @@ internal sealed class BookSessionCommandHandler(
 
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
 
-            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.BookingFailed", "Failed to book session"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.BookingFailed",
+                "Failed to book session"));
         }
     }
 }

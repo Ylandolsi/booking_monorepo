@@ -2,6 +2,7 @@ using System.Data.Common;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Booking.Api;
+using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Mocking;
@@ -12,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
@@ -48,13 +51,13 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             .Build();
 
 
-
         // Start the container and set the connection string synchronously
         _dbContainer.StartAsync().GetAwaiter().GetResult();
         _connectionString = _dbContainer.GetConnectionString();
 
         Environment.SetEnvironmentVariable("ConnectionStrings:Database", _connectionString);
     }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureAppConfiguration((context, config) =>
@@ -63,7 +66,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                 .AddJsonFile("appsettings.Test.json")
                 .AddEnvironmentVariables();
         });
-      
+
         builder.ConfigureAppConfiguration((context, config) =>
         {
             // Add dummy Google auth settings that will be used during registration
@@ -76,12 +79,35 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             config.AddInMemoryCollection(testConfig);
         });
 
+        builder.ConfigureServices(services =>
+        {
+          
+        });
 
         builder.ConfigureTestServices(services =>
         {
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType ==
-                    typeof(DbContextOptions<UsersDbContext>));
+            services.RemoveAll<IHttpClientFactory>();
+
+            // Configure KonnectClient to use the test server
+            services.AddHttpClient("KonnectClient", client =>
+                {
+                    client.BaseAddress = CreateClient().BaseAddress;
+                })
+                .ConfigurePrimaryHttpMessageHandler(() => Server.CreateHandler());
+
+            // Configure Konnect options for testing
+            services.Configure<KonnectOptions>(options =>
+            {
+                options.ApiUrl = ""; // Relative path to mock controller
+                options.ApiKey = "test-api-key";
+                options.WalletKey = "test-wallet";
+                options.PaymentLifespan = 100;
+                options.Webhook = "mentorships/payments/webhook";
+                options.PayoutWebhook = "mentorships/admin/payout/webhook";
+            });
+
+            var descriptor = services.SingleOrDefault(d => d.ServiceType ==
+                                                           typeof(DbContextOptions<UsersDbContext>));
 
 
             if (descriptor != null)
@@ -90,7 +116,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             }
 
 
-            services.AddDbContext<UsersDbContext>((sp, options)=> options
+            services.AddDbContext<UsersDbContext>((sp, options) => options
                 .UseNpgsql(_connectionString,
                     npgsqlOptions =>
                     {
@@ -99,13 +125,13 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                 .UseSnakeCaseNamingConvention());
 
             // Add MentorshipsDbContext for testing
-            var mentorshipsDescriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<MentorshipsDbContext>));
+            var mentorshipsDescriptor =
+                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MentorshipsDbContext>));
             if (mentorshipsDescriptor != null)
             {
                 services.Remove(mentorshipsDescriptor);
             }
-            
+
             services.AddDbContext<MentorshipsDbContext>((sp, options) => options
                 .UseNpgsql(_connectionString,
                     npgsqlOptions =>
@@ -123,14 +149,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             var mockSes = CaptureAmazonSESServiceMock.CreateMock(out List<SendEmailRequest> capturedEmails);
             CapturedEmails = capturedEmails;
             services.AddSingleton<IAmazonSimpleEmailService>(mockSes);
-
-
-
-
         });
-      
-
-
     }
 
     public async Task InitializeAsync()
@@ -141,10 +160,11 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
             await usersDbContext.Database.MigrateAsync();
             await SeedData.Initialize(usersDbContext);
-            
+
             var mentorshipsDbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
             await mentorshipsDbContext.Database.MigrateAsync();
         }
+
         await InitializeDbRespawner();
     }
 
@@ -157,6 +177,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         {
             await _dbConnection.CloseAsync();
         }
+
         _dbConnection?.Dispose();
 
         NpgsqlConnection.ClearAllPools();
@@ -167,7 +188,6 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
 
     public async Task ResetDatabase()
     {
-
         await _respawner.ResetAsync(_dbConnection);
         using (var scope = Services.CreateScope())
         {
@@ -192,6 +212,4 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             SchemasToInclude = new[] { "users", "mentorships" }
         });
     }
-
-
 }

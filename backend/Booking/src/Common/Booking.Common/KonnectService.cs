@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Mentorships.Features.Payment;
@@ -20,6 +21,7 @@ public static class PaymentErrors
 
 public class KonnectService(
     IHttpClientFactory httpClientFactory,
+    IHttpContextAccessor HttpContextAccessor,
     IOptions<KonnectOptions> options)
 {
     private readonly KonnectOptions KonnectOptions = options.Value;
@@ -74,7 +76,9 @@ public class KonnectService(
          TODO : fix it , it always to refer to the old url
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
         */
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("KonnectClient");
+     
+
         receiverWallet ??= KonnectOptions.WalletKey;
         var paymentInfo = new
         {
@@ -98,9 +102,10 @@ public class KonnectService(
         };
 
 
-        httpClient.DefaultRequestHeaders.Add("x-api-key", KonnectOptions.ApiKey);
+        // httpClient.DefaultRequestHeaders.Add("x-api-key", KonnectOptions.ApiKey);
+
         var response = await httpClient.PostAsJsonAsync(
-            $"{KonnectOptions.ApiUrl}/payments/init-payment",
+            "payments/init-payment",
             paymentInfo,
             new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
         );
@@ -108,8 +113,9 @@ public class KonnectService(
 
         if (response.IsSuccessStatusCode)
         {
-            var responseDate = await response.Content.ReadFromJsonAsync<PaymentResponse>();
-            return Result.Success(responseDate!);
+            var responseDate= await response.Content.ReadFromJsonAsync<PaymentResponse>(); 
+
+            return Result.Success(responseDate );
         }
 
         var json = await response.Content.ReadFromJsonAsync<JsonElement>();
@@ -147,12 +153,11 @@ public class KonnectService(
     {
         try
         {
-            /*
+            
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
-            */
-            var httpClient = httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}/payments/{paymentRef}");
-
+            //var httpClient = httpClientFactory.CreateClient();
+            //var response = await httpClient.GetAsync($"{KonnectOptions.ApiUrl}/payments/{paymentRef}");
+            var response = await httpClient.GetAsync($"payments/{paymentRef}");
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

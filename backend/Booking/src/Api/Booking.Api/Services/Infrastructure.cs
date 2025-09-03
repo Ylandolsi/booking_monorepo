@@ -21,10 +21,10 @@ public static class Infrastructure
         IConfiguration configuration) =>
         services
             .AddCors()
+            .AddOptions(configuration)
             .AddServices(configuration)
             .AddCache(configuration)
             //.AddResielenecPipelines(configuration)
-            .AddOptions(configuration)
             .AddAWS(configuration)
             .AddIdentityCore()
             .AddHealthChecks(configuration)
@@ -39,18 +39,18 @@ public static class Infrastructure
         //services.AddScoped<TokenHelper>();
 
         services.AddHttpClient();
-        /*// TODO : move clients name to static !
+        /*// TODO : move clients name to static !*/
+        var konnectOptions = configuration.GetSection(KonnectOptions.OptionsKey)?.Get<KonnectOptions>() ??
+                             throw new InvalidOperationException("konnect options are not configured.");
+
         services.AddHttpClient("KonnectClient", client =>
             {
                 // TODO : make this more reselllient
-                /*
-                client.BaseAddress = new Uri(configuration["Konnect:ApiUrl"]);
-                #1#
-                client.BaseAddress = new Uri("https://api.sandbox.konnect.network/api/v2");
+                client.BaseAddress = new Uri(konnectOptions.ApiUrl);
                 client.DefaultRequestHeaders.Add("x-api-key", configuration["Konnect:ApiKey"]);
-                client.Timeout = TimeSpan.FromSeconds(10);
+                // TOdo : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
             })
-            .AddStandardResilienceHandler();*/
+            .AddStandardResilienceHandler();
 
 
         services.AddScoped<KonnectService>();
@@ -66,7 +66,7 @@ public static class Infrastructure
             options.AddPolicy("DefaultCors", builder =>
             {
                 builder.WithOrigins("http://localhost:3000",
-                        "http://localhost:3000",
+                        "http://localhost:3001",
                         "http://localhost:5000")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
@@ -87,8 +87,7 @@ public static class Infrastructure
     {
         services.AddMemoryCache();
         services.AddFusionCache();
-        
-        
+
 
         /*
         services.AddStackExchangeRedisCache(options =>
@@ -154,6 +153,16 @@ public static class Infrastructure
         services.Configure<FrontendApplicationOptions>(
             configuration.GetSection(FrontendApplicationOptions.FrontEndOptionsKey));
         services.Configure<KonnectOptions>(configuration.GetSection(KonnectOptions.OptionsKey));
+        // In your test setup
+        /*services.Configure<KonnectOptions>(options =>
+        {
+            options.ApiUrl = "http://127.0.0.1:8080";
+            options.ApiKey = "mock-api-key";
+            options.WalletKey = "mock-receiver-wallet";
+            options.Webhook = "http://localhost:5000/api/mentorships/payment/webhook";
+            options.PayoutWebhook = "http://localhost:5000/api/mentorships/payout/webhook";
+            options.PaymentLifespan = 10;
+        });*/
         return services;
     }
 

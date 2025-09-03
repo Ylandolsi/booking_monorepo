@@ -3,17 +3,20 @@ using System;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Booking.Modules.Mentorships.Persistence.Migrations
+namespace Booking.Modules.Mentorships.Persistence.Migration
 {
     [DbContext(typeof(MentorshipsDbContext))]
-    partial class MentorshipsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250901160027_RemoveOutbox")]
+    partial class RemoveOutbox
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

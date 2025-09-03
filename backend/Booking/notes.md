@@ -262,3 +262,17 @@ ts
     };
   }, [open, hasOpenPopover]);
 ```
+
+---
+
+## --
+
+Authored cautious SQL scripts to avoid resource locking and minimize performance impact in production. Prepared and monitored migration jobs with detailed logging to detect failures early, and completed migration with zero downtime and <2% CPU overhead during peak loads
+
+---
+
+Azure Key Vault for managing secrets (API keys, tokens) in the card lifecycle process, reducing exposure of sensitive data.
+
+---
+
+policy management UI react ,
