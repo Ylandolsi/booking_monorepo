@@ -20,15 +20,21 @@ import {
 import { DrawerDialog } from '@/components/ui/drawer-dialog';
 import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 import { PayoutRequestForm } from './components';
-import { useRequestPayout } from './api';
+import { useHistoryPayout, useRequestPayout } from './api';
 import { useState } from 'react';
 import { useGetWallet } from '@/features/shared/get-wallet';
+import { formatDate } from '@/utils/format';
 
 export function PayoutPage() {
   const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const requestPayoutMutation = useRequestPayout();
   const { data: walletData, error, isLoading } = useGetWallet();
+  const {
+    data: historyPayout,
+    error: errorHistory,
+    isLoading: isLoadingHistory,
+  } = useHistoryPayout();
 
   if (error || walletData == null) {
     return (
@@ -38,7 +44,15 @@ export function PayoutPage() {
       />
     );
   }
-  if (isLoading) {
+  if (errorHistory) {
+    return (
+      <ErrorComponenet
+        message="Failed to load payout history"
+        title="Failed to load payout history"
+      />
+    );
+  }
+  if (isLoading || isLoadingHistory) {
     return <LoadingState type="dots" />;
   }
 
@@ -153,7 +167,6 @@ export function PayoutPage() {
           <Calendar className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-2xl font-semibold">Payout History</h2>
         </div>
-
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
@@ -170,60 +183,40 @@ export function PayoutPage() {
                 <TableRow>
                   <TableHead>Date</TableHead>
                   <TableHead>Amount</TableHead>
-                  <TableHead>Method</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Transaction ID</TableHead>
+                  <TableHead className="text-right">Payment Ref</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">May 15, 2024</TableCell>
-                  <TableCell className="font-semibold">$1,234.56</TableCell>
-                  <TableCell>Bank Transfer</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="default"
-                      className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-                    >
-                      Completed
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
-                    TXN-001234
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">April 28, 2024</TableCell>
-                  <TableCell className="font-semibold">$892.30</TableCell>
-                  <TableCell>Bank Transfer</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="default"
-                      className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-                    >
-                      Completed
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
-                    TXN-001189
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">April 10, 2024</TableCell>
-                  <TableCell className="font-semibold">$567.89</TableCell>
-                  <TableCell>PayPal</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="secondary"
-                      className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100"
-                    >
-                      Processing
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-muted-foreground font-mono text-sm">
-                    TXN-001156
-                  </TableCell>
-                </TableRow>
+                {historyPayout?.map((ph) => (
+                  <TableRow key={ph.id}>
+                    <TableCell className="font-medium">
+                      {formatDate(ph.createdAt)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      ${ph.amount.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          ph.status === 'Completed' ? 'default' : 'secondary'
+                        }
+                        className={
+                          ph.status === 'Completed'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'
+                        }
+                      >
+                        {ph.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground font-mono text-sm">
+                      {ph.paymentRef == ''
+                        ? 'not available yet'
+                        : ph.paymentRef}
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </CardContent>

@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui';
 import { cn, formatDate, formatTime } from '@/utils';
-import type { SessionSlotType } from '../../availability/types/availability-types';
+import type { SessionSlotType } from '@/features/app/session/booking/shared';
 
 interface TimeSlotsProps {
   selectedDate: Date | undefined;

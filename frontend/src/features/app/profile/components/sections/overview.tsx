@@ -1,4 +1,8 @@
-import { MainErrorFallback, SocialLinks } from '@/components';
+import {
+  MainErrorFallback,
+  SocialLinks,
+  type SocialLinksObject,
+} from '@/components';
 import { MdEdit, MdOutlineWork } from 'react-icons/md';
 import { FaBookReader } from 'react-icons/fa';
 import {
@@ -45,7 +49,10 @@ export function Overview() {
               <h2 className="text-xl font-semibold mb-4 text-foreground">
                 Social Links
               </h2>
-              <SocialLinks links={user.socialLinks ?? {}} variant="icons" />
+              <SocialLinks
+                links={(user.socialLinks as SocialLinksObject) ?? {}}
+                variant="icons"
+              />
             </div>
           )}
 

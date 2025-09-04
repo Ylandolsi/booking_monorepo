@@ -1,7 +1,6 @@
 import z from 'zod';
 
 export const mentorCreateFormSchema = z.object({
-  konnectWalletId: z.string().min(2, 'Konnect Wallet Id is required'),
   hourlyRate: z
     .string()
     .min(1, 'Hourly rate is required')

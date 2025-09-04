@@ -9,7 +9,7 @@ export interface PayoutRequest {
 export interface PayoutHistory {
   id: string;
   amount: number;
-  status: 'completed' | 'pending' | 'failed';
+  status: 'pending' | 'approved' | 'rejected' | 'completed';
   date: string;
   transactionId: string;
   method: string;
