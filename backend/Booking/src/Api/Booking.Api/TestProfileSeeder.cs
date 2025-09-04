@@ -140,9 +140,8 @@ public class TestProfileSeeder
         var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         await mentorShipContext.Wallets.AddAsync(new Wallet(userDb.Id));
         await mentorShipContext.SaveChangesAsync();
-        // set mentor and availability 
 
-        /*var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
+        var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
         await mentorShipContext.Mentors.AddAsync(mentor);
         await mentorShipContext.SaveChangesAsync();
 
@@ -173,7 +172,6 @@ public class TestProfileSeeder
             await mentorShipContext.Availabilities.AddAsync(availability);
             await mentorShipContext.SaveChangesAsync();
         }
-        */
 
 
         return user;
@@ -280,10 +278,9 @@ public class TestProfileSeeder
         var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "yesslandolsi@gmail.com");
         await mentorShipContext.Wallets.AddAsync(new Wallet(userDb.Id));
         await mentorShipContext.SaveChangesAsync();
-        //var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         // set mentor and availability 
 
-        /*var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
+        var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
         await mentorShipContext.Mentors.AddAsync(mentor);
         await mentorShipContext.SaveChangesAsync();
 
@@ -313,7 +310,7 @@ public class TestProfileSeeder
 
             await mentorShipContext.Availabilities.AddAsync(availability);
             await mentorShipContext.SaveChangesAsync();
-        }*/
+        }
 
 
         return user;

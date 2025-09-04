@@ -29,6 +29,7 @@ public class GetAllPayoutsAdminQueryHandler(
                 Amount = p.Amount ,
                 UpdatedAt = p.UpdatedAt ,
                 CreatedAt = p.CreatedAt, 
+                Status = p.Status,
             })
             .ToListAsync(cancellationToken);
 

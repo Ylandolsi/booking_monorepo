@@ -26,6 +26,7 @@ public class GetPayoutHistoryQueryHandler(
                 Amount = p.Amount ,
                 UpdatedAt = p.UpdatedAt ,
                 CreatedAt = p.CreatedAt,    
+                Status = p.Status,
             }).ToListAsync(cancellationToken);
 
         return Result.Success(payouts);

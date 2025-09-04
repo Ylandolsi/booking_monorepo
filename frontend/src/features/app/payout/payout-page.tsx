@@ -44,6 +44,7 @@ export function PayoutPage() {
       />
     );
   }
+  console.log(historyPayout, errorHistory);
   if (errorHistory) {
     return (
       <ErrorComponenet
@@ -225,7 +226,7 @@ export function PayoutPage() {
 
       {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        {/* <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Earned</CardDescription>
             <CardTitle className="text-2xl">$12,845.67</CardTitle>
@@ -236,7 +237,7 @@ export function PayoutPage() {
             <CardDescription>This Month</CardDescription>
             <CardTitle className="text-2xl">$2,222.00</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Pending</CardDescription>
