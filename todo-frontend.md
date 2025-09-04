@@ -7,3 +7,4 @@
 - [ ] Booking page: improve mobile version.
 - [ ] u cannot see payout page unles integrated with konnect 
 - [ ] check all time in front / back and make sure they are okay : ( check experience , education : explicitly )
+- [ ] make all the code use the same formatDate ! (from utils ) 

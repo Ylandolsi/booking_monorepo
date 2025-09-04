@@ -21,12 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components';
-import {
-  Filter,
-  Eye,
-  Check,
-  X,
-} from 'lucide-react';
+import { Filter, Eye, Check, X } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 
 // Mock data for payout requests
@@ -54,7 +49,7 @@ const mockPayoutRequests: Array<{
     id: 'PR-002',
     mentorName: 'Sarah Johnson',
     mentorEmail: 'sarah.johnson@example.com',
-    amount: 892.30,
+    amount: 892.3,
     method: 'PayPal',
     status: 'approved',
     requestDate: '2024-08-29T14:15:00Z',
@@ -84,7 +79,7 @@ const mockPayoutRequests: Array<{
     id: 'PR-005',
     mentorName: 'Karim Sassi',
     mentorEmail: 'karim.sassi@example.com',
-    amount: 445.20,
+    amount: 445.2,
     method: 'Bank Transfer',
     status: 'rejected',
     requestDate: '2024-08-28T11:30:00Z',
@@ -92,7 +87,12 @@ const mockPayoutRequests: Array<{
   },
 ];
 
-type PayoutStatus = 'pending' | 'approved' | 'processing' | 'completed' | 'rejected';
+type PayoutStatus =
+  | 'pending'
+  | 'approved'
+  | 'processing'
+  | 'completed'
+  | 'rejected';
 type TimeFilter = 'today' | 'last_hour' | 'last_3_days' | 'all';
 
 const getStatusBadgeProps = (status: PayoutStatus) => {
@@ -100,22 +100,26 @@ const getStatusBadgeProps = (status: PayoutStatus) => {
     case 'pending':
       return {
         variant: 'secondary' as const,
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+        className:
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
       };
     case 'approved':
       return {
         variant: 'default' as const,
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+        className:
+          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
       };
     case 'processing':
       return {
         variant: 'secondary' as const,
-        className: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+        className:
+          'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
       };
     case 'completed':
       return {
         variant: 'default' as const,
-        className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+        className:
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
       };
     case 'rejected':
       return {
@@ -140,7 +144,10 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const filterRequestsByTime = (requests: typeof mockPayoutRequests, filter: TimeFilter) => {
+const filterRequestsByTime = (
+  requests: typeof mockPayoutRequests,
+  filter: TimeFilter,
+) => {
   const now = new Date();
   const nowMs = now.getTime();
 
@@ -170,17 +177,19 @@ export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('all');
   const [statusFilter, setStatusFilter] = useState<PayoutStatus | 'all'>('all');
-  
+
   // Dialog states
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<typeof mockPayoutRequests[0] | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<
+    (typeof mockPayoutRequests)[0] | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Filter requests based on selected filters
   const filteredRequests = useMemo(() => {
     let filtered = filterRequestsByTime(mockPayoutRequests, timeFilter);
-    
+
     if (statusFilter !== 'all') {
       filtered = filtered.filter((request) => request.status === statusFilter);
     }
@@ -190,9 +199,17 @@ export function AdminPayoutRequestsPage() {
 
   // Calculate statistics
   const stats = useMemo(() => {
-    const pendingRequests = filteredRequests.filter((req) => req.status === 'pending');
-    const totalAmount = filteredRequests.reduce((sum, req) => sum + req.amount, 0);
-    const pendingAmount = pendingRequests.reduce((sum, req) => sum + req.amount, 0);
+    const pendingRequests = filteredRequests.filter(
+      (req) => req.status === 'pending',
+    );
+    const totalAmount = filteredRequests.reduce(
+      (sum, req) => sum + req.amount,
+      0,
+    );
+    const pendingAmount = pendingRequests.reduce(
+      (sum, req) => sum + req.amount,
+      0,
+    );
 
     return {
       totalRequests: filteredRequests.length,
@@ -202,12 +219,12 @@ export function AdminPayoutRequestsPage() {
     };
   }, [filteredRequests]);
 
-  const handleApprove = async (request: typeof mockPayoutRequests[0]) => {
+  const handleApprove = async (request: (typeof mockPayoutRequests)[0]) => {
     setSelectedRequest(request);
     setIsApproveDialogOpen(true);
   };
 
-  const handleReject = async (request: typeof mockPayoutRequests[0]) => {
+  const handleReject = async (request: (typeof mockPayoutRequests)[0]) => {
     setSelectedRequest(request);
     setIsRejectDialogOpen(true);
   };
@@ -218,12 +235,12 @@ export function AdminPayoutRequestsPage() {
 
   const confirmApprove = async () => {
     if (!selectedRequest) return;
-    
+
     setIsLoading(true);
     try {
       // TODO: Implement actual approve API call
       console.log('Approve request:', selectedRequest.id);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
       // Update local state or refresh data
@@ -236,12 +253,12 @@ export function AdminPayoutRequestsPage() {
 
   const confirmReject = async () => {
     if (!selectedRequest) return;
-    
+
     setIsLoading(true);
     try {
       // TODO: Implement actual reject API call
       console.log('Reject request:', selectedRequest.id);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
       setIsRejectDialogOpen(false);
       setSelectedRequest(null);
       // Update local state or refresh data
@@ -256,7 +273,9 @@ export function AdminPayoutRequestsPage() {
     <div className="mx-auto p-6 space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-light">Payout Requests Management</h1>
+        <h1 className="text-4xl font-bold tracking-light">
+          Payout Requests Management
+        </h1>
         <p className="text-muted-foreground text-lg">
           Review and manage mentor payout requests
         </p>
@@ -273,19 +292,25 @@ export function AdminPayoutRequestsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Pending Reviews</CardDescription>
-            <CardTitle className="text-2xl text-yellow-600">{stats.pendingRequests}</CardTitle>
+            <CardTitle className="text-2xl text-yellow-600">
+              {stats.pendingRequests}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Amount</CardDescription>
-            <CardTitle className="text-2xl">${stats.totalAmount.toFixed(2)}</CardTitle>
+            <CardTitle className="text-2xl">
+              ${stats.totalAmount.toFixed(2)}
+            </CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Pending Amount</CardDescription>
-            <CardTitle className="text-2xl text-yellow-600">${stats.pendingAmount.toFixed(2)}</CardTitle>
+            <CardTitle className="text-2xl text-yellow-600">
+              ${stats.pendingAmount.toFixed(2)}
+            </CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -304,7 +329,10 @@ export function AdminPayoutRequestsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Time Period</label>
-              <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeFilter(value)}>
+              <Select
+                value={timeFilter}
+                onValueChange={(value: TimeFilter) => setTimeFilter(value)}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select time period" />
                 </SelectTrigger>
@@ -316,10 +344,15 @@ export function AdminPayoutRequestsPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Status</label>
-              <Select value={statusFilter} onValueChange={(value: PayoutStatus | 'all') => setStatusFilter(value)}>
+              <Select
+                value={statusFilter}
+                onValueChange={(value: PayoutStatus | 'all') =>
+                  setStatusFilter(value)
+                }
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -364,7 +397,10 @@ export function AdminPayoutRequestsPage() {
             <TableBody>
               {filteredRequests.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={7}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     No payout requests found for the selected filters.
                   </TableCell>
                 </TableRow>
@@ -378,7 +414,9 @@ export function AdminPayoutRequestsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium">{request.mentorName}</div>
+                          <div className="font-medium">
+                            {request.mentorName}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             {request.mentorEmail}
                           </div>
@@ -390,7 +428,8 @@ export function AdminPayoutRequestsPage() {
                       <TableCell>{request.method}</TableCell>
                       <TableCell>
                         <Badge {...statusProps}>
-                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                          {request.status.charAt(0).toUpperCase() +
+                            request.status.slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">
@@ -442,8 +481,8 @@ export function AdminPayoutRequestsPage() {
         <>
           <ApprovePayoutDialog
             isOpen={isApproveDialogOpen}
-            onClose={() => {
-              setIsApproveDialogOpen(false);
+            onClose={(e: boolean) => {
+              setIsApproveDialogOpen(e);
               setSelectedRequest(null);
             }}
             onConfirm={confirmApprove}
@@ -455,8 +494,8 @@ export function AdminPayoutRequestsPage() {
 
           <RejectPayoutDialog
             isOpen={isRejectDialogOpen}
-            onClose={() => {
-              setIsRejectDialogOpen(false);
+            onClose={(e: boolean) => {
+              setIsRejectDialogOpen(e);
               setSelectedRequest(null);
             }}
             onConfirm={confirmReject}
