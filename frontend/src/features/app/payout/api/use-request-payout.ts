@@ -8,27 +8,18 @@ interface PayoutRequestData {
   Amount: number;
 }
 
-interface PayoutRequestResponse {
-  success: boolean;
-  message?: string;
-}
-
 export const useRequestPayout = () => {
   return useMutation({
-    mutationFn: async (amount: number): Promise<PayoutRequestResponse> => {
-      const response = await api.post<PayoutRequestResponse>(
-        MentorshipEndpoints.Payouts.Payout,
-        {
-          Amount: amount,
-        } satisfies PayoutRequestData,
-      );
-      return response;
+    mutationFn: async (amount: number): Promise<void> => {
+      await api.post<void>(MentorshipEndpoints.Payouts.Payout, {
+        Amount: amount,
+      } satisfies PayoutRequestData);
     },
     meta: {
       // TODO : invalidate mentor-data-slug key
       invalidatesQuery: [PayoutKeys.history(), WalletKeys.wallet()],
-      successMessage: 'Payou request successfully ',
-      errorMessage: 'Failed to update profile',
+      successMessage: 'Payout requested successfully ',
+      // errorMessage: 'Failed to request to a payout',
     },
   });
 };

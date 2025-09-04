@@ -26,6 +26,7 @@ public class GetWalletQueryHandler(
         var walletResponse = new GetWalletResponse
         {
             Balance = wallet.Balance,
+            PendingBalance = wallet.PendingBalance,
         };
         
         return Result.Success(walletResponse);
@@ -35,4 +36,5 @@ public class GetWalletQueryHandler(
 public record GetWalletResponse
 {
     public decimal Balance { get; init; }
+    public decimal PendingBalance { get; init; }
 }

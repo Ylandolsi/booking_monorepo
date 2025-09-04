@@ -105,3 +105,23 @@ Initialize an empty array of objects:
 ```csharp
 TimeSlots = new object[0]; // Empty object array
 ```
+
+### Serialization guidance (C#)
+
+- Use ReadFromJsonAsync<T> for known models (most efficient and type-safe).
+  Example:
+  ```csharp
+  var data = await response.Content.ReadFromJsonAsync<MeData>();
+  ```
+- Use ReadFromJsonAsync<JsonElement> for dynamic or unknown structures.
+  Example:
+  ```csharp
+  var json = await response.Content.ReadFromJsonAsync<JsonElement>();
+  var value = json.GetProperty("key").GetString();
+  ```
+- Use ReadAsStreamAsync() for large responses to reduce memory usage.
+  Example:
+  ```csharp
+  using var stream = await response.Content.ReadAsStreamAsync();
+  var data = await JsonSerializer.DeserializeAsync<MyData>(stream);
+  ```

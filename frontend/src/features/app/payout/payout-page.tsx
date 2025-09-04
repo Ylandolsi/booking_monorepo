@@ -14,34 +14,49 @@ import {
   TableRow,
   Badge,
   Alert,
+  ErrorComponenet,
+  LoadingState,
 } from '@/components';
 import { DrawerDialog } from '@/components/ui/drawer-dialog';
 import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 import { PayoutRequestForm } from './components';
 import { useRequestPayout } from './api';
 import { useState } from 'react';
+import { useGetWallet } from '@/features/shared/get-wallet';
 
 export function PayoutPage() {
   const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const requestPayoutMutation = useRequestPayout();
-  
-  // Mock data - in a real app, this would come from an API
-  const availableBalance = 2222.00;
+  const { data: walletData, error, isLoading } = useGetWallet();
+
+  if (error || walletData == null) {
+    return (
+      <ErrorComponenet
+        message="Failed to load wallet"
+        title="Failed to load wallet"
+      />
+    );
+  }
+  if (isLoading) {
+    return <LoadingState type="dots" />;
+  }
+
+  const availableBalance = walletData?.balance;
+  const pendingBalance = walletData?.pendingBalance;
 
   const handlePayoutRequest = async (amount: number) => {
     try {
       await requestPayoutMutation.mutateAsync(amount);
       setPayoutSuccess(true);
       setIsPayoutDialogOpen(false);
-      
+
       // Reset success message after 5 seconds
       setTimeout(() => {
         setPayoutSuccess(false);
       }, 5000);
     } catch (error) {
       console.error('Payout request failed:', error);
-      // Error handling is managed by the mutation
     }
   };
   return (
@@ -63,7 +78,8 @@ export function PayoutPage() {
               <strong>Payout request submitted successfully!</strong>
             </p>
             <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-              Your payout request is being processed and will be completed within 3-5 business days.
+              Your payout request is being processed and will be completed
+              within 3-5 business days.
             </p>
           </div>
         </Alert>
@@ -80,7 +96,9 @@ export function PayoutPage() {
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center justify-between">
             <div className="space-y-1">
-              <div className="text-4xl font-bold text-primary">${availableBalance.toFixed(2)}</div>
+              <div className="text-4xl font-bold text-primary">
+                ${availableBalance.toFixed(2)}
+              </div>
               <div className="text-sm text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="h-4 w-4" />
                 Ready to withdraw
@@ -90,8 +108,8 @@ export function PayoutPage() {
               open={isPayoutDialogOpen}
               onOpenChange={setIsPayoutDialogOpen}
               trigger={
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="bg-primary hover:bg-primary/80"
                   disabled={availableBalance < 20}
                 >
@@ -118,10 +136,12 @@ export function PayoutPage() {
           <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           <div className="ml-2">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>Minimum payout requirement:</strong> You need at least $20.00 to request a payout.
+              <strong>Minimum payout requirement:</strong> You need at least
+              $20.00 to request a payout.
             </p>
             <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-              Continue earning through mentoring sessions to reach the minimum threshold.
+              Continue earning through mentoring sessions to reach the minimum
+              threshold.
             </p>
           </div>
         </Alert>
@@ -227,7 +247,7 @@ export function PayoutPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Pending</CardDescription>
-            <CardTitle className="text-2xl">$567.89</CardTitle>
+            <CardTitle className="text-2xl">${pendingBalance}</CardTitle>
           </CardHeader>
         </Card>
       </div>

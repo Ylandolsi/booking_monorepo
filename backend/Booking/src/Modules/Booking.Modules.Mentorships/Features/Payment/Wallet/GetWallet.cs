@@ -13,12 +13,12 @@ public class GetWallet : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(MentorshipEndpoints.Payment.GetWallet, async (
-                UserContext UserContext,
+                UserContext userContext,
                 IQueryHandler<GetWalletQuery, GetWalletResponse> handler,
                 CancellationToken cancellationToken
             ) =>
             {
-                var userId = UserContext.UserId;
+                var userId = userContext.UserId;
                 var query = new GetWalletQuery(userId);
 
                 var result = await handler.Handle(query, cancellationToken);

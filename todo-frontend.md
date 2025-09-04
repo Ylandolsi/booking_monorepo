@@ -1,0 +1,7 @@
+- [ ] Review of toast- especially failures
+- [ ] review keys of tanstack 
+- [ ] replace all list ids with generated cyrpto ids
+- [ ] policy management UI react 
+- [ ] make sure of this works : for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
+- [ ] add : naviagte to mentor or mentee when showing the meets
+- [ ] Booking page: improve mobile version.
