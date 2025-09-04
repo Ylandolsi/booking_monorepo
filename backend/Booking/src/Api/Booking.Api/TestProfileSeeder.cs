@@ -1,3 +1,4 @@
+using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 using Booking.Modules.Mentorships.Domain.Entities.Days;
 using Booking.Modules.Mentorships.Domain.Entities.Mentors;
@@ -137,6 +138,8 @@ public class TestProfileSeeder
         await context.SaveChangesAsync();
 
         var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
+        await mentorShipContext.Wallets.AddAsync(new Wallet(userDb.Id));
+        await mentorShipContext.SaveChangesAsync();
         // set mentor and availability 
 
         /*var mentor = Mentor.Create(userDb.Id, 2, userDb.Slug);
@@ -274,7 +277,9 @@ public class TestProfileSeeder
 
 
         await context.SaveChangesAsync();
-
+        var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "yesslandolsi@gmail.com");
+        await mentorShipContext.Wallets.AddAsync(new Wallet(userDb.Id));
+        await mentorShipContext.SaveChangesAsync();
         //var userDb = await context.Users.FirstOrDefaultAsync(u => u.Email == "john.doe@example.com");
         // set mentor and availability 
 

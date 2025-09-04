@@ -30,7 +30,7 @@ public class MockKonnectController : ControllerBase
         _logger.LogInformation("Mock Konnect: Creating payment for amount {Amount}", request.Amount);
 
         var paymentRef = $"PAY_{Guid.NewGuid():N}";
-        var payUrl = $"https://localhost/api/mock-konnect/pay/{paymentRef}";
+        var payUrl = $"http://localhost:5000/pay/{paymentRef}";
 
         var payment = new MockPayment
         {
@@ -188,7 +188,7 @@ public class MockKonnectController : ControllerBase
         }}
 
         function payWithCard() {{
-            fetch(`/api/mock-konnect/process-payment/{paymentRef}`, {{
+            fetch(`/process-payment/{paymentRef}`, {{
                 method: 'POST',
                 headers: {{ 'Content-Type': 'application/json' }},
                 body: JSON.stringify({{ paymentMethod: 'card' }})

@@ -23,7 +23,9 @@ public class GetPayoutHistoryQueryHandler(
                 KonnectWalletId = p.KonnectWalletId,
                 PaymentRef = p.PaymentRef,
                 WalletId = p.WalletId,
-                Amount = p.Amount
+                Amount = p.Amount ,
+                UpdatedAt = p.UpdatedAt ,
+                CreatedAt = p.CreatedAt,    
             }).ToListAsync(cancellationToken);
 
         return Result.Success(payouts);

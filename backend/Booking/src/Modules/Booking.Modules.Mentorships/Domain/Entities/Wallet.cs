@@ -7,7 +7,7 @@ public class Wallet
     public decimal Balance { get; private set; }
     public decimal PendingBalance { get; private set; }
 
-    public Wallet(int userId, decimal balance = 0)
+    public Wallet(int userId, decimal balance = 200)
     {
         UserId = userId;
         Balance = balance;

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Booking.Common.Domain.Entity;
 
 namespace Booking.Modules.Mentorships.Domain.Entities;
@@ -14,7 +15,6 @@ public class Payout : Entity
 
     public string PaymentRef { get; private set; } = ""; // from Konnect
     public PayoutStatus Status { get; private set; }
-
     public Payout(int userId, string konnectWalletId, int walletId, decimal amount)
     {
         UserId = userId;
