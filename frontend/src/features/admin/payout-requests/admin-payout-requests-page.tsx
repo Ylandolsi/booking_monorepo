@@ -25,35 +25,43 @@ import {
 } from '@/components';
 import { Filter, Eye, Check, X } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
-import { 
-  useGetAllPayoutsAdmin, 
-  useApprovePayoutAdmin, 
+import {
+  useGetAllPayoutsAdmin,
+  useApprovePayoutAdmin,
   useRejectPayoutAdmin,
-  type AdminPayoutResponse
+  type AdminPayoutResponse,
 } from './api';
 import {
   type PayoutStatus,
   type TimeFilter,
-  mapPayoutStatus
+  mapPayoutStatus,
 } from './types/admin-payout';
 import { formatDate } from '@/utils/format';
 
 export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>('all');
+  const [upToDate, setUpToDate] = useState<Date | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<PayoutStatus | 'all'>('all');
-
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('All');
   // Dialog states
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<AdminPayoutResponse | null>(null);
+  const [selectedRequest, setSelectedRequest] =
+    useState<AdminPayoutResponse | null>(null);
 
   // API hooks
-  const { data: payoutRequests, error, isLoading } = useGetAllPayoutsAdmin();
+  const {
+    data: payoutRequests,
+    error,
+    isLoading,
+  } = useGetAllPayoutsAdmin(
+    statusFilter === 'all' ? undefined : statusFilter,
+    upToDate,
+    undefined,
+  );
   const approvePayoutMutation = useApprovePayoutAdmin();
   const rejectPayoutMutation = useRejectPayoutAdmin();
 
-  // Helper functions
   const getStatusBadgeProps = (status: PayoutStatus) => {
     switch (status) {
       case 'pending':
@@ -77,7 +85,8 @@ export function AdminPayoutRequestsPage() {
       case 'rejected':
         return {
           variant: 'destructive' as const,
-          className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+          className:
+            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
         };
       default:
         return {
@@ -87,70 +96,43 @@ export function AdminPayoutRequestsPage() {
     }
   };
 
-  const filterRequestsByTime = (
-    requests: AdminPayoutResponse[],
-    filter: TimeFilter,
-  ) => {
-    const now = new Date();
-    const nowMs = now.getTime();
-
-    switch (filter) {
-      case 'today':
-        return requests.filter((request) => {
-          const requestDate = new Date(request.createdAt);
-          return requestDate.toDateString() === now.toDateString();
-        });
-      case 'last_hour':
-        return requests.filter((request) => {
-          const requestDate = new Date(request.createdAt);
-          return nowMs - requestDate.getTime() <= 60 * 60 * 1000;
-        });
-      case 'last_3_days':
-        return requests.filter((request) => {
-          const requestDate = new Date(request.createdAt);
-          return nowMs - requestDate.getTime() <= 3 * 24 * 60 * 60 * 1000;
-        });
-      case 'all':
-      default:
-        return requests;
+  const setTimeStatus = (timeStatus: TimeFilter) => {
+    setTimeFilter(timeStatus);
+    switch (timeStatus) {
+      case 'LastHour':
+        return setUpToDate(new Date(new Date().getTime() - 60 * 60 * 1000));
+      case 'Last24Hours':
+        return setUpToDate(new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
+      case 'Last3Days':
+        return setUpToDate(
+          new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000),
+        );
+      case 'All':
+        return setUpToDate(undefined);
     }
   };
 
-  // Filter requests based on selected filters
-  const filteredRequests = useMemo(() => {
-    if (!payoutRequests) return [];
-    let filtered = filterRequestsByTime(payoutRequests, timeFilter);
+  // // Calculate statistics
+  // const stats = useMemo(() => {
+  //   const pendingRequests = filteredRequests.filter(
+  //     (req) => mapPayoutStatus(req.status) === 'pending',
+  //   );
+  //   const totalAmount = filteredRequests.reduce(
+  //     (sum, req) => sum + req.amount,
+  //     0,
+  //   );
+  //   const pendingAmount = pendingRequests.reduce(
+  //     (sum, req) => sum + req.amount,
+  //     0,
+  //   );
 
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter((request) => 
-        mapPayoutStatus(request.status) === statusFilter
-      );
-    }
-
-    return filtered;
-  }, [payoutRequests, timeFilter, statusFilter]);
-
-  // Calculate statistics
-  const stats = useMemo(() => {
-    const pendingRequests = filteredRequests.filter(
-      (req) => mapPayoutStatus(req.status) === 'pending',
-    );
-    const totalAmount = filteredRequests.reduce(
-      (sum, req) => sum + req.amount,
-      0,
-    );
-    const pendingAmount = pendingRequests.reduce(
-      (sum, req) => sum + req.amount,
-      0,
-    );
-
-    return {
-      totalRequests: filteredRequests.length,
-      pendingRequests: pendingRequests.length,
-      totalAmount,
-      pendingAmount,
-    };
-  }, [filteredRequests]);
+  //   return {
+  //     totalRequests: filteredRequests.length,
+  //     pendingRequests: pendingRequests.length,
+  //     totalAmount,
+  //     pendingAmount,
+  //   };
+  // }, [filteredRequests]);
 
   // Loading and error states
   if (isLoading) {
@@ -184,7 +166,9 @@ export function AdminPayoutRequestsPage() {
     if (!selectedRequest) return;
 
     try {
-      const result = await approvePayoutMutation.mutateAsync(selectedRequest.id);
+      const result = await approvePayoutMutation.mutateAsync(
+        selectedRequest.id,
+      );
       console.log('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
@@ -220,11 +204,11 @@ export function AdminPayoutRequestsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Requests</CardDescription>
-            <CardTitle className="text-2xl">{stats.totalRequests}</CardTitle>
+             <CardTitle className="text-2xl">{stats.totalRequests}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -251,7 +235,7 @@ export function AdminPayoutRequestsPage() {
             </CardTitle>
           </CardHeader>
         </Card>
-      </div>
+      </div> */}
 
       {/* Filters Section */}
       <Card>
@@ -269,16 +253,16 @@ export function AdminPayoutRequestsPage() {
               <label className="text-sm font-medium">Time Period</label>
               <Select
                 value={timeFilter}
-                onValueChange={(value: TimeFilter) => setTimeFilter(value)}
+                onValueChange={(value: TimeFilter) => setTimeStatus(value)}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select time period" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Time</SelectItem>
-                  <SelectItem value="today">Today</SelectItem>
-                  <SelectItem value="last_hour">Last Hour</SelectItem>
-                  <SelectItem value="last_3_days">Last 3 Days</SelectItem>
+                  <SelectItem value="All">All Time</SelectItem>
+                  <SelectItem value="LastHour">Last Hour</SelectItem>
+                  <SelectItem value="Last24Hours">Last 24 Hours </SelectItem>
+                  <SelectItem value="Last3Days">Last 3 Days</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -298,7 +282,6 @@ export function AdminPayoutRequestsPage() {
                   <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
-                  {/* <SelectItem value="processing">Processing</SelectItem> */}
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
                 </SelectContent>
@@ -313,7 +296,7 @@ export function AdminPayoutRequestsPage() {
         <CardHeader>
           <CardTitle>Payout Requests</CardTitle>
           <CardDescription>
-            {filteredRequests.length} request(s) found
+            {/* {filteredRequests.length} request(s) found */}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -333,7 +316,7 @@ export function AdminPayoutRequestsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredRequests.length === 0 ? (
+              {payoutRequests.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={7}
@@ -343,7 +326,7 @@ export function AdminPayoutRequestsPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredRequests.map((request) => {
+                payoutRequests.map((request) => {
                   const status = mapPayoutStatus(request.status);
                   const statusProps = getStatusBadgeProps(status);
                   return (

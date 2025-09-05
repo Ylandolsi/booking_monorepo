@@ -12,7 +12,7 @@ internal sealed class BookSession : IEndpoint
 {
     public sealed record Request(
         string MentorSlug,
-        string Date, // YYYY-MM-DD,
+        string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
         string StartTime, // TIMEONLY  
         string EndTime,
         string TimeZoneId = "Africa/Tunis",

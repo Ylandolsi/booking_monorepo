@@ -1,5 +1,13 @@
 import { default as dayjs } from 'dayjs';
 
+export const  toLocalISOString = (date: Date): string => {
+  // convert Date to this format and keep it local ! "2025-09-05 23:07:23"
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const padMs = (n: number) => String(n).padStart(3, '0');
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${padMs(date.getMilliseconds())}`;
+}
+
 export const timeStampFormat = (date: number) =>
   dayjs(date).format('MMMM D, YYYY h:mm A');
 

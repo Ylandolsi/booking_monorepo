@@ -33,8 +33,8 @@ public static class MentorshipEndpoints
             public const string ApprovePayout = $"{Base}/admin/payout/approve"; // body : payoutId
             public const string WebhookPayout = $"{Base}/admin/payout/webhook";
             public const string RejectPayout = $"{Base}/admin/payout/reject"; // body : payoutId 
-            public const string GetAllPayouts = $"{Base}/admin/payout";
-            public const string GetDetailled = $"{Base}/admin/payout/{{payoutId}}";
+            public const string GetAllPayouts = $"{Base}/admin/payout"; // query : status (Pending, Approved, Rejected , Completed) , upToDate , timeZoneId
+            // public const string GetDetailled = $"{Base}/admin/payout/{{payoutId}}";
         }
     }
 

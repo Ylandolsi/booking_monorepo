@@ -1,7 +1,7 @@
 import { api, type RequestOptions } from '@/lib';
 import type { Session } from '@/features/app/session/get/types';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { sessionQueryKeys } from '@/features/app/session/get/api/sessions-get-keys';
 
 export const getSessions = async (upToDate?: string, timeZoneId?: string) => {
@@ -16,17 +16,21 @@ export const getSessions = async (upToDate?: string, timeZoneId?: string) => {
 export function useGetSessions(
   upToDate?: Date,
   timeZoneId?: string,
-  overrides?: Partial<UseQueryOptions<Array<Session>, unknown, Array<Session>>>,
-) {
+  overrides?: Partial<UseQueryOptions<Array<Session>, Error>>,
+) : UseQueryResult<Array<Session>, Error> {
   const normalizedUpToDate = upToDate
-    ? new Date(upToDate).toISOString()
+    ? new Date(upToDate).toISOString() // TODO : change it to toLocalISOString(upToDate) : undefined;
     : undefined;
 
   const dateOnly = normalizedUpToDate?.slice(0, 10); // used for cache
   console.log(dateOnly);
-  return useQuery<Array<Session>, unknown, Array<Session>>({
-    queryKey: sessionQueryKeys.session(dateOnly, timeZoneId),
+
+  const options: UseQueryOptions<Array<Session>, Error> = {
+  queryKey: sessionQueryKeys.session(dateOnly, timeZoneId),
     queryFn: () => getSessions(normalizedUpToDate, timeZoneId),
     ...overrides,
-  });
+  };
+  
+  return useQuery<Array<Session>,Error>(options);
+
 }

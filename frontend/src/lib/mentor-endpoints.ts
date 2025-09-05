@@ -29,8 +29,8 @@ export const MentorshipEndpoints = {
       ApprovePayout: 'mentorships/admin/payout/approve', // body : payoutId
       WebhookPayout: 'mentorships/admin/payout/webhook',
       RejectPayout: 'mentorships/admin/payout/reject', // body : payoutId
-      GetAllPayouts: 'mentorships/admin/payout',
-      GetDetailled: 'mentorships/admin/payout/{payoutId}',
+      GetAllPayouts: 'mentorships/admin/payout', // query : status (Pending, Approved, Rejected , Completed) , upToDate , timeZoneId
+      // GetDetailled: 'mentorships/admin/payout/{payoutId}',
     },
   },
 
