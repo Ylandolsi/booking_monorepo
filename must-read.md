@@ -4,6 +4,15 @@
 
 ---
 
+- [notificaiton] (https://www.linkedin.com/posts/ahmed-emad-abdelall_%D8%B4%D9%83%D8%B1%D8%A7-%D9%84%D9%83%D9%84-%D8%AA%D8%B9%D9%84%D9%8A%D9%82%D8%A7%D8%AA%D9%83%D9%85-%D9%88%D8%A7%D8%AC%D8%A7%D8%A8%D8%AA%D9%83%D9%85-%D8%B9%D9%84%D9%8A-%D8%A7%D9%84%D8%B3%D9%88%D8%A7%D9%84-activity-7364981642525847555-hs0f?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
+- [notifcationqueue](https://www.linkedin.com/feed/update/urn:li:activity:7369750790292303872/)
+
+---
+
+https://www.linkedin.com/posts/tannika-majumder-424a5040_i-gave-this-problem-to-30-candidates-in-mock-activity-7369714329434189825-e2Eb?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg
+
+---
+
 **Database Locks:**  
 Consider using `SET LOCK_TIMEOUT` for long-running queries.
 
@@ -28,6 +37,7 @@ Monitor memory consumption with large batch operations.
 ---
 
 ## DB as queue instead of rabitmq :
+
 - [read1](https://dagster.io/blog/skip-kafka-use-postgres-message-queue)
 - [read2](https://en.m.wikipedia.org/wiki/Change_data_capture)
 
@@ -38,12 +48,11 @@ I have done this, but by the time you have multiple servers interacting with the
 ---
 
 event libraries :
+
 - https://github.com/rebus-org/Rebus is pretty nice.
 - https://wolverine.netlify.app/ is nice
 
-
 ---
-
 
 https://learn.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction
 https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet-multi-tier-app-using-service-bus-queues
@@ -51,7 +60,9 @@ https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dotnet
 ---
 
 ### deployment :
+
     if you’re self hosting a web app on Windows and IIS then you need to tweak the IIS application pool to be always on. And you can can use a background task for the processing. Or you can deploy the worker as Windows Service.
 
 ---
+
 https://github.com/zeromq/netmq

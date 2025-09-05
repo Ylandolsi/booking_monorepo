@@ -20,6 +20,10 @@ we can specify it as query param ?error=
 
 ---
 
+take a look at biome : alternative for pretteir & eslint 
+
+---
+
 back to useContext and go in depth in that multiselect dialog
 
 update PaidValue object in session
