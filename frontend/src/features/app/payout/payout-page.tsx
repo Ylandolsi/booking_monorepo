@@ -24,6 +24,7 @@ import { useHistoryPayout, useRequestPayout } from './api';
 import { useState } from 'react';
 import { useGetWallet } from '@/features/shared/get-wallet';
 import { formatDate } from '@/utils/format';
+import type { PayoutStatus } from '@/features/app/payout/types/payout';
 
 export function PayoutPage() {
   const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
@@ -198,16 +199,7 @@ export function PayoutPage() {
                       ${ph.amount.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          ph.status === 'Completed' ? 'default' : 'secondary'
-                        }
-                        className={
-                          ph.status === 'Completed'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'
-                        }
-                      >
+                      <Badge {...getStatusBadgeProps(ph.status)}>
                         {ph.status}
                       </Badge>
                     </TableCell>
@@ -248,3 +240,44 @@ export function PayoutPage() {
     </div>
   );
 }
+
+const getStatusBadgeProps = (status: PayoutStatus) => {
+  switch (status) {
+    case 'Pending':
+      return {
+        variant: 'secondary' as const,
+        className:
+          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+      };
+    case 'Approved':
+      return {
+        variant: 'default' as const,
+        className:
+          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+      };
+
+    case 'Completed':
+      return {
+        variant: 'default' as const,
+        className:
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+      };
+    case 'Rejected':
+      return {
+        variant: 'destructive' as const,
+        className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+      };
+    default:
+      return {
+        variant: 'default' as const,
+        className: '',
+      };
+
+    // case 'processing':
+    //   return {
+    //     variant: 'secondary' as const,
+    //     className:
+    //       'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
+    //   };
+  }
+};

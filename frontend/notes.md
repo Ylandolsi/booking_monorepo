@@ -386,128 +386,6 @@ to show list in a good format , transparent a little bit when its not shown comp
             >
 ```
 
-```ts
-useful for react router
-import { routes } from './routes';
-
-export const paths = {
-  home: {
-    getHref: () => routes.to.home(),
-  },
-  auth: {
-    register: {
-      getHref: (redirectTo?: string | null | undefined) =>
-        routes.to.auth.register(redirectTo ? { redirectTo } : undefined),
-    },
-    login: {
-      getHref: (redirectTo?: string | null | undefined) =>
-        routes.to.auth.login(redirectTo ? { redirectTo } : undefined),
-    },
-    verificationEmail: {
-      getHref: (redirectTo?: string | null | undefined) =>
-        routes.to.auth.emailVerification(
-          redirectTo ? { redirectTo } : undefined,
-        ),
-    },
-    emailVerified: {
-      getHref: (redirectTo?: string | null | undefined) =>
-        routes.to.auth.emailVerificationVerified(
-          redirectTo ? { redirectTo } : undefined,
-        ),
-    },
-    forgotPassword: {
-      getHref: (redirectTo?: string | null | undefined) =>
-        routes.to.auth.forgotPassword(redirectTo ? { redirectTo } : undefined),
-    },
-    resetPassword: {
-      getHref: (params?: {
-        redirectTo?: string;
-        email?: string;
-        token?: string;
-      }) => routes.to.auth.resetPassword(params),
-    },
-  },
-  app: {
-    root: {
-      getHref: () => routes.to.app.root(),
-    },
-    discussions: {
-      getHref: () => '/app/discussions',
-    },
-    discussion: {
-      getHref: (id: string) => `/app/discussions/${id}`,
-    },
-    users: {
-      getHref: () => '/app/users',
-    },
-    profile: {
-      getHref: () => '/app/profile',
-    },
-  },
-  booking: {
-    session: {
-      getHref: (mentorSlug: string) => routes.to.booking.session(mentorSlug),
-    },
-    demo: {
-      getHref: (mentorSlug: string) => routes.to.booking.demo(mentorSlug),
-    },
-    enhanced: {
-      getHref: (mentorSlug: string) => routes.to.booking.enhanced(mentorSlug),
-    },
-    test: {
-      getHref: (mentorSlug: string) => routes.to.booking.test(mentorSlug),
-    },
-  },
-  mentor: {
-    become: {
-      getHref: () => routes.to.mentor.become(),
-    },
-    setSchedule: {
-      getHref: () => routes.to.mentor.setSchedule(),
-    },
-  },
-  profile: {
-    user: {
-      getHref: (userSlug: string) => routes.to.profile.user(userSlug),
-    },
-  },
-  test: {
-    mentorRequired: {
-      getHref: () => routes.to.test.mentorRequired(),
-    },
-    img: {
-      getHref: () => routes.to.test.img(),
-    },
-    dashboard: {
-      getHref: () => routes.to.test.dashboard(),
-    },
-    bookingDemo: {
-      getHref: () => routes.to.test.bookingDemo(),
-    },
-    already: {
-      getHref: () => routes.to.test.already(),
-    },
-  },
-  errorExp: {
-    simpleLoading: {
-      getHref: () => routes.to.errorExp.simpleLoading(),
-    },
-    advancedLoading: {
-      getHref: () => routes.to.errorExp.advancedLoading(),
-    },
-  },
-  public: {
-    discussion: {
-      getHref: (id: string) => `/public/discussions/${id}`,
-    },
-  },
-  unauthorized: {
-    getHref: () => routes.to.unauthorized(),
-  },
-} as const;
-
-```
-
 consided this appraoch for future :
 
 ```tsx
@@ -572,3 +450,68 @@ learn more about prefetech and prelaod ( tantaskc route r)
 avoid bareel export and do package export https://claude.ai/share/3c6ded80-c263-4d76-a942-6b27263e1aea
 
 from-blue-50 to-indigo-50
+
+---
+
+this pattern after post/patch update
+
+```ts
+const handlePayoutRequest = async (amount: number) => {
+  try {
+    await requestPayoutMutation.mutateAsync(amount);
+    setPayoutSuccess(true);
+    setIsPayoutDialogOpen(false);
+
+    // Reset success message after 5 seconds
+    setTimeout(() => {
+      setPayoutSuccess(false); // show success state for 5 seconds
+    }, 5000);
+  } catch (error) {
+    console.error('Payout request failed:', error);
+  }
+};
+
+ {/* Success Alert */}
+{payoutSuccess && (
+  <Alert className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900">
+    <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+    <div className="ml-2">
+      <p className="text-sm text-green-800 dark:text-green-200">
+        <strong>Payout request submitted successfully!</strong>
+      </p>
+      <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+        Your payout request is being processed and will be completed
+        within 3-5 business days.
+      </p>
+    </div>
+  </Alert>
+)}
+```
+
+SingleFlight
+
+```ts
+type AsyncFunction<V> = () => Promise<V>;
+
+const pendingPromises: Map<string, Promise<any>> = new Map();
+
+const run = async <V>(key: string, fn: AsyncFunction<V>): Promise<V> => {
+  if (pendingPromises.has(key)) {
+    return pendingPromises.get(key) as Promise<V>;
+  }
+
+  const promise = fn();
+  pendingPromises.set(key, promise);
+
+  try {
+    const result = await promise;
+    return result;
+  } finally {
+    pendingPromises.delete(key);
+  }
+};
+
+export default {
+  run,
+};
+```
