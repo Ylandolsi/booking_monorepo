@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { routes } from '@/config/routes';
 import { Calendar, Users, Clock, Star, ArrowRight, BookOpen, Zap, Shield } from 'lucide-react';
 
-export const HomePage = () => {
+export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
       {/* Hero Section */}
