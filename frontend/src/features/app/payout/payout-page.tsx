@@ -16,6 +16,7 @@ import {
   Alert,
   ErrorComponenet,
   LoadingState,
+  IntegrationRequired,
 } from '@/components';
 import { DrawerDialog } from '@/components/ui/drawer-dialog';
 import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
@@ -59,12 +60,10 @@ export function PayoutPage() {
 
   if (!isKonnectIntegrated) {
     return (
-      <ErrorComponenet
+      <IntegrationRequired
         title="Integration Required"
         message="You need to integrate with Konnect to access payout features. Please integrate with Konnect first."
-        iconType="warning"
         showHomeButton={true}
-        showBackButton={true}
       />
     );
   }

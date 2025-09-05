@@ -14,6 +14,9 @@ Azure Key Vault for managing secrets (API keys, tokens) in the card lifecycle pr
 
 ---
 
+when bakcend want to send error after redirection to front :
+we can specify it as query param ?error=  
+
 
 ---
 

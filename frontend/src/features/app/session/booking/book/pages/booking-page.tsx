@@ -24,6 +24,7 @@ import { BookingSummary } from '@/features/app/session/booking/book/components';
 import React from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useAuth } from '@/features/auth';
+import { toast } from 'sonner';
 
 function BookingContent() {
   const nav = useAppNavigation();
@@ -331,7 +332,16 @@ function BookingContent() {
             selectedSlot={selectedSlot}
             notes={notes}
             onNotesChange={setNotes}
-            onBookSession={handleBookSession}
+            onBookSession={() => {
+              if (!currentUser?.integratedWithGoogle) {
+                toast.error(
+                  "You can't book a session until you integrate your Google Calendar",
+                );
+                nav.goToIntegrations();
+                return;
+              }
+              handleBookSession();
+            }}
             isBookingInProgress={
               bookSessionMutation.isPending || step === 'confirm'
             }
