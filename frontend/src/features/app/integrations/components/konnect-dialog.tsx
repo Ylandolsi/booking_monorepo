@@ -30,8 +30,14 @@ export function KonnectIntegrationDialog({
   });
 
   const onSubmit = async (data: IntegrateWithKonnectFormData) => {
-    await integrateWithKonnectMutation.mutateAsync(data.walletId);
-    reset();
+    try {
+      await integrateWithKonnectMutation.mutateAsync(data.walletId);
+      reset();
+      setKonnectDialogOpen(false); // Close dialog on success
+    } catch (error) {
+      // Error is already handled by the mutation's meta.errorMessage
+      console.error('Integration failed:', error);
+    }
   };
 
   return (

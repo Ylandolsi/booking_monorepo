@@ -1,12 +1,13 @@
 - [ ] Review of toast- especially failures
+- [ ] profile picture fallback and LazyImage
 - [ ] review keys of tanstack 
 - [ ] if try to payout and not integrated with konnect : redirect to integrations page 
-- [ ] when user integrate with konnect : it should refresh the page to show the new data or rerender the component 
+- [x] when user integrate with konnect : it should refresh the page to show the new data or rerender the component 
 - [ ] replace all list ids with generated cyrpto ids
 - [ ] make sure of this works : for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 - [ ] add : naviagte to mentor or mentee when showing the meets
 - [ ] Booking page: improve mobile version.
-- [ ] u cannot see payout page unles integrated with konnect 
+- [x] u cannot see payout page unles integrated with konnect 
 - [ ] check all time in front / back and make sure they are okay : ( check experience , education : explicitly )
 - [ ] make all the code use the same formatDate ! (from utils ) 
 - [ ] covnert date that came from backend as UTC to localTimezone before format it (24 sep 2024 ) ...  

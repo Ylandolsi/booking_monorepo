@@ -1,4 +1,5 @@
 import type { Item } from '@/components/navigation/side-bar';
+import type { User } from '@/types/api';
 import { Button } from '@/components/ui';
 import { useAppNavigation } from '@/hooks';
 import {
@@ -28,7 +29,7 @@ export function NavigationSection(props: {
     {
       name: 'Profile',
       icon: <UserIcon size={20} />,
-      click: () => nav.goToProfile(currentUser?.slug || ''),
+      click: () => nav.goToProfile(props.currentUser?.slug || ''),
     },
     {
       name: 'Become Mentor',
@@ -51,7 +52,7 @@ export function NavigationSection(props: {
     {
       name: 'Search',
       icon: <Search size={20} />,
-      click: () => {},
+      click: () => nav.goToApp(),
     },
   ];
   return (

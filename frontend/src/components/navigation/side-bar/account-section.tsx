@@ -19,7 +19,7 @@ export function AccountSection(props: {
     {
       icon: <MdPayment size={20} />,
       click: () => {
-        nav.goTo('');
+        nav.goToPayout();
       },
       name: 'Payout',
     },
