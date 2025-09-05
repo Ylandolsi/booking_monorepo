@@ -20,158 +20,23 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  LoadingState,
+  ErrorComponenet,
 } from '@/components';
 import { Filter, Eye, Check, X } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
-
-// Mock data for payout requests
-const mockPayoutRequests: Array<{
-  id: string;
-  mentorName: string;
-  mentorEmail: string;
-  amount: number;
-  method: string;
-  status: PayoutStatus;
-  requestDate: string;
-  mentorId: string;
-}> = [
-  {
-    id: 'PR-001',
-    mentorName: 'Ahmed Ben Ali',
-    mentorEmail: 'ahmed.benali@example.com',
-    amount: 1234.56,
-    method: 'Bank Transfer',
-    status: 'pending',
-    requestDate: '2024-08-30T10:30:00Z',
-    mentorId: 'M001',
-  },
-  {
-    id: 'PR-002',
-    mentorName: 'Sarah Johnson',
-    mentorEmail: 'sarah.johnson@example.com',
-    amount: 892.3,
-    method: 'PayPal',
-    status: 'approved',
-    requestDate: '2024-08-29T14:15:00Z',
-    mentorId: 'M002',
-  },
-  {
-    id: 'PR-003',
-    mentorName: 'Mohamed Trabelsi',
-    mentorEmail: 'mohamed.trabelsi@example.com',
-    amount: 567.89,
-    method: 'Bank Transfer',
-    status: 'processing',
-    requestDate: '2024-08-29T09:45:00Z',
-    mentorId: 'M003',
-  },
-  {
-    id: 'PR-004',
-    mentorName: 'Emily Davis',
-    mentorEmail: 'emily.davis@example.com',
-    amount: 2100.75,
-    method: 'Stripe',
-    status: 'completed',
-    requestDate: '2024-08-28T16:20:00Z',
-    mentorId: 'M004',
-  },
-  {
-    id: 'PR-005',
-    mentorName: 'Karim Sassi',
-    mentorEmail: 'karim.sassi@example.com',
-    amount: 445.2,
-    method: 'Bank Transfer',
-    status: 'rejected',
-    requestDate: '2024-08-28T11:30:00Z',
-    mentorId: 'M005',
-  },
-];
-
-type PayoutStatus =
-  | 'pending'
-  | 'approved'
-  | 'processing'
-  | 'completed'
-  | 'rejected';
-type TimeFilter = 'today' | 'last_hour' | 'last_3_days' | 'all';
-
-const getStatusBadgeProps = (status: PayoutStatus) => {
-  switch (status) {
-    case 'pending':
-      return {
-        variant: 'secondary' as const,
-        className:
-          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-      };
-    case 'approved':
-      return {
-        variant: 'default' as const,
-        className:
-          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-      };
-    case 'processing':
-      return {
-        variant: 'secondary' as const,
-        className:
-          'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-      };
-    case 'completed':
-      return {
-        variant: 'default' as const,
-        className:
-          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-      };
-    case 'rejected':
-      return {
-        variant: 'destructive' as const,
-        className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
-      };
-    default:
-      return {
-        variant: 'default' as const,
-        className: '',
-      };
-  }
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
-const filterRequestsByTime = (
-  requests: typeof mockPayoutRequests,
-  filter: TimeFilter,
-) => {
-  const now = new Date();
-  const nowMs = now.getTime();
-
-  switch (filter) {
-    case 'today':
-      return requests.filter((request) => {
-        const requestDate = new Date(request.requestDate);
-        return requestDate.toDateString() === now.toDateString();
-      });
-    case 'last_hour':
-      return requests.filter((request) => {
-        const requestDate = new Date(request.requestDate);
-        return nowMs - requestDate.getTime() <= 60 * 60 * 1000;
-      });
-    case 'last_3_days':
-      return requests.filter((request) => {
-        const requestDate = new Date(request.requestDate);
-        return nowMs - requestDate.getTime() <= 3 * 24 * 60 * 60 * 1000;
-      });
-    case 'all':
-    default:
-      return requests;
-  }
-};
+import { 
+  useGetAllPayoutsAdmin, 
+  useApprovePayoutAdmin, 
+  useRejectPayoutAdmin
+} from './api';
+import {
+  type AdminPayoutResponse,
+  type PayoutStatus,
+  type TimeFilter,
+  mapPayoutStatus
+} from './types/admin-payout';
+import { formatDate } from '@/utils/format';
 
 export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
@@ -181,26 +46,94 @@ export function AdminPayoutRequestsPage() {
   // Dialog states
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<
-    (typeof mockPayoutRequests)[0] | null
-  >(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<AdminPayoutResponse | null>(null);
+
+  // API hooks
+  const { data: payoutRequests, error, isLoading } = useGetAllPayoutsAdmin();
+  const approvePayoutMutation = useApprovePayoutAdmin();
+  const rejectPayoutMutation = useRejectPayoutAdmin();
+
+  // Helper functions
+  const getStatusBadgeProps = (status: PayoutStatus) => {
+    switch (status) {
+      case 'pending':
+        return {
+          variant: 'secondary' as const,
+          className:
+            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+        };
+      case 'approved':
+        return {
+          variant: 'default' as const,
+          className:
+            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+        };
+      case 'completed':
+        return {
+          variant: 'default' as const,
+          className:
+            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+        };
+      case 'rejected':
+        return {
+          variant: 'destructive' as const,
+          className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+        };
+      default:
+        return {
+          variant: 'default' as const,
+          className: '',
+        };
+    }
+  };
+
+  const filterRequestsByTime = (
+    requests: AdminPayoutResponse[],
+    filter: TimeFilter,
+  ) => {
+    const now = new Date();
+    const nowMs = now.getTime();
+
+    switch (filter) {
+      case 'today':
+        return requests.filter((request) => {
+          const requestDate = new Date(request.createdAt);
+          return requestDate.toDateString() === now.toDateString();
+        });
+      case 'last_hour':
+        return requests.filter((request) => {
+          const requestDate = new Date(request.createdAt);
+          return nowMs - requestDate.getTime() <= 60 * 60 * 1000;
+        });
+      case 'last_3_days':
+        return requests.filter((request) => {
+          const requestDate = new Date(request.createdAt);
+          return nowMs - requestDate.getTime() <= 3 * 24 * 60 * 60 * 1000;
+        });
+      case 'all':
+      default:
+        return requests;
+    }
+  };
 
   // Filter requests based on selected filters
   const filteredRequests = useMemo(() => {
-    let filtered = filterRequestsByTime(mockPayoutRequests, timeFilter);
+    if (!payoutRequests) return [];
+    let filtered = filterRequestsByTime(payoutRequests, timeFilter);
 
     if (statusFilter !== 'all') {
-      filtered = filtered.filter((request) => request.status === statusFilter);
+      filtered = filtered.filter((request) => 
+        mapPayoutStatus(request.status) === statusFilter
+      );
     }
 
     return filtered;
-  }, [timeFilter, statusFilter]);
+  }, [payoutRequests, timeFilter, statusFilter]);
 
   // Calculate statistics
   const stats = useMemo(() => {
     const pendingRequests = filteredRequests.filter(
-      (req) => req.status === 'pending',
+      (req) => mapPayoutStatus(req.status) === 'pending',
     );
     const totalAmount = filteredRequests.reduce(
       (sum, req) => sum + req.amount,
@@ -219,53 +152,58 @@ export function AdminPayoutRequestsPage() {
     };
   }, [filteredRequests]);
 
-  const handleApprove = async (request: (typeof mockPayoutRequests)[0]) => {
+  // Loading and error states
+  if (isLoading) {
+    return <LoadingState type="dots" />;
+  }
+
+  if (error || !payoutRequests) {
+    return (
+      <ErrorComponenet
+        message="Failed to load payout requests"
+        title="Error Loading Data"
+      />
+    );
+  }
+
+  const handleApprove = async (request: AdminPayoutResponse) => {
     setSelectedRequest(request);
     setIsApproveDialogOpen(true);
   };
 
-  const handleReject = async (request: (typeof mockPayoutRequests)[0]) => {
+  const handleReject = async (request: AdminPayoutResponse) => {
     setSelectedRequest(request);
     setIsRejectDialogOpen(true);
   };
 
-  const handleView = (requestId: string) => {
-    nav.goToAdminPayoutRequestDetails(requestId);
+  const handleView = (requestId: number) => {
+    nav.goToAdminPayoutRequestDetails(requestId.toString());
   };
 
   const confirmApprove = async () => {
     if (!selectedRequest) return;
 
-    setIsLoading(true);
     try {
-      // TODO: Implement actual approve API call
-      console.log('Approve request:', selectedRequest.id);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      const result = await approvePayoutMutation.mutateAsync(selectedRequest.id);
+      console.log('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
-      // Update local state or refresh data
+      // The query will be invalidated automatically via meta.invalidatesQuery
     } catch (error) {
       console.error('Error approving request:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const confirmReject = async () => {
     if (!selectedRequest) return;
 
-    setIsLoading(true);
     try {
-      // TODO: Implement actual reject API call
-      console.log('Reject request:', selectedRequest.id);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      await rejectPayoutMutation.mutateAsync(selectedRequest.id);
       setIsRejectDialogOpen(false);
       setSelectedRequest(null);
-      // Update local state or refresh data
+      // The query will be invalidated automatically via meta.invalidatesQuery
     } catch (error) {
       console.error('Error rejecting request:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -406,34 +344,34 @@ export function AdminPayoutRequestsPage() {
                 </TableRow>
               ) : (
                 filteredRequests.map((request) => {
-                  const statusProps = getStatusBadgeProps(request.status);
+                  const status = mapPayoutStatus(request.status);
+                  const statusProps = getStatusBadgeProps(status);
                   return (
                     <TableRow key={request.id}>
                       <TableCell className="font-medium font-mono text-sm">
-                        {request.id}
+                        PR-{request.id.toString().padStart(3, '0')}
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <div className="font-medium">
-                            {request.mentorName}
+                            User ID: {request.userId}
                           </div>
                           <div className="text-sm text-muted-foreground">
-                            {request.mentorEmail}
+                            Wallet: {request.konnectWalletId}
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="font-semibold">
                         ${request.amount.toFixed(2)}
                       </TableCell>
-                      <TableCell>{request.method}</TableCell>
+                      <TableCell>Konnect Wallet</TableCell>
                       <TableCell>
                         <Badge {...statusProps}>
-                          {request.status.charAt(0).toUpperCase() +
-                            request.status.slice(1)}
+                          {status.charAt(0).toUpperCase() + status.slice(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm">
-                        {formatDate(request.requestDate)}
+                        {formatDate(request.createdAt)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -445,13 +383,14 @@ export function AdminPayoutRequestsPage() {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                          {request.status === 'pending' && (
+                          {status === 'pending' && (
                             <>
                               <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleApprove(request)}
                                 className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                disabled={approvePayoutMutation.isPending}
                               >
                                 <Check className="h-4 w-4" />
                               </Button>
@@ -460,6 +399,7 @@ export function AdminPayoutRequestsPage() {
                                 size="sm"
                                 onClick={() => handleReject(request)}
                                 className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                disabled={rejectPayoutMutation.isPending}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -486,9 +426,9 @@ export function AdminPayoutRequestsPage() {
               setSelectedRequest(null);
             }}
             onConfirm={confirmApprove}
-            isLoading={isLoading}
-            requestId={selectedRequest.id}
-            mentorName={selectedRequest.mentorName}
+            isLoading={approvePayoutMutation.isPending}
+            requestId={`PR-${selectedRequest.id.toString().padStart(3, '0')}`}
+            mentorName={`User ID: ${selectedRequest.userId}`}
             amount={selectedRequest.amount}
           />
 
@@ -499,9 +439,9 @@ export function AdminPayoutRequestsPage() {
               setSelectedRequest(null);
             }}
             onConfirm={confirmReject}
-            isLoading={isLoading}
-            requestId={selectedRequest.id}
-            mentorName={selectedRequest.mentorName}
+            isLoading={rejectPayoutMutation.isPending}
+            requestId={`PR-${selectedRequest.id.toString().padStart(3, '0')}`}
+            mentorName={`User ID: ${selectedRequest.userId}`}
             amount={selectedRequest.amount}
           />
         </>

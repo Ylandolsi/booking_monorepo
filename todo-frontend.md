@@ -1,5 +1,7 @@
 - [ ] Review of toast- especially failures
 - [ ] review keys of tanstack 
+- [ ] if try to payout and not integrated with konnect : redirect to integrations page 
+- [ ] when user integrate with konnect : it should refresh the page to show the new data or rerender the component 
 - [ ] replace all list ids with generated cyrpto ids
 - [ ] make sure of this works : for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 - [ ] add : naviagte to mentor or mentee when showing the meets
@@ -9,3 +11,4 @@
 - [ ] make all the code use the same formatDate ! (from utils ) 
 - [ ] covnert date that came from backend as UTC to localTimezone before format it (24 sep 2024 ) ...  
 - [ ] policy management UI react 
+- [ ] group types that realted to the api calls to that api 

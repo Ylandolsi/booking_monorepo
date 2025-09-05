@@ -9,6 +9,8 @@ import {
   CardTitle,
   Badge,
   Separator,
+  LoadingState,
+  ErrorComponenet,
 } from '@/components';
 import {
   ArrowLeft,
@@ -23,131 +25,110 @@ import {
   Eye,
 } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
-
-// Mock data - this would come from an API call based on the request ID
-const mockPayoutRequest = {
-  id: 'PR-001',
-  mentorName: 'Ahmed Ben Ali',
-  mentorEmail: 'ahmed.benali@example.com',
-  amount: 1234.56,
-  method: 'Bank Transfer',
-  status: 'pending' as const,
-  requestDate: '2024-08-30T10:30:00Z',
-  mentorId: 'M001',
-  details: {
-    sessionCount: 12,
-    totalEarnings: 1500.00,
-    platformFee: 265.44,
-    netAmount: 1234.56,
-    accountDetails: {
-      bankName: 'Bank ABC',
-      accountNumber: '****1234',
-      routingNumber: '021000021',
-      accountHolder: 'Ahmed Ben Ali',
-    },
-    sessionHistory: [
-      { date: '2024-08-25', student: 'John Doe', duration: 60, amount: 125.00 },
-      { date: '2024-08-23', student: 'Jane Smith', duration: 45, amount: 93.75 },
-      { date: '2024-08-22', student: 'Mike Johnson', duration: 60, amount: 125.00 },
-      { date: '2024-08-20', student: 'Sarah Wilson', duration: 30, amount: 62.50 },
-    ],
-    notes: 'Regular monthly payout request. All sessions completed successfully.',
-  },
-};
-
-type PayoutStatus = 'pending' | 'approved' | 'processing' | 'completed' | 'rejected';
-
-const getStatusBadgeProps = (status: PayoutStatus) => {
-  switch (status) {
-    case 'pending':
-      return {
-        variant: 'secondary' as const,
-        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-        icon: <Clock className="w-4 h-4" />,
-      };
-    case 'approved':
-      return {
-        variant: 'default' as const,
-        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-        icon: <CheckCircle className="w-4 h-4" />,
-      };
-    case 'processing':
-      return {
-        variant: 'secondary' as const,
-        className: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100',
-        icon: <AlertCircle className="w-4 h-4" />,
-      };
-    case 'completed':
-      return {
-        variant: 'default' as const,
-        className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-        icon: <CheckCircle className="w-4 h-4" />,
-      };
-    case 'rejected':
-      return {
-        variant: 'destructive' as const,
-        className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
-        icon: <XCircle className="w-4 h-4" />,
-      };
-    default:
-      return {
-        variant: 'default' as const,
-        className: '',
-        icon: <Clock className="w-4 h-4" />,
-      };
-  }
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
+import {
+  useGetAllPayoutsAdmin,
+  useApprovePayoutAdmin,
+  useRejectPayoutAdmin,
+} from './api';
+import { formatDate } from '@/utils/format';
+import { mapPayoutStatus, type PayoutStatus } from './types/admin-payout';
 
 export function AdminPayoutRequestDetailsPage() {
   const navigate = useNavigate();
   const params = useParams({ from: '/app/admin/payout-requests/$requestId' });
-  const requestId = params.requestId;
-  
+  const requestId = parseInt(params.requestId, 10);
+
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // In a real app, you'd fetch the payout request data based on requestId
-  const payoutRequest = { ...mockPayoutRequest, id: requestId };
-  const statusProps = getStatusBadgeProps(payoutRequest.status);
+  // API hooks
+  const { data: allPayouts, error, isLoading } = useGetAllPayoutsAdmin();
+  const approvePayoutMutation = useApprovePayoutAdmin();
+  const rejectPayoutMutation = useRejectPayoutAdmin();
+
+  // Loading and error states
+  if (isLoading) {
+    return <LoadingState type="dots" />;
+  }
+
+  if (error || !allPayouts) {
+    return (
+      <ErrorComponenet
+        message="Failed to load payout request"
+        title="Error Loading Data"
+      />
+    );
+  }
+
+  // Find the specific payout request
+  const payoutRequest = allPayouts.find(p => p.id === requestId);
+  
+  if (!payoutRequest) {
+    return (
+      <ErrorComponenet
+        message="Payout request not found"
+        title="Request Not Found"
+      />
+    );
+  }
+
+  const status = mapPayoutStatus(payoutRequest.status);
+  const statusProps = getStatusBadgeProps(status);
+
+  // Helper function for status badge props
+  function getStatusBadgeProps(status: PayoutStatus) {
+    switch (status) {
+      case 'pending':
+        return {
+          variant: 'secondary' as const,
+          className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+          icon: <Clock className="w-4 h-4" />,
+        };
+      case 'approved':
+        return {
+          variant: 'default' as const,
+          className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+          icon: <CheckCircle className="w-4 h-4" />,
+        };
+      case 'completed':
+        return {
+          variant: 'default' as const,
+          className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+          icon: <CheckCircle className="w-4 h-4" />,
+        };
+      case 'rejected':
+        return {
+          variant: 'destructive' as const,
+          className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+          icon: <XCircle className="w-4 h-4" />,
+        };
+      default:
+        return {
+          variant: 'default' as const,
+          className: '',
+          icon: <Clock className="w-4 h-4" />,
+        };
+    }
+  }
 
   const handleApprove = async () => {
-    setIsLoading(true);
     try {
-      // TODO: Implement actual approve API call
-      console.log('Approving request:', requestId);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      const result = await approvePayoutMutation.mutateAsync(payoutRequest.id);
+      console.log('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
-      // Update local state or refresh data
+      // The query will be invalidated automatically and page will reflect changes
     } catch (error) {
       console.error('Error approving request:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleReject = async () => {
-    setIsLoading(true);
     try {
-      // TODO: Implement actual reject API call
-      console.log('Rejecting request:', requestId);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      await rejectPayoutMutation.mutateAsync(payoutRequest.id);
       setIsRejectDialogOpen(false);
-      // Update local state or refresh data
+      // The query will be invalidated automatically and page will reflect changes
     } catch (error) {
       console.error('Error rejecting request:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -177,11 +158,11 @@ export function AdminPayoutRequestDetailsPage() {
             <h1 className="text-3xl font-bold tracking-tight">Payout Request Details</h1>
             <Badge {...statusProps} className="gap-2">
               {statusProps.icon}
-              {payoutRequest.status.charAt(0).toUpperCase() + payoutRequest.status.slice(1)}
+              {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
           </div>
           <p className="text-muted-foreground">
-            Request ID: <span className="font-mono font-medium">{payoutRequest.id}</span>
+            Request ID: <span className="font-mono font-medium">PR-{payoutRequest.id.toString().padStart(3, '0')}</span>
           </p>
         </div>
 
@@ -201,12 +182,12 @@ export function AdminPayoutRequestDetailsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <User className="w-4 h-4" />
-                      Mentor Information
+                      User Information
                     </div>
                     <div>
-                      <p className="font-medium">{payoutRequest.mentorName}</p>
-                      <p className="text-sm text-muted-foreground">{payoutRequest.mentorEmail}</p>
-                      <p className="text-sm text-muted-foreground">ID: {payoutRequest.mentorId}</p>
+                      <p className="font-medium">User ID: {payoutRequest.userId}</p>
+                      <p className="text-sm text-muted-foreground">Konnect Wallet: {payoutRequest.konnectWalletId}</p>
+                      <p className="text-sm text-muted-foreground">Wallet ID: {payoutRequest.walletId}</p>
                     </div>
                   </div>
                   
@@ -215,7 +196,7 @@ export function AdminPayoutRequestDetailsPage() {
                       <Calendar className="w-4 h-4" />
                       Request Date
                     </div>
-                    <p className="font-medium">{formatDate(payoutRequest.requestDate)}</p>
+                    <p className="font-medium">{formatDate(payoutRequest.createdAt)}</p>
                   </div>
 
                   <div className="space-y-2">
@@ -231,16 +212,16 @@ export function AdminPayoutRequestDetailsPage() {
                       <CreditCard className="w-4 h-4" />
                       Payment Method
                     </div>
-                    <p className="font-medium">{payoutRequest.method}</p>
+                    <p className="font-medium">Konnect Wallet</p>
                   </div>
                 </div>
 
-                {payoutRequest.details.notes && (
+                {payoutRequest.paymentRef && payoutRequest.paymentRef !== '' && (
                   <>
                     <Separator />
                     <div className="space-y-2">
-                      <h4 className="font-medium">Notes</h4>
-                      <p className="text-sm text-muted-foreground">{payoutRequest.details.notes}</p>
+                      <h4 className="font-medium">Payment Reference</h4>
+                      <p className="text-sm text-muted-foreground font-mono">{payoutRequest.paymentRef}</p>
                     </div>
                   </>
                 )}
@@ -250,51 +231,64 @@ export function AdminPayoutRequestDetailsPage() {
             {/* Financial Breakdown */}
             <Card>
               <CardHeader>
-                <CardTitle>Financial Breakdown</CardTitle>
+                <CardTitle>Financial Information</CardTitle>
                 <CardDescription>
-                  Detailed breakdown of earnings and fees
+                  Basic payout information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span>Total Earnings ({payoutRequest.details.sessionCount} sessions)</span>
-                    <span className="font-medium">${payoutRequest.details.totalEarnings.toFixed(2)}</span>
+                    <span>Requested Amount</span>
+                    <span className="font-medium">${payoutRequest.amount.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-red-600">
-                    <span>Platform Fee (17.7%)</span>
-                    <span>-${payoutRequest.details.platformFee.toFixed(2)}</span>
+                  <div className="flex justify-between">
+                    <span>Status</span>
+                    <Badge {...statusProps}>{status}</Badge>
                   </div>
-                  <Separator />
-                  <div className="flex justify-between text-lg font-semibold">
-                    <span>Net Amount</span>
-                    <span>${payoutRequest.details.netAmount.toFixed(2)}</span>
+                  <div className="flex justify-between">
+                    <span>Created At</span>
+                    <span className="text-sm">{formatDate(payoutRequest.createdAt)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Last Updated</span>
+                    <span className="text-sm">{formatDate(payoutRequest.updatedAt)}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Recent Sessions */}
+            {/* System Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Recent Sessions</CardTitle>
+                <CardTitle>System Information</CardTitle>
                 <CardDescription>
-                  Sessions included in this payout request
+                  Internal tracking details
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {payoutRequest.details.sessionHistory.map((session, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                      <div>
-                        <p className="font-medium">{session.student}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(session.date).toLocaleDateString()} • {session.duration} min
-                        </p>
-                      </div>
-                      <span className="font-medium">${session.amount.toFixed(2)}</span>
+                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                    <div>
+                      <p className="font-medium">Payout ID</p>
+                      <p className="text-sm text-muted-foreground">Internal system identifier</p>
                     </div>
-                  ))}
+                    <span className="font-mono">{payoutRequest.id}</span>
+                  </div>
+                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                    <div>
+                      <p className="font-medium">User ID</p>
+                      <p className="text-sm text-muted-foreground">Requesting user</p>
+                    </div>
+                    <span className="font-mono">{payoutRequest.userId}</span>
+                  </div>
+                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                    <div>
+                      <p className="font-medium">Wallet ID</p>
+                      <p className="text-sm text-muted-foreground">Internal wallet reference</p>
+                    </div>
+                    <span className="font-mono">{payoutRequest.walletId}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -303,7 +297,7 @@ export function AdminPayoutRequestDetailsPage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            {payoutRequest.status === 'pending' && (
+            {status === 'pending' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
@@ -315,46 +309,51 @@ export function AdminPayoutRequestDetailsPage() {
                   <Button 
                     onClick={() => setIsApproveDialogOpen(true)}
                     className="w-full bg-green-600 hover:bg-green-700"
+                    disabled={approvePayoutMutation.isPending || rejectPayoutMutation.isPending}
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Approve Request
+                    {approvePayoutMutation.isPending ? 'Approving...' : 'Approve Request'}
                   </Button>
                   <Button 
                     variant="destructive"
                     onClick={() => setIsRejectDialogOpen(true)}
                     className="w-full"
+                    disabled={approvePayoutMutation.isPending || rejectPayoutMutation.isPending}
                   >
                     <XCircle className="w-4 h-4 mr-2" />
-                    Reject Request
+                    {rejectPayoutMutation.isPending ? 'Rejecting...' : 'Reject Request'}
                   </Button>
                 </CardContent>
               </Card>
             )}
 
-            {/* Account Details */}
+            {/* Payout Details */}
             <Card>
               <CardHeader>
-                <CardTitle>Account Details</CardTitle>
+                <CardTitle>Payout Details</CardTitle>
                 <CardDescription>
-                  Payout destination information
+                  Konnect wallet information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Bank Name</label>
-                  <p>{payoutRequest.details.accountDetails.bankName}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Konnect Wallet ID</label>
+                  <p className="font-mono text-sm">{payoutRequest.konnectWalletId}</p>
                 </div>
+                {payoutRequest.paymentRef && payoutRequest.paymentRef !== '' && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Payment Reference</label>
+                    <p className="font-mono text-sm">{payoutRequest.paymentRef}</p>
+                  </div>
+                )}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Account Holder</label>
-                  <p>{payoutRequest.details.accountDetails.accountHolder}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Account Number</label>
-                  <p className="font-mono">{payoutRequest.details.accountDetails.accountNumber}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Routing Number</label>
-                  <p className="font-mono">{payoutRequest.details.accountDetails.routingNumber}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <div className="mt-1">
+                    <Badge {...statusProps}>
+                      {statusProps.icon}
+                      <span className="ml-1">{status}</span>
+                    </Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -367,9 +366,9 @@ export function AdminPayoutRequestDetailsPage() {
         isOpen={isApproveDialogOpen}
         onClose={() => setIsApproveDialogOpen(false)}
         onConfirm={handleApprove}
-        isLoading={isLoading}
-        requestId={payoutRequest.id}
-        mentorName={payoutRequest.mentorName}
+        isLoading={approvePayoutMutation.isPending}
+        requestId={`PR-${payoutRequest.id.toString().padStart(3, '0')}`}
+        mentorName={`User ID: ${payoutRequest.userId}`}
         amount={payoutRequest.amount}
       />
 
@@ -377,9 +376,9 @@ export function AdminPayoutRequestDetailsPage() {
         isOpen={isRejectDialogOpen}
         onClose={() => setIsRejectDialogOpen(false)}
         onConfirm={handleReject}
-        isLoading={isLoading}
-        requestId={payoutRequest.id}
-        mentorName={payoutRequest.mentorName}
+        isLoading={rejectPayoutMutation.isPending}
+        requestId={`PR-${payoutRequest.id.toString().padStart(3, '0')}`}
+        mentorName={`User ID: ${payoutRequest.userId}`}
         amount={payoutRequest.amount}
       />
     </>
