@@ -1,10 +1,9 @@
 using System.Collections.Concurrent;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.TestKonnect;
+namespace Booking.Modules.Mentorships.Features.test.Konnect;
 
 [ApiController]
 public class MockKonnectController : ControllerBase

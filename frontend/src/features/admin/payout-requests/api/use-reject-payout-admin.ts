@@ -3,7 +3,9 @@ import { api } from '@/lib/api-client';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
 import { AdminPayoutKeys } from './admin-payout-keys';
 
-import type { RejectPayoutRequest } from '../types';
+interface RejectPayoutRequest {
+  PayoutId: number;
+}
 
 export const useRejectPayoutAdmin = () => {
   return useMutation({

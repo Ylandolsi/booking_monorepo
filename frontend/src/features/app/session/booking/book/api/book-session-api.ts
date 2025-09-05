@@ -6,10 +6,14 @@ import type { BookSessionRequestType } from '@/features/app/session/booking/book
 
 // ISO 8601 format ("2025-08-20T15:00:00Z")
 
+export type BookSessionResponseType ={
+  payUrl : string;
+}
+
 export const bookSession = async (
   booking: BookSessionRequestType,
-): Promise<number> => {
-  return await api.post<number>(MentorshipEndpoints.Sessions.Book, booking);
+): Promise<BookSessionResponseType> => {
+  return await api.post<BookSessionResponseType>(MentorshipEndpoints.Sessions.Book, booking);
 };
 
 export function useBookSession() {
@@ -20,34 +24,13 @@ export function useBookSession() {
         bookingQueryKeys.myBookings(),
         // bookingQueryKeys.availability(),
       ],
+      successAction : (data : BookSessionResponseType) =>{
+        if ( data.payUrl != "" && data.payUrl != null)
+          window.open(data.payUrl, '_blank');
+      },
       successMessage: 'Session booked successfully!',
       errorMessage: 'Failed to book session. Please try again.',
     },
   });
 }
 
-// export const cancelSession = async (sessionId: string): Promise<void> => {
-//   return await api.delete<void>(
-//     MentorshipEndpoints.Sessions.Cancel.replace('{sessionId}', sessionId),
-//   );
-// };
-
-// export const getSessionDetails = async (sessionId: string): Promise<number> => {
-//   return await api.get<number>(
-//     MentorshipEndpoints.Sessions.GetDetails.replace('{sessionId}', sessionId),
-//   );
-// };
-
-// export function useCancelSession() {
-//   return useMutation({
-//     mutationFn: (sessionId: string) => cancelSession(sessionId),
-//     meta: {
-//       invalidatesQuery: [
-//         bookingQueryKeys.myBookings(),
-//         // bookingQueryKeys.availability(),
-//       ],
-//       successMessage: 'Session cancelled successfully',
-//       errorMessage: 'Failed to cancel session',
-//     },
-//   });
-// }

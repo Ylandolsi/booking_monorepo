@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.TestCalendar;
+namespace Booking.Modules.Mentorships.Features.test.Calendar;
 
 public class endpoint2test : IEndpoint
 {

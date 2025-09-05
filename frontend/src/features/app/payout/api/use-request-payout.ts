@@ -4,9 +4,11 @@ import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
 import { WalletKeys } from '@/features/shared';
 
-interface PayoutRequestData {
+type PayoutRequestData = {
   Amount: number;
 }
+
+
 
 export const useRequestPayout = () => {
   return useMutation({

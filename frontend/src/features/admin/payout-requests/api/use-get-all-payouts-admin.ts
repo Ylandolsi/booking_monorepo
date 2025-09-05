@@ -7,7 +7,18 @@ import { AdminPayoutKeys } from './admin-payout-keys';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
 import { api } from '@/lib';
 
-import type { AdminPayoutResponse } from '../types';
+export interface AdminPayoutResponse {
+  id: number;
+  userId: number;
+  konnectWalletId: string;
+  walletId: number;
+  amount: number;
+  paymentRef: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 const getAllPayoutsAdmin = async (): Promise<Array<AdminPayoutResponse>> => {
   return await api.get<Array<AdminPayoutResponse>>(

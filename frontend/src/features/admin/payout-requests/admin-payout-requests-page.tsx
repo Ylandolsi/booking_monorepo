@@ -28,10 +28,10 @@ import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 import { 
   useGetAllPayoutsAdmin, 
   useApprovePayoutAdmin, 
-  useRejectPayoutAdmin
+  useRejectPayoutAdmin,
+  type AdminPayoutResponse
 } from './api';
 import {
-  type AdminPayoutResponse,
   type PayoutStatus,
   type TimeFilter,
   mapPayoutStatus

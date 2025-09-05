@@ -3,14 +3,17 @@ import { api } from '@/lib/api-client';
 import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
 import { AdminPayoutKeys } from './admin-payout-keys';
 
-import type { ApprovePayoutRequest, ApprovePayoutAdminResponse } from '../types';
-
-export { type ApprovePayoutAdminResponse } from '../types';
+type ApprovePayoutRequest =  {
+  PayoutId: number;
+}
+type PayoutRequestResponse = {
+  payUrl : string ;
+}
 
 export const useApprovePayoutAdmin = () => {
   return useMutation({
-    mutationFn: async (payoutId: number): Promise<ApprovePayoutAdminResponse> => {
-      return await api.post<ApprovePayoutAdminResponse>(
+    mutationFn: async (payoutId: number): Promise<PayoutRequestResponse> => {
+      return await api.post<PayoutRequestResponse>(
         MentorshipEndpoints.Payouts.Admin.ApprovePayout,
         {
           PayoutId: payoutId,
@@ -20,6 +23,9 @@ export const useApprovePayoutAdmin = () => {
     meta: {
       invalidatesQuery: [AdminPayoutKeys.allPayouts()],
       successMessage: 'Payout approved successfully',
+        successAction : (data : PayoutRequestResponse) => {
+        window.open(data.payUrl, '_blank');
+      },
       // errorMessage: 'Failed to approve payout',
     },
   });

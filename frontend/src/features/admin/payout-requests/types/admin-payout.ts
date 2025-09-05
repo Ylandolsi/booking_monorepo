@@ -1,29 +1,7 @@
 // Admin payout types that match the backend PayoutResponse
-export interface AdminPayoutResponse {
-  id: number;
-  userId: number;
-  konnectWalletId: string;
-  walletId: number;
-  amount: number;
-  paymentRef: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
-  createdAt: string;
-  updatedAt: string;
-}
 
-// API response types
-export interface ApprovePayoutAdminResponse {
-  payUrl: string;
-}
+import type { AdminPayoutResponse } from "../api";
 
-// Request payload types
-export interface ApprovePayoutRequest {
-  PayoutId: number;
-}
-
-export interface RejectPayoutRequest {
-  PayoutId: number;
-}
 
 // UI-specific types for the admin payout pages
 export type PayoutStatus = 'pending' | 'approved' | 'rejected' | 'completed';
