@@ -11,6 +11,9 @@
 
 https://www.linkedin.com/posts/tannika-majumder-424a5040_i-gave-this-problem-to-30-candidates-in-mock-activity-7369714329434189825-e2Eb?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg
 
+
+---
+.net abstracton https://www.milanjovanovic.tech/blog/the-real-cost-of-abstractions-in-dotnet?utm_source=X&utm_medium=social&utm_campaign=01.09.2025
 ---
 
 **Database Locks:**  
