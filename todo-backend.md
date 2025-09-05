@@ -1,4 +1,5 @@
 - [ ] Aim for clear telemetry and alerting around webhook failures and retries.
+- [ ] verify the backend cron job for approved payout and not complete back to pending ! ( test it ) ! 
 - [ ] Mentee cannot book unless integrated with Google
 - [ ] Add resiliency to background jobs / Konnect
 - [ ] Google refresh token config

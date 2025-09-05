@@ -298,7 +298,7 @@ export function AdminPayoutRequestsPage() {
                   <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
+                  {/* <SelectItem value="processing">Processing</SelectItem> */}
                   <SelectItem value="completed">Completed</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
                 </SelectContent>

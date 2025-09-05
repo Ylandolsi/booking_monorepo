@@ -18,7 +18,7 @@ import {
   LoadingState,
 } from '@/components';
 import { DrawerDialog } from '@/components/ui/drawer-dialog';
-import { DollarSign, Calendar, TrendingUp, AlertCircle, Wallet, ExternalLink } from 'lucide-react';
+import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 import { PayoutRequestForm } from './components';
 import { useHistoryPayout, useRequestPayout } from './api';
 import { useState } from 'react';
@@ -44,12 +44,10 @@ export function PayoutPage() {
   // Check if user is integrated with Konnect
   const isKonnectIntegrated = !!user?.konnectWalletId?.trim();
 
-  // Show loading if either user or wallet data is loading
   if (isLoading || isLoadingHistory || isUserLoading) {
     return <LoadingState type="dots" />;
   }
 
-  // Handle user data errors
   if (userError) {
     return (
       <ErrorComponenet
@@ -59,58 +57,29 @@ export function PayoutPage() {
     );
   }
 
-  // Check Konnect integration - show message if not integrated
   if (!isKonnectIntegrated) {
     return (
-      <div className="mx-auto p-6 space-y-8 max-w-4xl">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-light">Payouts</h1>
-          <p className="text-muted-foreground text-lg">
-            Access your payout dashboard
-          </p>
-        </div>
-        
-        <Card className="border-orange-200 bg-gradient-to-br from-orange-50/50 to-yellow-50/50">
-          <CardHeader className="text-center pb-3">
-            <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <Wallet className="w-8 h-8 text-orange-600" />
-            </div>
-            <CardTitle className="text-2xl text-orange-900">
-              Konnect Integration Required
-            </CardTitle>
-            <CardDescription className="text-orange-700">
-              You need to integrate your Konnect wallet to access payout features
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 space-y-2">
-              <h3 className="font-semibold text-orange-900">Why integrate with Konnect?</h3>
-              <ul className="text-sm text-orange-800 space-y-1">
-                <li>• Secure and instant payment processing</li>
-                <li>• Direct deposits to your Konnect wallet</li>
-                <li>• Real-time transaction tracking</li>
-                <li>• Low transaction fees</li>
-              </ul>
-            </div>
-            
-            <Button 
-              onClick={() => navigate.goToIntegrations()}
-              className="bg-orange-600 hover:bg-orange-700 text-white gap-2"
-              size="lg"
-            >
-              <Wallet className="w-4 h-4" />
-              Integrate with Konnect
-              <ExternalLink className="w-4 h-4" />
-            </Button>
-            
-            <p className="text-xs text-orange-600">
-              Integration takes less than 2 minutes and is completely secure
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <ErrorComponenet
+        title="Integration Required"
+        message="You need to integrate with Konnect to access payout features. Please integrate with Konnect first."
+        iconType="warning"
+        showHomeButton={true}
+        showBackButton={true}
+      />
     );
   }
+
+  // if (!isGoogleIntegrated) {
+  //   return (
+  //     <ErrorComponenet
+  //       title="Google Integration Required"
+  //       message="You need to integrate with Google Calendar to access payout features. Please integrate with Google Calendar first."
+  //       iconType="warning"
+  //       showHomeButton={true}
+  //       showBackButton={true}
+  //     />
+  //   );
+  // }
 
   if (error || walletData == null) {
     return (
@@ -292,7 +261,8 @@ export function PayoutPage() {
       </div>
 
       {/* Quick Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
+      <div className="grid grid-cols-1  gap-4">
         {/* <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Earned</CardDescription>
@@ -305,7 +275,7 @@ export function PayoutPage() {
             <CardTitle className="text-2xl">$2,222.00</CardTitle>
           </CardHeader>
         </Card> */}
-        <Card>
+        <Card className="bg-gradient-to-r from-yellow-50 to-white border border-yellow-600">
           <CardHeader className="pb-2">
             <CardDescription>Pending</CardDescription>
             <CardTitle className="text-2xl">${pendingBalance}</CardTitle>

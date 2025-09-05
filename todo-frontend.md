@@ -1,7 +1,9 @@
 - [ ] Review of toast- especially failures
 - [ ] profile picture fallback and LazyImage
+- [ ] add link to konnect to pay 
+- [ ] add link to konnect to accept payout 
 - [ ] review keys of tanstack 
-- [ ] if try to payout and not integrated with konnect : redirect to integrations page 
+- [x] if try to payout and not integrated with konnect : redirect to integrations page 
 - [x] when user integrate with konnect : it should refresh the page to show the new data or rerender the component 
 - [ ] replace all list ids with generated cyrpto ids
 - [ ] make sure of this works : for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
