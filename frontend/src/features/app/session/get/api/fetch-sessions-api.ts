@@ -16,7 +16,7 @@ export const getSessions = async (upToDate?: string, timeZoneId?: string) => {
 export function useGetSessions(
   upToDate?: Date,
   timeZoneId?: string,
-  overrides?: Partial<UseQueryOptions<Array<Session>, Error, Array<Session>>>,
+  overrides?: Partial<UseQueryOptions<Array<Session>, unknown, Array<Session>>>,
 ) {
   const normalizedUpToDate = upToDate
     ? new Date(upToDate).toISOString()

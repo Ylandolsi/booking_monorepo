@@ -515,3 +515,6 @@ export default {
   run,
 };
 ```
+
+
+  overrides?: Partial<UseQueryOptions<Array<Session>, unknown, Array<Session>>>,

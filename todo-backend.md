@@ -23,6 +23,8 @@
 - [ ] add fallback objects that contain defaults for missing fields.
 ---
 ### Later 
+- [ ] add activity
+- [ ] add realtime communication  
 - [ ] previous meetings/mentors.
 - [ ] maybe add tag of skills to the meeting to show it !
 - [ ]Manage auth metadata (currentIp, currentUserAgent).

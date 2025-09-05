@@ -6,14 +6,17 @@ import type { BookSessionRequestType } from '@/features/app/session/booking/book
 
 // ISO 8601 format ("2025-08-20T15:00:00Z")
 
-export type BookSessionResponseType ={
-  payUrl : string;
-}
+export type BookSessionResponseType = {
+  payUrl: string;
+};
 
 export const bookSession = async (
   booking: BookSessionRequestType,
 ): Promise<BookSessionResponseType> => {
-  return await api.post<BookSessionResponseType>(MentorshipEndpoints.Sessions.Book, booking);
+  return await api.post<BookSessionResponseType>(
+    MentorshipEndpoints.Sessions.Book,
+    booking,
+  );
 };
 
 export function useBookSession() {
@@ -24,13 +27,17 @@ export function useBookSession() {
         bookingQueryKeys.myBookings(),
         // bookingQueryKeys.availability(),
       ],
-      successAction : (data : BookSessionResponseType) =>{
-        if ( data.payUrl != "" && data.payUrl != null)
-          window.open(data.payUrl, '_blank');
+      successAction: (data: BookSessionResponseType) => {
+        let isValidUrl: boolean = true;
+        try {
+          new URL(data.payUrl);
+        } catch {
+          isValidUrl = false;
+        }
+        if (isValidUrl) window.open(data.payUrl, '_blank');
       },
       successMessage: 'Session booked successfully!',
       errorMessage: 'Failed to book session. Please try again.',
     },
   });
 }
-
