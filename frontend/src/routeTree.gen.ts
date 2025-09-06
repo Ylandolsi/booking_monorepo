@@ -15,20 +15,18 @@ import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as TestMentorRequiredRouteImport } from './routes/test/mentor-required'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
-import { Route as TestBookingDemoRouteImport } from './routes/test/booking-demo'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AuthEmailVerifiedRouteImport } from './routes/auth/email-verified'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
-import { Route as AuthEmailVerificationVerifiedRouteImport } from './routes/auth/email-verification.verified'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
@@ -66,11 +64,6 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const TestMentorRequiredRoute = TestMentorRequiredRouteImport.update({
-  id: '/test/mentor-required',
-  path: '/test/mentor-required',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
   path: '/test/img',
@@ -79,11 +72,6 @@ const TestImgRoute = TestImgRouteImport.update({
 const TestDashboardRoute = TestDashboardRouteImport.update({
   id: '/test/dashboard',
   path: '/test/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestBookingDemoRoute = TestBookingDemoRouteImport.update({
-  id: '/test/booking-demo',
-  path: '/test/booking-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ErrorExpSimpleLoadingDemoRoute =
@@ -112,6 +100,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AuthEmailVerifiedRoute = AuthEmailVerifiedRouteImport.update({
+  id: '/email-verified',
+  path: '/email-verified',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
 const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   id: '/email-verification',
   path: '/email-verification',
@@ -132,12 +125,6 @@ const AppIntegrationRoute = AppIntegrationRouteImport.update({
   path: '/integration',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AuthEmailVerificationVerifiedRoute =
-  AuthEmailVerificationVerifiedRouteImport.update({
-    id: '/verified',
-    path: '/verified',
-    getParentRoute: () => AuthEmailVerificationRoute,
-  } as any)
 const AppProfileUserSlugRoute = AppProfileUserSlugRouteImport.update({
   id: '/profile/$userSlug',
   path: '/profile/$userSlug',
@@ -180,22 +167,20 @@ export interface FileRoutesByFullPath {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
-  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
+  '/auth/email-verification': typeof AuthEmailVerificationRoute
+  '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
-  '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -207,22 +192,20 @@ export interface FileRoutesByTo {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
-  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
+  '/auth/email-verification': typeof AuthEmailVerificationRoute
+  '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
-  '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -236,22 +219,20 @@ export interface FileRoutesById {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
-  '/auth/email-verification': typeof AuthEmailVerificationRouteWithChildren
+  '/auth/email-verification': typeof AuthEmailVerificationRoute
+  '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
-  '/test/booking-demo': typeof TestBookingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/mentor-required': typeof TestMentorRequiredRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
-  '/auth/email-verification/verified': typeof AuthEmailVerificationVerifiedRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -267,21 +248,19 @@ export interface FileRouteTypes {
     | '/app/meets'
     | '/app/payouts'
     | '/auth/email-verification'
+    | '/auth/email-verified'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/mentor-required'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
-    | '/auth/email-verification/verified'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
@@ -294,21 +273,19 @@ export interface FileRouteTypes {
     | '/app/meets'
     | '/app/payouts'
     | '/auth/email-verification'
+    | '/auth/email-verified'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/mentor-required'
     | '/app'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
-    | '/auth/email-verification/verified'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   id:
@@ -322,21 +299,19 @@ export interface FileRouteTypes {
     | '/app/meets'
     | '/app/payouts'
     | '/auth/email-verification'
+    | '/auth/email-verified'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
-    | '/test/booking-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/mentor-required'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
-    | '/auth/email-verification/verified'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesById: FileRoutesById
@@ -348,10 +323,8 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
-  TestBookingDemoRoute: typeof TestBookingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
-  TestMentorRequiredRoute: typeof TestMentorRequiredRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -398,13 +371,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/test/mentor-required': {
-      id: '/test/mentor-required'
-      path: '/test/mentor-required'
-      fullPath: '/test/mentor-required'
-      preLoaderRoute: typeof TestMentorRequiredRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/test/img': {
       id: '/test/img'
       path: '/test/img'
@@ -417,13 +383,6 @@ declare module '@tanstack/react-router' {
       path: '/test/dashboard'
       fullPath: '/test/dashboard'
       preLoaderRoute: typeof TestDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test/booking-demo': {
-      id: '/test/booking-demo'
-      path: '/test/booking-demo'
-      fullPath: '/test/booking-demo'
-      preLoaderRoute: typeof TestBookingDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/error-exp/simple-loading-demo': {
@@ -461,6 +420,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/auth/email-verified': {
+      id: '/auth/email-verified'
+      path: '/email-verified'
+      fullPath: '/auth/email-verified'
+      preLoaderRoute: typeof AuthEmailVerifiedRouteImport
+      parentRoute: typeof AuthRouteRoute
+    }
     '/auth/email-verification': {
       id: '/auth/email-verification'
       path: '/email-verification'
@@ -488,13 +454,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/integration'
       preLoaderRoute: typeof AppIntegrationRouteImport
       parentRoute: typeof AppRouteRoute
-    }
-    '/auth/email-verification/verified': {
-      id: '/auth/email-verification/verified'
-      path: '/verified'
-      fullPath: '/auth/email-verification/verified'
-      preLoaderRoute: typeof AuthEmailVerificationVerifiedRouteImport
-      parentRoute: typeof AuthEmailVerificationRoute
     }
     '/app/profile/$userSlug': {
       id: '/app/profile/$userSlug'
@@ -583,21 +542,9 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
   AppRouteRouteChildren,
 )
 
-interface AuthEmailVerificationRouteChildren {
-  AuthEmailVerificationVerifiedRoute: typeof AuthEmailVerificationVerifiedRoute
-}
-
-const AuthEmailVerificationRouteChildren: AuthEmailVerificationRouteChildren = {
-  AuthEmailVerificationVerifiedRoute: AuthEmailVerificationVerifiedRoute,
-}
-
-const AuthEmailVerificationRouteWithChildren =
-  AuthEmailVerificationRoute._addFileChildren(
-    AuthEmailVerificationRouteChildren,
-  )
-
 interface AuthRouteRouteChildren {
-  AuthEmailVerificationRoute: typeof AuthEmailVerificationRouteWithChildren
+  AuthEmailVerificationRoute: typeof AuthEmailVerificationRoute
+  AuthEmailVerifiedRoute: typeof AuthEmailVerifiedRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
@@ -605,7 +552,8 @@ interface AuthRouteRouteChildren {
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthEmailVerificationRoute: AuthEmailVerificationRouteWithChildren,
+  AuthEmailVerificationRoute: AuthEmailVerificationRoute,
+  AuthEmailVerifiedRoute: AuthEmailVerifiedRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
@@ -623,10 +571,8 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
-  TestBookingDemoRoute: TestBookingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
-  TestMentorRequiredRoute: TestMentorRequiredRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

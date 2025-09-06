@@ -102,11 +102,11 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         await userManager.DeleteAsync(user);
     }
 
-    await roleService.CreateRoleAsync("Admin");
+    await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod 
     await roleService.CreateRoleAsync("User");
 
-    var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+    //var TestProfileSeeder = new TestProfileSeeder(app.Services);
+    //await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 
 }
 

@@ -22,7 +22,7 @@ export const ROUTE_PATHS = {
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
     EMAIL_VERIFICATION: '/auth/email-verification',
-    EMAIL_VERIFICATION_VERIFIED: '/auth/email-verification/verified',
+    EMAIL_VERIFICATION_VERIFIED: '/auth/email-verified',
   },
 
   // App routes
@@ -66,11 +66,8 @@ export const ROUTE_PATHS = {
   },
 
   TEST: {
-    MENTOR_REQUIRED: '/test/mentor-required',
     IMG: '/test/img',
     DASHBOARD: '/test/dashboard',
-    BOOKING_DEMO: '/test/booking-demo',
-    ALREADY: '/test/already',
   },
 
   // Utility routes
@@ -205,11 +202,8 @@ export const routeBuilder = {
   },
 
   test: {
-    mentorRequired: () => ROUTE_PATHS.TEST.MENTOR_REQUIRED,
     img: () => ROUTE_PATHS.TEST.IMG,
     dashboard: () => ROUTE_PATHS.TEST.DASHBOARD,
-    bookingDemo: () => ROUTE_PATHS.TEST.BOOKING_DEMO,
-    already: () => ROUTE_PATHS.TEST.ALREADY,
   },
 
   // Utility routes

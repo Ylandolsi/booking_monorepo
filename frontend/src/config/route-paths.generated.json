@@ -6,7 +6,7 @@
     "FORGOT_PASSWORD": "/auth/forgot-password",
     "RESET_PASSWORD": "/auth/reset-password",
     "EMAIL_VERIFICATION": "/auth/email-verification",
-    "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verification/verified"
+    "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verified"
   },
   "APP": {
     "INDEX": "/app",
@@ -18,7 +18,18 @@
       "SET_SCHEDULE": "/app/mentor/set-schedule"
     },
     "PROFILE": {
-      "USER": "/app/profile/$userSlug"
+      "USER": "/app/profile/$userSlug",
+      "INTEGRATIONS": "/app/integration"
+    },
+    "MEETS": {
+      "INDEX": "/app/meets"
+    },
+    "PAYMENT": {
+      "PAYOUT": "/app/payouts"
+    },
+    "ADMIN": {
+      "PAYOUT_REQUESTS": "/app/admin/payout-requests",
+      "PAYOUT_REQUEST_DETAILS": "/app/admin/payout-requests/$requestId"
     }
   },
   "ERROR_EXP": {
@@ -26,11 +37,8 @@
     "ADVANCED_LOADING": "/error-exp/advanced-loading-examples"
   },
   "TEST": {
-    "MENTOR_REQUIRED": "/test/mentor-required",
     "IMG": "/test/img",
-    "DASHBOARD": "/test/dashboard",
-    "BOOKING_DEMO": "/test/booking-demo",
-    "ALREADY": "/test/already"
+    "DASHBOARD": "/test/dashboard"
   },
   "UNAUTHORIZED": "/unauthorized"
 }

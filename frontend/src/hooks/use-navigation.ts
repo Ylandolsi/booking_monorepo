@@ -92,30 +92,9 @@ export function useAppNavigation() {
       navigate({ to: routes.to.test.dashboard() });
     },
 
-    goToTestMentorRequired: () => {
-      navigate({ to: routes.to.test.mentorRequired() });
-    },
-
     goToTestImg: () => {
       navigate({ to: routes.to.test.img() });
     },
-
-    goToTestBookingDemo: () => {
-      navigate({ to: routes.to.test.bookingDemo() });
-    },
-
-    goToTestAlready: () => {
-      navigate({ to: routes.to.test.already() });
-    },
-
-    // Error example navigation
-    goToErrorExpSimpleLoading: () => {
-      navigate({ to: routes.to.errorExp.simpleLoading() });
-    },
-
-    // goToErrorExpAdvancedLoading: () => {
-    //   navigate({ to: routes.to.errorExp.advancedLoading() });
-    // },
 
     // Utility navigation
     goToUnauthorized: () => {
