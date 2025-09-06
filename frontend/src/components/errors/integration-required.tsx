@@ -1,21 +1,21 @@
 import { Button } from '@/components/ui';
-import { GraduationCap, UserPlus, Home, Plug } from 'lucide-react';
+import { UserPlus, Home, Plug } from 'lucide-react';
 import { useAppNavigation } from '@/hooks';
 
 interface IntegrationRequiredProps {
   title?: string;
   message?: string;
-  showBecomeMentorButton?: boolean;
+  showIntegrationPageButtton?: boolean;
   showHomeButton?: boolean;
   actionDescription?: string;
 }
 
 export const IntegrationRequired = ({
   title = 'Integration Required',
-  message = 'You need to become a mentor before you can access this feature.',
-  showBecomeMentorButton = true,
+  message = 'You need to integrate your account before you can access this feature.',
+  showIntegrationPageButtton = true,
   showHomeButton = true,
-  actionDescription = 'This action requires mentor privileges. Please complete your mentor registration to continue.',
+  actionDescription = '',
 }: IntegrationRequiredProps) => {
   const navigate = useAppNavigation();
 
@@ -52,13 +52,13 @@ export const IntegrationRequired = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {showBecomeMentorButton && (
+          {showIntegrationPageButtton && (
             <Button
               onClick={handleIntegration}
               className="flex items-center gap-2"
             >
               <UserPlus className="w-4 h-4" />
-              Integrate your account 
+              Integrate your account
             </Button>
           )}
 

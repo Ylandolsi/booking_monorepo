@@ -32,7 +32,7 @@ public sealed class User : IdentityUser<int>, IEntity
     public string? GoogleEmail { get; private set; } = null;
     public bool IntegratedWithGoogle { get; private set; } = false;
     public string KonnectWalledId { get; private set; } = "";
-    public string TimezoneId { get; private set; } = "Africa/Tunis";
+    public string TimeZoneId { get; private set; } = "Africa/Tunis";
     public string Bio { get; private set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -49,7 +49,7 @@ public sealed class User : IdentityUser<int>, IEntity
         string lastName,
         string emailAddress,
         string profilePictureSource,
-        string timezoneId = "Africa/Tunis")
+        string timeZoneId = "Africa/Tunis")
     {
         if (string.IsNullOrWhiteSpace(slug))
             throw new ArgumentException("Slug cannot be null or empty", nameof(slug));
@@ -66,21 +66,21 @@ public sealed class User : IdentityUser<int>, IEntity
             ProfilePictureUrl = new ProfilePicture(profilePictureSource),
             Slug = slug,
             CreatedAt = DateTime.UtcNow,
-            TimezoneId = timezoneId,
+            TimeZoneId = timeZoneId,
         };
 
 
         return user;
     }
 
-    public Result UpdateTimezone(string timezoneId)
+    public Result UpdateTimezone(string timeZoneId)
     {
-        if (timezoneId == "")
+        if (timeZoneId == "")
         {
-            return Result.Failure(UserErrors.InvalidTimeZone(timezoneId));
+            return Result.Failure(UserErrors.InvalidTimeZone(timeZoneId));
         }
 
-        TimezoneId = timezoneId;
+        TimeZoneId = timeZoneId;
         return Result.Success();
     }
 

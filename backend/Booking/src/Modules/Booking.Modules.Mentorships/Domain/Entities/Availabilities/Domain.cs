@@ -19,7 +19,7 @@ public class Availability : Entity
     public TimeRange TimeRange { get; private set; } = null!;
 
     public bool IsActive { get; private set; }
-    public string TimezoneId { get; private set; } = "Africa/Tunis";
+    public string TimeZoneId { get; private set; } = "Africa/Tunis";
 
 
     // Navigation properties
@@ -35,7 +35,7 @@ public class Availability : Entity
         DayOfWeek dayOfWeek,
         TimeOnly startTime,
         TimeOnly endTime,
-        string timezoneId = "Africa/Tunis")
+        string timeZoneId = "Africa/Tunis")
     {
         var availability = new Availability
         {
@@ -44,7 +44,7 @@ public class Availability : Entity
             DayOfWeek = dayOfWeek,
             TimeRange = new TimeRange(startTime, endTime),
             IsActive = true,
-            TimezoneId = timezoneId,
+            TimeZoneId = timeZoneId,
         };
 
         return availability;

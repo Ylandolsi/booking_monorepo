@@ -19,9 +19,9 @@ import { useBooking, TimeSlots } from '@/features/app/session/booking/book';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { formatDate } from '@/utils';
-import { ErrorComponenet } from '@/components';
+import { ErrorComponenet, IntegrationRequired } from '@/components';
 import { BookingSummary } from '@/features/app/session/booking/book/components';
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useAuth } from '@/features/auth';
 import { toast } from 'sonner';
@@ -64,6 +64,8 @@ function BookingContent() {
     handleBookSession,
   } = useBooking({ mentorSlug, iamTheMentor });
 
+  const [googleRequired, setGoogleRequired] = useState<boolean>(false);
+
   if (iamTheMentor) {
     return (
       <ErrorComponenet
@@ -101,6 +103,12 @@ function BookingContent() {
             : 'Failed to load availability. Please refresh the page.'}
         </AlertDescription>
       </Alert>
+    );
+  }
+
+  if (googleRequired) {
+    return (
+      <IntegrationRequired message="You need to integrate your account with google calendar before you can book a session" />
     );
   }
 
@@ -334,13 +342,10 @@ function BookingContent() {
             onNotesChange={setNotes}
             onBookSession={() => {
               if (!currentUser?.integratedWithGoogle) {
-                toast.error(
-                  "You can't book a session until you integrate your Google Calendar",
-                );
-                nav.goToIntegrations();
+                setGoogleRequired(true);
                 return;
               }
-              handleBookSession();
+              if (!googleRequired) handleBookSession();
             }}
             isBookingInProgress={
               bookSessionMutation.isPending || step === 'confirm'

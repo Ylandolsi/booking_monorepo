@@ -49,11 +49,11 @@ export function NavigationSection(props: {
       },
       badge: '3',
     },
-    {
-      name: 'Search',
-      icon: <Search size={20} />,
-      click: () => nav.goToApp(),
-    },
+    // {
+    //   name: 'Search',
+    //   icon: <Search size={20} />,
+    //   click: () => nav.goToApp(),
+    // },
   ];
   return (
     <div className="mb-6">

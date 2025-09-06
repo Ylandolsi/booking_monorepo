@@ -871,7 +871,7 @@ namespace Booking.Modules.Users.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("slug");
 
-                    b.Property<string>("TimezoneId")
+                    b.Property<string>("TimeZoneId")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("timezone_id");

@@ -34,10 +34,10 @@ internal sealed class SetScheduleCommandHandler(
                     Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
 
-            if (mentor.TimezoneId == "")
+            if (mentor.TimeZoneId == "")
             {
                 var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
-                var timeZone = (userData.TimzoneId == "" || userData.TimzoneId is null) ? command.TimeZoneId : userData.TimzoneId;
+                var timeZone = (userData.TimeZoneId == "" || userData.TimeZoneId is null) ? command.TimeZoneId : userData.TimeZoneId;
                 if (timeZone == "")
                 {
                     timeZone = "Africa/Tunis";
@@ -100,7 +100,7 @@ internal sealed class SetScheduleCommandHandler(
                             dayRequest.DayOfWeek,
                             timeStart,
                             timeEnd,
-                            mentor.TimezoneId)
+                            mentor.TimeZoneId)
                         ;
 
                     context.Availabilities.Add(availability);

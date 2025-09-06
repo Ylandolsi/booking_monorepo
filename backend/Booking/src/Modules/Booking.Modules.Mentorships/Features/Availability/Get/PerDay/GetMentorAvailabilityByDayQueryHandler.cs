@@ -94,7 +94,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                 
                 var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) = ConvertAvailability.Convert(
                     availability.TimeRange.StartTime, availability.TimeRange.EndTime,
-                    query.Date, availability.TimezoneId, query.TimeZoneId);
+                    query.Date, availability.TimeZoneId, query.TimeZoneId);
 
                 var availabilitySlots = CalculateAvailabilitySlots(
                     currentTimeAtMentee,

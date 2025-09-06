@@ -120,12 +120,12 @@ internal sealed class BookSessionCommandHandler(
 
 
         var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
-            mentor.TimezoneId == "" ? "Africa/Tunis" : mentor.TimezoneId);
+            mentor.TimeZoneId == "" ? "Africa/Tunis" : mentor.TimeZoneId);
 
         var requestedDayOfWeek = sessionStartDateTimeTimeZoneMentor.DayOfWeek;
 
         var sessionEndDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionEndDateTimeUtc,
-            mentor.TimezoneId == "" ? "Africa/Tunis" : mentor.TimezoneId);
+            mentor.TimeZoneId == "" ? "Africa/Tunis" : mentor.TimeZoneId);
 
 
         // Check if the time slot is available 
@@ -202,6 +202,12 @@ internal sealed class BookSessionCommandHandler(
             {
                 logger.LogError("Mentee user {MenteeId} not found for payment creation", command.MenteeId);
                 return Result.Failure<BookSessionRepsonse>(Error.NotFound("User.NotFound", "Mentee user not found"));
+            }
+
+            if (String.IsNullOrEmpty(menteeUser.GoogleEmail))
+            {
+                logger.LogError("Mentee {MenteeId} tries to book a session without being  integrated with google calendar ", command.MenteeId);
+                return Result.Failure<BookSessionRepsonse>(Error.NotFound("User.Not.Integrated.Google.Calendar", "Integrate your account with google calendar before booking a session"));
             }
 
             var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
@@ -314,7 +320,7 @@ internal sealed class BookSessionCommandHandler(
                         Location = "Online"
                     };
 
-                // TODO: logic shared with PaymentCOmpleteDdomainEventHandler : centralize it ! 
+                // TODO: logic shared with PaymentCompletedDomainEventHandler : centralize it ! 
                 await googleCalendarService.InitializeAsync(mentor.Id);
 
                 var resEventMentor =
@@ -333,10 +339,6 @@ internal sealed class BookSessionCommandHandler(
 
                 var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
                     resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
-                /*logger.LogDebug("----- google meet link  mentor and mentee  -----");
-                logger.LogDebug(resEventMentee.Value.HangoutLink);
-                logger.LogDebug(resEventMentor.Value.HangoutLink);
-                logger.LogDebug("------------------------------------------------");*/
                 session.Confirm(meetLink);
 
 

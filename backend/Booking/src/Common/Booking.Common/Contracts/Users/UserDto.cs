@@ -5,7 +5,7 @@ public class UserDto
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required ProfilePictureDto ProfilePicture { get; set; }
-    public required string TimzoneId { get; set; }
+    public required string TimeZoneId { get; set; }
     public required string Email { get; set; }
     public required string GoogleEmail { get; set; }
     public required string KonnectWalletId { get; set; }
@@ -13,6 +13,6 @@ public class UserDto
 
 public class ProfilePictureDto
 {
-    public string ProfilePictureLink { get; set; }
-    public string ThumbnailUrlPictureLink { get; set; }
+    public required string ProfilePictureLink { get; set; }
+    public required string ThumbnailUrlPictureLink { get; set; }
 }

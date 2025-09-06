@@ -39,7 +39,7 @@ export function MeetingCard({
 
   return (
     <div className="group border border-border relative flex items-center bg-white hover:bg-gray-50 rounded-2xl shadow-sm hover:shadow-lg  px-6 py-4 space-x-4 transition-all duration-300">
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-secondary/30 to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div className="relative z-10 flex items-center space-x-4 flex-1">
         {/* Enhanced Avatar */}

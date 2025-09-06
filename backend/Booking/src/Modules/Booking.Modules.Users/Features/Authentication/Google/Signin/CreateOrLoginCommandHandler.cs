@@ -86,7 +86,7 @@ internal sealed class CreateOrLoginCommandHandler(
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);
                 if (calendar.IsSuccess)
                 {
-                    user.UpdateTimezone(calendar.Value.TimezoneId);
+                    user.UpdateTimezone(calendar.Value.TimeZoneId);
                 }
                 else
                 {

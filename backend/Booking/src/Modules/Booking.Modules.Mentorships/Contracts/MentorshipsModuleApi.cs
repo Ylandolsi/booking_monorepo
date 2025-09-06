@@ -29,7 +29,7 @@ public class MentorshipsModuleApi(IServiceProvider serviceProvider) : IMentorshi
 
         var dto = new CalendarDto
         {
-            TimezoneId = resultVal.TimeZone,
+            TimeZoneId = resultVal.TimeZone,
         };
         return Result.Success(dto);
     }

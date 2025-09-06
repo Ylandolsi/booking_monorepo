@@ -72,8 +72,9 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
                 ProfilePictureLink = userData.ProfilePictureUrl.ProfilePictureLink,
                 ThumbnailUrlPictureLink = userData.ProfilePictureUrl.ThumbnailUrlPictureLink
             },
-            TimzoneId = userData.TimezoneId,
+            TimeZoneId = userData.TimeZoneId,
             KonnectWalletId = userData.KonnectWalledId,  
+            
         };
     }
 }

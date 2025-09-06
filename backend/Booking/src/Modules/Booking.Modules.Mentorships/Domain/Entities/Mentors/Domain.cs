@@ -21,7 +21,7 @@ public class Mentor : Entity
     public bool IsActive { get; private set; }
     public DateTime? LastActiveAt { get; private set; }
 
-    public string TimezoneId { get; private set; }
+    public string TimeZoneId { get; private set; }
 
 
     // Navigation properties
@@ -45,7 +45,7 @@ public class Mentor : Entity
         string userSlug,
         int bufferTimeMinutes = 15,
         string currency = "USD",
-        string timezoneId = "Africa/Tunis")
+        string timeZoneId = "Africa/Tunis")
     {
         var bufferTimeResult = Duration.Create(bufferTimeMinutes);
         if (bufferTimeResult.IsFailure)
@@ -62,21 +62,21 @@ public class Mentor : Entity
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             LastActiveAt = DateTime.UtcNow,
-            TimezoneId = timezoneId
+            TimeZoneId = timeZoneId
         };
         // TODO : FIND a better approach
         mentor.CreateAllDays();
         return mentor;
     }
 
-    public void UpdateTimezone(string timezoneId)
+    public void UpdateTimezone(string timeZoneId)
     {
-        if (timezoneId == "")
+        if (timeZoneId == "")
         {
             return;
         }
 
-        TimezoneId = timezoneId;
+        TimeZoneId = timeZoneId;
     }
 
     private void CreateAllDays()

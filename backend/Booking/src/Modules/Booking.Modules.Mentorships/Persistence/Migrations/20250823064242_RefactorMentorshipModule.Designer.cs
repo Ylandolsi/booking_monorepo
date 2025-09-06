@@ -92,7 +92,7 @@ namespace Booking.Modules.Mentorships.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("mentor_id");
 
-                    b.Property<string>("TimezoneId")
+                    b.Property<string>("TimeZoneId")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("timezone_id");

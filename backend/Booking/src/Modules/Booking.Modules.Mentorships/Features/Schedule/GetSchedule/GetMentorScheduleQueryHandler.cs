@@ -37,7 +37,7 @@ public class GetMentorScheduleQueryHandler(
                         var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) =
                             ConvertAvailability.Convert(
                                 av.TimeRange.StartTime, av.TimeRange.EndTime,
-                                DateOnly.FromDateTime(DateTime.UtcNow), av.TimezoneId, query.TimeZoneId);
+                                DateOnly.FromDateTime(DateTime.UtcNow), av.TimeZoneId, query.TimeZoneId);
 
                         return new AvailabilityRange
                         {

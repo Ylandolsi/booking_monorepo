@@ -57,7 +57,7 @@ namespace Booking.Modules.Mentorships.Persistence.Migration
                         .HasColumnType("integer")
                         .HasColumnName("mentor_id");
 
-                    b.Property<string>("TimezoneId")
+                    b.Property<string>("TimeZoneId")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("timezone_id");
@@ -194,7 +194,7 @@ namespace Booking.Modules.Mentorships.Persistence.Migration
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_active_at");
 
-                    b.Property<string>("TimezoneId")
+                    b.Property<string>("TimeZoneId")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("timezone_id");
