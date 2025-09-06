@@ -288,7 +288,7 @@ internal sealed class BookSessionCommandHandler(
                 {
                     logger.LogError("Failed to create Konnect payment for session {SessionId}: {Error}",
                         session.Id, paymentResponse.Error.Description);
-
+                    paymentLink = "failed";
 
                     // We could either fail the entire booking or continue with wallet payment only
                     // For now, let's continue and mark session as waiting for payment

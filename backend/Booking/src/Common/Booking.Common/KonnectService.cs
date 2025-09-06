@@ -73,7 +73,7 @@ public class KonnectService(
     )
     {
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
-        
+       
         receiverWallet ??= KonnectOptions.WalletKey;
         var paymentInfo = new
         {
@@ -82,7 +82,7 @@ public class KonnectService(
             amount = amount, // 100 amount = 1$ 
             type = "immediate",
             description = "Pay for session ",
-            // acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR"  },
+            acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR"  },
             lifespan = KonnectOptions.PaymentLifespan,
             checkoutForm = false,
             addPaymentFeesToAmount = true,
@@ -99,7 +99,7 @@ public class KonnectService(
 
 
         var response = await httpClient.PostAsJsonAsync(
-            "payments/init-payment",
+            "v2/payments/init-payment",
             paymentInfo,
             new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
         );
@@ -147,7 +147,7 @@ public class KonnectService(
         {
             
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
-            var response = await httpClient.GetAsync($"payments/{paymentRef}");
+            var response = await httpClient.GetAsync($"v2/payments/{paymentRef}");
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

@@ -44,7 +44,7 @@ public static class Infrastructure
             {
                 // TODO : make this more reselllient
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
-                client.DefaultRequestHeaders.Add("x-api-key",konnectOptions.ApiUrl);
+                client.DefaultRequestHeaders.Add("x-api-key",konnectOptions.ApiKey);
                 // TOdo : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
             })
             .AddStandardResilienceHandler();
@@ -151,15 +151,6 @@ public static class Infrastructure
             configuration.GetSection(FrontendApplicationOptions.FrontEndOptionsKey));
         services.Configure<KonnectOptions>(configuration.GetSection(KonnectOptions.OptionsKey));
         // In your test setup
-        /*services.Configure<KonnectOptions>(options =>
-        {
-            options.ApiUrl = "http://127.0.0.1:8080";
-            options.ApiKey = "mock-api-key";
-            options.WalletKey = "mock-receiver-wallet";
-            options.Webhook = "http://localhost:5000/api/mentorships/payment/webhook";
-            options.PayoutWebhook = "http://localhost:5000/api/mentorships/payout/webhook";
-            options.PaymentLifespan = 10;
-        });*/
         return services;
     }
 
