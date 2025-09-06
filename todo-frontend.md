@@ -1,17 +1,24 @@
 - [ ] Review of toast- especially failures
 - [ ] profile picture fallback and LazyImage
-- [ ] add link to konnect to pay 
-- [ ] add link to konnect to accept payout 
-- [ ] review keys of tanstack 
-- [x] if try to payout and not integrated with konnect : redirect to integrations page 
-- [x] when user integrate with konnect : it should refresh the page to show the new data or rerender the component 
+- [ ] review keys of tanstack
 - [ ] replace all list ids with generated cyrpto ids
 - [ ] make sure of this works : for availability : dont show today's slots when time has passed : example :today at 15 don show me slots from 9 to 14
 - [ ] add : naviagte to mentor or mentee when showing the meets
 - [ ] Booking page: improve mobile version.
-- [x] u cannot see payout page unles integrated with konnect 
 - [ ] check all time in front / back and make sure they are okay : ( check experience , education : explicitly )
-- [ ] make all the code use the same formatDate ! (from utils ) 
-- [ ] covnert date that came from backend as UTC to localTimezone before format it (24 sep 2024 ) ...  
-- [ ] policy management UI react 
-- [ ] group types that realted to the api calls to that api 
+- [ ] make all the code use the same formatDate ! (from utils )
+- [ ] fix timing in getSession : and use ToLocalIsoString everywhere and use the same datetiomeFormat
+- [ ] covnert date that came from backend as UTC to localTimezone before format it (24 sep 2024 ) ...
+- [ ] email verification flow
+- [ ] become mentor backend check
+- [ ] improve the flow of u cant book unless integrated
+- [ ] add this condition to backend as well
+- [x] add link to konnect to pay
+- [x] add link to konnect to accept payout
+- [x] if try to payout and not integrated with konnect : redirect to integrations page
+- [x] when user integrate with konnect : it should refresh the page to show the new data or rerender the component
+
+---
+
+- [ ] policy management UI react
+- [ ] group types that realted to the api calls to that api
