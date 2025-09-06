@@ -16,6 +16,7 @@ public class Session : Entity
     public int MentorId { get; private set; }
 
     public int MenteeId { get; private set; }
+    public string Title { get; private set; } = "";
 
     public Duration Duration { get; private set; } = null!;
 
@@ -57,6 +58,7 @@ public class Session : Entity
         decimal priceAmount,
         string currency,
         DateTime scheduledAt,
+        string title , 
         string note = "",
         int? mentorshipRelationshipId = null
     )
@@ -73,6 +75,7 @@ public class Session : Entity
             ScheduledAt = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Utc),
             RescheduleRequested = false,
             MentorshipRelationshipId = mentorshipRelationshipId,
+            Title = title ,
         };
 
         return session;
@@ -85,6 +88,7 @@ public class Session : Entity
         Duration duration,
         Price price,
         decimal amountPaid,
+        string title ,
         string note = ""
     )
     {
@@ -100,6 +104,7 @@ public class Session : Entity
             CreatedAt = DateTime.UtcNow,
             ScheduledAt = scheduledAt,
             RescheduleRequested = false,
+            Title = title,
         };
 
         return session;

@@ -195,6 +195,7 @@ internal sealed class BookSessionCommandHandler(
         }
 
         string paymentLink = "paid";
+
         try
         {
             var menteeUser = await usersModuleApi.GetUserInfo(command.MenteeId, cancellationToken);
@@ -206,8 +207,24 @@ internal sealed class BookSessionCommandHandler(
 
             if (String.IsNullOrEmpty(menteeUser.GoogleEmail))
             {
-                logger.LogError("Mentee {MenteeId} tries to book a session without being  integrated with google calendar ", command.MenteeId);
-                return Result.Failure<BookSessionRepsonse>(Error.NotFound("User.Not.Integrated.Google.Calendar", "Integrate your account with google calendar before booking a session"));
+                logger.LogError(
+                    "Mentee {MenteeId} tries to book a session without being  integrated with google calendar ",
+                    command.MenteeId);
+                return Result.Failure<BookSessionRepsonse>(Error.NotFound("User.Not.Integrated.Google.Calendar",
+                    "Integrate your account with google calendar before booking a session"));
+            }
+
+            var menteeData = menteeUser;
+            var mentorData = await usersModuleApi.GetUserInfo(mentor.Id, cancellationToken);
+
+
+            if (String.IsNullOrEmpty(mentorData.GoogleEmail))
+            {
+                logger.LogError(
+                    "Mentee {MenteeId} tries to book a session with a mentor  {MentorId } who is not integrated with google calendar ",
+                    command.MenteeId, mentor.Id);
+                return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.Not.Integrated.Google.Calendar",
+                    "Your mentor is not integrated with  google calendar"));
             }
 
             var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
@@ -219,6 +236,7 @@ internal sealed class BookSessionCommandHandler(
                 duration.Value,
                 price.Value,
                 amountToBePaid,
+                command.Title,
                 command.Note ?? string.Empty);
 
             var amountLeftToPay = price.Value.Amount - amountToBePaid;
@@ -296,23 +314,20 @@ internal sealed class BookSessionCommandHandler(
                 var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
 
-                var menteeData = menteeUser;
-                var mentorData = await usersModuleApi.GetUserInfo(mentor.Id, cancellationToken);
-
                 // TODO : maybe add original email as well , 
                 // TODO : show this message on front : if the the event is not found on calendar 
                 // check your email 
                 var emails = new List<string>
                     { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
 
-                var description =
-                    $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} ";
-
+                var description = string.IsNullOrEmpty(command.Note)
+                    ? $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} : {command.Title}"
+                    : command.Note;
 
                 var meetRequest =
                     new MeetingRequest
                     {
-                        Title = "Meetini Session",
+                        Title = $"Meetini Session : {command.Title} ",
                         Description = description,
                         AttendeeEmails = emails,
                         StartTime = sessionStartTime,

@@ -42,7 +42,7 @@ function BookingContent() {
     selectedSlot,
     step,
     notes,
-
+    title,
     // Computed values
     isLoading,
     hasError,
@@ -59,6 +59,7 @@ function BookingContent() {
     setSelectedDate,
     setSelectedSlot,
     // setStep,
+    setTitle,
     setNotes,
     resetBooking,
     handleBookSession,
@@ -340,6 +341,8 @@ function BookingContent() {
             selectedSlot={selectedSlot}
             notes={notes}
             onNotesChange={setNotes}
+            title={title}
+            onTitleChange={setTitle}
             onBookSession={() => {
               if (!currentUser?.integratedWithGoogle) {
                 setGoogleRequired(true);

@@ -7,6 +7,7 @@ public sealed record BookSessionCommand(
     string MentorSlug,
     string MenteeSlug,
     int MenteeId,
+    string Title , 
     string Date, // YYYY-MM-DD,
     string StartTime , 
     string EndTime ,

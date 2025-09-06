@@ -1,5 +1,4 @@
 import { useCallback, useState } from 'react';
-import { useParams } from '@tanstack/react-router';
 import type {
   BookingSummaryType,
   BookSessionRequestType,
@@ -12,7 +11,6 @@ import {
   useMonthlyAvailability,
 } from '@/features/app/session/booking';
 import { useProfile } from '@/features/app/profile';
-import { useAuth } from '@/features/auth';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
 
@@ -21,6 +19,7 @@ export interface BookingHookState {
   selectedSlot: SessionSlotType | null;
   step: BookingStep;
   notes: string;
+  title: string;
 }
 
 export function useBooking({
@@ -35,6 +34,7 @@ export function useBooking({
     selectedSlot: null,
     step: 'select',
     notes: '',
+    title: '',
   });
 
   const mentorInfoQuery = useProfile(mentorSlug!);
@@ -103,12 +103,20 @@ export function useBooking({
     }));
   }, []);
 
+  const setTitle = useCallback((title: string) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      title,
+    }));
+  }, []);
+
   const resetBooking = useCallback(() => {
     setState({
       selectedDate: undefined,
       selectedSlot: null,
       step: 'select',
       notes: '',
+      title: '',
     });
   }, []);
 
@@ -161,6 +169,7 @@ export function useBooking({
       startTime: state.selectedSlot.startTime,
       endTime: state.selectedSlot.endTime,
       notes: state.notes ?? '',
+      title: state.title,
     };
 
     try {
@@ -189,6 +198,7 @@ export function useBooking({
     selectedSlot: state.selectedSlot,
     step: state.step,
     notes: state.notes,
+    title: state.title,
 
     // Computed values
     isLoading,
@@ -208,6 +218,7 @@ export function useBooking({
     setSelectedSlot,
     setStep,
     setNotes,
+    setTitle,
     resetBooking,
     handleBookSession,
   };

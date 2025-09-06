@@ -35,5 +35,10 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
         RuleFor(c => c.Note)
             .MaximumLength(1000)
             .WithMessage("Note cannot exceed 1000 characters.");
+        
+        RuleFor(c => c.
+                Title)
+            .MaximumLength(1000)
+            .WithMessage("Title cannot exceed 1000 characters.");
     }
 }

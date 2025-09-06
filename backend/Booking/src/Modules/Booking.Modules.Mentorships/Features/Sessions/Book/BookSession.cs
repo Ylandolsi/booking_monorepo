@@ -15,6 +15,7 @@ internal sealed class BookSession : IEndpoint
         string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
         string StartTime, // TIMEONLY  
         string EndTime,
+        string Title , 
         string TimeZoneId = "Africa/Tunis",
         string? Note = "");
 
@@ -33,6 +34,7 @@ internal sealed class BookSession : IEndpoint
                     request.MentorSlug,
                     menteeSlug,
                     menteeId,
+                    request.Title,
                     request.Date,
                     request.StartTime,
                     request.EndTime,

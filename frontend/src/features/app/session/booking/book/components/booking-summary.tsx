@@ -18,11 +18,19 @@ import {
   Button,
   Textarea,
   Label,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DrawerDialog,
+  Input, // Added Input import
 } from '@/components/ui';
 import { cn } from '@/utils';
 import type { BookingSummaryType } from '../types/booking-types';
-import type { SessionSlotType } from '../../availability/types/availability-types';
 import { useState } from 'react';
+import type { SessionSlotType } from '@/features/app/session/booking/shared';
 
 interface BookingSummaryProps {
   booking: BookingSummaryType | null;
@@ -30,6 +38,9 @@ interface BookingSummaryProps {
   selectedSlot: SessionSlotType | null;
   notes: string;
   onNotesChange: (notes: string) => void;
+  title: string;
+  onTitleChange: (title: string) => void; // Fixed parameter name
+
   onBookSession: () => void;
   isBookingInProgress: boolean;
   isBookingDisabled: boolean;
@@ -42,12 +53,16 @@ export function BookingSummary({
   selectedSlot,
   notes,
   onNotesChange,
+  title,
+  onTitleChange,
   onBookSession,
   isBookingInProgress,
   isBookingDisabled,
   className,
 }: BookingSummaryProps) {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false); // Added state for title editing
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const formatDate = (date: Date): string => {
     return date.toLocaleDateString('en-US', {
@@ -89,6 +104,15 @@ export function BookingSummary({
       .map((n) => n[0])
       .join('')
       .toUpperCase();
+  };
+
+  const handleBookSessionClick = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmBooking = () => {
+    setIsConfirmModalOpen(false);
+    onBookSession();
   };
 
   if (!booking || !selectedDate || !selectedSlot) {
@@ -256,6 +280,8 @@ export function BookingSummary({
             </div>
           </div>
 
+          {/* Session Title Section */}
+
           {/* Notes Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -304,7 +330,7 @@ export function BookingSummary({
           <Button
             className="w-full"
             size="lg"
-            onClick={onBookSession}
+            onClick={handleBookSessionClick}
             disabled={isBookingDisabled || isBookingInProgress}
           >
             {isBookingInProgress ? (
@@ -329,6 +355,100 @@ export function BookingSummary({
           </div>
         </CardContent>
       </Card>
+
+      {/* Confirmation Modal */}
+      <DrawerDialog
+        open={isConfirmModalOpen}
+        onOpenChange={setIsConfirmModalOpen}
+        title="Confirm Booking"
+        description="Please confirm the session title and notes before proceeding with the booking."
+      >
+        <div className="py-4 space-y-6">
+          {/* Session Title in Modal */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Session Title
+              </Label>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditingTitle(!isEditingTitle)}
+              >
+                <Edit3 className="w-3 h-3 mr-1" />
+                {isEditingTitle ? 'Save' : 'Edit'}
+              </Button>
+            </div>
+
+            {isEditingTitle ? (
+              <Input
+                placeholder="Enter a title for your session..."
+                value={title}
+                onChange={(e) => onTitleChange(e.target.value)}
+              />
+            ) : (
+              <div className="p-3 bg-gray-50 rounded-lg min-h-[40px] flex items-center">
+                <p className="text-sm text-muted-foreground">
+                  {title ||
+                    'No title added. Click Edit to add a session title.'}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Session Notes in Modal */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <MessageCircle className="w-4 h-4" />
+                Session Notes (Optional)
+              </Label>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditingNotes(!isEditingNotes)}
+              >
+                <Edit3 className="w-3 h-3 mr-1" />
+                {isEditingNotes ? 'Save' : 'Edit'}
+              </Button>
+            </div>
+
+            {isEditingNotes ? (
+              <Textarea
+                placeholder="Add any specific topics you'd like to discuss or questions you have..."
+                value={notes}
+                onChange={(e) => onNotesChange(e.target.value)}
+                className="min-h-[80px] resize-none"
+                maxLength={500}
+              />
+            ) : (
+              <div className="p-3 bg-gray-50 rounded-lg min-h-[80px] flex items-center">
+                <p className="text-sm text-muted-foreground">
+                  {notes ||
+                    "No specific notes added. Click Edit to add topics you'd like to discuss."}
+                </p>
+              </div>
+            )}
+            {isEditingNotes && (
+              <p className="text-xs text-muted-foreground">
+                {notes.length}/500 characters
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setIsConfirmModalOpen(false)}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmBooking} disabled={isBookingInProgress}>
+            Confirm Booking
+          </Button>
+        </div>
+      </DrawerDialog>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 - [ ] verify the backend cron job for approved payout and not complete back to pending ! ( test it ) !
-- [ ] Mentee cannot book unless integrated with Google
 - [ ] Add resiliency to background jobs / Konnect
 - [ ] Google refresh token config
 - [ ] Add title to the meeting by the mentee
@@ -18,7 +17,7 @@
 - [ ] remove all logDebug !
 - [ ] add fallback objects that contain defaults for missing fields.
 - [ ] Aim for clear telemetry and alerting around webhook failures and retries.
-- [ ] make the price entity consistent ?
+- [ ] make the price entity consistent ? and duration
 
 ---
 
