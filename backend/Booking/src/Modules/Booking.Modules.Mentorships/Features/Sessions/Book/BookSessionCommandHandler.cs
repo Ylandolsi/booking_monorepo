@@ -1,6 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.Contracts.Users;
+using Booking.Common.RealTime;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
@@ -18,6 +19,7 @@ internal sealed class BookSessionCommandHandler(
     MentorshipsDbContext context,
     KonnectService konnectService,
     IUsersModuleApi usersModuleApi,
+    NotificationService notificationService,
     IUnitOfWork unitOfWork,
     GoogleCalendarService googleCalendarService,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>
@@ -289,6 +291,8 @@ internal sealed class BookSessionCommandHandler(
                     logger.LogError("Failed to create Konnect payment for session {SessionId}: {Error}",
                         session.Id, paymentResponse.Error.Description);
                     paymentLink = "failed";
+                    
+                    // TODO : handle this carefully 
 
                     // We could either fail the entire booking or continue with wallet payment only
                     // For now, let's continue and mark session as waiting for payment
@@ -360,7 +364,7 @@ internal sealed class BookSessionCommandHandler(
                 var escrow = new Escrow(price.Value.Amount, session.Id, mentor.Id);
                 await context.Escrows.AddAsync(escrow, cancellationToken);
 
-
+                await SendNotificationsToUsers(session , menteeData.Slug);
                 logger.LogInformation("Session {SessionId} fully paid from wallet and confirmed", session.Id);
             }
 
@@ -382,6 +386,52 @@ internal sealed class BookSessionCommandHandler(
 
             return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.BookingFailed",
                 "Failed to book session"));
+        }
+    }
+    private async Task SendNotificationsToUsers( Session session , string menteeSlug )
+    {
+        try
+        {
+            
+            
+            // Notification for mentee
+            var menteeNotification = new NotificationDto(
+                Id: Guid.NewGuid().ToString(),
+                Type: "session_confirmed",
+                Title: "Session Confirmed! 🎉",
+                Message: $"Your mentorship session has been confirmed and paid. You'll receive the meeting link soon.",
+                CreatedAt: DateTime.UtcNow
+            );
+            // TODO : needs to be cached 
+            
+            await notificationService.SendNotificationAsync(menteeSlug, menteeNotification);
+
+
+            /*
+                // Notification for mentor
+                var mentorNotification = new NotificationDto(
+                    Id: Guid.NewGuid().ToString(),
+                    Type: "session_booked",
+                    Title: "New Session Booked! 📅",
+                    Message: $"A new mentorship session has been booked and confirmed. Check your calendar for details.",
+                    CreatedAt: DateTime.UtcNow,
+                    Data: new
+                    {
+                        SessionId = session.Id,
+                        SessionDate = session.Date,
+                        SessionTime = session.StartTime,
+                        Action = "view_session"
+                    }
+                );
+
+                await notificationService.SendNotificationAsync(session.MentorId, mentorNotification);
+            */
+
+            logger.LogInformation("Real-time notifications sent for session {SessionId}", session.Id);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send real-time notifications for session {SessionId}", session.Id);
         }
     }
 }

@@ -1,9 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Booking.Api;
 using Booking.Api.Extensions;
 using Booking.Api.Services;
 using Booking.Common;
+using Booking.Common.RealTime;
 using Booking.Modules.Mentorships;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.RecurringJobs;
@@ -16,7 +18,9 @@ using Booking.Modules.Users.RecurringJobs;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -49,6 +53,14 @@ builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
 builder.Services.AddEmailSender(builder.Configuration);
+
+
+//builder.Services.TryAddSingleton(typeof(IUserIdProvider), typeof(SignalRCustomUserIdProvider));
+builder.Services.AddSignalR();
+
+
+
+builder.Services.AddScoped<NotificationService>();
 
 
 builder.Services.UseHangFire(builder.Configuration);
@@ -135,6 +147,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapEndpoints();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
+
 await app.RunAsync();
 
 

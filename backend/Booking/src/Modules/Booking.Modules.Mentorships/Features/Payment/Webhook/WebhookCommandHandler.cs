@@ -1,21 +1,23 @@
+using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
+using Booking.Common.RealTime;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.BackgroundJobs.Payment;
-using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Domain.Entities.Payments;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
-using Booking.Modules.Mentorships.Domain.ValueObjects;
 using Booking.Modules.Mentorships.Persistence;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Payment;
+namespace Booking.Modules.Mentorships.Features.Payment.Webhook;
 
 public class WebhookCommandHandler(
     MentorshipsDbContext context,
     KonnectService konnectService,
+    NotificationService notificationService,
     IBackgroundJobClient backgroundJobClient,
+    IUsersModuleApi usersModuleApi ,
     ILogger<WebhookCommandHandler> logger) : ICommandHandler<WebhookCommand>
 {
     // TODO : EMAIL VERIFICATION 
@@ -87,6 +89,58 @@ public class WebhookCommandHandler(
                 amountWithFees = successfulTransaction.amount;
             }
         }*/
+        
+        // Send real-time notifications
+        await SendNotificationsToUsers(session);
         return Result.Success();
     }
+    private async Task SendNotificationsToUsers(Session session)
+    {
+        try
+        {
+            
+            
+            // Notification for mentee
+            var menteeNotification = new NotificationDto(
+                Id: Guid.NewGuid().ToString(),
+                Type: "session_confirmed",
+                Title: "Session Confirmed! 🎉",
+                Message: $"Your mentorship session has been confirmed and paid. You'll receive the meeting link soon.",
+                CreatedAt: DateTime.UtcNow
+            );
+            // TODO : needs to be cached 
+            var menteeData = await usersModuleApi.GetUserInfo(session.MenteeId, CancellationToken.None);
+            
+            await notificationService.SendNotificationAsync(menteeData.Slug, menteeNotification);
+
+
+            /*
+                // Notification for mentor
+                var mentorNotification = new NotificationDto(
+                    Id: Guid.NewGuid().ToString(),
+                    Type: "session_booked",
+                    Title: "New Session Booked! 📅",
+                    Message: $"A new mentorship session has been booked and confirmed. Check your calendar for details.",
+                    CreatedAt: DateTime.UtcNow,
+                    Data: new
+                    {
+                        SessionId = session.Id,
+                        SessionDate = session.Date,
+                        SessionTime = session.StartTime,
+                        Action = "view_session"
+                    }
+                );
+
+                await notificationService.SendNotificationAsync(session.MentorId, mentorNotification);
+            */
+
+            logger.LogInformation("Real-time notifications sent for session {SessionId}", session.Id);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send real-time notifications for session {SessionId}", session.Id);
+        }
+    }
 }
+
+

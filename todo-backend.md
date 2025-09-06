@@ -40,3 +40,4 @@
 - [ ] add timezone in the frontend for each request
 - [ ] Multiple session duration options
 - [ ] make the app extensible and can replace any payment gateway
+  services.TryAddSingleton(typeof(IUserIdProvider), typeof(DefaultUserIdProvider));

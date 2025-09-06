@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Payment;
+namespace Booking.Modules.Mentorships.Features.Payment.Webhook;
 
 public class Webhook : IEndpoint
 {

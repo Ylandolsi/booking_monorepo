@@ -63,6 +63,7 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
 
         return new UserDto
         {
+            Slug = userData.Slug ,
             FirstName = userData.Name.FirstName,
             LastName = userData.Name.LastName,
             Email = userData.Email,

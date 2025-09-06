@@ -40,7 +40,7 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
             {
                 Subject = new ClaimsIdentity(
                 [
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                    new Claim(ClaimsIdentifiers.UserId, user.Id.ToString()),
                     new Claim(ClaimsIdentifiers.Email, user.Email!),
                     new Claim(ClaimsIdentifiers.IsEmailVerified, user.EmailConfirmed.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

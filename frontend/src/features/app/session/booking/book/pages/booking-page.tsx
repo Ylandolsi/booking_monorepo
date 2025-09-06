@@ -21,9 +21,13 @@ import { useAppNavigation } from '@/hooks/use-navigation';
 import { formatDate } from '@/utils';
 import { ErrorComponenet, IntegrationRequired } from '@/components';
 import { BookingSummary } from '@/features/app/session/booking/book/components';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useAuth } from '@/features/auth';
+import {
+  signalRService,
+  type NotificationSignalR,
+} from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
 
 function BookingContent() {
@@ -66,6 +70,48 @@ function BookingContent() {
   } = useBooking({ mentorSlug, iamTheMentor });
 
   const [googleRequired, setGoogleRequired] = useState<boolean>(false);
+
+  const sessionConfirmedMentee = (data: NotificationSignalR) => {
+    toast.success(data.title, {
+      description: data.message,
+      duration: 5000,
+      action: {
+        label: 'View',
+        onClick: () => {
+          nav.goToMeets();
+        },
+      },
+    });
+  };
+
+  // Initialize SignalR connection
+  useEffect(() => {
+    if (currentUser != null) {
+      // needs to be auth
+      // Start connection
+      signalRService
+        .startConnection(currentUser.slug)
+        .catch((error) =>
+          console.error('Failed to establish SignalR connection:', error),
+        );
+
+      // Register callback
+      signalRService.addCallback('session_confirmed', sessionConfirmedMentee);
+
+      // Cleanup on unmount
+      return () => {
+        signalRService.removeCallback(
+          'session_confirmed',
+          sessionConfirmedMentee,
+        );
+        signalRService
+          .stopConnection(currentUser.slug)
+          .catch((error) =>
+            console.error('Error stopping SignalR connection:', error),
+          );
+      };
+    }
+  }, [currentUser]);
 
   if (iamTheMentor) {
     return (
@@ -115,66 +161,64 @@ function BookingContent() {
 
   // Success page
   if (step === 'success') {
-    return (
-      <div className="container mx-auto max-w-4xl">
-        <div className="text-center space-y-6">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <CheckCircle className="w-10 h-10 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Session Booked Successfully!
-            </h1>
-            <p className="text-lg text-gray-600">
-              Your mentoring session has been confirmed. You'll receive an email
-              with the meeting details shortly.
-            </p>
-          </div>
-
-          {bookingSummary && selectedDate && selectedSlot && (
-            <div className="max-w-md mx-auto">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Mentor:</span>
-                      <span className="text-sm font-medium">
-                        {bookingSummary.mentor.name}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Date:</span>
-                      <span className="text-sm font-medium">
-                        {formatDate(selectedDate)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Time:</span>
-                      <span className="text-sm font-medium">
-                        {selectedSlot.startTime}
-                      </span>
-                    </div>
-                    <div className="flex justify-between border-t pt-2">
-                      <span className="font-medium">Total:</span>
-                      <span className="font-bold text-green-600">
-                        ${bookingSummary.total}
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button onClick={() => nav.goToApp()}>View My Bookings</Button>
-            <Button variant="outline" onClick={resetBooking}>
-              Book Another Session
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    // return (
+    //   <div className="container mx-auto max-w-4xl">
+    //     <div className="text-center space-y-6">
+    //       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+    //         <CheckCircle className="w-10 h-10 text-green-600" />
+    //       </div>
+    //       <div>
+    //         <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    //           Session Booked Successfully!
+    //         </h1>
+    //         <p className="text-lg text-gray-600">
+    //           Your mentoring session has been confirmed. You'll receive an email
+    //           with the meeting details shortly.
+    //         </p>
+    //       </div>
+    //       {bookingSummary && selectedDate && selectedSlot && (
+    //         <div className="max-w-md mx-auto">
+    //           <Card>
+    //             <CardContent className="pt-6">
+    //               <div className="space-y-3">
+    //                 <div className="flex justify-between">
+    //                   <span className="text-sm text-gray-600">Mentor:</span>
+    //                   <span className="text-sm font-medium">
+    //                     {bookingSummary.mentor.name}
+    //                   </span>
+    //                 </div>
+    //                 <div className="flex justify-between">
+    //                   <span className="text-sm text-gray-600">Date:</span>
+    //                   <span className="text-sm font-medium">
+    //                     {formatDate(selectedDate)}
+    //                   </span>
+    //                 </div>
+    //                 <div className="flex justify-between">
+    //                   <span className="text-sm text-gray-600">Time:</span>
+    //                   <span className="text-sm font-medium">
+    //                     {selectedSlot.startTime}
+    //                   </span>
+    //                 </div>
+    //                 <div className="flex justify-between border-t pt-2">
+    //                   <span className="font-medium">Total:</span>
+    //                   <span className="font-bold text-green-600">
+    //                     ${bookingSummary.total}
+    //                   </span>
+    //                 </div>
+    //               </div>
+    //             </CardContent>
+    //           </Card>
+    //         </div>
+    //       )}
+    //       <div className="flex flex-col sm:flex-row gap-4 justify-center">
+    //         <Button onClick={() => nav.goToApp()}>View My Bookings</Button>
+    //         <Button variant="outline" onClick={resetBooking}>
+    //           Book Another Session
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
   }
 
   // Error page
