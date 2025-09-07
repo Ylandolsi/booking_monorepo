@@ -34,7 +34,7 @@ Monitor memory consumption with large batch operations.
 
 - [ASP\.NET Core Integration Testing Best Practices](https://antondevtips.com/blog/asp-net-core-integration-testing-best-practises)
 - [Overriding Configuration in ASP\.NET Core Integration Tests](https://blog.markvincze.com/overriding-configuration-in-asp-net-core-integration-tests/)
-
+- [check this type of init ](https://github.com/iayti/CleanArchitecture/blob/master/tests/CleanArchitecture.Application.IntegrationTests/Testing.cs)
 ---
 
 ---
