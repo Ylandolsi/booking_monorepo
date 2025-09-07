@@ -1,7 +1,7 @@
 import { scheduleQueryKeys } from '@/features/app/mentor/schedule/api/schedule-keys';
 import type { DailySchedule } from '@/features/app/mentor/schedule/types';
 import { api } from '@/lib';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { useMutation } from '@tanstack/react-query';
 
 // request :

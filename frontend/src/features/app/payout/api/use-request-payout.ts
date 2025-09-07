@@ -1,14 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api-client';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { api } from '@/lib/api/api-client';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
 import { WalletKeys } from '@/features/shared';
 
 type PayoutRequestData = {
   Amount: number;
-}
-
-
+};
 
 export const useRequestPayout = () => {
   return useMutation({

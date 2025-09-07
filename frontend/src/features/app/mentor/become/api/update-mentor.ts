@@ -1,7 +1,7 @@
 import { api } from '@/lib';
 import { useMutation } from '@tanstack/react-query';
 import type { Mentor } from '@/features/app/mentor/become/types';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { mentorQueryKeys } from '@/features/app/mentor/become/api';
 import { useUser } from '@/features/auth';
 

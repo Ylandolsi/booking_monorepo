@@ -5,7 +5,7 @@ import {
   type UseQueryOptions,
   type UseQueryResult,
 } from '@tanstack/react-query';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import type {
   DayAvailabilityType,
   MonthAvailabilityType,

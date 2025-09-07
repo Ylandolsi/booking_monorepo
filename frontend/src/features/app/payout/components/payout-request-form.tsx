@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Button,
-  Input,
-  Alert,
-} from '@/components';
+import { Button, Input, Alert } from '@/components';
 import { DollarSign, AlertTriangle } from 'lucide-react';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/cn';
 
 interface PayoutRequestFormProps {
   availableBalance: number;
@@ -33,16 +29,16 @@ export function PayoutRequestForm({
 
     // Remove any non-numeric characters except decimal point
     const cleanValue = value.replace(/[^\d.]/g, '');
-    
+
     // Ensure only one decimal point
     const parts = cleanValue.split('.');
     if (parts.length > 2) return;
-    
+
     // Limit to 2 decimal places
     if (parts[1] && parts[1].length > 2) {
       parts[1] = parts[1].substring(0, 2);
     }
-    
+
     const formattedValue = parts.join('.');
     setAmount(formattedValue);
 
@@ -59,7 +55,9 @@ export function PayoutRequestForm({
     }
 
     if (numericValue > availableBalance) {
-      setError(`Amount exceeds available balance of $${availableBalance.toFixed(2)}`);
+      setError(
+        `Amount exceeds available balance of $${availableBalance.toFixed(2)}`,
+      );
       return;
     }
 
@@ -68,10 +66,14 @@ export function PayoutRequestForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const numericAmount = parseFloat(amount);
-    
-    if (isNaN(numericAmount) || numericAmount < 20 || numericAmount > availableBalance) {
+
+    if (
+      isNaN(numericAmount) ||
+      numericAmount < 20 ||
+      numericAmount > availableBalance
+    ) {
       return;
     }
 
@@ -80,15 +82,20 @@ export function PayoutRequestForm({
 
   const isValidAmount = () => {
     const numericAmount = parseFloat(amount);
-    return !isNaN(numericAmount) && 
-           numericAmount >= 20 && 
-           numericAmount <= availableBalance && 
-           !error;
+    return (
+      !isNaN(numericAmount) &&
+      numericAmount >= 20 &&
+      numericAmount <= availableBalance &&
+      !error
+    );
   };
 
-  const suggestedAmounts = [20, 50, 100, Math.min(availableBalance, 500)].filter(
-    (suggested) => suggested <= availableBalance && suggested >= 20
-  );
+  const suggestedAmounts = [
+    20,
+    50,
+    100,
+    Math.min(availableBalance, 500),
+  ].filter((suggested) => suggested <= availableBalance && suggested >= 20);
 
   return (
     <div className="space-y-6">
@@ -131,7 +138,7 @@ export function PayoutRequestForm({
               onChange={(e) => handleAmountChange(e.target.value)}
               className={cn(
                 'pl-8',
-                error && 'border-destructive focus-visible:border-destructive'
+                error && 'border-destructive focus-visible:border-destructive',
               )}
               disabled={isLoading}
             />
@@ -169,7 +176,9 @@ export function PayoutRequestForm({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => handleAmountChange(availableBalance.toString())}
+                  onClick={() =>
+                    handleAmountChange(availableBalance.toString())
+                  }
                   disabled={isLoading}
                   className="text-xs"
                 >

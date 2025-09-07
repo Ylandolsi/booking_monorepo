@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/cn';
 
 export type UserStatus =
   | 'online'

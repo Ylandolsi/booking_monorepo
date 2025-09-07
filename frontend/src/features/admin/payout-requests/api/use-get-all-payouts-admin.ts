@@ -4,7 +4,7 @@ import {
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { AdminPayoutKeys } from './admin-payout-keys';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { api } from '@/lib';
 import { toLocalISOString } from '@/utils/format';
 
@@ -39,7 +39,6 @@ export const useGetAllPayoutsAdmin = (
   timeZoneId?: string,
   overrides?: Partial<UseQueryOptions<Array<AdminPayoutResponse>, Error>>,
 ): UseQueryResult<Array<AdminPayoutResponse>, Error> => {
-  
   const normalizedUpToDate = upToDate ? toLocalISOString(upToDate) : undefined;
 
   const dateOnly = normalizedUpToDate?.slice(0, 10); // used for cache

@@ -4,12 +4,17 @@ import {
   type UseQueryResult,
 } from '@tanstack/react-query';
 import { AdminPayoutKeys } from './admin-payout-keys';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { api } from '@/lib';
 import type { AdminPayoutResponse } from './use-get-all-payouts-admin';
 
-const getPayoutDetailsAdmin = async (payoutId: number): Promise<AdminPayoutResponse> => {
-  const endpoint = MentorshipEndpoints.Payouts.Admin.GetDetailled.replace('{payoutId}', payoutId.toString());
+const getPayoutDetailsAdmin = async (
+  payoutId: number,
+): Promise<AdminPayoutResponse> => {
+  const endpoint = MentorshipEndpoints.Payouts.Admin.GetDetailled.replace(
+    '{payoutId}',
+    payoutId.toString(),
+  );
   return await api.get<AdminPayoutResponse>(endpoint);
 };
 

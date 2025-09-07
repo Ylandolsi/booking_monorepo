@@ -1,5 +1,5 @@
-import { buildUrlWithParams } from '../../../lib/api-client';
-import * as Endpoints from '@/lib/user-endpoints.ts';
+import { buildUrlWithParams } from '../../../lib/api/api-client';
+import * as Endpoints from '@/lib/api/user-endpoints';
 import { env } from '@/config/env';
 import { routeBuilder } from '@/config';
 

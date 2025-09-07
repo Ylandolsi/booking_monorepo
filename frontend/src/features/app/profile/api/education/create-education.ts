@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/user-endpoints.ts';
+import * as Endpoints from '@/lib/api/user-endpoints';
 import type { EducationType } from '@/features/app/profile';
 import { useMutation } from '@tanstack/react-query';
 import { authQueryKeys } from '@/features/auth';

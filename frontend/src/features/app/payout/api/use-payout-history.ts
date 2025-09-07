@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
 import type { PayoutType } from '@/features/app/payout/types/payout';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { api } from '@/lib';
 
 const getHistoryPayout = async (): Promise<Array<PayoutType>> => {

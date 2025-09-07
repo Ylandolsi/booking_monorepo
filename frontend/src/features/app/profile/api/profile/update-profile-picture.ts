@@ -2,7 +2,7 @@ import { api } from '@/lib';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ProfilePictureType } from '@/features/app/profile/types';
 import { authQueryKeys } from '@/features/auth';
-import * as Endpoints from '@/lib/user-endpoints.ts';
+import * as Endpoints from '@/lib/api/user-endpoints';
 
 async function updateProfilePicture(
   body: FormData,

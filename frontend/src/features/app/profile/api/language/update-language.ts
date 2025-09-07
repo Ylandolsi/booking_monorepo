@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/user-endpoints.ts';
+import * as Endpoints from '@/lib/api/user-endpoints';
 import { useMutation } from '@tanstack/react-query';
 
 export const updateLanguage = async (languageIds: number[]) => {

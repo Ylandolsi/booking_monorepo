@@ -1,6 +1,6 @@
 import { api } from '@/lib';
 import { useMutation } from '@tanstack/react-query';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints.ts';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints.ts';
 import { bookingQueryKeys } from './booking-keys.ts';
 import type { BookSessionRequestType } from '@/features/app/session/booking/book/types/booking-types.ts';
 

@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/cn';
 import logo from '@/assets/logo.svg';
 
 export const Logo = ({ className }: { className?: string }) => {

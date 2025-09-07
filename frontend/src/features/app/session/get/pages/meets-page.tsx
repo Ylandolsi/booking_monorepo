@@ -17,27 +17,19 @@ export function MeetsPage() {
   const [meetingLink, setMeetingLink] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
   const [upToDate, setUpToDate] = useState<Date | undefined>(undefined);
-  const [selectedDuration, setSelectedDuration] = useState<
-    keyof typeof toDate | undefined
-  >(undefined);
+  const [selectedDuration, setSelectedDuration] = useState<keyof typeof toDate | undefined>(undefined);
+
+  const { upToDate, timeFilter, setTimeStatus } = useTimeFilter();
+
   const timeZoneId = GenerateTimeZoneId();
   // for now we didnt specify limit for the sessions so its undefined !
-  const {
-    data: sessions,
-    error,
-    isLoading,
-  } = useGetSessions(upToDate, timeZoneId);
+  const { data: sessions, error, isLoading } = useGetSessions(upToDate, timeZoneId);
 
   if (isLoading) {
     return <LoadingState type="spinner" message="Loading sessions ..." />;
   }
   if (error) {
-    return (
-      <ErrorComponenet
-        title="Failed to fetch sessions"
-        message="Error happened while fetching sessions"
-      />
-    );
+    return <ErrorComponenet title="Failed to fetch sessions" message="Error happened while fetching sessions" />;
   }
 
   const handleCopy = () => {
@@ -50,20 +42,14 @@ export function MeetsPage() {
     <div>
       {/* Main Content */}
       <h1 className="text-3xl font-bold mb-2">Meetings</h1>
-      <p className="text-muted-foreground mb-6">
-        Manage your meetings and schedule new ones.
-      </p>
+      <p className="text-muted-foreground mb-6">Manage your meetings and schedule new ones.</p>
 
       {/* Meeting Link */}
       <div className="mb-8">
         <Label className="block font-semibold">
           Meeting Link
           <div className="relative mt-2">
-            <Input
-              type="text"
-              value={meetingLink}
-              onChange={(e) => setMeetingLink(e.target.value)}
-            />
+            <Input type="text" value={meetingLink} onChange={(e) => setMeetingLink(e.target.value)} />
             <button
               type="button"
               onClick={handleCopy}
@@ -72,11 +58,7 @@ export function MeetsPage() {
             >
               <Copy size={20} />
             </button>
-            {copied && (
-              <span className="absolute top-2 right-12 text-primary text-sm">
-                Copied!
-              </span>
-            )}
+            {copied && <span className="absolute top-2 right-12 text-primary text-sm">Copied!</span>}
           </div>
         </Label>
       </div>
@@ -84,76 +66,51 @@ export function MeetsPage() {
       {/* Upcoming Meetings */}
       <section>
         <div className="flex flex-col gap-4  mb-4">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Upcoming Meetings
-          </h2>
+          <h2 className="text-2xl font-semibold text-gray-900">Upcoming Meetings</h2>
           {/* TODO : for future enable this filter */}
           <div className="flex space-x-2">
-            {(Object.keys(toDate) as Array<keyof typeof toDate>).map(
-              (filter) => (
-                <Button
-                  variant="ghost"
-                  key={filter}
-                  className={`px-4 py-1 rounded-full text-sm ${
-                    filter === selectedDuration
-                      ? 'bg-muted-foreground/20 font-medium'
-                      : 'text-muted-foreground'
-                  }`}
-                  onClick={() => {
-                    const value = toDate[filter];
-                    const date = new Date();
-                    date.setDate(date.getDate() + value);
-                    setUpToDate(date);
-                    setSelectedDuration(filter);
-                  }}
-                >
-                  {filter}
-                </Button>
-              ),
-            )}
+            {(Object.keys(toDate) as Array<keyof typeof toDate>).map((filter) => (
+              <Button
+                variant="ghost"
+                key={filter}
+                className={`px-4 py-1 rounded-full text-sm ${
+                  filter === selectedDuration ? 'bg-muted-foreground/20 font-medium' : 'text-muted-foreground'
+                }`}
+                onClick={() => {
+                  const value = toDate[filter];
+                  const date = new Date();
+                  date.setDate(date.getDate() + value);
+                  setUpToDate(date);
+                  setSelectedDuration(filter);
+                }}
+              >
+                {filter}
+              </Button>
+            ))}
           </div>
         </div>
         <div className="space-y-4">
           {sessions?.map((session) => {
-            let atendeeName =
-              [session.mentorFirstName, session.mentorLastName]
-                .filter(Boolean)
-                .join(' ') || 'Mentor';
+            let atendeeName = [session.mentorFirstName, session.mentorLastName].filter(Boolean).join(' ') || 'Mentor';
 
             let atendeeProfilePic =
               session.mentorProfilePicture ??
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                atendeeName,
-              )}&background=FFB085&co lor=fff&size=64`;
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(atendeeName)}&background=FFB085&co lor=fff&size=64`;
 
             if (session.iamMentor) {
-              atendeeName =
-                [session.menteeFirstName, session.menteeLastName]
-                  .filter(Boolean)
-                  .join(' ') || 'Mentee';
+              atendeeName = [session.menteeFirstName, session.menteeLastName].filter(Boolean).join(' ') || 'Mentee';
 
               atendeeProfilePic =
                 session.menteeProfilePicture ??
                 // TODO : add fallback for non profile picture
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                  atendeeName,
-                )}&background=FFB085&co lor=fff&size=64`;
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(atendeeName)}&background=FFB085&co lor=fff&size=64`;
             }
 
             const title = `Session with ${atendeeName}`;
             const link = session.googleMeetLink ?? '';
             const time = formatISODateTime(session.scheduledAt);
 
-            return (
-              <MeetingCard
-                key={session.id}
-                title={title}
-                link={link}
-                time={time}
-                avatar={atendeeProfilePic}
-                setMeetingLink={setMeetingLink}
-              />
-            );
+            return <MeetingCard key={session.id} title={title} link={link} time={time} avatar={atendeeProfilePic} setMeetingLink={setMeetingLink} />;
           })}
         </div>
       </section>

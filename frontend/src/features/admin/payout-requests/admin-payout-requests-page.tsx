@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useTimeFilter } from '@/hooks';
 import {
   Button,
   Card,
@@ -25,40 +25,24 @@ import {
 } from '@/components';
 import { Filter, Eye, Check, X } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
-import {
-  useGetAllPayoutsAdmin,
-  useApprovePayoutAdmin,
-  useRejectPayoutAdmin,
-  type AdminPayoutResponse,
-} from './api';
-import {
-  type PayoutStatus,
-  type TimeFilter,
-  mapPayoutStatus,
-} from './types/admin-payout';
+import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin, type AdminPayoutResponse } from './api';
+import { type PayoutStatus, type TimeFilter, mapPayoutStatus } from './types/admin-payout';
 import { formatDate } from '@/utils/format';
 
 export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
-  const [upToDate, setUpToDate] = useState<Date | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<PayoutStatus | 'all'>('all');
-  const [timeFilter, setTimeFilter] = useState<TimeFilter>('All');
+
+  const { upToDate, timeFilter, setTimeStatus } = useTimeFilter();
+
   // Dialog states
   const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] =
-    useState<AdminPayoutResponse | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<AdminPayoutResponse | null>(null);
 
   // API hooks
-  const {
-    data: payoutRequests,
-    error,
-    isLoading,
-  } = useGetAllPayoutsAdmin(
-    statusFilter === 'all' ? undefined : statusFilter,
-    upToDate,
-    undefined,
-  );
+  const { data: payoutRequests, error, isLoading } = useGetAllPayoutsAdmin(statusFilter === 'all' ? undefined : statusFilter, upToDate, undefined);
+
   const approvePayoutMutation = useApprovePayoutAdmin();
   const rejectPayoutMutation = useRejectPayoutAdmin();
 
@@ -67,48 +51,28 @@ export function AdminPayoutRequestsPage() {
       case 'pending':
         return {
           variant: 'secondary' as const,
-          className:
-            'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+          className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
         };
       case 'approved':
         return {
           variant: 'default' as const,
-          className:
-            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+          className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
         };
       case 'completed':
         return {
           variant: 'default' as const,
-          className:
-            'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+          className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
         };
       case 'rejected':
         return {
           variant: 'destructive' as const,
-          className:
-            'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
+          className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
         };
       default:
         return {
           variant: 'default' as const,
           className: '',
         };
-    }
-  };
-
-  const setTimeStatus = (timeStatus: TimeFilter) => {
-    setTimeFilter(timeStatus);
-    switch (timeStatus) {
-      case 'LastHour':
-        return setUpToDate(new Date(new Date().getTime() - 60 * 60 * 1000));
-      case 'Last24Hours':
-        return setUpToDate(new Date(new Date().getTime() - 24 * 60 * 60 * 1000));
-      case 'Last3Days':
-        return setUpToDate(
-          new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000),
-        );
-      case 'All':
-        return setUpToDate(undefined);
     }
   };
 
@@ -140,12 +104,7 @@ export function AdminPayoutRequestsPage() {
   }
 
   if (error || !payoutRequests) {
-    return (
-      <ErrorComponenet
-        message="Failed to load payout requests"
-        title="Error Loading Data"
-      />
-    );
+    return <ErrorComponenet message="Failed to load payout requests" title="Error Loading Data" />;
   }
 
   const handleApprove = async (request: AdminPayoutResponse) => {
@@ -166,9 +125,7 @@ export function AdminPayoutRequestsPage() {
     if (!selectedRequest) return;
 
     try {
-      const result = await approvePayoutMutation.mutateAsync(
-        selectedRequest.id,
-      );
+      const result = await approvePayoutMutation.mutateAsync(selectedRequest.id);
       console.log('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
@@ -195,12 +152,8 @@ export function AdminPayoutRequestsPage() {
     <div className="mx-auto p-6 space-y-8">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-light">
-          Payout Requests Management
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Review and manage mentor payout requests
-        </p>
+        <h1 className="text-4xl font-bold tracking-light">Payout Requests Management</h1>
+        <p className="text-muted-foreground text-lg">Review and manage mentor payout requests</p>
       </div>
 
       {/* Stats Cards */}
@@ -251,10 +204,7 @@ export function AdminPayoutRequestsPage() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Time Period</label>
-              <Select
-                value={timeFilter}
-                onValueChange={(value: TimeFilter) => setTimeStatus(value)}
-              >
+              <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeStatus(value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select time period" />
                 </SelectTrigger>
@@ -269,12 +219,7 @@ export function AdminPayoutRequestsPage() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Status</label>
-              <Select
-                value={statusFilter}
-                onValueChange={(value: PayoutStatus | 'all') =>
-                  setStatusFilter(value)
-                }
-              >
+              <Select value={statusFilter} onValueChange={(value: PayoutStatus | 'all') => setStatusFilter(value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
@@ -295,15 +240,11 @@ export function AdminPayoutRequestsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Payout Requests</CardTitle>
-          <CardDescription>
-            {/* {filteredRequests.length} request(s) found */}
-          </CardDescription>
+          <CardDescription>{/* {filteredRequests.length} request(s) found */}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
-            <TableCaption className="text-left">
-              Payout requests from mentors awaiting review.
-            </TableCaption>
+            <TableCaption className="text-left">Payout requests from mentors awaiting review.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Request ID</TableHead>
@@ -318,10 +259,7 @@ export function AdminPayoutRequestsPage() {
             <TableBody>
               {payoutRequests.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-8 text-muted-foreground"
-                  >
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     No payout requests found for the selected filters.
                   </TableCell>
                 </TableRow>
@@ -331,39 +269,22 @@ export function AdminPayoutRequestsPage() {
                   const statusProps = getStatusBadgeProps(status);
                   return (
                     <TableRow key={request.id}>
-                      <TableCell className="font-medium font-mono text-sm">
-                        PR-{request.id.toString().padStart(3, '0')}
-                      </TableCell>
+                      <TableCell className="font-medium font-mono text-sm">PR-{request.id.toString().padStart(3, '0')}</TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium">
-                            User ID: {request.userId}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Wallet: {request.konnectWalletId}
-                          </div>
+                          <div className="font-medium">User ID: {request.userId}</div>
+                          <div className="text-sm text-muted-foreground">Wallet: {request.konnectWalletId}</div>
                         </div>
                       </TableCell>
-                      <TableCell className="font-semibold">
-                        ${request.amount.toFixed(2)}
-                      </TableCell>
+                      <TableCell className="font-semibold">${request.amount.toFixed(2)}</TableCell>
                       <TableCell>Konnect Wallet</TableCell>
                       <TableCell>
-                        <Badge {...statusProps}>
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
-                        </Badge>
+                        <Badge {...statusProps}>{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
                       </TableCell>
-                      <TableCell className="text-sm">
-                        {formatDate(request.createdAt)}
-                      </TableCell>
+                      <TableCell className="text-sm">{formatDate(request.createdAt)}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleView(request.id)}
-                            className="h-8 w-8 p-0"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => handleView(request.id)} className="h-8 w-8 p-0">
                             <Eye className="h-4 w-4" />
                           </Button>
                           {status === 'pending' && (

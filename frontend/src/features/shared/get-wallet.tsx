@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import { MentorshipEndpoints } from '@/lib/mentor-endpoints';
+import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import {
   queryOptions,
   useQuery,

@@ -3,7 +3,7 @@ import {
   Link as TanStackLink,
   type LinkProps as TanStackLinkProps,
 } from '@tanstack/react-router';
-import { cn } from '@/utils/cn';
+import { cn } from '@/lib/cn';
 
 export type LinkProps = {
   className?: string;

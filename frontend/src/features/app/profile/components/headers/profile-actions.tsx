@@ -1,5 +1,5 @@
 import { Button, ErrorComponenet, Link } from '@/components';
-import { cn } from '@/utils';
+import { cn } from '@/lib/cn';
 import { useProfileBySlug, useProfileEditStore } from '@/features/app/profile';
 import { routes } from '@/config';
 interface ProfileActionsProps {

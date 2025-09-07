@@ -5,8 +5,8 @@ import { UploadPictureDialog, useProfileBySlug } from '@/features/app/profile';
 import { Edit2 } from 'lucide-react';
 import { useUpdateProfilePicture } from '@/features/app/profile/api';
 import 'react-image-crop/dist/ReactCrop.css';
-import { cn, LazyImage } from '@/utils';
-
+import { LazyImage } from '@/utils';
+import { cn } from '@/lib/cn';
 interface ProfileImageProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   size?: 'sm' | 'lg';

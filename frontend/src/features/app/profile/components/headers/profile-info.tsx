@@ -1,5 +1,5 @@
 import { useProfileBySlug } from '@/features/app/profile/hooks';
-import { cn } from '@/utils';
+import { cn } from '@/lib/cn';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 

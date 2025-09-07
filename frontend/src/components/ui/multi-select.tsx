@@ -8,7 +8,7 @@ import {
   WandSparkles,
 } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/cn';
 import { Separator } from '@/components/ui';
 import { Badge } from '@/components/ui';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui';

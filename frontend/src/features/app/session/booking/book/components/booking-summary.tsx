@@ -27,7 +27,7 @@ import {
   DrawerDialog,
   Input, // Added Input import
 } from '@/components/ui';
-import { cn } from '@/utils';
+import { cn } from '@/lib/cn';
 import type { BookingSummaryType } from '../types/booking-types';
 import { useState } from 'react';
 import type { SessionSlotType } from '@/features/app/session/booking/shared';
