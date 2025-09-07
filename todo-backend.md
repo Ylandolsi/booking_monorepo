@@ -1,7 +1,5 @@
 - [ ] verify the backend cron job for approved payout and not complete back to pending ! ( test it ) !
 - [ ] Add resiliency to background jobs / Konnect
-- [ ] Google refresh token config
-- [ ] Add title to the meeting by the mentee
 - [ ] Handle when a user integrates with an account already integrated / or email integrated by another account
 - [ ] secure become mentor endpoint ( now only secured from front end)
 - [ ] Configure EF Core domains and connection settings carefully and validators for endpoints
