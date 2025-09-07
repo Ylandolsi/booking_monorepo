@@ -53,8 +53,8 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 var propeties = result.Properties.Items;
                 GoogleTokens googleTokens = new GoogleTokens
                 {
-                    AccessToken = propeties[".Token.refresh_token"],
-                    RefreshToken = propeties.ContainsKey(".Token.access_token")
+                    RefreshToken = propeties[".Token.refresh_token"],
+                    AccessToken = propeties.ContainsKey(".Token.access_token")
                         ? propeties[".Token.access_token"]
                         : null,
                     ExpiresAt = DateTimeOffset  // 2025-08-21T11:52:55.9919390+00:00
