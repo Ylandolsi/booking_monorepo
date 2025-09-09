@@ -4,8 +4,10 @@ using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
+using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationsTests.Abstractions.Authentication;
@@ -14,39 +16,52 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 {
     protected string DefaultPassword => "TestPassword123!";
     protected string DefaultEmail => "test@gmail.com";
+
     protected AuthenticationTestBase(IntegrationTestsWebAppFactory factory) : base(factory)
     {
-
     }
 
-    protected async Task<MeData> GetCurrenUserInfo( HttpClient? arrangeClient = null)
+    protected async Task<MeData> GetCurrenUserInfo(HttpClient? arrangeClient = null)
     {
         arrangeClient ??= ArrangeClient;
         var response = await arrangeClient.GetAsync(UsersEndpoints.GetCurrentUser);
-        return await response.Content.ReadFromJsonAsync<MeData>() ?? throw new InvalidOperationException("Failed to deserialize user info response");
+        return await response.Content.ReadFromJsonAsync<MeData>() ??
+               throw new InvalidOperationException("Failed to deserialize user info response");
     }
-    
-     #region Authentication Helper Methods
+
+    #region Authentication Helper Methods
 
     /// <summary>
     /// Registers and verifies a user, then logs them in
     /// Returns the login response and sets up cookies for the specified userId
     /// </summary>
-    protected async Task<LoginResponse> CreateUserAndLogin(string? email = null, string? password = null ,  HttpClient? arrangeClient = null)
+    protected async Task<LoginResponse> CreateUserAndLogin(string? email = null, string? password = null,
+        HttpClient? arrangeClient = null)
     {
-        arrangeClient ??= ArrangeClient; 
-        
+        arrangeClient ??= ArrangeClient;
+
         email ??= Fake.Internet.Email();
         password ??= "SecurePassword123!";
 
-        await RegisterAndVerifyUser(email, password, true , arrangeClient);
-        return await LoginUser(email, password, arrangeClient);
+        await RegisterAndVerifyUser(email, password, true, arrangeClient);
+        var loginInfo = await LoginUser(email, password, arrangeClient);
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var currentUser = await dbContext.Users.Where(u => u.Email == loginInfo.Email).FirstOrDefaultAsync();
+        if (currentUser != null)
+        {
+            currentUser.IntegrateWithGoogle(loginInfo.Email);
+            await dbContext.SaveChangesAsync();
+        }
+
+        return loginInfo;
     }
 
     /// <summary>
     /// Registers and verifies a user using the specified client
     /// </summary>
-    protected async Task RegisterAndVerifyUser(string email, string password, bool verify = true ,  HttpClient? arrangeClient = null)
+    protected async Task RegisterAndVerifyUser(string email, string password, bool verify = true,
+        HttpClient? arrangeClient = null)
     {
         arrangeClient ??= ArrangeClient;
 
@@ -60,8 +75,7 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
         var registerResponse = await arrangeClient.PostAsJsonAsync(UsersEndpoints.Register, registerPayload);
         await Task.Delay(TimeSpan.FromSeconds(2));
-        if (!verify) return; 
-
+        if (!verify) return;
 
 
         var (token, parsedEmail) = ExtractTokenAndEmailFromEmail(email);
@@ -98,7 +112,6 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
     protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
     {
-
         var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
         if (sentEmail is null) return (null, null);
 
@@ -120,5 +133,4 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
 
         return (token.ToString(), email.ToString());
     }
-
 }

@@ -3,6 +3,7 @@ using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 
 namespace Booking.Modules.Mentorships.Domain.Entities;
 
+// TODO :we can add mentor and mentee id here for fast access 
 public class Escrow : Entity
 {
     public int Id { get; private set; }
@@ -17,7 +18,7 @@ public class Escrow : Entity
     {
         
     }
-    public Escrow(decimal price, int sessionId , int mentorId )
+    public Escrow(decimal price, int sessionId )
     {
         Price = price;
         SessionId = sessionId;

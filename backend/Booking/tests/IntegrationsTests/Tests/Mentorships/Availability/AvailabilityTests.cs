@@ -26,7 +26,6 @@ public class AvailabilityTests : MentorshipTestBase
         var (userArrange, userAct) = await CreateMentor("mentor_daily_checkt");
 
         var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(userArrange);
-
         await MentorshipTestUtilities.SetupMentorAvailabilityWithRanges(userArrange, DayOfWeek.Monday, 
             new[] { ("09:00", "12:00"), ("14:00", "17:00") });
 

@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  type UseQueryOptions,
-  type UseQueryResult,
-} from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { AdminPayoutKeys } from './admin-payout-keys';
 import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { api } from '@/lib';
@@ -20,17 +16,10 @@ export interface AdminPayoutResponse {
   updatedAt: string;
 }
 
-const getAllPayoutsAdmin = async (
-  status?: string,
-  upToDate?: string,
-  timeZoneId?: string,
-): Promise<Array<AdminPayoutResponse>> => {
-  return await api.get<Array<AdminPayoutResponse>>(
-    MentorshipEndpoints.Payouts.Admin.GetAllPayouts,
-    {
-      params: { status, upToDate, timeZoneId },
-    },
-  );
+const getAllPayoutsAdmin = async (status?: string, upToDate?: string, timeZoneId?: string): Promise<Array<AdminPayoutResponse>> => {
+  return await api.get<Array<AdminPayoutResponse>>(MentorshipEndpoints.Payouts.Admin.GetAllPayouts, {
+    params: { status, upToDate, timeZoneId },
+  });
 };
 
 export const useGetAllPayoutsAdmin = (
@@ -41,7 +30,7 @@ export const useGetAllPayoutsAdmin = (
 ): UseQueryResult<Array<AdminPayoutResponse>, Error> => {
   const normalizedUpToDate = upToDate ? toLocalISOString(upToDate) : undefined;
 
-  const dateOnly = normalizedUpToDate?.slice(0, 10); // used for cache
+  const dateOnly = normalizedUpToDate?.slice(0, 13); // used for cache (removed minutes and seconds  )
 
   const options: UseQueryOptions<Array<AdminPayoutResponse>, Error> = {
     queryKey: AdminPayoutKeys.allPayouts(status, dateOnly, timeZoneId),

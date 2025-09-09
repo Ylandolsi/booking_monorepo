@@ -49,7 +49,7 @@ public class CompleteWebhook(
         // Create escrow for the full session price
         var priceAfterReducing = session.Price.Amount - (session.Price.Amount * 0.15m);
         var escrowCreated =
-            new Domain.Entities.Escrow(priceAfterReducing, session.Id, session.MentorId);
+            new Domain.Entities.Escrow(priceAfterReducing, session.Id);
         await dbContext.AddAsync(escrowCreated, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 

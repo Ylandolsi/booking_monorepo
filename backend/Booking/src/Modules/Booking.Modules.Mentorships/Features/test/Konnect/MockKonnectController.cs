@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace Booking.Modules.Mentorships.Features.test.Konnect;
 
 [ApiController]
+[Route("v2")]
 public class MockKonnectController : ControllerBase
 {
     private static readonly ConcurrentDictionary<string, MockPayment> _payments = new();

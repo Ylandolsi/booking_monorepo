@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions\" />
       <Folder Include="Features\Payout\Admin\GetDetailed\" />
       <Folder Include="Features\Payout\User\" />
       <Folder Include="Features\Sessions\Ignore\" />

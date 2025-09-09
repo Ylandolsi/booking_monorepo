@@ -117,8 +117,14 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_wallet", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_wallet");
 
+        var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(mentorArrange);
+        var mentorIdElement = currentUser.GetProperty("slug");
+        var mentorIdString = mentorIdElement.GetString();
+        int mentorId = int.Parse(mentorIdString);
+
+
         // Charge test wallet with sufficient balance
-        await MentorshipTestUtilities.ChargeTestWallet("test-wallet-1", 10000, menteeAct); // $100
+        await MentorshipTestUtilities.ChargeTestWallet(Factory, mentorId, 100); // $100
 
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Wednesday, "09:00", "17:00");
 

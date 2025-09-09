@@ -231,6 +231,13 @@ internal sealed class BookSessionCommandHandler(
 
             var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
 
+
+            var sessionTitle = String.IsNullOrEmpty(command.Title)
+                ? $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName}"
+                : command.Title;
+
+            var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note; 
+            
             var session = Session.Create(
                 mentor.Id,
                 command.MenteeId,
@@ -238,8 +245,8 @@ internal sealed class BookSessionCommandHandler(
                 duration.Value,
                 price.Value,
                 amountToBePaid,
-                command.Title,
-                command.Note ?? string.Empty);
+                sessionTitle,
+                sessionNote);
 
             var amountLeftToPay = price.Value.Amount - amountToBePaid;
 
@@ -325,7 +332,7 @@ internal sealed class BookSessionCommandHandler(
                     { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
 
                 var description = string.IsNullOrEmpty(command.Note)
-                    ? $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} : {command.Title}"
+                    ? session.Title
                     : command.Note;
 
                 var meetRequest =
@@ -360,8 +367,9 @@ internal sealed class BookSessionCommandHandler(
                     resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
                 session.Confirm(meetLink);
 
+                var priceAfterReducing = session.Price.Amount - (session.Price.Amount * 0.15m);
 
-                var escrow = new Escrow(price.Value.Amount, session.Id, mentor.Id);
+                var escrow = new Escrow(priceAfterReducing, session.Id );
                 await context.Escrows.AddAsync(escrow, cancellationToken);
 
                 await SendNotificationsToUsers(session , menteeData.Slug);

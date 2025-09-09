@@ -1,10 +1,25 @@
 import { useState } from 'react';
-import { Copy } from 'lucide-react';
+import { Copy, Filter } from 'lucide-react';
 import { Label } from '@radix-ui/react-label';
-import { Button, ErrorComponenet, Input, LoadingState } from '@/components';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ErrorComponenet,
+  Input,
+  LoadingState,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components';
 import { MeetingCard } from '@/features/app/session/get/components';
 import { useGetSessions } from '@/features/app/session/get/api';
 import { formatISODateTime, GenerateTimeZoneId } from '@/utils';
+import { useTimeFilter, type TimeFilter } from '@/hooks/use-time-filter';
 
 const toDate = {
   All: 600,
@@ -16,8 +31,6 @@ const toDate = {
 export function MeetsPage() {
   const [meetingLink, setMeetingLink] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
-  const [upToDate, setUpToDate] = useState<Date | undefined>(undefined);
-  const [selectedDuration, setSelectedDuration] = useState<keyof typeof toDate | undefined>(undefined);
 
   const { upToDate, timeFilter, setTimeStatus } = useTimeFilter();
 
@@ -64,31 +77,38 @@ export function MeetsPage() {
       </div>
 
       {/* Upcoming Meetings */}
+      <h2 className="text-2xl font-semibold text-gray-900 mb-8">Upcoming Meetings</h2>
+
       <section>
-        <div className="flex flex-col gap-4  mb-4">
-          <h2 className="text-2xl font-semibold text-gray-900">Upcoming Meetings</h2>
-          {/* TODO : for future enable this filter */}
-          <div className="flex space-x-2">
-            {(Object.keys(toDate) as Array<keyof typeof toDate>).map((filter) => (
-              <Button
-                variant="ghost"
-                key={filter}
-                className={`px-4 py-1 rounded-full text-sm ${
-                  filter === selectedDuration ? 'bg-muted-foreground/20 font-medium' : 'text-muted-foreground'
-                }`}
-                onClick={() => {
-                  const value = toDate[filter];
-                  const date = new Date();
-                  date.setDate(date.getDate() + value);
-                  setUpToDate(date);
-                  setSelectedDuration(filter);
-                }}
-              >
-                {filter}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5 text-muted-foreground" />
+                <CardTitle>Filters</CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-4  mb-4">
+              {/* TODO : for future enable this filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Time Period</label>
+                <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeStatus(value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select time period" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Time</SelectItem>
+                    <SelectItem value="NextHour">Next Hour</SelectItem>
+                    <SelectItem value="Next24Hours">Next 24 Hours </SelectItem>
+                    <SelectItem value="Next3Days">Next 3 Days</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         <div className="space-y-4">
           {sessions?.map((session) => {
             let atendeeName = [session.mentorFirstName, session.mentorLastName].filter(Boolean).join(' ') || 'Mentor';

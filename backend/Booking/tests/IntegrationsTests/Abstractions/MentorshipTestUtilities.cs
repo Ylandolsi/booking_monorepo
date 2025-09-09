@@ -606,9 +606,16 @@ public static class MentorshipTestUtilities
 
     public static async Task<dynamic> CompletePaymentViaMockKonnect(string paymentRef, HttpClient client)
     {
+        if (paymentRef == "paid")
+            return new
+            {
+                success = true,
+                error = (string?)null
+            };
+
         var paymentRequest = new { paymentMethod = "card" };
 
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var response = await client.PostAsJsonAsync($"v2/process-payment/{paymentRef}", paymentRequest);
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         return new
@@ -622,7 +629,7 @@ public static class MentorshipTestUtilities
     {
         var paymentRequest = new { paymentMethod = "wallet", walletId = walletId };
 
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var response = await client.PostAsJsonAsync($"v2/process-payment/{paymentRef}", paymentRequest);
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         return new
@@ -636,7 +643,7 @@ public static class MentorshipTestUtilities
     {
         var paymentRequest = new { paymentMethod = "fail" };
 
-        var response = await client.PostAsJsonAsync($"process-payment/{paymentRef}", paymentRequest);
+        var response = await client.PostAsJsonAsync($"v2/process-payment/{paymentRef}", paymentRequest);
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         return new
@@ -646,16 +653,18 @@ public static class MentorshipTestUtilities
         };
     }
 
-    public static async Task ChargeTestWallet(string walletId, int amount, HttpClient client)
+    public static async Task ChargeTestWallet(IntegrationTestsWebAppFactory factory, int userId, decimal amount)
     {
-        var chargeRequest = new { Amount = amount };
-
-        await client.PostAsJsonAsync($"wallets/{walletId}/charge", chargeRequest);
+        using var scope = factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+        var menteeWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+        menteeWallet?.UpdateBalance(-menteeWallet.Balance + amount); // make it exactly amount ! 
+        await context.SaveChangesAsync(CancellationToken.None);
     }
 
     public static async Task<dynamic> GetPaymentDetails(string paymentRef, HttpClient client)
     {
-        var response = await client.GetAsync($"payments/{paymentRef}");
+        var response = await client.GetAsync($"v2/payments/{paymentRef}");
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         return new

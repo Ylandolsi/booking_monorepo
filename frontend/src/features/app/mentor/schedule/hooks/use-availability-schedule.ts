@@ -1,16 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { mapDayToNumber } from '@/utils/enum-days-week';
-import type {
-  AvailabilityRangeType,
-  DailySchedule,
-} from '@/features/app/mentor/schedule/types';
+import type { AvailabilityRangeType, DailySchedule } from '@/features/app/mentor/schedule/types';
 import type { DayOfWeek } from '@/features/app/session/booking/shared';
-import {
-  useSetWeeklySchedule,
-  useWeeklySchedule,
-} from '@/features/app/mentor/schedule';
-import { GenerateIdNumber } from '@/utils';
+import { useSetWeeklySchedule, useWeeklySchedule } from '@/features/app/mentor/schedule';
+import { GenerateIdNumber } from '@/lib';
 
 export interface UseAvailabilityScheduleReturn {
   schedule: DailySchedule[];
@@ -22,17 +16,9 @@ export interface UseAvailabilityScheduleReturn {
   actions: {
     setSelectedCopySource: (day: DayOfWeek | null) => void;
     toggleDay: (day: DayOfWeek) => void;
-    addTimeSlot: (
-      day: DayOfWeek,
-      slot: { startTime: string; endTime: string },
-    ) => void;
+    addTimeSlot: (day: DayOfWeek, slot: { startTime: string; endTime: string }) => void;
     addCustomTimeSlot: (day: DayOfWeek) => void;
-    updateTimeRange: (
-      day: DayOfWeek,
-      rangeId: string,
-      field: 'startTime' | 'endTime',
-      value: string,
-    ) => void;
+    updateTimeRange: (day: DayOfWeek, rangeId: string, field: 'startTime' | 'endTime', value: string) => void;
     removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
     copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
     saveAvailability: () => Promise<void>;
@@ -47,8 +33,7 @@ export function useAvailabilitySchedule() {
   const { data: apiSchedule } = scheduleQuery;
   const [schedule, setSchedule] = useState<DailySchedule[]>([]);
 
-  const [selectedCopySource, setSelectedCopySource] =
-    useState<DayOfWeek | null>(null);
+  const [selectedCopySource, setSelectedCopySource] = useState<DayOfWeek | null>(null);
 
   const hasChanges = useMemo(() => {
     if (!apiSchedule) return false;
@@ -64,14 +49,9 @@ export function useAvailabilitySchedule() {
     }
   }, [apiSchedule]);
 
-  const updateSchedule = (
-    day: DayOfWeek,
-    updater: (ds: DailySchedule) => DailySchedule,
-  ) => {
+  const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
     setSchedule((prev) => {
-      return prev.map((ds) =>
-        ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds,
-      );
+      return prev.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
     });
   };
 
@@ -79,10 +59,7 @@ export function useAvailabilitySchedule() {
     updateSchedule(day, (ds) => ({ ...ds, isActive: !ds.isActive }));
   };
 
-  const addTimeSlot = (
-    day: DayOfWeek,
-    slot: { startTime: string; endTime: string },
-  ) => {
+  const addTimeSlot = (day: DayOfWeek, slot: { startTime: string; endTime: string }) => {
     updateSchedule(day, (ds) => ({
       ...ds,
       availabilityRanges: [
@@ -102,34 +79,22 @@ export function useAvailabilitySchedule() {
       endTime: '10:00',
     });
 
-  const updateTimeRange = (
-    day: DayOfWeek,
-    rangeId: string,
-    field: 'startTime' | 'endTime',
-    value: string,
-  ) => {
+  const updateTimeRange = (day: DayOfWeek, rangeId: string, field: 'startTime' | 'endTime', value: string) => {
     updateSchedule(day, (ds) => ({
       ...ds,
-      availabilityRanges: ds.availabilityRanges.map(
-        (r: AvailabilityRangeType) =>
-          r.id?.toString() === rangeId ? { ...r, [field]: value } : r,
-      ),
+      availabilityRanges: ds.availabilityRanges.map((r: AvailabilityRangeType) => (r.id?.toString() === rangeId ? { ...r, [field]: value } : r)),
     }));
   };
 
   const removeTimeRange = (day: DayOfWeek, rangeId: string) => {
     updateSchedule(day, (ds) => ({
       ...ds,
-      availabilityRanges: ds.availabilityRanges.filter(
-        (r) => r.id?.toString() !== rangeId,
-      ),
+      availabilityRanges: ds.availabilityRanges.filter((r) => r.id?.toString() !== rangeId),
     }));
   };
 
   const copyAvailability = (fromDay: DayOfWeek, toDay: DayOfWeek) => {
-    const source = schedule.find(
-      (s) => s.dayOfWeek === mapDayToNumber(fromDay),
-    );
+    const source = schedule.find((s) => s.dayOfWeek === mapDayToNumber(fromDay));
     if (!source) return;
     updateSchedule(toDay, (ds) => ({
       ...ds,
@@ -165,13 +130,8 @@ export function useAvailabilitySchedule() {
   };
 
   const getScheduleSummary = () => {
-    const enabledDays = schedule.filter(
-      (d) => d.isActive && d.availabilityRanges.length > 0,
-    );
-    const totalSlots = enabledDays.reduce(
-      (sum, d) => sum + d.availabilityRanges.length,
-      0,
-    );
+    const enabledDays = schedule.filter((d) => d.isActive && d.availabilityRanges.length > 0);
+    const totalSlots = enabledDays.reduce((sum, d) => sum + d.availabilityRanges.length, 0);
     return { enabledDays: enabledDays.length, totalSlots };
   };
 
