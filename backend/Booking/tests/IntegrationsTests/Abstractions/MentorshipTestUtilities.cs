@@ -6,6 +6,7 @@ using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Domain.Entities;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
+using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -342,6 +343,18 @@ public static class MentorshipTestUtilities
         return latestSession.GetProperty("id").GetInt32();
     }
 
+    public static async Task VerifySessionidAmount(IntegrationTestsWebAppFactory factory, int sessionId,
+        decimal paidAmount)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var session = await dbContext.Sessions.FindAsync(sessionId);
+        Assert.NotNull(session);
+        Assert.Equal(paidAmount, session.AmountPaid);
+    }
+
+
     public static async Task VerifySessionStatus(IntegrationTestsWebAppFactory factory, int sessionId,
         SessionStatus expectedStatus)
     {
@@ -625,19 +638,6 @@ public static class MentorshipTestUtilities
         };
     }
 
-    public static async Task<dynamic> CompletePaymentWithWallet(string paymentRef, string walletId, HttpClient client)
-    {
-        var paymentRequest = new { paymentMethod = "wallet", walletId = walletId };
-
-        var response = await client.PostAsJsonAsync($"v2/process-payment/{paymentRef}", paymentRequest);
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-
-        return new
-        {
-            success = result.TryGetProperty("success", out var success) && success.GetBoolean(),
-            error = result.TryGetProperty("error", out var error) ? error.GetString() : null
-        };
-    }
 
     public static async Task<dynamic> SimulatePaymentFailure(string paymentRef, HttpClient client)
     {
@@ -778,14 +778,22 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
+    /// Gets the user ID from the HTTP client
+    /// </summary>
+    /// <param name="userClinet">The user 's HTTP client</param>
+    /// <returns>Mentor ID</returns>
+    /// <summary>
     /// Gets the mentor ID from the HTTP client
     /// </summary>
     /// <param name="mentorClient">The mentor's HTTP client</param>
     /// <returns>Mentor ID</returns>
-    public static async Task<string> GetMentorId(HttpClient mentorClient)
+    public static async Task<int> GetUserId(IntegrationTestsWebAppFactory factory, HttpClient userClient)
     {
-        var userInfo = await GetCurrentUserInfo(mentorClient);
-        return userInfo.GetProperty("id").GetString()!;
+        var slug = await GetUserSlug(userClient);
+        using var scope = factory.Server.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+        var userInfo = await context.Users.FirstOrDefaultAsync(u => u.Slug == slug);
+        return userInfo.Id;
     }
 
     /// <summary>
@@ -848,6 +856,17 @@ public static class MentorshipTestUtilities
         Assert.NotNull(escrow);
         Assert.Equal(expectedAmount, escrow.Price);
     }
+
+    public static async Task VerifyWalletBalance(IntegrationTestsWebAppFactory factory, int userId, decimal balance)
+    {
+        using var scope = factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(e => e.UserId == userId);
+        Assert.NotNull(wallet);
+        Assert.Equal(balance, wallet.Balance);
+    }
+
 
     /// <summary>
     /// Verifies that an escrow is released after session completion

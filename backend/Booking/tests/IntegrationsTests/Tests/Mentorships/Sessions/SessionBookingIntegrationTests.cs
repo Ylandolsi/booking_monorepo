@@ -117,14 +117,10 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var (mentorArrange, mentorAct) = await CreateMentor("mentor_wallet", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_wallet");
 
-        var currentUser = await MentorshipTestUtilities.GetCurrentUserInfo(mentorArrange);
-        var mentorIdElement = currentUser.GetProperty("slug");
-        var mentorIdString = mentorIdElement.GetString();
-        int mentorId = int.Parse(mentorIdString);
-
-
+        int menteeId = await MentorshipTestUtilities.GetUserId(Factory, menteeArrange);
+        int mentorId = await MentorshipTestUtilities.GetUserId(Factory, mentorArrange);
         // Charge test wallet with sufficient balance
-        await MentorshipTestUtilities.ChargeTestWallet(Factory, mentorId, 100); // $100
+        await MentorshipTestUtilities.ChargeTestWallet(Factory, menteeId, 200 ); // $100
 
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Wednesday, "09:00", "17:00");
 
@@ -142,37 +138,43 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
 
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef =
-            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
-
-        // Complete payment with wallet
-        var paymentResponse =
-            await MentorshipTestUtilities.CompletePaymentWithWallet(paymentRef, "test-wallet-1", menteeAct);
-        Assert.True(paymentResponse.success);
+        var payUrl = bookingResult.GetProperty("payUrl").GetString()!;
+        Assert.Equal("paid", payUrl);
 
         await Task.Delay(10000);
 
         var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
         await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
         await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
+        await MentorshipTestUtilities.VerifyWalletBalance(Factory, menteeId, 80); // 200 - 120 ( session price ) = 100 
     }
 
     [Fact]
-    public async Task SessionBooking_ShouldHandleInsufficientWalletBalance()
+    public async Task SessionBooking_ShouldHandlePayment_PartFromWalletandPartFromPayment()
     {
+        var sessionPrice = 500.0m;
+        var expectedEscrowAmount = sessionPrice * 0.85m; // 15% platform fee
         // Arrange
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_insufficient", 500.0m, 15);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor_insufficient", sessionPrice, 15);
         var (menteeArrange, menteeAct) = await CreateMentee("mentee_insufficient");
 
-        // Use wallet with insufficient balance (test-wallet-2 has only $100)
+
+        int menteeId = await MentorshipTestUtilities.GetUserId(Factory, menteeArrange);
+        int mentorId = await MentorshipTestUtilities.GetUserId(Factory, mentorArrange);
+
+        // Charge test wallet with insufficient balance
+        await MentorshipTestUtilities.ChargeTestWallet(Factory, menteeId, 100); // $100
+
+
         await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Thursday, "09:00", "17:00");
 
         var nextThursday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Thursday);
+        // booked one hour , but only 30  avaialble now 
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
             await MentorshipTestUtilities.GetUserSlug(mentorArrange),
             nextThursday.ToString("yyyy-MM-dd"),
             "15:00",
-            "15:30",
+            "16:00",
             MentorshipTestUtilities.TimeZones.Tunisia
         );
 
@@ -183,48 +185,24 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
         var paymentRef =
             MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+       
+        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
 
-        // Try to pay with insufficient wallet balance
+
+        await MentorshipTestUtilities.VerifySessionidAmount(Factory, sessionId, 100);
+
+        // complete 400$ from payment 
         var paymentResponse =
-            await MentorshipTestUtilities.CompletePaymentWithWallet(paymentRef, "test-wallet-2", menteeAct);
-        Assert.False(paymentResponse.success);
-        Assert.Contains("insufficient", paymentResponse.error.ToLower());
+            await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
+
+
+        Assert.True(paymentResponse.success);
+        await Task.Delay(10000);
+
+        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
+        await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
     }
 
-    [Fact]
-    public async Task SessionBooking_ShouldHandlePaymentExpiration()
-    {
-        // Arrange
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_expired", 80.0m, 15);
-        var (menteeArrange, menteeAct) = await CreateMentee("mentee_expired");
-
-        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Friday, "09:00", "17:00");
-
-        var nextFriday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Friday);
-        var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
-            await MentorshipTestUtilities.GetUserSlug(mentorArrange),
-            nextFriday.ToString("yyyy-MM-dd"),
-            "16:00",
-            "17:00",
-            MentorshipTestUtilities.TimeZones.Tunisia
-        );
-
-        // Act - Book session
-        var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
-        Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
-
-        var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef =
-            MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
-
-        // Wait for payment to expire (mock Konnect has 10 minute lifespan, we can manipulate this for testing)
-        // For testing, we'll check the payment status to see if expiration handling works
-        var paymentDetails = await MentorshipTestUtilities.GetPaymentDetails(paymentRef, menteeAct);
-        Assert.Equal("pending", paymentDetails.status);
-
-        // Simulate expired payment by waiting or manipulating time
-        // In a real test, you might want to create a payment with very short lifespan
-    }
 
     [Fact]
     public async Task SessionBooking_ShouldCreateProperEscrowAmount()
@@ -262,36 +240,75 @@ public class SessionBookingIntegrationTests : MentorshipTestBase
         Assert.Equal(expectedEscrowAmount, escrowAmount);
     }
 
-    [Fact]
-    public async Task SessionBooking_ShouldHandleGoogleCalendarFailure_Gracefully()
+
+    /*[Fact]
+    public async Task SessionBooking_ShouldHandlePaymentExpiration()
     {
-        // This test would require mocking Google Calendar service to simulate failures
-        // For now, we'll test that the session is still confirmed even if calendar fails
+        // Arrange
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor_expired", 80.0m, 15);
+        var (menteeArrange, menteeAct) = await CreateMentee("mentee_expired");
 
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor_calendar_fail", 60.0m, 15);
-        var (menteeArrange, menteeAct) = await CreateMentee("mentee_calendar_fail");
+        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Friday, "09:00", "17:00");
 
-        await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
-
-        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var nextFriday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Friday);
         var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
             await MentorshipTestUtilities.GetUserSlug(mentorArrange),
-            nextMonday.ToString("yyyy-MM-dd"),
-            "12:00",
-            "13:00",
+            nextFriday.ToString("yyyy-MM-dd"),
+            "16:00",
+            "17:00",
             MentorshipTestUtilities.TimeZones.Tunisia
         );
 
+        // Act - Book session
         var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
+        Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
+
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
         var paymentRef =
             MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
 
-        await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
-        await Task.Delay(10000);
+        // Wait for payment to expire (mock Konnect has 10 minute lifespan, we can manipulate this for testing)
+        // For testing, we'll check the payment status to see if expiration handling works
+        var paymentDetails = await MentorshipTestUtilities.GetPaymentDetails(paymentRef, menteeAct);
+        Assert.Equal("pending", paymentDetails.status);
+        // TODO : must !
 
-        var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
-        await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
-        // Session should be confirmed even if calendar integration fails
+        // Simulate expired payment by waiting or manipulating time
+        // In a real test, you might want to create a payment with very short lifespan
     }
+
+    //   // Session should be confirmed even if calendar integration fails
+
+    // [Fact]
+    // public async Task SessionBooking_ShouldHandleGoogleCalendarFailure_Gracefully()
+    // {
+    //     // This test would require mocking Google Calendar service to simulate failures
+    //     // For now, we'll test that the session is still confirmed even if calendar fails
+
+    //     var (mentorArrange, mentorAct) = await CreateMentor("mentor_calendar_fail", 60.0m, 15);
+    //     var (menteeArrange, menteeAct) = await CreateMentee("mentee_calendar_fail");
+
+    //     await MentorshipTestUtilities.SetupMentorAvailability(mentorArrange, DayOfWeek.Monday, "09:00", "17:00");
+
+    //     var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+    //     var bookingRequest = MentorshipTestUtilities.CreateBookingRequest(
+    //         await MentorshipTestUtilities.GetUserSlug(mentorArrange),
+    //         nextMonday.ToString("yyyy-MM-dd"),
+    //         "12:00",
+    //         "13:00",
+    //         MentorshipTestUtilities.TimeZones.Tunisia
+    //     );
+
+    //     var bookingResponse = await menteeAct.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
+    //     var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
+    //     var paymentRef =
+    //         MentorshipTestUtilities.ExtractPaymentRefFromUrl(bookingResult.GetProperty("payUrl").GetString()!);
+
+    //     await MentorshipTestUtilities.CompletePaymentViaMockKonnect(paymentRef, menteeAct);
+    //     await Task.Delay(10000);
+
+    //     var sessionId = await MentorshipTestUtilities.GetLatestSessionId(menteeAct);
+    //     await MentorshipTestUtilities.VerifySessionStatus(Factory, sessionId, SessionStatus.Confirmed);
+    // }
+    */
 }

@@ -244,7 +244,7 @@ internal sealed class BookSessionCommandHandler(
                 sessionStartDateTimeUtc,
                 duration.Value,
                 price.Value,
-                amountToBePaid,
+                0,
                 sessionTitle,
                 sessionNote);
 
