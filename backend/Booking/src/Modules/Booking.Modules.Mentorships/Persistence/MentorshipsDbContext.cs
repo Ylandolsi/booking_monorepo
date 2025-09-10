@@ -26,7 +26,6 @@ public sealed class MentorshipsDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Wallet> Wallets { get; set; }
     public DbSet<Escrow> Escrows { get; set; }
-    public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Payout> Payouts { get; set; }
 
 
