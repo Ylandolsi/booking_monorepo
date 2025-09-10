@@ -42,7 +42,7 @@ public sealed class RefreshAccessTokenCommandHandler(UsersDbContext applicationD
 
 
             var oldestToken = await applicationDbContext.RefreshTokens
-                .Where(rt => rt.UserId == refreshToken.UserId && rt.IsActive)
+                .Where(rt => rt.UserId == refreshToken.UserId && rt.RevokedOnUtc == null)
                 .OrderBy(rt => rt.CreatedOnUtc)
                 .FirstOrDefaultAsync(cancellationToken);
 

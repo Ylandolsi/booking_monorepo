@@ -67,7 +67,8 @@ builder.Services.UseHangFire(builder.Configuration);
 
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
-builder.Configuration.AddModuleConfiguration(["users"]);
+// for each module add its own app.settings.json ..
+// builder.Configuration.AddModuleConfiguration(["users"]);
 
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddMentorshipsModule(builder.Configuration);

@@ -37,7 +37,7 @@ public class RefreshToken : Entity
         CreatedOnUtc = DateTime.UtcNow;
         // TODO : uncomment the exceptions
         // the exception are removed for testing purposes ( cuz in memory there is no IP or User-Agent)
-        CreatedByIp = createdByIp ?? string.Empty; //?? throw new ArgumentNullException(nameof(createdByIp));
+        CreatedByIp = createdByIp ?? string.Empty; //??  throw new ArgumentNullException(nameof(createdByIp));
         UserAgent = userAgent ?? string.Empty; //  ?? throw new ArgumentNullException(nameof(userAgent));
     }
 

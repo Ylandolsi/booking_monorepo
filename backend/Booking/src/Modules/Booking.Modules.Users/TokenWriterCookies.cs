@@ -57,7 +57,7 @@ public class TokenWriterCookies(
             Secure = !webHostEnvironment.IsDevelopment(), //dev=false ,prod=true: change to true 
             Path = "/",
             SameSite = webHostEnvironment.IsDevelopment() ? SameSiteMode.Lax : SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddMinutes(jwtAuthOptions.ExpirationInMinutes)
+            Expires = DateTime.UtcNow.AddSeconds(jwtAuthOptions.ExpirationInMinutes)
         };
 
         // ─────────────────────────────────────────────────────────────────────────────
