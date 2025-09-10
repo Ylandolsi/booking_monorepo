@@ -130,7 +130,6 @@ app.MapHealthChecks("health", new HealthCheckOptions
 app.UseStaticFiles(); // Serves files from wwwroot by default : http://localhost:5000/logo.png.
 app.UseGlobalExceptionHandler();
 app.UseCors("DefaultCors");
-app.UseHangfireDashboard();
 
 app.UseRequestContextLogging();
 
@@ -139,12 +138,15 @@ app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 app.UseCancellationMiddleware();
 
-RecurringJobs.AddRecurringJobs();
-RecurringJobsMentorShipModules.AddRecurringJobs();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseHangfireDashboard();
+
+RecurringJobs.AddRecurringJobs();
+RecurringJobsMentorShipModules.AddRecurringJobs();
 app.MapControllers();
 app.MapEndpoints();
 

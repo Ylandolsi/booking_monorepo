@@ -32,7 +32,7 @@ public class RoleRequirementHandler(IServiceScopeFactory serviceScopeFactory) : 
 
         foreach (var role in requirement.RequiredRoles)
         {
-            if (!await userManager.IsInRoleAsync(user, requirement.RequiredRoles[0]))
+            if (!await userManager.IsInRoleAsync(user, role))
                 context.Fail();
         }
 
