@@ -19,7 +19,7 @@ docker stop <container_name_or_id>
 docker rm <container_name_or_id>
 
 # View logs of a container
-docker logs <container_name_or_id>
+docker logs <container_name_or_id> -f -tail 100 ?
 ```
 
 ## Running a PostgreSQL Container
