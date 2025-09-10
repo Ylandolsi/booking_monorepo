@@ -1,15 +1,7 @@
 import { useCallback, useState } from 'react';
-import type {
-  BookingSummaryType,
-  BookSessionRequestType,
-  DayAvailabilityType,
-  SessionSlotType,
-} from '@/features/app/session/booking';
+import type { BookingSummaryType, BookSessionRequestType, DayAvailabilityType, SessionSlotType } from '@/features/app/session/booking';
 import { useMentorDetails } from '@/features/app/mentor/become';
-import {
-  useBookSession,
-  useMonthlyAvailability,
-} from '@/features/app/session/booking';
+import { useBookSession, useMonthlyAvailability } from '@/features/app/session/booking';
 import { useProfile } from '@/features/app/profile';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
@@ -22,13 +14,10 @@ export interface BookingHookState {
   title: string;
 }
 
-export function useBooking({
-  mentorSlug,
-  iamTheMentor,
-}: {
-  mentorSlug?: string;
-  iamTheMentor: boolean;
-}) {
+export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; iamTheMentor: boolean }) {
+  if (!mentorSlug) {
+    return null;
+  }
   const [state, setState] = useState<BookingHookState>({
     selectedDate: new Date(),
     selectedSlot: null,
@@ -49,12 +38,10 @@ export function useBooking({
     { enabled: !!mentorSlug && !!state.selectedDate && !iamTheMentor },
   );
 
-  const bookSessionMutation = useBookSession();
+  const bookSessionMutation = useBookSession({ mentorSlug });
 
-  const isLoading =
-    mentorDetailsQuery.isLoading || monthlyAvailabilityQuery.isLoading;
-  const hasError =
-    mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
+  const isLoading = mentorDetailsQuery.isLoading || monthlyAvailabilityQuery.isLoading;
+  const hasError = mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
 
   const selectedDayData: DayAvailabilityType | undefined =
     state.selectedDate && monthlyAvailabilityQuery.data
@@ -68,10 +55,7 @@ export function useBooking({
         })
       : undefined;
 
-  const availableSlots =
-    selectedDayData?.timeSlots.filter(
-      (slot: SessionSlotType) => slot.isAvailable && !slot.isBooked,
-    ) || [];
+  const availableSlots = selectedDayData?.timeSlots.filter((slot: SessionSlotType) => slot.isAvailable && !slot.isBooked) || [];
 
   // Actions
   const setSelectedDate = useCallback((date: Date | undefined) => {
@@ -122,12 +106,7 @@ export function useBooking({
 
   // Create booking summary
   const createBookingSummary = useCallback((): BookingSummaryType | null => {
-    if (
-      !mentorDetailsQuery.data ||
-      !mentorInfoQuery.data ||
-      !state.selectedDate ||
-      !state.selectedSlot
-    ) {
+    if (!mentorDetailsQuery.data || !mentorInfoQuery.data || !state.selectedDate || !state.selectedSlot) {
       return null;
     }
 
@@ -149,13 +128,7 @@ export function useBooking({
       },
       total: mentorDetailsQuery.data.hourlyRate || 50,
     };
-  }, [
-    mentorDetailsQuery.data,
-    mentorInfoQuery.data,
-    state.selectedDate,
-    state.selectedSlot,
-    mentorSlug,
-  ]);
+  }, [mentorDetailsQuery.data, mentorInfoQuery.data, state.selectedDate, state.selectedSlot, mentorSlug]);
 
   // Handle booking submission
   const handleBookSession = useCallback(async () => {
@@ -180,14 +153,7 @@ export function useBooking({
       console.error('Booking failed:', error);
       setStep('error');
     }
-  }, [
-    state.selectedDate,
-    state.selectedSlot,
-    state.notes,
-    mentorSlug,
-    bookSessionMutation,
-    setStep,
-  ]);
+  }, [state.selectedDate, state.selectedSlot, state.notes, mentorSlug, bookSessionMutation, setStep]);
 
   const bookingSummary = createBookingSummary();
   console.log(state.selectedDate);

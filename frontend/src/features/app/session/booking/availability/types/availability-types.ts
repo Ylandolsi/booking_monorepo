@@ -19,6 +19,7 @@ export type MonthAvailabilityType = {
   month: number; // 1-12
   days: DayAvailabilityType[];
 };
+
 // {
 //     "year": 2025,
 //     "month": 8,
