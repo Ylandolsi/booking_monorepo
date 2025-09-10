@@ -17,8 +17,7 @@ public class ProfilePicture : ValueObject
         }
         else
         {
-            ProfilePictureLink = profilePictureLink;
-            ThumbnailUrlPictureLink = thumbnailUrlPictureLink;
+            UpdateProfilePicture(profilePictureLink, thumbnailUrlPictureLink);
         }
     }
 
@@ -30,8 +29,8 @@ public class ProfilePicture : ValueObject
             return Result.Failure(ProfilePictureErrors.InvalidProfilePictureUrl);
         }
 
-        ProfilePictureLink = profilePictureLink;
-        ThumbnailUrlPictureLink = thumbnailUrlPictureLink;
+        ProfilePictureLink = AddHttpsPrefix(profilePictureLink);
+        ThumbnailUrlPictureLink = AddHttpsPrefix(thumbnailUrlPictureLink);
 
         return Result.Success();
     }
@@ -49,12 +48,24 @@ public class ProfilePicture : ValueObject
     }
 
     private bool isProfilePictureLinkValid(string Link) => !string.IsNullOrWhiteSpace(Link) &&
-                                                           IsValidUrl(Link); 
+                                                           IsValidUrl(Link);
 
     private static bool IsValidUrl(string profilePictureLink)
     {
+        profilePictureLink = AddHttpsPrefix(profilePictureLink);
+
         return Uri.TryCreate(profilePictureLink, UriKind.Absolute, out var result)
                && (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);
+    }
+
+    private static string AddHttpsPrefix(string profilePictureUrl)
+    {
+        if (!profilePictureUrl.StartsWith("http://") && !profilePictureUrl.StartsWith("https://"))
+        {
+            profilePictureUrl = "https://" + profilePictureUrl;
+        }
+
+        return profilePictureUrl;
     }
 
 

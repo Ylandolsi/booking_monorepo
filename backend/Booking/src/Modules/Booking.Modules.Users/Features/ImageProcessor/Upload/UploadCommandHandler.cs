@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.ImageProcessor.Upload;
 
-internal sealed class UploadCommandHandler (S3ImageProcessingService s3ImageProcessingService,
+internal sealed class UploadCommandHandler(S3ImageProcessingService s3ImageProcessingService,
                                             ILogger<UploadCommandHandler> logger) : ICommandHandler<UploadCommand, ImageUploadResult>
 {
     public async Task<Result<ImageUploadResult>> Handle(UploadCommand request, CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ internal sealed class UploadCommandHandler (S3ImageProcessingService s3ImageProc
         var uniqueFileName = $"{fileName}_{Guid.NewGuid():N}";
 
         // TODO : add a resilency policy for the S3 upload operation
-        ImageProcessingResult result; 
+        ImageProcessingResult result;
         try
         {
             result = await s3ImageProcessingService.ProcessImageAsync(request.File, uniqueFileName);
