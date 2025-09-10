@@ -6,6 +6,22 @@ EnumerateArray
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>()
 -         var httpClient = httpClientFactory.CreateClient();
 
+# access environemnet
+
+```c#
+public MyClass(IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            // Run development specific code
+        }
+    }
+
+// or
+
+var isDevelopment = string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "development", StringComparison.InvariantCultureIgnoreCase);
+```
+
 ## Handling UTC DateTime for PostgreSQL
 
 Ensure DateTime values are in UTC for PostgreSQL's `timestamp with time zone`:

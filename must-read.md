@@ -15,6 +15,10 @@ https://www.linkedin.com/posts/tannika-majumder-424a5040_i-gave-this-problem-to-
 
 ---
 
+### .net
+
+- [IHostEnv] (https://andrewlock.net/ihostingenvironment-vs-ihost-environment-obsolete-types-in-net-core-3/)
+
 ## .net abstracton https://www.milanjovanovic.tech/blog/the-real-cost-of-abstractions-in-dotnet?utm_source=X&utm_medium=social&utm_campaign=01.09.2025
 
 **Database Locks:**  
