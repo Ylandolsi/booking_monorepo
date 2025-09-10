@@ -28,9 +28,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
 
         try
         {
-            // TODO : make sure date is on UTC or not 
-            
-            var dayOfWeek = query.Date.DayOfWeek;
+            var dayOfWeek = query.Date.DayOfWeek; // date is dateonly without time : YYYY-MM-DD
 
             // Get mentor with buffer time
             var mentor = await context.Mentors
@@ -70,7 +68,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                             s.Status != Domain.Enums.SessionStatus.Cancelled)
                 .Select(s => new ScheduledAtWithDuration
                 {
-                    ScheduledAt = s.ScheduledAt, 
+                    ScheduledAt = s.ScheduledAt,
                     Minutes = s.Duration.Minutes
                 })
                 .OrderBy(s => s.ScheduledAt)
@@ -79,19 +77,19 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
             foreach (var bookedSess in bookedSessions)
             {
                 var s = TimeConvertion.ConvertInstantToTimeZone(bookedSess.ScheduledAt, query.TimeZoneId);
-                bookedSess.ScheduledAt = s; 
+                bookedSess.ScheduledAt = s;
             }
 
             var timeSlots = new List<TimeSlotResponse>();
             var availableSlots = 0;
             var bookedSlots = 0;
-            
-            var currentTimeAtMentee = TimeConvertion.ConvertInstantToTimeZone(DateTime.UtcNow  , query.TimeZoneId);
+
+            var currentTimeAtMentee = TimeConvertion.ConvertInstantToTimeZone(DateTime.UtcNow, query.TimeZoneId);
 
             var considerTime = query.Date == DateOnly.FromDateTime(DateTime.UtcNow);
             foreach (var availability in dayAvailabilities)
             {
-                
+
                 var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) = ConvertAvailability.Convert(
                     availability.TimeRange.StartTime, availability.TimeRange.EndTime,
                     query.Date, availability.TimeZoneId, query.TimeZoneId);
@@ -149,7 +147,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
     }
 
     private List<TimeSlotResponse> CalculateAvailabilitySlots(
-        DateTime currentTimeAtMentee , 
+        DateTime currentTimeAtMentee,
         bool considerTime,
         TimeOnly startTime,
         TimeOnly endTime,
@@ -179,13 +177,13 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
                 var slotStart = currentTime.ToTimeSpan();
                 var slotEnd = slotEndTime.ToTimeSpan();
 
-                return (slotStart < sessionEnd && slotEnd > sessionStart);
+                return slotStart < sessionEnd && slotEnd > sessionStart;
             });
 
 
             var isAvailable = !isBooked;
-            
-            if ( considerTime &&  currentTime < TimeOnly.FromDateTime(currentTimeAtMentee) )
+
+            if (considerTime && currentTime < TimeOnly.FromDateTime(currentTimeAtMentee))
             {
                 isAvailable = false;
                 // TODO : or maybe dont include it at all ?

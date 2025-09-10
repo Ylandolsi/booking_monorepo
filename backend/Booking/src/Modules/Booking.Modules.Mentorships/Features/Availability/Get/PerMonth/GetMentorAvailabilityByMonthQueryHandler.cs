@@ -43,7 +43,7 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
                 .ToListAsync(cancellationToken);
 
             var allDaysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(query.Year, query.Month))
-                .Select(day => new DateOnly(query.Year, query.Month, day))
+                .Select(day => new DateOnly(query.Year, query.Month, day)) // date without time 
                 .ToList();
 
             // Filter out past days if IncludePastDays is false

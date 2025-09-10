@@ -34,11 +34,22 @@ internal sealed class SetScheduleCommandHandler(
                     Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
 
-            if (mentor.TimeZoneId == "")
+            string timeZone = "";
+            if (String.IsNullOrEmpty(mentor.TimeZoneId))
             {
-                var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
-                var timeZone = (userData.TimeZoneId == "" || userData.TimeZoneId is null) ? command.TimeZoneId : userData.TimeZoneId;
-                if (timeZone == "")
+                if (String.IsNullOrEmpty(command.TimeZoneId))
+                {
+                    var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
+                    timeZone = userData.TimeZoneId;
+
+                }
+                else
+                {
+
+                    timeZone = command.TimeZoneId;
+                }
+
+                if (String.IsNullOrEmpty(timeZone))
                 {
                     timeZone = "Africa/Tunis";
                 }
