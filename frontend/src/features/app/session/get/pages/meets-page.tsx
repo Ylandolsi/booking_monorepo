@@ -73,7 +73,7 @@ export function MeetsPage() {
       {/* Upcoming Meetings */}
       <h2 className="text-2xl font-semibold text-gray-900 mb-8">Upcoming Meetings</h2>
 
-      <section>
+      <section className="space-y-5">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">

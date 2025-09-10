@@ -31,9 +31,10 @@ internal sealed class GetSessionsQueryHandler(
         {
             var sessionsIMentee = await context.Sessions
                 .AsNoTracking()
-                .Where(s => s.MenteeId == query.MenteeId && (parsedUpToDate == null || (
-                    DateOnly.FromDateTime(s.ScheduledAt) <=
-                    DateOnly.FromDateTime(parsedUpToDate.Value))))
+                .Where(s => s.MenteeId == query.MenteeId && s.ScheduledAt >= DateTime.UtcNow &&
+                            (parsedUpToDate == null || (
+                                DateOnly.FromDateTime(s.ScheduledAt) <=
+                                DateOnly.FromDateTime(parsedUpToDate.Value))))
                 .OrderByDescending(s => s.ScheduledAt)
                 .Select(s => new SessionResponse
                 {
@@ -54,8 +55,9 @@ internal sealed class GetSessionsQueryHandler(
 
             var sessionsIMentor = await context.Sessions
                 .AsNoTracking()
-                .Where(s => s.MentorId == query.MenteeId && (parsedUpToDate == null || (
-                    DateOnly.FromDateTime(s.ScheduledAt) <= DateOnly.FromDateTime(parsedUpToDate.Value))))
+                .Where(s => s.MentorId == query.MenteeId && s.ScheduledAt >= DateTime.UtcNow &&
+                            (parsedUpToDate == null || (
+                                DateOnly.FromDateTime(s.ScheduledAt) <= DateOnly.FromDateTime(parsedUpToDate.Value))))
                 .OrderByDescending(s => s.ScheduledAt)
                 .Select(s => new SessionResponse
                 {

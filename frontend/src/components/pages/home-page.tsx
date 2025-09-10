@@ -7,20 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/features/auth/hooks';
 import { useMentor } from '@/hooks/use-mentor';
 import { useAppNavigation } from '@/hooks/use-navigation';
-import {
-  Calendar,
-  Users,
-  Clock,
-  BookOpen,
-  ArrowRight,
-  Video,
-  Star,
-  TrendingUp,
-  MessageCircle,
-  Settings,
-  User,
-  GraduationCap,
-} from 'lucide-react';
+import { Calendar, BookOpen, Video, TrendingUp, Settings, User } from 'lucide-react';
 import { GiTeacher } from 'react-icons/gi';
 import { useGetSessions } from '@/features/app/session';
 
@@ -31,10 +18,7 @@ export function HomePage() {
   const { isMentor } = useMentor();
   const nav = useAppNavigation();
 
-  const {
-    data: sessionsData,
-    isLoading : sessionsIsLoading,
-  } = useGetSessions();
+  const { data: sessionsData, isLoading: sessionsIsLoading } = useGetSessions();
 
   useEffect(() => {
     if (error) {
@@ -51,12 +35,7 @@ export function HomePage() {
 
   // Helper to get the next session and time until it starts
   const getNextSessionInfo = () => {
-    if (
-      !sessionsData ||
-      !Array.isArray(sessionsData) ||
-      sessionsData.length === 0
-    )
-      return null;
+    if (!sessionsData || !Array.isArray(sessionsData) || sessionsData.length === 0) return null;
     const now = new Date();
     const next = sessionsData[0];
     const startTimeOfSession = new Date(next.scheduledAt);
@@ -85,32 +64,20 @@ export function HomePage() {
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {getGreeting()}, {currentUser?.firstName}! 👋
         </h1>
-        <p className="mt-2 text-muted-foreground">
-          {isMentor
-            ? 'Welcome back to your mentoring dashboard'
-            : 'Ready to learn something new today?'}
-        </p>
+        <p className="mt-2 text-muted-foreground">{isMentor ? 'Welcome back to your mentoring dashboard' : 'Ready to learn something new today?'}</p>
       </div>
 
       {/* Quick Stats */}
       <div className="flex w-full items-center">
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Upcoming Sessions
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {sessionsIsLoading ? '...' : (sessionsData?.length ?? 0)}
-            </div>
+            <div className="text-2xl font-bold">{sessionsIsLoading ? '...' : (sessionsData?.length ?? 0)}</div>
             <p className="text-xs text-muted-foreground font-bold">
-              {sessionsIsLoading
-                ? 'Loading...'
-                : nextSessionInfo
-                  ? `Next session ${nextSessionInfo.timeString}`
-                  : 'No upcoming sessions'}
+              {sessionsIsLoading ? 'Loading...' : nextSessionInfo ? `Next session ${nextSessionInfo.timeString}` : 'No upcoming sessions'}
             </p>
           </CardContent>
         </Card>
@@ -140,9 +107,7 @@ export function HomePage() {
                       <Calendar className="h-5 w-5 text-primary" />
                       <span className="font-medium">Set Availability</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      Update your available time slots
-                    </span>
+                    <span className="text-sm text-muted-foreground">Update your available time slots</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -153,9 +118,7 @@ export function HomePage() {
                       <Video className="h-5 w-5 text-primary" />
                       <span className="font-medium">View Sessions</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      Manage your upcoming meetings
-                    </span>
+                    <span className="text-sm text-muted-foreground">Manage your upcoming meetings</span>
                   </Button>
                 </>
               ) : (
@@ -169,9 +132,7 @@ export function HomePage() {
                       <GiTeacher className="h-5 w-5 text-primary" />
                       <span className="font-medium">Become a Mentor</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      Share your expertise with others
-                    </span>
+                    <span className="text-sm text-muted-foreground">Share your expertise with others</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -182,9 +143,7 @@ export function HomePage() {
                       <BookOpen className="h-5 w-5 text-primary" />
                       <span className="font-medium">Find Mentors</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      Discover experts in your field
-                    </span>
+                    <span className="text-sm text-muted-foreground">Discover experts in your field</span>
                   </Button>
                 </>
               )}
@@ -211,9 +170,7 @@ export function HomePage() {
                   <p className="font-medium">
                     {currentUser?.firstName} {currentUser?.lastName}
                   </p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {currentUser?.email}
-                  </p>
+                  <p className="text-sm text-muted-foreground truncate">{currentUser?.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -226,12 +183,7 @@ export function HomePage() {
                   <Badge variant="outline">Student</Badge>
                 )}
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full"
-                onClick={() => nav.goToProfile(currentUser?.slug || '')}
-              >
+              <Button variant="outline" size="sm" className="w-full" onClick={() => nav.goToProfile(currentUser?.slug || '')}>
                 <Settings className="h-4 w-4 mr-2" />
                 Edit Profile
               </Button>

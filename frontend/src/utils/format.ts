@@ -48,17 +48,6 @@ export function ConvertUtcToLocal(timeZoneId?: string) {
 
   return localTime;
 }
-// "en-US" = U.S. English formatting.
-
-// Example: August 25, 2025, 08:45:12 PM GMT+2
-
-// "en-GB" = U.K. English formatting.
-
-// Example: 25 August 2025 at 20:45:12 GMT+2
-
-// "fr-FR" = French formatting.
-
-// Example: 25 août 2025 à 20:45:12 UTC+2
 
 export const formatTime = (timeString: string): string => {
   // Parse HH:mm format
@@ -82,3 +71,16 @@ export const formatISODateTime = (iso: string): string => {
   // from : 2025-08-30T10:45:00
   // to : August 30, 2025 10:45 AM
 };
+
+// ----------
+// "en-US" = U.S. English formatting.
+
+// Example: August 25, 2025, 08:45:12 PM GMT+2
+
+// "en-GB" = U.K. English formatting.
+
+// Example: 25 August 2025 at 20:45:12 GMT+2
+
+// "fr-FR" = French formatting.
+
+// Example: 25 août 2025 à 20:45:12 UTC+2
