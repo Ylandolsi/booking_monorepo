@@ -39,7 +39,7 @@ public static class UsersModule
     private static IServiceCollection ExposeApiForModules(this IServiceCollection service)
     {
         service.AddScoped<IUsersModuleApi, UsersModuleApi>();
-        return service; 
+        return service;
     }
 
 
@@ -67,16 +67,14 @@ public static class UsersModule
     {
         string? connectionString = configuration.GetConnectionString("Database");
 
-        services.AddDbContext<UsersDbContext>((sp, options)=> options
+        services.AddDbContext<UsersDbContext>((sp, options) => options
             .UseNpgsql(connectionString,
                 npgsqlOptions =>
                 {
                     npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Users);
                 })
-            // TODO : add this interceptor 
-            //.AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>())
             .UseSnakeCaseNamingConvention());
-        
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
@@ -98,7 +96,7 @@ public static class UsersModule
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,
         IConfiguration configuration)
     {
-        
+
 
         return services;
     }

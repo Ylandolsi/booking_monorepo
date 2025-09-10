@@ -25,7 +25,6 @@ public class CompleteWebhook(
         // TODO : optimize this and pass session not sesionId 
         var session = await dbContext.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId);
         // TODO : send link to mentor and mentee for confirmation 
-        // TODO : recurring job to handle all escrow and send to wallet and create a transaction 
         logger.LogInformation(
             "Handling PaymentCompletedDomainEvent for menteeId:{mentee} , mentorId:{mentor} ,sessionId:{session} with price : {Price} ",
             session.MenteeId,

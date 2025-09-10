@@ -64,7 +64,6 @@ public class Mentor : Entity
             LastActiveAt = DateTime.UtcNow,
             TimeZoneId = timeZoneId
         };
-        // TODO : FIND a better approach
         mentor.CreateAllDays();
         return mentor;
     }

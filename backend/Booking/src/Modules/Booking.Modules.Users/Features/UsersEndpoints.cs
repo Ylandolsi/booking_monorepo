@@ -20,7 +20,7 @@ public static class UsersEndpoints
     public const string InegrateKonnect = "users/integrate/konnect";
 
     // User Management
-    public const string GetUser = "users/{userSlug}"; // TODO : implement this 
+    public const string GetUser = "users/{userSlug}";
     public const string GetCurrentUser = "users/me";
 
     // Experience 

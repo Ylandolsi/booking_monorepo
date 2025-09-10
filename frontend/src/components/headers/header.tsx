@@ -6,6 +6,7 @@ import { LazyImage } from '@/utils';
 import { CreditCard, Menu } from 'lucide-react';
 import { useAppNavigation } from '@/hooks';
 import { useGetWallet } from '@/features/shared/get-wallet';
+import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 
 function BalanceHeader() {
   const { data: walletData, isLoading } = useGetWallet();
@@ -39,12 +40,7 @@ export function Header() {
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left side - Logo and Menu (Mobile only) */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(true)}
-            className="h-7.5 w-10 p-0 hover:bg-muted "
-          >
+          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)} className="h-7.5 w-10 p-0 hover:bg-muted ">
             <Menu className="w-5 h-5" />
           </Button>
           <Logo className="h-8" />
@@ -68,23 +64,12 @@ export function Header() {
             </Button> */}
             <BalanceHeader />
 
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate.goToProfile(currentUser.slug)}
-              className="h-10 px-2 hover:bg-muted"
-            >
+            <Button variant="ghost" size="sm" onClick={() => navigate.goToProfile(currentUser.slug)} className="h-10 px-2 hover:bg-muted">
               <LazyImage
                 className="w-7 h-7 rounded-full ring-2 ring-primary/20 object-cover"
-                src={
-                  currentUser?.profilePicture.profilePictureLink ||
-                  'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-                }
+                src={currentUser?.profilePicture.profilePictureLink || FALLBACK_PROFILE_PICTURE}
                 alt="profile-pic"
-                placeholder={
-                  currentUser?.profilePicture.thumbnailUrlPictureLink ||
-                  'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-                }
+                placeholder={currentUser?.profilePicture.thumbnailUrlPictureLink || FALLBACK_PROFILE_PICTURE}
               />
             </Button>
           </div>

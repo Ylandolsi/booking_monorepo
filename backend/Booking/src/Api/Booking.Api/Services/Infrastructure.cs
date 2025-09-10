@@ -44,8 +44,8 @@ public static class Infrastructure
             {
                 // TODO : make this more reselllient
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
-                client.DefaultRequestHeaders.Add("x-api-key",konnectOptions.ApiKey);
-                // TOdo : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestHeaders.Add("x-api-key", konnectOptions.ApiKey);
+                // TODO : IMPORTANT  : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
             })
             .AddStandardResilienceHandler();
 

@@ -17,7 +17,7 @@ export const useLogout = ({
     mutationFn: logout,
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: authQueryKeys.currentUser() });
-      // queryClient.clear(); // clear all : TODO check this
+      queryClient.clear(); // clear all
 
       toast.success('Logged out successfully!');
       onSuccess?.();

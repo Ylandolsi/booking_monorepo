@@ -55,8 +55,6 @@ public static class MentorshipsModule
                 {
                     npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, Schemas.Mentorships);
                 })
-            // TODO : add this interceptor 
-            //.AddInterceptors(sp.GetRequiredService<InsertOutboxMessagesInterceptor>())
             .UseSnakeCaseNamingConvention());
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();

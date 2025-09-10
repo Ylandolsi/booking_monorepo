@@ -7,16 +7,13 @@ import { useUpdateProfilePicture } from '@/features/app/profile/api';
 import 'react-image-crop/dist/ReactCrop.css';
 import { LazyImage } from '@/utils';
 import { cn } from '@/lib/cn';
+import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 interface ProfileImageProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   size?: 'sm' | 'lg';
 }
 
-export const ProfileImage = ({
-  className = '',
-  size = 'lg',
-  ...props
-}: ProfileImageProps) => {
+export const ProfileImage = ({ className = '', size = 'lg', ...props }: ProfileImageProps) => {
   const sizeClasses = {
     sm: 'w-24 h-24',
     lg: 'w-33 h-33',
@@ -65,11 +62,7 @@ export const ProfileImage = ({
   };
 
   // Center aspect crop utility
-  const centerAspectCrop = (
-    mediaWidth: number,
-    mediaHeight: number,
-    aspect: number,
-  ) => {
+  const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect: number) => {
     return centerCrop(
       makeAspectCrop(
         {
@@ -86,10 +79,7 @@ export const ProfileImage = ({
   };
 
   // Generate cropped image
-  const getCroppedImg = (
-    image: HTMLImageElement,
-    cropData: PixelCrop,
-  ): Promise<string> => {
+  const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<string> => {
     const canvas = document.createElement('canvas');
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
@@ -200,19 +190,10 @@ export const ProfileImage = ({
       <div className={`group relative inline-block ${className}`}>
         <div className="relative">
           <LazyImage
-            src={
-              user?.profilePicture.profilePictureLink ||
-              'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-            }
+            src={user?.profilePicture.profilePictureLink || FALLBACK_PROFILE_PICTURE}
             alt="profile-picture"
-            placeholder={
-              user?.profilePicture.thumbnailUrlPictureLink ||
-              'https://www.gravatar.com/avatar/2c7d99fe281ecd3bcd65ab915bac6dd5?s=250'
-            }
-            className={cn(
-              'rounded-full ring-4 ring-primary/20 object-cover transition-all group-hover:ring-primary/40 shadow-lg',
-              sizeClasses[size],
-            )}
+            placeholder={user?.profilePicture.thumbnailUrlPictureLink || FALLBACK_PROFILE_PICTURE}
+            className={cn('rounded-full ring-4 ring-primary/20 object-cover transition-all group-hover:ring-primary/40 shadow-lg', sizeClasses[size])}
           />
           {isSlugCurrent && (
             <button

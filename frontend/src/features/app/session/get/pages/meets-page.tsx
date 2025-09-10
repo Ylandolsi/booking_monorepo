@@ -20,14 +20,8 @@ import { MeetingCard } from '@/features/app/session/get/components';
 import { useGetSessions } from '@/features/app/session/get/api';
 import { formatISODateTime, GenerateTimeZoneId } from '@/utils';
 import { useTimeFilter, type TimeFilter } from '@/hooks/use-time-filter';
+import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 
-const toDate = {
-  All: 600,
-  Today: 0,
-  Tomorrow: 1,
-  // 'Next 3 Days': 3,
-  // 'Next Week': 7,
-};
 export function MeetsPage() {
   const [meetingLink, setMeetingLink] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
@@ -113,17 +107,12 @@ export function MeetsPage() {
           {sessions?.map((session) => {
             let atendeeName = [session.mentorFirstName, session.mentorLastName].filter(Boolean).join(' ') || 'Mentor';
 
-            let atendeeProfilePic =
-              session.mentorProfilePicture ??
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(atendeeName)}&background=FFB085&co lor=fff&size=64`;
+            let atendeeProfilePic = session.mentorProfilePicture ?? FALLBACK_PROFILE_PICTURE;
 
             if (session.iamMentor) {
               atendeeName = [session.menteeFirstName, session.menteeLastName].filter(Boolean).join(' ') || 'Mentee';
 
-              atendeeProfilePic =
-                session.menteeProfilePicture ??
-                // TODO : add fallback for non profile picture
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(atendeeName)}&background=FFB085&co lor=fff&size=64`;
+              atendeeProfilePic = session.menteeProfilePicture ?? FALLBACK_PROFILE_PICTURE;
             }
 
             const title = `Session with ${atendeeName}`;

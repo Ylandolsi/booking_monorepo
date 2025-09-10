@@ -25,13 +25,13 @@ internal sealed class GetMentorReviewsQueryHandler(
                     r.SessionId,
                     r.MentorId,
                     r.MenteeId,
-                    "Mentee Name", // TODO: Join with user table to get actual name
+                    "Mentee Name", //Join with user table to get actual name
                     r.Rating,
                     r.Comment,
                     r.CreatedAt))
                 .ToListAsync(cancellationToken);
 
-            logger.LogInformation("Retrieved {Count} reviews for mentor {MentorSlug}", 
+            logger.LogInformation("Retrieved {Count} reviews for mentor {MentorSlug}",
                 reviews.Count, query.MentorSlug);
 
             return Result.Success(reviews);
@@ -39,7 +39,7 @@ internal sealed class GetMentorReviewsQueryHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to get reviews for mentor {MentorSlug}", query.MentorSlug);
-            return Result.Failure<List<ReviewResponse>>(Error.Problem("Reviews.GetFailed", 
+            return Result.Failure<List<ReviewResponse>>(Error.Problem("Reviews.GetFailed",
                 "Failed to retrieve mentor reviews"));
         }
     }

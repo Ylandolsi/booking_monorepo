@@ -9,34 +9,16 @@ export type RequestOptions = {
   cache?: RequestCache;
 };
 
-export function buildUrlWithParams(
-  url: string,
-  params?: RequestOptions['params'],
-): string {
+export function buildUrlWithParams(url: string, params?: RequestOptions['params']): string {
   if (!params) return url;
-  const filteredParams = Object.fromEntries(
-    Object.entries(params).filter(
-      ([, value]) => value !== undefined && value !== null,
-    ),
-  );
+  const filteredParams = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined && value !== null));
   if (Object.keys(filteredParams).length === 0) return url;
-  const queryString = new URLSearchParams(
-    filteredParams as Record<string, string>,
-  ).toString();
+  const queryString = new URLSearchParams(filteredParams as Record<string, string>).toString();
   return `${url}?${queryString}`;
 }
 
-async function fetchApi<T>(
-  url: string,
-  options: RequestOptions = {},
-): Promise<T> {
-  const {
-    method = 'GET',
-    headers = {},
-    body,
-    params,
-    cache = 'no-store',
-  } = options;
+async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T> {
+  const { method = 'GET', headers = {}, body, params, cache = 'no-store' } = options;
 
   const fullUrl = buildUrlWithParams(`${env.API_URL}/${url}`, params);
 
@@ -48,11 +30,7 @@ async function fetchApi<T>(
     ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...headers,
   };
-  const requestBody = isFormData
-    ? body
-    : body
-      ? JSON.stringify(body)
-      : undefined;
+  const requestBody = isFormData ? body : body ? JSON.stringify(body) : undefined;
   const response = await fetch(fullUrl, {
     method,
     headers: fetchHeaders,
@@ -66,8 +44,6 @@ async function fetchApi<T>(
     if (window.location.href.includes('auth')) return undefined as T; // Allow auth pages to handle 401 without redirecting
     // try to refresh the token
     try {
-      // TODO : refresh only when exists a refresh token
-      // and add a rate limiter for that ( and maybe use BFF )
       const refreshResponse = await fetch(env.REFRESH_URL, {
         method: 'POST',
         credentials: 'include',
@@ -81,9 +57,7 @@ async function fetchApi<T>(
       console.error('Token refresh failed:', error);
     }
     // If the token refresh fails, redirect to login
-    window.location.href =
-      '/auth/login?redirectTo=' +
-      encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = '/auth/login?redirectTo=' + encodeURIComponent(window.location.pathname + window.location.search);
     toast.error('Unauthorized access');
   }
 
