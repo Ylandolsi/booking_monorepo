@@ -1,9 +1,5 @@
 import { env } from '@/config/env';
-import {
-  HubConnection,
-  HubConnectionBuilder,
-  LogLevel,
-} from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 
 export type NotificationSignalR = {
   id: string;
@@ -42,25 +38,20 @@ class SignalRService {
             withCredentials: true, // enables sending cookies with the request
           })
           .configureLogging(LogLevel.Information)
-          .withAutomaticReconnect()
+          .withAutomaticReconnect([0, 2000, 10000, 30000]) // Better reconnect strategy
           .build();
 
         // Set up event handlers
-        this.connection.on(
-          'ReceiveNotification',
-          (notification: NotificationSignalR) => {
-            this.invokeCallbacks(notification);
-          },
-        );
+        this.connection.on('ReceiveNotification', (notification: NotificationSignalR) => {
+          this.invokeCallbacks(notification);
+        });
 
         // Handle reconnection event
         this.connection.onreconnected((connectionId?: string) => {
           console.log('SignalR Reconnected:', connectionId);
           // Rejoin user group after reconnection
           if (this.connection) {
-            this.connection
-              .invoke('JoinUserGroup', userId)
-              .catch(console.error);
+            this.connection.invoke('JoinUserGroup', userId).catch(console.error);
           }
         });
 

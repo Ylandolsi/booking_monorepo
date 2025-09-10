@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/config/env';
+import { RefreshAccessToken } from '@/lib/api/user-endpoints';
 import { toast } from 'sonner';
+
 export type RequestOptions = {
   method?: string;
   headers?: Record<string, string>;
@@ -44,7 +46,7 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
     if (window.location.href.includes('auth')) return undefined as T; // Allow auth pages to handle 401 without redirecting
     // try to refresh the token
     try {
-      const refreshResponse = await fetch(env.REFRESH_URL, {
+      const refreshResponse = await fetch(`${env.API_URL}/${RefreshAccessToken}`, {
         method: 'POST',
         credentials: 'include',
       });

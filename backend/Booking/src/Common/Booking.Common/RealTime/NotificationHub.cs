@@ -1,4 +1,4 @@
- using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 
@@ -39,14 +39,16 @@ public class NotificationHub : Hub
 
         await base.OnDisconnectedAsync(exception);
     }
+
 }*/
+[Authorize]
 public class NotificationHub : Hub
 {
     public async Task JoinUserGroup(string userId)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, userId);
     }
-    
+
     public async Task LeaveUserGroup(string userId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, userId);
