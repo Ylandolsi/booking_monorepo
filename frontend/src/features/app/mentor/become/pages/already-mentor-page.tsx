@@ -1,39 +1,11 @@
 import React, { useState } from 'react';
-import {
-  useUpdateMentor,
-  useUserMentorData,
-} from '@/features/app/mentor/become';
+import { useUpdateMentor, useUserMentorData } from '@/features/app/mentor/become';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formatDate } from '@/utils';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Link,
-  Input,
-  Label,
-  Alert,
-  AlertDescription,
-  DrawerDialog,
-} from '@/components/ui';
+import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Link, Input, Label, Alert, AlertDescription, DrawerDialog } from '@/components/ui';
 import { ProfileStateWrapper } from '@/components/wrappers';
-import {
-  CheckCircle,
-  Calendar,
-  DollarSign,
-  ArrowRight,
-  Settings,
-  BarChart3,
-  MessageCircle,
-  Edit3,
-  Loader2,
-  AlertCircle,
-  Save,
-} from 'lucide-react';
+import { CheckCircle, Calendar, DollarSign, ArrowRight, Settings, BarChart3, MessageCircle, Edit3, Loader2, AlertCircle, Save } from 'lucide-react';
 import { type MentorUpdateFormData } from '@/features/app/mentor/become/schemas';
 import { useAppNavigation, useQueryState } from '@/hooks';
 import { mentorUpdateFormSchema } from '@/features/app/mentor/become/schemas/mentor-update-schema';
@@ -89,10 +61,10 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
 
   const quickActions = [
     {
-      onClick: navigate.goToTestDashboard,
+      onClick: navigate.goToPayout,
       icon: <BarChart3 className="w-5 h-5 mr-2" />,
-      title: 'Go to Dashboard',
-      description: 'Manage your sessions and students',
+      title: 'Go to Payout',
+      description: 'Extract your money',
     },
     // {
     //   onClick:
@@ -126,9 +98,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
       {updateMentorMutation.isSuccess && (
         <Alert className="mb-6 border-green-200 bg-green-50">
           <CheckCircle className="w-4 h-4 text-green-600" />
-          <AlertDescription className="text-green-800">
-            Your mentor profile has been updated successfully!
-          </AlertDescription>
+          <AlertDescription className="text-green-800">Your mentor profile has been updated successfully!</AlertDescription>
         </Alert>
       )}
 
@@ -139,18 +109,13 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">
-            You're Already a Mentor!
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">You're Already a Mentor!</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Welcome back, {user?.firstName || 'there'}! You've been successfully
-            registered as a mentor since {formatDate(mentor?.createdAt)}.
+            Welcome back, {user?.firstName || 'there'}! You've been successfully registered as a mentor since {formatDate(mentor?.createdAt)}.
           </p>
         </div>
 
-        <Badge className="bg-green-100 text-green-800 px-4 py-2">
-          Active Mentor
-        </Badge>
+        <Badge className="bg-green-100 text-green-800 px-4 py-2">Active Mentor</Badge>
       </div>
 
       {/* Current Status Card with Edit Dialog */}
@@ -172,11 +137,7 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
               {...register('hourlyRate')}
               className={errors.hourlyRate ? 'border-red-500' : ''}
             />
-            {errors.hourlyRate && (
-              <p className="text-sm text-red-600">
-                {errors.hourlyRate.message}
-              </p>
-            )}
+            {errors.hourlyRate && <p className="text-sm text-red-600">{errors.hourlyRate.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -189,38 +150,22 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
               {...register('bufferTimeMinutes')}
               className={errors.bufferTimeMinutes ? 'border-red-500' : ''}
             />
-            {errors.bufferTimeMinutes && (
-              <p className="text-sm text-red-600">
-                {errors.bufferTimeMinutes.message}
-              </p>
-            )}
-            <p className="text-xs text-gray-500">
-              Time between sessions for preparation
-            </p>
+            {errors.bufferTimeMinutes && <p className="text-sm text-red-600">{errors.bufferTimeMinutes.message}</p>}
+            <p className="text-xs text-gray-500">Time between sessions for preparation</p>
           </div>
 
           {updateMentorMutation.isError && (
             <Alert className="border-red-200 bg-red-50">
               <AlertCircle className="w-4 h-4 text-red-600" />
-              <AlertDescription className="text-red-800">
-                Failed to update profile. Please try again.
-              </AlertDescription>
+              <AlertDescription className="text-red-800">Failed to update profile. Please try again.</AlertDescription>
             </Alert>
           )}
 
           <div className="flex items-center justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleDialogClose}
-              disabled={isSubmitting || updateMentorMutation.isPending}
-            >
+            <Button type="button" variant="outline" onClick={handleDialogClose} disabled={isSubmitting || updateMentorMutation.isPending}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || updateMentorMutation.isPending}
-            >
+            <Button type="submit" disabled={isSubmitting || updateMentorMutation.isPending}>
               {isSubmitting || updateMentorMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -247,36 +192,25 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">Buffer Time:</span>
-                <span className="font-semibold">
-                  {mentor?.bufferTimeMinutes} minutes
-                </span>
+                <span className="font-semibold">{mentor?.bufferTimeMinutes} minutes</span>
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">Member Since:</span>
-                <span className="font-semibold">
-                  {formatDate(mentor?.createdAt)}
-                </span>
+                <span className="font-semibold">{formatDate(mentor?.createdAt)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-600">Status:</span>
-                <Badge
-                  variant="outline"
-                  className="text-green-700 border-green-300"
-                >
+                <Badge variant="outline" className="text-green-700 border-green-300">
                   Active
                 </Badge>
               </div>
             </div>
           </div>
           <div className="flex justify-end">
-            <Button
-              onClick={() => setIsEditDialogOpen(true)}
-              variant="outline"
-              size="sm"
-            >
+            <Button onClick={() => setIsEditDialogOpen(true)} variant="outline" size="sm">
               <Edit3 className="w-4 h-4 mr-2" />
               Edit Profile
             </Button>
@@ -299,16 +233,11 @@ function AlreadyMentorContent({ user, mentor }: CombinedData) {
                 size="lg"
                 className="flex h-auto p-4 text-left justify-start"
               >
-                <div
-                  className="w-full flex items-center"
-                  onClick={action.onClick}
-                >
+                <div className="w-full flex items-center" onClick={action.onClick}>
                   {action.icon}
                   <div className="text-left">
                     <div className="font-medium">{action.title}</div>
-                    <div className="text-xs text-gray-600">
-                      {action.description}
-                    </div>
+                    <div className="text-xs text-gray-600">{action.description}</div>
                   </div>
                   <ArrowRight className="w-4 h-4 ml-auto" />
                 </div>
@@ -334,15 +263,8 @@ export function AlreadyMentorPage() {
   );
 
   return (
-    <ProfileStateWrapper
-      query={queryState}
-      requiresMentor={true}
-      loadingMessage="Loading your mentor profile..."
-      loadingType="spinner"
-    >
-      {({ user, mentor }: any) => (
-        <AlreadyMentorContent user={user} mentor={mentor} />
-      )}
+    <ProfileStateWrapper query={queryState} requiresMentor={true} loadingMessage="Loading your mentor profile..." loadingType="spinner">
+      {({ user, mentor }: any) => <AlreadyMentorContent user={user} mentor={mentor} />}
     </ProfileStateWrapper>
   );
 }
