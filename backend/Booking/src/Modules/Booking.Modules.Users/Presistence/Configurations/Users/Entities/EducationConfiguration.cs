@@ -29,10 +29,23 @@ internal sealed class EducationConfiguration : IEntityTypeConfiguration<Educatio
             .IsRequired()
             .HasMaxLength(100);
 
+        // Add indexes for performance
+        builder.HasIndex(e => e.UserId);
+        builder.HasIndex(e => e.StartDate);
+        builder.HasIndex(e => new { e.UserId, e.StartDate }); // Composite for user education queries
+
         builder.HasOne(e => e.User)
             .WithMany(u => u.Educations)
             .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Add table-level constraints
+        builder.ToTable("educations", t =>
+        {
+            t.HasCheckConstraint("CK_Education_Dates_Valid", "end_date IS NULL OR end_date >= start_date");
+            t.HasCheckConstraint("CK_Education_Field_Length", "LENGTH(field) >= 2 AND LENGTH(field) <= 100");
+            t.HasCheckConstraint("CK_Education_University_Length", "LENGTH(university) >= 2 AND LENGTH(university) <= 100");
+        });
     }
 
 }

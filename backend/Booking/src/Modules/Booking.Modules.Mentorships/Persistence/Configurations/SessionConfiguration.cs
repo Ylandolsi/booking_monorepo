@@ -41,6 +41,11 @@ internal sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
             .HasMaxLength(1000)
             .IsRequired(false);
 
+        // Add Title property with length limit
+        builder.Property(s => s.Title)
+            .HasMaxLength(200)
+            .IsRequired(false);
+
         builder.Property(s => s.Status)
             .HasConversion<int>()
             .IsRequired();
@@ -95,5 +100,16 @@ internal sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.HasIndex(s => s.MenteeId);
         builder.HasIndex(s => s.Status);
         builder.HasIndex(s => s.ScheduledAt);
+        builder.HasIndex(s => new { s.MentorId, s.Status }); // Composite index for mentor session queries
+        builder.HasIndex(s => new { s.MenteeId, s.Status }); // Composite index for mentee session queries
+        builder.HasIndex(s => new { s.ScheduledAt, s.Status }); // For date-based filtering with status
+
+        // Add table-level constraints
+        builder.ToTable("sessions", t =>
+        {
+            t.HasCheckConstraint("CK_Session_Price_Positive", "price_amount > 0");
+            t.HasCheckConstraint("CK_Session_Duration_Valid", "duration_minutes > 0 AND duration_minutes <= 480"); // Max 8 hours
+            t.HasCheckConstraint("CK_Session_Date_Valid", "scheduled_at > created_at");
+        });
     }
 }

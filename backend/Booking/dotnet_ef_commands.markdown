@@ -10,6 +10,19 @@ Check wallet balance with row-level locking
     ExecuteUpdateAsync(w => w.SetProperty(x => x.Balance, x => x.Balance), cancellationToken);
 ```
 
+## Table level conditions
+
+````c#
+// Add table-level constraints
+builder.ToTable("sessions", t =>
+{
+    t.HasCheckConstraint("CK_Session_Price_Positive", "price_amount > 0");
+    t.HasCheckConstraint("CK_Session_Duration_Valid", "duration_minutes > 0 AND duration_minutes <= 480"); // Max 8 hours
+    t.HasCheckConstraint("CK_Session_Date_Valid", "scheduled_at > created_at");
+});
+```
+
+
 ## Entity Framework Migrations
 
 Add migrations for the Users module:
@@ -21,7 +34,7 @@ dotnet ef migrations add Initial \
   --context UsersDbContext \
   --configuration Debug \
   --output-dir Persistence/Migrations
-```
+````
 
 Add migrations for the Mentorships module:
 

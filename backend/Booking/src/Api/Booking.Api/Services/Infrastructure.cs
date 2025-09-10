@@ -36,16 +36,16 @@ public static class Infrastructure
         //services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddHttpClient();
-        //   move clients name to static 
+        // move clients name to static 
         var konnectOptions = configuration.GetSection(KonnectOptions.OptionsKey)?.Get<KonnectOptions>() ??
                              throw new InvalidOperationException("konnect options are not configured.");
 
         services.AddHttpClient("KonnectClient", client =>
             {
-                // TODO : make this more reselllient
+                //make this more reselllient
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
                 client.DefaultRequestHeaders.Add("x-api-key", konnectOptions.ApiKey);
-                // TODO : IMPORTANT  : Restore it for prod client.Timeout = TimeSpan.FromSeconds(10);
+                client.Timeout = TimeSpan.FromSeconds(10);
             })
             .AddStandardResilienceHandler();
 

@@ -31,7 +31,7 @@ internal sealed class AvailabilityConfiguration : IEntityTypeConfiguration<Avail
             timeRange.Property(tr => tr.EndTime)
                 .HasColumnName("end_time")
                 .IsRequired();
-            
+
         });
 
         builder.Property(a => a.IsActive)
@@ -57,6 +57,16 @@ internal sealed class AvailabilityConfiguration : IEntityTypeConfiguration<Avail
         builder.HasIndex(a => a.DayOfWeek);
         builder.HasIndex(a => a.DayId);
         builder.HasIndex(a => a.IsActive);
+        builder.HasIndex(a => new { a.MentorId, a.DayOfWeek, a.IsActive }); // Composite for mentor availability queries
+
+        // Add table-level constraints
+        builder.ToTable("availabilities", t =>
+        {
+            t.HasCheckConstraint("CK_Availability_TimeRange_Valid", "start_time < end_time");
+            t.HasCheckConstraint("CK_Availability_TimeRange_BusinessHours",
+                "start_time >= '00:00:00' AND end_time <= '23:59:59'");
+            t.HasCheckConstraint("CK_Availability_DayOfWeek_Valid", "day_of_week >= 0 AND day_of_week <= 6");
+        });
 
     }
 }

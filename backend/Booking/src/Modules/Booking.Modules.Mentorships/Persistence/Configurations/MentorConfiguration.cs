@@ -10,7 +10,7 @@ internal sealed class MentorConfiguration : IEntityTypeConfiguration<Mentor>
     public void Configure(EntityTypeBuilder<Mentor> builder)
     {
         builder.HasKey(m => m.Id);
-        
+
         builder.Property(m => m.UserSlug)
             .HasMaxLength(100)
             .IsRequired();
@@ -43,8 +43,21 @@ internal sealed class MentorConfiguration : IEntityTypeConfiguration<Mentor>
 
         builder.Property(m => m.LastActiveAt)
             .IsRequired(false);
-        
-        
+
+        // Add essential indexes for performance
+        builder.HasIndex(m => m.UserSlug).IsUnique(); // Critical for mentor lookup
+        builder.HasIndex(m => m.IsActive); // For filtering active mentors
+        builder.HasIndex(m => m.CreatedAt); // For mentor analytics
+        builder.HasIndex(m => new { m.IsActive, m.LastActiveAt }); // Composite for active mentor queries
+
+        // Add table-level constraints
+        builder.ToTable("mentors", t =>
+        {
+            t.HasCheckConstraint("CK_Mentor_HourlyRate_Positive", "hourly_rate_amount > 0");
+            t.HasCheckConstraint("CK_Mentor_BufferTime_Valid", "buffer_time_minutes >= 0 AND buffer_time_minutes <= 120"); // Max 2 hours buffer
+        });
+
+
 
         // Relationships
         builder.HasMany(m => m.Sessions)

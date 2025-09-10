@@ -17,10 +17,10 @@ public static class AuthorizationInternal
         });
 
         services.AddScoped<PermissionProvider>();
-        // services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-        //services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         services.AddTransient<IAuthorizationHandler, RoleRequirementHandler>();
 
+        // services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        //services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         return services;
     }
 }

@@ -56,10 +56,7 @@ public class GoogleCalendarService
 
         try
         {
-            // Force token refresh check by accessing the token
-            
-            
-            GoogleTokensDto? newTokens = await RefreshTokenAsync(googleTokens.RefreshToken , userId.ToString());
+            GoogleTokensDto? newTokens = await RefreshTokenAsync(googleTokens.RefreshToken, userId.ToString());
             newTokens ??= googleTokens; // keep old tokens if failed to refresh 
             var tokenResponse = new TokenResponse
             {
@@ -67,33 +64,6 @@ public class GoogleCalendarService
                 RefreshToken = newTokens.RefreshToken,
             };
             var credential = new UserCredential(flow, userId.ToString(), tokenResponse);
-
-            
-            /*var tokenResponse = new TokenResponse
-            {
-                AccessToken = googleTokens.AccessToken,
-                RefreshToken = googleTokens.RefreshToken,
-            };
-            UserCredential? credential = null;
-            bool refreshed = false; 
-            try
-            {
-                credential = new UserCredential(flow, userId.ToString(), tokenResponse);
-            }
-            catch (Exception e)
-            {
-                Logger.LogDebug(e.Message);
-                if ( credential != null)
-                    refreshed = await credential.RefreshTokenAsync(CancellationToken.None);
-            }
-            if (refreshed)
-            {
-                
-
-            }
-            /*
-            */
-            
 
             var service = new CalendarService(new BaseClientService.Initializer()
             {
@@ -195,30 +165,7 @@ public class GoogleCalendarService
             return Result.Failure<Calendar>(GoogleCalendarErrors.FailedToGetCalendar);
         }
     }
-    /*{
-        "value": {
-            "conferenceProperties": {
-                "allowedConferenceSolutionTypes": [
-                "hangoutsMeet"
-                    ],
-                "eTag": null
-            },
-            "description": null,
-            "eTag": "\"M5wO-UIvX1HOSzuYphUtwOzWCSY\"",
-            "id": "yassine.landolsi@converty.shop",
-            "kind": "calendar#calendar",
-            "location": null,
-            "summary": "yassine.landolsi@converty.shop",
-            "timeZone": "Africa/Tunis"
-        },
-        "isSuccess": true,
-        "isFailure": false,
-        "error": {
-            "code": "",
-            "description": "",
-            "type": 0
-        }
-    }*/
+
 
     public async Task<Result<Calendar>> CreateEventAsync(Event newEvent, string calendarId = "primary")
     {
@@ -240,13 +187,14 @@ public class GoogleCalendarService
     public async Task<Result<IList<Event>>> GetEventsAsync(int userId,
         string calendarId = "primary", DateTime? timeMin = null, DateTime? timeMax = null, int maxResults = 10)
     {
+        // TODO : change DateTime to datetimeoffset 
         var googleTokens = await UsersModuleApi.GetUserTokensAsync(userId);
 
         try
         {
             var request = CalendarService.Events.List(calendarId);
-            request.TimeMin = timeMin ?? DateTime.Now;
-            request.TimeMax = timeMax;
+            request.TimeMaxDateTimeOffset = timeMin ?? DateTime.Now;
+            request.TimeMaxDateTimeOffset = timeMax;
             request.ShowDeleted = false;
             request.SingleEvents = true;
             request.MaxResults = maxResults;
@@ -334,12 +282,12 @@ public class GoogleCalendarService
             Location = location,
             Start = new EventDateTime()
             {
-                DateTime = startTime,
+                DateTimeDateTimeOffset = startTime,
                 TimeZone = TimeZoneInfo.Local.Id,
             },
             End = new EventDateTime()
             {
-                DateTime = endTime,
+                DateTimeDateTimeOffset = endTime,
                 TimeZone = TimeZoneInfo.Local.Id,
             },
             Reminders = new Event.RemindersData()
@@ -427,12 +375,12 @@ public class GoogleCalendarService
             Location = location,
             Start = new EventDateTime()
             {
-                DateTime = startTime,
+                DateTimeDateTimeOffset = startTime,
                 TimeZone = TimeZoneInfo.Local.Id,
             },
             End = new EventDateTime()
             {
-                DateTime = endTime,
+                DateTimeDateTimeOffset = endTime,
                 TimeZone = TimeZoneInfo.Local.Id,
             },
 

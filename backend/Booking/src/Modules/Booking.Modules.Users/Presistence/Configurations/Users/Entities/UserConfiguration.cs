@@ -12,7 +12,16 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         // has one , create a separate table for the property
         builder.HasKey(u => u.Id);
 
+        // Slug configuration with length limit
+        builder.Property(u => u.Slug)
+            .HasMaxLength(100)
+            .IsRequired();
+
         builder.HasIndex(u => u.Slug).IsUnique();
+
+        // Add essential indexes for performance
+        builder.HasIndex(u => u.Email).IsUnique(); // Critical for user lookup
+        builder.HasIndex(u => u.CreatedAt); // For user analytics
 
         builder.OwnsOne(u => u.Name, name =>
         {
@@ -22,6 +31,11 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.OwnsOne(u => u.ProfilePictureUrl, profilePicture =>
         {
             profilePicture.Property(p => p.ProfilePictureLink)
+                .HasMaxLength(2048) // URL length limit for security
+                .IsRequired();
+
+            profilePicture.Property(p => p.ThumbnailUrlPictureLink)
+                .HasMaxLength(2048) // URL length limit for security
                 .IsRequired();
         });
 
@@ -52,8 +66,17 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Bio)
             .HasMaxLength(500)
             .IsRequired(false);
-        
-        builder.Property( u => u.Gender).HasMaxLength(10).IsRequired(false);
+
+        builder.Property(u => u.Gender)
+            .HasMaxLength(10)
+            .IsRequired(false);
+
+        // Configure table-level constraints for modern EF Core
+        builder.ToTable("AspNetUsers", t =>
+        {
+            t.HasCheckConstraint("CK_User_Bio_Length", "LENGTH(bio) <= 500");
+            t.HasCheckConstraint("CK_User_Gender_Valid", "gender IS NULL OR gender IN ('Male', 'Female', 'Other', 'Prefer not to say')");
+        });
 
 
 

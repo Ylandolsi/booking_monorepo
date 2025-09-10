@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Booking.Common.Email;
 
-public  sealed class AwsSesEmailService
+public sealed class AwsSesEmailService
 {
     private readonly IAmazonSimpleEmailService _sesClient;
     private readonly EmailOptions _emailOptions;
@@ -43,7 +43,6 @@ public  sealed class AwsSesEmailService
         };
         try
         {
-            // TODO : verify this is working correctly 
             await _sesClient.SendEmailAsync(request, cancellationToken);
         }
         catch (AmazonSimpleEmailServiceException sesEx)
