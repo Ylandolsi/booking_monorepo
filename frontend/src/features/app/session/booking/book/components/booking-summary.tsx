@@ -1,11 +1,4 @@
-import {
-  Calendar,
-  Clock,
-  DollarSign,
-  MessageCircle,
-  CheckCircle,
-  Edit3,
-} from 'lucide-react';
+import { Calendar, Clock, DollarSign, MessageCircle, CheckCircle, Edit3 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -18,16 +11,11 @@ import {
   Button,
   Textarea,
   Label,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
   DrawerDialog,
-  Input, // Added Input import
+  Input,
 } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { formatDateLong } from '@/utils';
 import type { BookingSummaryType } from '../types/booking-types';
 import { useState } from 'react';
 import type { SessionSlotType } from '@/features/app/session/booking/shared';
@@ -61,17 +49,8 @@ export function BookingSummary({
   className,
 }: BookingSummaryProps) {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [isEditingTitle, setIsEditingTitle] = useState(false); // Added state for title editing
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-
-  const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   const formatTime = (timeString: string): string => {
     const [hours, minutes] = timeString.split(':');
@@ -126,10 +105,7 @@ export function BookingSummary({
             <div className="text-center py-12 text-muted-foreground">
               <Calendar className="w-16 h-16 mx-auto mb-4 text-gray-300" />
               <p className="text-lg font-medium mb-2">Select a date and time</p>
-              <p className="text-sm">
-                Choose your preferred date and time slot to see the booking
-                summary
-              </p>
+              <p className="text-sm">Choose your preferred date and time slot to see the booking summary</p>
             </div>
           </CardContent>
         </Card>
@@ -150,14 +126,10 @@ export function BookingSummary({
             </div>
             <div className="flex justify-between">
               <span className="text-sm text-gray-600">Meeting link:</span>
-              <span className="text-sm font-medium">
-                Provided after booking
-              </span>
+              <span className="text-sm font-medium">Provided after booking</span>
             </div>
             <div className="pt-2 border-t">
-              <p className="text-xs text-gray-500">
-                * All sessions are 30 minutes and conducted via video call
-              </p>
+              <p className="text-xs text-gray-500">* All sessions are 30 minutes and conducted via video call</p>
             </div>
           </CardContent>
         </Card>
@@ -178,21 +150,12 @@ export function BookingSummary({
           {/* Mentor Info */}
           <div className="flex items-start gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border">
             <Avatar className="w-14 h-14">
-              <AvatarImage
-                src={booking.mentor.avatar}
-                alt={booking.mentor.name}
-              />
-              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
-                {getInitials(booking.mentor.name)}
-              </AvatarFallback>
+              <AvatarImage src={booking.mentor.avatar} alt={booking.mentor.name} />
+              <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">{getInitials(booking.mentor.name)}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <h3 className="font-semibold text-lg">{booking.mentor.name}</h3>
-              {booking.mentor.title && (
-                <p className="text-sm text-muted-foreground mb-2">
-                  {booking.mentor.title}
-                </p>
-              )}
+              {booking.mentor.title && <p className="text-sm text-muted-foreground mb-2">{booking.mentor.title}</p>}
               <div className="flex flex-wrap gap-1 mb-2">
                 {booking.mentor.expertise.slice(0, 3).map((skill, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
@@ -207,9 +170,7 @@ export function BookingSummary({
               </div>
               <div className="text-sm">
                 <span className="text-muted-foreground">Hourly Rate: </span>
-                <span className="font-semibold text-green-600">
-                  ${booking.mentor.hourlyRate}/hour
-                </span>
+                <span className="font-semibold text-green-600">${booking.mentor.hourlyRate}/hour</span>
               </div>
             </div>
           </div>
@@ -227,9 +188,7 @@ export function BookingSummary({
                   <Calendar className="w-4 h-4 text-blue-600" />
                   <div>
                     <div className="font-medium">Date</div>
-                    <div className="text-sm text-muted-foreground">
-                      {formatDate(selectedDate)}
-                    </div>
+                    <div className="text-sm text-muted-foreground">{formatDateLong(selectedDate)}</div>
                   </div>
                 </div>
               </div>
@@ -240,8 +199,7 @@ export function BookingSummary({
                   <div>
                     <div className="font-medium">Time</div>
                     <div className="text-sm text-muted-foreground">
-                      {formatTime(selectedSlot.startTime)} -{' '}
-                      {getEndTime(selectedSlot.startTime)}
+                      {formatTime(selectedSlot.startTime)} - {getEndTime(selectedSlot.startTime)}
                     </div>
                   </div>
                 </div>
@@ -256,15 +214,11 @@ export function BookingSummary({
                   <DollarSign className="w-4 h-4 text-purple-600" />
                   <div>
                     <div className="font-medium">Price</div>
-                    <div className="text-sm text-muted-foreground">
-                      Session fee
-                    </div>
+                    <div className="text-sm text-muted-foreground">Session fee</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-lg text-purple-600">
-                    ${booking.session.price}
-                  </div>
+                  <div className="font-bold text-lg text-purple-600">${booking.session.price}</div>
                 </div>
               </div>
             </div>
@@ -273,9 +227,7 @@ export function BookingSummary({
             <div className="border-t pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold">Total</span>
-                <span className="text-2xl font-bold text-green-600">
-                  ${booking.total}
-                </span>
+                <span className="text-2xl font-bold text-green-600">${booking.total}</span>
               </div>
             </div>
           </div>
@@ -289,11 +241,7 @@ export function BookingSummary({
                 <MessageCircle className="w-4 h-4" />
                 Session Notes (Optional)
               </Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditingNotes(!isEditingNotes)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setIsEditingNotes(!isEditingNotes)}>
                 <Edit3 className="w-3 h-3 mr-1" />
                 {isEditingNotes ? 'Save' : 'Edit'}
               </Button>
@@ -309,17 +257,10 @@ export function BookingSummary({
               />
             ) : (
               <div className="p-3 bg-gray-50 rounded-lg min-h-[80px] flex items-center">
-                <p className="text-sm text-muted-foreground">
-                  {notes ||
-                    "No specific notes added. Click Edit to add topics you'd like to discuss."}
-                </p>
+                <p className="text-sm text-muted-foreground">{notes || "No specific notes added. Click Edit to add topics you'd like to discuss."}</p>
               </div>
             )}
-            {isEditingNotes && (
-              <p className="text-xs text-muted-foreground">
-                {notes.length}/500 characters
-              </p>
-            )}
+            {isEditingNotes && <p className="text-xs text-muted-foreground">{notes.length}/500 characters</p>}
           </div>
         </CardContent>
       </Card>
@@ -327,12 +268,7 @@ export function BookingSummary({
       {/* Booking Action */}
       <Card>
         <CardContent className="pt-6">
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleBookSessionClick}
-            disabled={isBookingDisabled || isBookingInProgress}
-          >
+          <Button className="w-full" size="lg" onClick={handleBookSessionClick} disabled={isBookingDisabled || isBookingInProgress}>
             {isBookingInProgress ? (
               <>
                 <Clock className="w-4 h-4 mr-2 animate-spin" />
@@ -348,8 +284,7 @@ export function BookingSummary({
 
           <div className="mt-4 text-center">
             <p className="text-xs text-muted-foreground">
-              By clicking "Book Session", you agree to our Terms of Service and
-              confirm your booking. You'll receive a confirmation email with the
+              By clicking "Book Session", you agree to our Terms of Service and confirm your booking. You'll receive a confirmation email with the
               meeting link.
             </p>
           </div>
@@ -371,28 +306,17 @@ export function BookingSummary({
                 <MessageCircle className="w-4 h-4" />
                 Session Title
               </Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditingTitle(!isEditingTitle)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setIsEditingTitle(!isEditingTitle)}>
                 <Edit3 className="w-3 h-3 mr-1" />
                 {isEditingTitle ? 'Save' : 'Edit'}
               </Button>
             </div>
 
             {isEditingTitle ? (
-              <Input
-                placeholder="Enter a title for your session..."
-                value={title}
-                onChange={(e) => onTitleChange(e.target.value)}
-              />
+              <Input placeholder="Enter a title for your session..." value={title} onChange={(e) => onTitleChange(e.target.value)} />
             ) : (
               <div className="p-3 bg-gray-50 rounded-lg min-h-[40px] flex items-center">
-                <p className="text-sm text-muted-foreground">
-                  {title ||
-                    'No title added. Click Edit to add a session title.'}
-                </p>
+                <p className="text-sm text-muted-foreground">{title || 'No title added. Click Edit to add a session title.'}</p>
               </div>
             )}
           </div>
@@ -404,11 +328,7 @@ export function BookingSummary({
                 <MessageCircle className="w-4 h-4" />
                 Session Notes (Optional)
               </Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditingNotes(!isEditingNotes)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => setIsEditingNotes(!isEditingNotes)}>
                 <Edit3 className="w-3 h-3 mr-1" />
                 {isEditingNotes ? 'Save' : 'Edit'}
               </Button>
@@ -424,24 +344,14 @@ export function BookingSummary({
               />
             ) : (
               <div className="p-3 bg-gray-50 rounded-lg min-h-[80px] flex items-center">
-                <p className="text-sm text-muted-foreground">
-                  {notes ||
-                    "No specific notes added. Click Edit to add topics you'd like to discuss."}
-                </p>
+                <p className="text-sm text-muted-foreground">{notes || "No specific notes added. Click Edit to add topics you'd like to discuss."}</p>
               </div>
             )}
-            {isEditingNotes && (
-              <p className="text-xs text-muted-foreground">
-                {notes.length}/500 characters
-              </p>
-            )}
+            {isEditingNotes && <p className="text-xs text-muted-foreground">{notes.length}/500 characters</p>}
           </div>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsConfirmModalOpen(false)}
-          >
+          <Button variant="outline" onClick={() => setIsConfirmModalOpen(false)}>
             Cancel
           </Button>
           <Button onClick={handleConfirmBooking} disabled={isBookingInProgress}>

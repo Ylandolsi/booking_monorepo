@@ -8,15 +8,25 @@ export const toLocalISOString = (date: Date): string => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${padMs(date.getMilliseconds())}`;
 };
 
-export const timeStampFormat = (date: number) =>
-  dayjs(date).format('MMMM D, YYYY h:mm A');
+export const timeStampFormat = (date: number) => dayjs(date).format('MMMM D, YYYY h:mm A');
 
 // convert UTC TO Local date
 export const formatDate = (date: Date | string): string => {
+  // Sep 10, 2025
   const dateObj = date instanceof Date ? date : new Date(date);
   return dateObj.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
+    day: 'numeric',
+  });
+};
+
+export const formatDateLong = (date: Date): string => {
+  // Wednesday, September 10, 2025
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    year: 'numeric',
     day: 'numeric',
   });
 };
@@ -66,7 +76,6 @@ export const formatTime = (timeString: string): string => {
 export const formatTimeRange = (start: string, end: string) => {
   return `${formatTime(start)} - ${formatTime(end)}`;
 };
-// const formatDate = (dateStr: string | undefined) => {
 
 export const formatISODateTime = (iso: string): string => {
   return dayjs(iso).format('MMMM D, YYYY h:mm A');

@@ -85,7 +85,6 @@ export function MeetsPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-4  mb-4">
-              {/* TODO : for future enable this filter */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Time Period</label>
                 <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeStatus(value)}>

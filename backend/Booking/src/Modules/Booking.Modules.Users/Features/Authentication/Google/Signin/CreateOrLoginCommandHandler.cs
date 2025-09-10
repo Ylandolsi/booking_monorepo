@@ -64,11 +64,10 @@ internal sealed class CreateOrLoginCommandHandler(
                     claims.Picture ?? string.Empty);
                 user.EmailConfirmed = true;
 
-                // TODO Maybe delete this line if not needed
                 user.IntegrateWithGoogle(claims.Email);
 
                 IdentityResult createResult = await userManager.CreateAsync(user);
-                
+
 
                 if (!createResult.Succeeded)
                 {
@@ -79,8 +78,8 @@ internal sealed class CreateOrLoginCommandHandler(
                             createResult.Errors.Select(e => e.Description))));
                 }
 
-                 user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
-                 await mentorshipsModuleApi.CreateWalletForUserId(user.Id  ,cancellationToken);
+                user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
+                await mentorshipsModuleApi.CreateWalletForUserId(user.Id, cancellationToken);
 
                 /*
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);

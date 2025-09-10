@@ -17,19 +17,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-import {
-  Calendar,
-  Clock,
-  DollarSign,
-  Star,
-  Users,
-  BookOpen,
-  Settings,
-  TrendingUp,
-  MessageCircle,
-  Award,
-  Edit3,
-} from 'lucide-react';
+import { Calendar, Clock, DollarSign, Star, Users, BookOpen, Settings, TrendingUp, MessageCircle, Award, Edit3 } from 'lucide-react';
+import { formatDate } from '@/utils/format';
 
 export const Route = createFileRoute(ROUTE_PATHS.TEST.DASHBOARD)({
   component: RouteComponent,
@@ -130,21 +119,11 @@ export function MentorDashboardPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-2">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-gray-600">
-            Loading your mentor dashboard...
-          </p>
+          <p className="text-sm text-gray-600">Loading your mentor dashboard...</p>
         </div>
       </div>
     );
   }
-
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
 
   const getInitials = (name: string) => {
     return name
@@ -160,9 +139,7 @@ export function MentorDashboardPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold">Welcome back, {'Mentor'}!</h1>
-          <p className="text-gray-600">
-            Manage your mentoring sessions and track your progress
-          </p>
+          <p className="text-gray-600">Manage your mentoring sessions and track your progress</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm">
@@ -182,9 +159,7 @@ export function MentorDashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Sessions
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total Sessions</p>
                 <p className="text-2xl font-bold">{stats.totalSessions}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -202,21 +177,15 @@ export function MentorDashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Earnings
-                </p>
-                <p className="text-2xl font-bold">
-                  {stats.totalEarnings.toFixed(2)} TND
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total Earnings</p>
+                <p className="text-2xl font-bold">{stats.totalEarnings.toFixed(2)} TND</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-green-600" />
               </div>
             </div>
             <div className="flex items-center mt-4 text-sm">
-              <span className="text-gray-600">
-                This month: {stats.monthlyEarnings.toFixed(2)} TND
-              </span>
+              <span className="text-gray-600">This month: {stats.monthlyEarnings.toFixed(2)} TND</span>
             </div>
           </CardContent>
         </Card>
@@ -225,9 +194,7 @@ export function MentorDashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-600">
-                  Average Rating
-                </p>
+                <p className="text-sm font-medium text-gray-600">Average Rating</p>
                 <div className="flex items-center gap-1">
                   <p className="text-2xl font-bold">{stats.averageRating}</p>
                   <Star className="w-5 h-5 text-yellow-500 fill-current" />
@@ -238,9 +205,7 @@ export function MentorDashboardPage() {
               </div>
             </div>
             <div className="flex items-center mt-4 text-sm">
-              <span className="text-gray-600">
-                From {stats.completedSessions} sessions
-              </span>
+              <span className="text-gray-600">From {stats.completedSessions} sessions</span>
             </div>
           </CardContent>
         </Card>
@@ -249,9 +214,7 @@ export function MentorDashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Students
-                </p>
+                <p className="text-sm font-medium text-gray-600">Total Students</p>
                 <p className="text-2xl font-bold">{stats.totalStudents}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -266,11 +229,7 @@ export function MentorDashboardPage() {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className="space-y-6"
-      >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="sessions">Sessions</TabsTrigger>
@@ -284,31 +243,20 @@ export function MentorDashboardPage() {
             {/* Upcoming Sessions */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-base font-medium">
-                  Upcoming Sessions
-                </CardTitle>
+                <CardTitle className="text-base font-medium">Upcoming Sessions</CardTitle>
                 <Badge variant="secondary">{stats.upcomingSessions}</Badge>
               </CardHeader>
               <CardContent className="space-y-4">
                 {upcomingSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
+                  <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <Avatar className="w-8 h-8">
                         <AvatarImage src={session.studentAvatar} />
-                        <AvatarFallback className="text-xs">
-                          {getInitials(session.studentName)}
-                        </AvatarFallback>
+                        <AvatarFallback className="text-xs">{getInitials(session.studentName)}</AvatarFallback>
                       </Avatar>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium">
-                          {session.studentName}
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          {session.subject}
-                        </p>
+                        <p className="text-sm font-medium">{session.studentName}</p>
+                        <p className="text-xs text-gray-600">{session.subject}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -333,41 +281,23 @@ export function MentorDashboardPage() {
             {/* Recent Activity */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base font-medium">
-                  Recent Sessions
-                </CardTitle>
+                <CardTitle className="text-base font-medium">Recent Sessions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
+                  <div key={session.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium">
-                        {session.studentName}
-                      </p>
+                      <p className="text-sm font-medium">{session.studentName}</p>
                       <p className="text-xs text-gray-600">{session.subject}</p>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3 h-3 ${
-                              i < session.rating
-                                ? 'text-yellow-500 fill-current'
-                                : 'text-gray-300'
-                            }`}
-                          />
+                          <Star key={i} className={`w-3 h-3 ${i < session.rating ? 'text-yellow-500 fill-current' : 'text-gray-300'}`} />
                         ))}
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-green-600">
-                        +{session.earnings.toFixed(2)} TND
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        {formatDate(session.date)}
-                      </p>
+                      <p className="text-sm font-medium text-green-600">+{session.earnings.toFixed(2)} TND</p>
+                      <p className="text-xs text-gray-600">{formatDate(session.date)}</p>
                     </div>
                   </div>
                 ))}
@@ -382,9 +312,7 @@ export function MentorDashboardPage() {
           {/* Weekly Progress */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-base font-medium">
-                This Week's Progress
-              </CardTitle>
+              <CardTitle className="text-base font-medium">This Week's Progress</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -423,12 +351,8 @@ export function MentorDashboardPage() {
             <CardContent>
               <div className="text-center py-8 text-gray-500">
                 <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg font-medium mb-2">
-                  Session management coming soon
-                </p>
-                <p className="text-sm">
-                  Detailed session scheduling and management tools
-                </p>
+                <p className="text-lg font-medium mb-2">Session management coming soon</p>
+                <p className="text-sm">Detailed session scheduling and management tools</p>
               </div>
             </CardContent>
           </Card>
@@ -443,12 +367,8 @@ export function MentorDashboardPage() {
             <CardContent>
               <div className="text-center py-8 text-gray-500">
                 <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg font-medium mb-2">
-                  Student directory coming soon
-                </p>
-                <p className="text-sm">
-                  Manage your students and track their progress
-                </p>
+                <p className="text-lg font-medium mb-2">Student directory coming soon</p>
+                <p className="text-sm">Manage your students and track their progress</p>
               </div>
             </CardContent>
           </Card>
@@ -463,9 +383,7 @@ export function MentorDashboardPage() {
             <CardContent>
               <div className="text-center py-8 text-gray-500">
                 <DollarSign className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-lg font-medium mb-2">
-                  Detailed earnings coming soon
-                </p>
+                <p className="text-lg font-medium mb-2">Detailed earnings coming soon</p>
                 <p className="text-sm">Track your income and payment history</p>
               </div>
             </CardContent>

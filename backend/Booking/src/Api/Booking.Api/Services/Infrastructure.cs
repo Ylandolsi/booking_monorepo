@@ -36,7 +36,7 @@ public static class Infrastructure
         //services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
         services.AddHttpClient();
-        /*// TODO : move clients name to static !*/
+        //   move clients name to static 
         var konnectOptions = configuration.GetSection(KonnectOptions.OptionsKey)?.Get<KonnectOptions>() ??
                              throw new InvalidOperationException("konnect options are not configured.");
 

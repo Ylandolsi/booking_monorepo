@@ -15,7 +15,7 @@ internal sealed class BookSession : IEndpoint
         string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
         string StartTime, // TIMEONLY  
         string EndTime,
-        string Title , 
+        string Title,
         string TimeZoneId = "Africa/Tunis",
         string? Note = "");
 
@@ -43,6 +43,9 @@ internal sealed class BookSession : IEndpoint
 
                 Result<BookSessionRepsonse> result = await handler.Handle(command, cancellationToken);
                 // if there is amount to be paid : return link of payment 
+                // else return 'paid' 
+
+                // todo : change this : to payUrl , status 
 
                 return result.Match(
                     Results.Ok,

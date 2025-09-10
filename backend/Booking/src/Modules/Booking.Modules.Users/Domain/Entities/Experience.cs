@@ -6,7 +6,7 @@ namespace Booking.Modules.Users.Domain.Entities;
 
 public class Experience : Entity
 {
-    // TODO : Add industry to Experience 
+    //  Add industry to Experience 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Title { get; private set; } = string.Empty;

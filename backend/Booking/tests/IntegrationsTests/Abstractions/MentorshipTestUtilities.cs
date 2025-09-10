@@ -161,6 +161,40 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
+    /// Generates test data for availability with mixed active/inactive days
+    /// </summary>
+    /// <returns>An object representing bulk availability data</returns>
+    public static object CreateMixedAvailabilityData()
+    {
+        return new
+        {
+            DayAvailabilities = new object[]
+            {
+                new
+                {
+                    DayOfWeek = DayOfWeek.Monday, IsActive = true,
+                    AvailabilityRanges = new[] { new { StartTime = "09:00", EndTime = "17:00" } }
+                },
+                new
+                {
+                    DayOfWeek = DayOfWeek.Wednesday, IsActive = true,
+                    AvailabilityRanges = new[] { new { StartTime = "10:00", EndTime = "16:00" } }
+                },
+                new
+                {
+                    DayOfWeek = DayOfWeek.Thursday, IsActive = true,
+                    AvailabilityRanges = new[] { new { StartTime = "08:00", EndTime = "14:00" } }
+                },
+                new
+                {
+                    DayOfWeek = DayOfWeek.Friday, IsActive = false,
+                    AvailabilityRanges = Array.Empty<object>()
+                }
+            }
+        };
+    }
+
+    /// <summary>
     /// Sets up default weekday availability (Monday-Friday, 9 AM - 5 PM)
     /// </summary>
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
@@ -378,145 +412,8 @@ public static class MentorshipTestUtilities
 
     #endregion
 
-    #region Bulk Operations
 
-    /// <summary>
-    /// Creates multiple mentors with default settings
-    /// </summary>
-    /// <param name="testBase">The test base instance for creating mentors</param>
-    /// <param name="count">Number of mentors to create</param>
-    /// <param name="basePrefix">Base prefix for mentor usernames</param>
-    /// <param name="hourlyRate">Hourly rate for mentors</param>
-    /// <param name="bufferTimeMinutes">Buffer time in minutes</param>
-    /// <returns>List of mentor client tuples</returns>
-    public static async Task<List<(HttpClient arrange, HttpClient act)>> CreateMultipleMentors(
-        MentorshipTestBase testBase,
-        int count,
-        string basePrefix = "mentor",
-        decimal hourlyRate = 75.0m,
-        int bufferTimeMinutes = 15)
-    {
-        var mentors = new List<(HttpClient arrange, HttpClient act)>();
 
-        for (int i = 0; i < count; i++)
-        {
-            var mentor = await testBase.CreateMentor($"{basePrefix}_{i}", hourlyRate, bufferTimeMinutes);
-            mentors.Add(mentor);
-        }
-
-        return mentors;
-    }
-
-    /// <summary>
-    /// Creates multiple mentees
-    /// </summary>
-    /// <param name="testBase">The test base instance for creating mentees</param>
-    /// <param name="count">Number of mentees to create</param>
-    /// <param name="basePrefix">Base prefix for mentee usernames</param>
-    /// <returns>List of mentee client tuples</returns>
-    public static async Task<List<(HttpClient arrange, HttpClient act)>> CreateMultipleMentees(
-        MentorshipTestBase testBase,
-        int count,
-        string basePrefix = "mentee")
-    {
-        var mentees = new List<(HttpClient arrange, HttpClient act)>();
-
-        for (int i = 0; i < count; i++)
-        {
-            var mentee = await testBase.CreateMentee($"{basePrefix}_{i}");
-            mentees.Add(mentee);
-        }
-
-        return mentees;
-    }
-
-    #endregion
-
-    #region Test Data Generation
-
-    /// <summary>
-    /// Generates test data for availability with mixed active/inactive days
-    /// </summary>
-    /// <returns>An object representing bulk availability data</returns>
-    public static object CreateMixedAvailabilityData()
-    {
-        return new
-        {
-            DayAvailabilities = new object[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "09:00", EndTime = "17:00" } }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Wednesday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "10:00", EndTime = "16:00" } }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Thursday, IsActive = true,
-                    AvailabilityRanges = new[] { new { StartTime = "08:00", EndTime = "14:00" } }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Friday, IsActive = false,
-                    AvailabilityRanges = Array.Empty<object>()
-                }
-            }
-        };
-    }
-
-    /// <summary>
-    /// Creates invalid booking request data for testing error scenarios
-    /// </summary>
-    /// <param name="mentorSlug">The mentor slug to use</param>
-    /// <returns>Array of invalid booking requests</returns>
-    public static object[] CreateInvalidBookingRequests(string mentorSlug)
-    {
-        return new object[]
-        {
-            // Invalid date formats
-            new
-            {
-                MentorSlug = mentorSlug, Date = "2025-13-45", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC"
-            },
-            new
-            {
-                MentorSlug = mentorSlug, Date = "invalid-date", StartTime = "10:00", EndTime = "11:00",
-                TimeZoneId = "UTC"
-            },
-
-            // Invalid time formats
-            new
-            {
-                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "25:00", EndTime = "26:00", TimeZoneId = "UTC"
-            },
-            new
-            {
-                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "invalid", EndTime = "11:00",
-                TimeZoneId = "UTC"
-            },
-
-            // Invalid timezones
-            new
-            {
-                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00",
-                TimeZoneId = "Invalid/Zone"
-            },
-            new
-            {
-                MentorSlug = mentorSlug, Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = ""
-            },
-
-            // Missing required fields
-            new { MentorSlug = "", Date = "2025-12-25", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
-            new { MentorSlug = mentorSlug, Date = "", StartTime = "10:00", EndTime = "11:00", TimeZoneId = "UTC" },
-        };
-    }
-
-    #endregion
 
     #region Assertion Helpers
 
@@ -691,71 +588,6 @@ public static class MentorshipTestUtilities
     #region Escrow and Payout Utilities
 
     /// <summary>
-    /// Books a session and completes the full flow including payment
-    /// </summary>
-    /// <param name="mentorClient">The mentor's HTTP client</param>
-    /// <param name="menteeClient">The mentee's HTTP client</param>
-    /// <param name="targetDate">The date for the session</param>
-    /// <param name="startTime">Start time in HH:mm format</param>
-    /// <param name="endTime">End time in HH:mm format</param>
-    /// <param name="timeZoneId">Timezone for the session</param>
-    /// <returns>The session ID of the completed session</returns>
-    public static async Task<int> BookAndCompleteSession(
-        HttpClient mentorClient,
-        HttpClient menteeClient,
-        DateTime targetDate,
-        string startTime = "10:00",
-        string endTime = "11:00",
-        string timeZoneId = DefaultTimeZone)
-    {
-        var mentorSlug = await GetUserSlug(mentorClient);
-
-        var bookingRequest = CreateBookingRequest(
-            mentorSlug,
-            targetDate.ToString("yyyy-MM-dd"),
-            startTime,
-            endTime,
-            timeZoneId,
-            "Test session for escrow flow"
-        );
-
-        // Book the session
-        var response = await menteeClient.PostAsJsonAsync(MentorshipEndpoints.Sessions.Book, bookingRequest);
-        response.EnsureSuccessStatusCode();
-
-        var result = await response.Content.ReadFromJsonAsync<JsonElement>();
-        var paymentRef = ExtractPaymentRefFromUrl(result.GetProperty("payUrl").GetString()!);
-
-        await CompletePaymentViaMockKonnect(paymentRef, menteeClient);
-
-        // Wait for webhook processing
-        await Task.Delay(2000);
-
-        // Get the session ID
-        var sessionId = await GetLatestSessionId(menteeClient);
-
-        return sessionId;
-    }
-
-
-    /// <summary>
-    /// Marks a session as completed by both mentor and mentee
-    /// </summary>
-    /// <param name="sessionId">The session ID</param>
-    /// <param name="mentorClient">Mentor's HTTP client</param>
-    /// <param name="menteeClient">Mentee's HTTP client</param>
-    public static async Task MarkSessionAsCompleted(int sessionId, HttpClient mentorClient, HttpClient menteeClient)
-    {
-        // Note: These endpoints might not exist yet - placeholder for when session completion is implemented
-        // For now, we'll simulate completion by directly updating the database
-        // await mentorClient.PostAsJsonAsync($"/mentorships/sessions/{sessionId}/complete", new { });
-        // await menteeClient.PostAsJsonAsync($"/mentorships/sessions/{sessionId}/complete", new { });
-
-        // TODO: Replace with actual endpoint calls when implemented
-        await Task.CompletedTask;
-    }
-
-    /// <summary>
     /// Creates an admin authentication client
     /// </summary>
     /// <param name="factory">The test factory</param>
@@ -820,21 +652,6 @@ public static class MentorshipTestUtilities
         return await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Payouts.Payout, payoutRequest);
     }
 
-    /// <summary>
-    /// Links a Konnect wallet to a mentor account
-    /// </summary>
-    /// <param name="mentorClient">Mentor's HTTP client</param>
-    /// <param name="walletId">Konnect wallet ID</param>
-    /// <returns>Response from wallet linking</returns>
-    public static async Task<HttpResponseMessage> LinkKonnectWallet(HttpClient mentorClient, string walletId)
-    {
-        var linkRequest = new
-        {
-            KonnectWalletId = walletId
-        };
-
-        return await mentorClient.PostAsJsonAsync(UsersEndpoints.InegrateKonnect, linkRequest);
-    }
 
     #endregion
 

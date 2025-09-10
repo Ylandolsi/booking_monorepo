@@ -159,8 +159,6 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
         var currentTime = startTime;
         var slotDuration = Duration.ThirtyMinutes.Minutes;
 
-
-        int pointerSession = 0;
         while (currentTime <= endTime)
         {
             var slotEndTime = currentTime.Add(TimeSpan.FromMinutes(30));
