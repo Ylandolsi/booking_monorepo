@@ -24,16 +24,13 @@ export function ProfileInfo({ titleSize = 'lg', className }: ProfileInfoProps) {
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center gap-2">
-        <h1
-          className={cn('font-bold text-foreground', titleClasses[titleSize])}
-        >
+        <h1 className={cn('font-bold text-foreground', titleClasses[titleSize])}>
           {user?.firstName} {user?.lastName}
         </h1>
-        <MdVerified
-          className={cn('text-primary', verifiedIconSize[titleSize])}
-        />
+        <MdVerified className={cn('text-primary', verifiedIconSize[titleSize])} />
       </div>
 
+      {/* TODO : add short description 
       <div className="flex items-center gap-2 text-muted-foreground">
         <FaMapMarkerAlt className="w-4 h-4" />
         <span
@@ -41,9 +38,9 @@ export function ProfileInfo({ titleSize = 'lg', className }: ProfileInfoProps) {
         >
           Software Engineer Student at Issat Sousse
         </span>
-      </div>
+      </div> */}
 
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+      {/* <div className="flex items-center gap-4 text-sm text-muted-foreground">
         <div className="flex items-center gap-1">
           <span className="font-semibold text-foreground">156</span>
           <span>Connections</span>
@@ -52,7 +49,7 @@ export function ProfileInfo({ titleSize = 'lg', className }: ProfileInfoProps) {
           <span className="font-semibold text-foreground">42</span>
           <span>Reviews</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

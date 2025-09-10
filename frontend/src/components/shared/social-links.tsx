@@ -1,17 +1,7 @@
 import { cn } from '@/lib/cn';
 import { Link } from '@tanstack/react-router';
 
-import {
-  FaLinkedin,
-  FaGithub,
-  FaTwitter,
-  FaInstagram,
-  FaFacebook,
-  FaYoutube,
-  FaGlobe,
-  FaDiscord,
-  FaTelegram,
-} from 'react-icons/fa';
+import { FaLinkedin, FaGithub, FaTwitter, FaInstagram, FaFacebook, FaYoutube, FaGlobe, FaDiscord, FaTelegram } from 'react-icons/fa';
 
 export interface SocialLink {
   platform: string;
@@ -87,12 +77,7 @@ const socialPlatforms = {
   },
 };
 
-export function SocialLinks({
-  links,
-  variant = 'icons',
-  size = 'md',
-  className = '',
-}: SocialLinksProps) {
+export function SocialLinks({ links, variant = 'icons', size = 'md', className = '' }: SocialLinksProps) {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-5 h-5',
@@ -120,11 +105,7 @@ export function SocialLinks({
               to={url}
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(
-                'rounded-lg transition-colors',
-                platform.bgColor,
-                buttonSizes[size],
-              )}
+              className={cn('rounded-lg transition-colors', platform.bgColor, buttonSizes[size])}
             >
               <Icon className={cn(sizeClasses[size], platform.color)} />
             </Link>

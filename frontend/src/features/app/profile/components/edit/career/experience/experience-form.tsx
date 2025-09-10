@@ -18,15 +18,8 @@ import {
   FormMessage,
 } from '@/components/ui';
 import type { ExperienceType } from '@/features/app/profile';
-import {
-  useAddExperience,
-  useDeleteExperience,
-  useUpdateExperience,
-} from '@/features/app/profile';
-import {
-  experienceSchema,
-  type ExperienceInput,
-} from '@/features/app/profile/schemas/career';
+import { useAddExperience, useDeleteExperience, useUpdateExperience } from '@/features/app/profile';
+import { experienceSchema, type ExperienceInput } from '@/features/app/profile/schemas/career';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -36,12 +29,7 @@ interface ExperienceFormProps {
   onCancel: () => void;
   isEditing?: boolean;
 }
-export function ExperienceForm({
-  experience,
-  onSuccess,
-  onCancel,
-  isEditing,
-}: ExperienceFormProps) {
+export function ExperienceForm({ experience, onSuccess, onCancel, isEditing }: ExperienceFormProps) {
   const addExperienceMutation = useAddExperience();
   const deleteExperienceMutation = useDeleteExperience();
   const updateExperienceMutation = useUpdateExperience();
@@ -53,12 +41,8 @@ export function ExperienceForm({
       company: experience?.company || '',
       description: experience?.description || '',
 
-      startDate: experience?.startDate
-        ? new Date(experience.startDate).getFullYear().toString()
-        : '',
-      endDate: experience?.endDate
-        ? new Date(experience.endDate).getFullYear().toString()
-        : '',
+      startDate: experience?.startDate ? new Date(experience.startDate).getFullYear().toString() : '',
+      endDate: experience?.endDate ? new Date(experience.endDate).getFullYear().toString() : '',
 
       toPresent: experience?.toPresent || false,
     },
@@ -81,10 +65,7 @@ export function ExperienceForm({
       company: data.company,
       description: data.description || '',
       startDate: new Date(`${data.startDate}-01-01`),
-      endDate:
-        data.toPresent || !data.endDate
-          ? null
-          : new Date(`${data.endDate}-01-01`),
+      endDate: data.toPresent || !data.endDate ? null : new Date(`${data.endDate}-01-01`),
       toPresent: data.toPresent,
     };
     try {
@@ -123,15 +104,9 @@ export function ExperienceForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Title / Position
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">Title / Position</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    className="text-foreground"
-                    placeholder="Eg: Senior Software Enginner"
-                  />
+                  <Input {...field} className="text-foreground" placeholder="Eg: Senior Software Enginner" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -143,15 +118,9 @@ export function ExperienceForm({
             name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Company Name
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">Company Name</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    className="text-foreground"
-                    placeholder="Eg: Google"
-                  />
+                  <Input {...field} className="text-foreground" placeholder="Eg: Google" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,14 +132,9 @@ export function ExperienceForm({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Description
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">Description</FormLabel>
                 <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Describe your experience..."
-                  />
+                  <Textarea {...field} placeholder="Describe your experience..." />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -185,9 +149,7 @@ export function ExperienceForm({
                 name="startDate"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel className="text-xs text-muted-foreground">
-                      Start Year
-                    </FormLabel>
+                    <FormLabel className="text-xs text-muted-foreground">Start Year</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="w-full">
@@ -213,13 +175,8 @@ export function ExperienceForm({
                   name="endDate"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel className="text-xs text-muted-foreground">
-                        End Year
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value || ''}
-                      >
+                      <FormLabel className="text-xs text-muted-foreground">End Year</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value || ''}>
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="End" />
@@ -257,9 +214,7 @@ export function ExperienceForm({
                     />
                   </FormControl>
                   <div className="space-y-1 leading-none">
-                    <FormLabel className="text-sm">
-                      I am currently studying here
-                    </FormLabel>
+                    <FormLabel className="text-sm">I am currently working here</FormLabel>
                   </div>
                 </FormItem>
               )}
@@ -267,22 +222,10 @@ export function ExperienceForm({
           </div>
 
           <div className="gap-2 flex">
-            <Button
-              type="submit"
-              className="flex-1"
-              disabled={
-                addExperienceMutation.isPending ||
-                updateExperienceMutation.isPending
-              }
-            >
+            <Button type="submit" className="flex-1" disabled={addExperienceMutation.isPending || updateExperienceMutation.isPending}>
               {isEditing ? 'Update Experience' : 'Save Experience'}
             </Button>
-            <Button
-              type="button"
-              className="flex-1"
-              variant="outline"
-              onClick={onCancel}
-            >
+            <Button type="button" className="flex-1" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
             {isEditing && (
