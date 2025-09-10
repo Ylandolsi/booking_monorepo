@@ -1,7 +1,10 @@
 import { Star, ArrowRight } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui';
+import { useAppNavigation } from '@/hooks';
 
 export const LandingPage = () => {
+  const navigate = useAppNavigation();
   return (
     <div
       className="min-h-screen bg-white"
@@ -10,7 +13,6 @@ export const LandingPage = () => {
         color: 'oklch(0.3211 0 0)',
       }}
     >
-      {/* Hero Section */}
       <section className="h-screen flex items-center justify-center pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center relative z-10">
@@ -29,13 +31,13 @@ export const LandingPage = () => {
               <span className="text-sm font-medium">Trusted by +100 mentors in Tunisia </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+            <h1 className="text-4xl md:text-4xl  font-bold tracking-tight mb-6">
               Schedule meetings that
               <br />
               <span className="bg-gradient-to-r from-primary to-chart-3 bg-clip-text text-transparent">actually happen</span>
             </h1>
 
-            <p className="max-w-2xl mx-auto text-lg md:text-xl mb-10" style={{ color: 'oklch(0.551 0.0234 264.3637)' }}>
+            <p className="max-w-2xl mx-auto text-lg mb-10" style={{ color: 'oklch(0.551 0.0234 264.3637)' }}>
               Stop the back-and-forth emails. BookFlow automatically finds the perfect time for everyone and sends smart reminders that eliminate
               no-shows.
             </p>
@@ -44,27 +46,23 @@ export const LandingPage = () => {
               {/* <h2 className="text-3xl md:text-4xl font-semibold mb-6">Ready to eliminate scheduling chaos?</h2> */}
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  className="px-8 py-4 rounded-full text-white font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
+                <Button
+                  className="h-10 px-8 p-4 rounded-full text-white font-semibold text-lg transition-all transform hover:scale-105 shadow-lg"
                   style={{ backgroundColor: 'oklch(0.2781 0.0296 256.848)' }}
+                  onClick={() => navigate.goToApp()}
                 >
                   Start your journey
                   <ArrowRight className="ml-2 h-5 w-5 inline" />
-                </button>
-                <button
-                  className="px-8 py-4 rounded-full font-semibold text-lg border-2 transition-colors"
-                  style={{
-                    borderColor: 'oklch(0.9276 0.0058 264.5313)',
-                    color: 'oklch(0.3211 0 0)',
-                  }}
+                </Button>
+                <Button
+                  variant={'ghost'}
+                  className="h-10 px-8 p-4 rounded-full font-semibold text-lg border-2 transition-colors hover:scale-105 shadow-lg"
                 >
                   Schedule a Demo
-                </button>
+                </Button>
               </div>
 
-              <p className="mt-6 text-sm" style={{ color: 'oklch(0.551 0.0234 264.3637)' }}>
-                ✓ No credit card required ✓ Setup in under 60 seconds ✓ Cancel anytime
-              </p>
+              <p className="mt-6 text-sm"> ✓ Setup in under 60 seconds ✓ Cancel anytime</p>
             </div>
           </div>
         </div>
