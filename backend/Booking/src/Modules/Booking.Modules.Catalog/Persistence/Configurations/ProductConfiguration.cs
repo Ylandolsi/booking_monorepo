@@ -32,10 +32,6 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
-        builder.Property(p => p.Currency)
-            .HasMaxLength(3)
-            .IsRequired();
-
         builder.Property(p => p.DisplayOrder)
             .HasDefaultValue(0);
 

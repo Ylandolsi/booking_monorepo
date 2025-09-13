@@ -1,3 +1,4 @@
+/*
 using FluentValidation;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStoreLinks;
@@ -39,3 +40,4 @@ internal sealed class UpdateStoreLinksCommandValidator : AbstractValidator<Updat
             });
     }
 }
+*/

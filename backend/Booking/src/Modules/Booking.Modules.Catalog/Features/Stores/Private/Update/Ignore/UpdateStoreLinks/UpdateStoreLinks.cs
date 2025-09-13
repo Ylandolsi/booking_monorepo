@@ -1,3 +1,4 @@
+/*
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 
@@ -49,3 +50,4 @@ public class UpdateStoreLinksHandler : ICommandHandler<UpdateStoreLinksCommand, 
         return Result.Success(response);
     }
 }
+*/

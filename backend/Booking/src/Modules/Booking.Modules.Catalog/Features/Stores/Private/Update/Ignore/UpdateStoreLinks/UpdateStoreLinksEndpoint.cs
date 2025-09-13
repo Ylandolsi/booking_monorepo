@@ -1,4 +1,4 @@
-using Booking.Common.Authentication;
+/*using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Microsoft.AspNetCore.Builder;
@@ -39,4 +39,4 @@ public class UpdateStoreLinksEndpoint : IEndpoint
             .WithDescription("Update all social media links for the store. This replaces all existing links.")
             .RequireAuthorization();
     }
-}
+}*/

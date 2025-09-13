@@ -1,22 +1,29 @@
+using Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
+namespace Booking.Modules.Catalog.Features.Stores.CreateStore;
 
 internal sealed class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
 {
+    private static readonly string[] ValidPlatforms = new[]
+    {
+        "portfolio", "github", "linkedin", "fb", "instagram", "tiktok", "twitter"
+    };
+
     public CreateStoreCommandValidator()
     {
         RuleFor(c => c.UserId)
             .NotEmpty()
             .WithMessage("User ID is required.");
 
-        RuleFor(c => c.FullName)
+        RuleFor(c => c.Title)
             .NotEmpty()
-            .WithMessage("Store name is required.")
+            .WithMessage("Store title is required.")
             .MaximumLength(100)
-            .WithMessage("Store name cannot exceed 100 characters.")
+            .WithMessage("Store title cannot exceed 100 characters.")
             .MinimumLength(3)
-            .WithMessage("Store name must be at least 3 characters.");
+            .WithMessage("Store title must be at least 3 characters.");
 
         RuleFor(c => c.StoreSlug)
             .NotEmpty()
@@ -32,5 +39,56 @@ internal sealed class CreateStoreCommandValidator : AbstractValidator<CreateStor
             .MaximumLength(500)
             .WithMessage("Store description cannot exceed 500 characters.")
             .When(c => !string.IsNullOrEmpty(c.Description));
+
+        RuleForEach(c => c.SocialLinks)
+            .SetValidator(new SocialLinkValidator())
+            .When(c => c.SocialLinks != null && c.SocialLinks.Any());
+
+        RuleFor(c => c.SocialLinks)
+            .Must(HaveUniquePlatforms)
+            .WithMessage("Social links must have unique platforms.")
+            .When(c => c.SocialLinks != null && c.SocialLinks.Any());
+    }
+
+    private static bool HaveUniquePlatforms(IReadOnlyList<SocialLink>? socialLinks)
+    {
+        if (socialLinks == null || !socialLinks.Any()) return true;
+
+        var platforms = socialLinks.Select(sl => sl.Platform.ToLowerInvariant()).ToList();
+        return platforms.Count == platforms.Distinct().Count();
+    }
+}
+
+internal sealed class SocialLinkValidator : AbstractValidator<SocialLink>
+{
+    private static readonly string[] ValidPlatforms = new[]
+    {
+        "portfolio", "github", "linkedin", "fb", "instagram", "tiktok", "twitter"
+    };
+
+    public SocialLinkValidator()
+    {
+        RuleFor(sl => sl.Platform)
+            .NotEmpty()
+            .WithMessage("Platform is required.")
+            .Must(BeValidPlatform)
+            .WithMessage($"Platform must be one of: {string.Join(", ", ValidPlatforms)}");
+
+        RuleFor(sl => sl.Url)
+            .NotEmpty()
+            .WithMessage("URL is required.")
+            .Must(BeValidUrl)
+            .WithMessage("URL must be a valid absolute URL.");
+    }
+
+    private static bool BeValidPlatform(string platform)
+    {
+        return ValidPlatforms.Contains(platform.ToLowerInvariant());
+    }
+
+    private static bool BeValidUrl(string url)
+    {
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 }

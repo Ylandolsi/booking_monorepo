@@ -6,7 +6,7 @@ internal sealed class CheckSlugAvailabilityQueryValidator : AbstractValidator<Ch
 {
     public CheckSlugAvailabilityQueryValidator()
     {
-        RuleFor(q => q.Slug)
+        RuleFor(q => q.StoreSlug)
             .NotEmpty()
             .WithMessage("Slug is required.")
             .MaximumLength(100)

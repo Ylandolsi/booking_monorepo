@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
+using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 
 namespace Booking.Modules.Catalog.Domain.Entities;
@@ -19,7 +20,7 @@ public class Store : Entity
     public bool IsPublished { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
-    
+
     // STEP 1 : name/slug : STEP 2 profile picture , bio 
     public int Step { get; private set; }
 
@@ -56,6 +57,38 @@ public class Store : Entity
         return store;
     }
 
+    public static Store CreateWithLinks(int ownerId, string title, string slug, string? description = null, IEnumerable<(string platform, string url)>? socialLinks = null)
+    {
+        var store = Create(ownerId, title, slug, description);
+
+        if (socialLinks != null)
+        {
+            foreach (var (platform, url) in socialLinks)
+            {
+                store.AddSocialLink(platform, url);
+            }
+        }
+
+        return store;
+    }
+
+    public Store UpdateStoreWithLinks(string title,  string? description = null,
+        IEnumerable<(string platform, string url)>? socialLinks = null)
+    {
+        Title = title;
+        Description = description;
+        if (socialLinks != null)
+        {
+            foreach (var (platform, url) in socialLinks)
+            {
+                AddSocialLink(platform, url);
+            }
+        }
+        
+
+        return this;
+    }
+
     public void UpdateBasicInfo(string title, string slug, string? description)
     {
         if (string.IsNullOrWhiteSpace(title))
@@ -72,7 +105,7 @@ public class Store : Entity
 
     public void UpdatePicture(Picture picture)
     {
-        Picture =picture;
+        Picture = picture;
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -99,6 +132,40 @@ public class Store : Entity
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void UpdateComprehensive(
+        string title,
+        string slug,
+        string? description,
+        Picture? picture = null,
+        IEnumerable<(string platform, string url)>? socialLinks = null)
+    {
+        UpdateBasicInfo(title, slug, description);
+
+        if (picture != null)
+        {
+            UpdatePicture(picture);
+        }
+
+        if (socialLinks != null)
+        {
+            ClearSocialLinks();
+            foreach (var (platform, url) in socialLinks)
+            {
+                AddSocialLink(platform, url);
+            }
+        }
+    }
+
+    public void UpdateSocialLinks(IEnumerable<(string platform, string url)> socialLinks)
+    {
+        ClearSocialLinks();
+        foreach (var (platform, url) in socialLinks)
+        {
+            AddSocialLink(platform, url);
+        }
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     public void Publish()
     {
         IsPublished = true;
@@ -110,4 +177,17 @@ public class Store : Entity
         IsPublished = false;
         UpdatedAt = DateTime.UtcNow;
     }
+}
+
+
+public static class StoreErros
+{
+
+    public static readonly Error NotFound = Error.NotFound(
+        "Store.NotFound",
+        "Store not found");
+    
+    public static Error NotFoundById(int id) => Error.NotFound(
+        "Store.NotFoundById",
+        $"Store with ID {id} not found");
 }

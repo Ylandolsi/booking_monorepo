@@ -1,50 +1,37 @@
+/*
 using FluentValidation;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateSocialLinks;
 
-internal sealed class UpdateStoreCommandValidator : AbstractValidator<UpdateStoreCommand>
+internal sealed class UpdateSocialLinksCommandValidator : AbstractValidator<UpdateSocialLinksCommand>
 {
-    private static readonly string[] ValidPlatforms = new[]
+    public UpdateSocialLinksCommandValidator()
     {
-        "portfolio", "github", "linkedin", "fb", "instagram", "tiktok", "twitter"
-    };
-
-    public UpdateStoreCommandValidator()
-    {
+        RuleFor(c => c.StoreId)
+            .GreaterThan(0)
+            .WithMessage("Store ID must be a positive integer.");
 
         RuleFor(c => c.UserId)
             .NotEmpty()
             .WithMessage("User ID is required.");
 
-        RuleFor(c => c.Title)
-            .NotEmpty()
-            .WithMessage("Store title is required.")
-            .MaximumLength(100)
-            .WithMessage("Store title cannot exceed 100 characters.")
-            .MinimumLength(3)
-            .WithMessage("Store title must be at least 3 characters.");
-        
-
-        RuleFor(c => c.Description)
-            .MaximumLength(500)
-            .WithMessage("Store description cannot exceed 500 characters.")
-            .When(c => !string.IsNullOrEmpty(c.Description));
+        RuleFor(c => c.SocialLinks)
+            .NotNull()
+            .WithMessage("Social links list is required.")
+            .Must(links => links.Count <= 10)
+            .WithMessage("Cannot have more than 10 social links.");
 
         RuleForEach(c => c.SocialLinks)
-            .SetValidator(new SocialLinkValidator())
-            .When(c => c.SocialLinks != null && c.SocialLinks.Any());
+            .SetValidator(new SocialLinkValidator());
 
         RuleFor(c => c.SocialLinks)
             .Must(HaveUniquePlatforms)
-            .WithMessage("Social links must have unique platforms.")
-            .When(c => c.SocialLinks != null && c.SocialLinks.Any());
+            .WithMessage("Social links must have unique platforms.");
     }
 
-    private static bool HaveUniquePlatforms(IReadOnlyList<SocialLink>? socialLinks)
+    private static bool HaveUniquePlatforms(IReadOnlyList<SocialLink> socialLinks)
     {
-        if (socialLinks == null || !socialLinks.Any()) return true;
-
         var platforms = socialLinks.Select(sl => sl.Platform.ToLowerInvariant()).ToList();
         return platforms.Count == platforms.Distinct().Count();
     }
@@ -83,3 +70,4 @@ internal sealed class SocialLinkValidator : AbstractValidator<SocialLink>
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
     }
 }
+*/

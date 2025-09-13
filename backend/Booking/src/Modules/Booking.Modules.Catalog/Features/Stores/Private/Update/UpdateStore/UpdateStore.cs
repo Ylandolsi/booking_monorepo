@@ -1,46 +1,57 @@
+using System.Data.Entity;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Features.Stores.Shared;
+using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Persistence;
+using Microsoft.Extensions.Logging;
+using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 
 public record UpdateStoreCommand(
-    int StoreId,
-    Guid UserId,
+    int UserId,
     string Title,
-    string Slug,
-    string? Description = null
+    string? Description = null,
+    Picture? Picture = null,
+    IReadOnlyList<SocialLink>? SocialLinks = null
 ) : ICommand<StoreResponse>;
 
-public record StoreResponse(
-    int Id,
-    string Title,
-    string Slug,
-    string? Description,
-    string? PictureUrl,
-    bool IsPublished,
-    DateTime UpdatedAt
-);
-
-public class UpdateStoreHandler : ICommandHandler<UpdateStoreCommand, StoreResponse>
+public class UpdateStoreHandler (CatalogDbContext context , ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, StoreResponse>
 {
     public async Task<Result<StoreResponse>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
     {
-        // TODO: Get store from database
-        // TODO: Check if user owns the store
-        // TODO: Check if new slug is available (if changed)
-        // TODO: Update store
-        // TODO: Save to database
+        // TODO : add log here 
 
-        // Placeholder response
+        var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == command.UserId);
+        if (store is null)
+        {
+
+            // TODO : add log here 
+            return Result.Failure<StoreResponse>(StoreErros.NotFound);
+        }
+        
+        var socialLinksData = command.SocialLinks?.Select(sl => (sl.Platform, sl.Url)).ToList();
+        store.UpdateStoreWithLinks(command.Title, command.Description, socialLinksData);
+        
+        await context.SaveChangesAsync(cancellationToken);
+
+        var storeLinks = store.SocialLinks
+            .Select(sl => new SocialLink(sl.Platform, sl.Url))
+            .ToList();
+
+
         var response = new StoreResponse(
-            command.StoreId,
-            command.Title,
-            command.Slug,
-            command.Description,
-            null,
-            false,
-            DateTime.UtcNow
+            store.Title,
+            store.Slug,
+            store.Description,
+            store.Picture,
+            store.IsPublished,
+            store.CreatedAt,
+            storeLinks
         );
+        // TODO : add log here 
 
         return Result.Success(response);
     }

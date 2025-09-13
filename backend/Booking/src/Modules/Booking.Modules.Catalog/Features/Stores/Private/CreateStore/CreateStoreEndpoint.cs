@@ -1,6 +1,8 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +15,8 @@ public class CreateStoreEndpoint : IEndpoint
     public record CreateStoreRequest(
         string FullName,
         string Slug,
-        string Description = ""
+        string Description = "",
+        IReadOnlyList<SocialLink>? SocialLinks = null
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
@@ -32,14 +35,13 @@ public class CreateStoreEndpoint : IEndpoint
                     request.Slug,
                     request.FullName,
                     file,
+                    request.SocialLinks,
                     request.Description
                 );
 
                 var result = await handler.Handle(command, context.RequestAborted);
 
-                return result.IsFailure
-                    ? Results.BadRequest(result.Error)
-                    : Results.Created($"{CatalogEndpoints.Stores.Create}/{result.Value.Id}", result.Value);
+                return result.Match(Results.Ok, CustomResults.Problem);
             })
             .WithTags("Stores")
             .WithSummary("Create a new store")

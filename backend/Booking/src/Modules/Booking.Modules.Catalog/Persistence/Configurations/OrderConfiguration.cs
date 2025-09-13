@@ -25,9 +25,6 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(o => o.BuyerId)
-            .HasColumnName("buyer_id")
-            .IsRequired(false); // Nullable for guest checkout
 
         builder.Property(o => o.CustomerEmail)
             .HasColumnName("customer_email")
@@ -59,10 +56,6 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasColumnType("decimal(10,2)")
             .IsRequired();
 
-        builder.Property(o => o.Currency)
-            .HasColumnName("currency")
-            .HasMaxLength(3)
-            .IsRequired();
 
         builder.Property(o => o.Status)
             .HasColumnName("status")
@@ -124,10 +117,6 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         // Indexes
         builder.HasIndex(o => o.StoreId)
             .HasDatabaseName("ix_orders_store_id");
-
-        builder.HasIndex(o => o.BuyerId)
-            .HasDatabaseName("ix_orders_buyer_id")
-            .HasFilter("buyer_id IS NOT NULL");
 
         builder.HasIndex(o => o.CustomerEmail)
             .HasDatabaseName("ix_orders_customer_email");

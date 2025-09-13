@@ -11,6 +11,7 @@ public static class CatalogEndpoints
         public const string CheckSlugAvailability = Base + "/stores/slug-availability/{slug}";
         public const string UpdatePicture = Base + "/stores/{storeId:int}/picture";
         public const string UpdateLinks = Base + "/stores/{storeId:int}/links";
+        public const string UpdateSocialLinks = Base + "/stores/{storeId:int}/social-links";
         public const string GetMy = Base + "/stores/me";
     }
 
@@ -32,7 +33,7 @@ public static class CatalogEndpoints
         public const string Get = Base + "/orders/{orderId:int}";
         public const string GetMy = Base + "/orders/me";
     }
-    
+
     public static class Payouts
     {
         public const string Payout = $"{Base}/payout";
@@ -61,7 +62,7 @@ public static class CatalogEndpoints
         public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
         public const string GetSchedule = $"{Base}/availability/schedule";
     }
-    
+
     public static class Sessions
     {
         public const string Book = $"{Base}/sessions";

@@ -6,10 +6,6 @@ internal sealed class UpdateStorePictureCommandValidator : AbstractValidator<Upd
 {
     public UpdateStorePictureCommandValidator()
     {
-        RuleFor(c => c.StoreId)
-            .GreaterThan(0)
-            .WithMessage("Store ID must be a positive integer.");
-
         RuleFor(c => c.UserId)
             .NotEmpty()
             .WithMessage("User ID is required.");

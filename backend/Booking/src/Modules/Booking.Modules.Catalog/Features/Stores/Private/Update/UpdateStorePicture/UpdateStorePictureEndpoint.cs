@@ -1,7 +1,8 @@
-/*
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,18 +14,16 @@ public class UpdateStorePictureEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/catalog/stores/{storeId:int}/picture", async(
-            int storeSlug,
+        app.MapPost("api/catalog/stores/picture", async(
             [FromForm]IFormFile file,
             UserContext userContext, 
-            ICommandHandler<UpdateStorePictureCommand, StorePictureResponse> handler,
+            ICommandHandler<UpdateStorePictureCommand, StoreResponse> handler,
             HttpContext context) =>
         {
             // TODO: Get user ID from claims/authentication
             var userId = userContext.UserId; // Placeholder
 
             var command = new UpdateStorePictureCommand(
-                storeId,
                 userId,
                 file
             );
@@ -42,4 +41,3 @@ public class UpdateStorePictureEndpoint : IEndpoint
         .RequireAuthorization();
     }
 }
-*/

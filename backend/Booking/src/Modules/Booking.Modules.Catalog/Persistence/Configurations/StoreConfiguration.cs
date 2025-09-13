@@ -23,12 +23,10 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(s => s.Description)
             .HasMaxLength(1000);
 
-        builder.Property(s => s.PictureUrl)
-            .HasMaxLength(500);
-
-        builder.Property(s => s.OwnerId)
-            .IsRequired();
-
+    
+        // TODO : add picture Property 
+        
+        
         builder.Property(s => s.IsPublished)
             .IsRequired()
             .HasDefaultValue(false);
@@ -50,8 +48,6 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
             .IsUnique()
             .HasDatabaseName("IX_Stores_Slug");
 
-        builder.HasIndex(s => s.OwnerId)
-            .HasDatabaseName("IX_Stores_OwnerId");
 
         builder.HasIndex(s => s.IsPublished)
             .HasDatabaseName("IX_Stores_IsPublished");

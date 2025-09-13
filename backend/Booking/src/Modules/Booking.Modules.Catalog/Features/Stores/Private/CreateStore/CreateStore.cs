@@ -2,30 +2,23 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
 public record CreateStoreCommand(
     int UserId,
     string StoreSlug,
-    string FullName,
+    string Title,
     IFormFile Picture,
+    IReadOnlyList<SocialLink>? SocialLinks = null,
     string Description = ""
 ) : ICommand<StoreResponse>;
-
-public record StoreResponse(
-    int Id,
-    string Title,
-    string Slug,
-    string? Description,
-    Picture Picture,
-    bool IsPublished,
-    DateTime CreatedAt
-);
 
 public class CreateStoreHandler(
     CatalogDbContext dbContext,
@@ -35,6 +28,8 @@ public class CreateStoreHandler(
 {
     public async Task<Result<StoreResponse>> Handle(CreateStoreCommand command, CancellationToken cancellationToken)
     {
+        // TODO : add log here 
+
         var
             isAvailable =
                 await storeService.CheckSlugAvailability(command.StoreSlug, null, true, cancellationToken);
@@ -48,29 +43,34 @@ public class CreateStoreHandler(
                 "Slug is not available , try another one "));
         }
 
+        var socialLinksData = command.SocialLinks?.Select(sl => (sl.Platform, sl.Url)).ToList();
 
-        var store = Store.Create(
-            command.UserId,
-            command.FullName,
-            command.StoreSlug,
-            command.Description
-        );
+
+        var store = Store.CreateWithLinks(command.UserId, command.Title, command.StoreSlug, command.Description,
+            socialLinksData);
 
         var profilePicture = await storeService.UploadPicture(command.Picture, command.StoreSlug);
-        
-        store.UpdatePicture(profilePicture.IsSuccess ? profilePicture.Value :new Picture());
+
+        store.UpdatePicture(profilePicture.IsSuccess ? profilePicture.Value : new Picture());
 
         await dbContext.AddAsync(store, cancellationToken);
 
+        var storeLinks = store.SocialLinks
+            .Select(sl => new SocialLink(sl.Platform, sl.Url))
+            .ToList();
+        // TODO : add log here 
+
+
         var response = new StoreResponse(
-            store.Id,
             store.Title,
             store.Slug,
             store.Description,
             store.Picture,
             store.IsPublished,
-            store.CreatedAt
+            store.CreatedAt,
+            storeLinks
         );
+
 
         return Result.Success(response);
     }

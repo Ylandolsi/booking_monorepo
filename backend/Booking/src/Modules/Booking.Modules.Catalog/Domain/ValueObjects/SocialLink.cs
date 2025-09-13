@@ -4,7 +4,7 @@ namespace Booking.Modules.Catalog.Domain.ValueObjects;
 
 public class SocialLink
 {
-    public string Platform { get; private set; }
+    public string Platform { get; private set; } // either : portfolio / github / linkedin / fb / instagram / tiktok / twitter 
     public string Url { get; private set; }
 
     private SocialLink() { }
