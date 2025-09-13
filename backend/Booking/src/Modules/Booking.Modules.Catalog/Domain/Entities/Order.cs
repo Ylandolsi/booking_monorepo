@@ -12,8 +12,6 @@ public class Order : Entity
     public int StoreId { get; private set; }
     public string StoreSlug { get; private set; }
 
-    // Buyer Information (supports both registered users and guest checkout)
-    public Guid? BuyerId { get; private set; } // FK to the User (null for guest checkout)
     public string CustomerEmail { get; private set; }
     public string CustomerName { get; private set; }
     public string? CustomerPhone { get; private set; }
@@ -22,7 +20,6 @@ public class Order : Entity
     public ProductType ProductType { get; private set; }
 
     public decimal Amount { get; private set; }
-    public string Currency { get; private set; }
     public OrderStatus Status { get; private set; }
 
     public string? PaymentRef { get; private set; } // From your payment provider
@@ -49,12 +46,10 @@ public class Order : Entity
         CustomerEmail = string.Empty;
         CustomerName = string.Empty;
         StoreSlug = string.Empty;
-        Currency = string.Empty;
     }
 
     // Static factory method for registered users
     public static Order Create(
-        Guid buyerId,
         int productId,
         int storeId,
         string storeSlug,
@@ -62,7 +57,6 @@ public class Order : Entity
         string customerName,
         string? customerPhone,
         decimal amount,
-        string currency,
         ProductType productType,
         DateTime? scheduledAt = null,
         DateTime? sessionEndTime = null,
@@ -71,7 +65,6 @@ public class Order : Entity
     {
         return new Order
         {
-            BuyerId = buyerId,
             ProductId = productId,
             StoreId = storeId,
             StoreSlug = storeSlug,
@@ -90,43 +83,7 @@ public class Order : Entity
         };
     }
 
-    // Static factory method for guest checkout
-    public static Order CreateGuestOrder(
-        int productId,
-        int storeId,
-        string storeSlug,
-        string customerEmail,
-        string customerName,
-        string? customerPhone,
-        decimal amount,
-        string currency,
-        ProductType productType,
-        DateTime? scheduledAt = null,
-        DateTime? sessionEndTime = null,
-        string? timeZoneId = null,
-        string? note = null)
-    {
-        return new Order
-        {
-            BuyerId = null, // Guest checkout
-            ProductId = productId,
-            StoreId = storeId,
-            StoreSlug = storeSlug,
-            CustomerEmail = customerEmail,
-            CustomerName = customerName,
-            CustomerPhone = customerPhone,
-            Amount = amount,
-            Currency = currency,
-            ProductType = productType,
-            ScheduledAt = scheduledAt,
-            SessionEndTime = sessionEndTime,
-            TimeZoneId = timeZoneId,
-            Note = note,
-            Status = OrderStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
-    }
-
+    
     public void SetPaymentInfo(string paymentRef, string? paymentUrl = null)
     {
         PaymentRef = paymentRef;

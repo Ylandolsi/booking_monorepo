@@ -141,8 +141,8 @@ internal sealed class BookSessionCommandHandler(
         }
 
         // Check for conflicting sessions
-        bool hasConflict = await context.Sessions
-            .Where(s => s.MentorId == mentor.Id &&
+        bool hasConflict = await context.BookedSessions
+            .Where(s => s.ProductId == product.Id &&
                         s.Status != SessionStatus.Cancelled &&
                         s.Status != SessionStatus.NoShow &&
                         s.ScheduledAt.Date == sessionDateUtc)
@@ -163,15 +163,7 @@ internal sealed class BookSessionCommandHandler(
                 "The requested time slot conflicts with an existing session"));
         }
 
-
-        var menteeWallet =
-            await context.Wallets.FirstOrDefaultAsync(w => w.UserId == command.MenteeId, cancellationToken);
-
-        if (menteeWallet is null)
-        {
-            menteeWallet = new Wallet(command.MenteeId);
-            await context.Wallets.AddAsync(menteeWallet, cancellationToken);
-        }
+        
 
         var duration = Duration.Create(durationMinutes);
         if (duration.IsFailure)
@@ -201,7 +193,6 @@ internal sealed class BookSessionCommandHandler(
                     "Your mentor is not integrated with  google calendar"));
             }
 
-            var amountToBePaid = Math.Min(price.Value.Amount, menteeWallet.Balance);
 
 
             var sessionTitle = String.IsNullOrEmpty(command.Title)
@@ -211,47 +202,54 @@ internal sealed class BookSessionCommandHandler(
             var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
 
             var session = BookedSession.Create(
-                product.Id ,
-                product.ProductSlug ,
+                product.Id,
+                product.ProductSlug,
                 product.StoreId,
                 product.StoreSlug,
                 sessionStartDateTimeUtc,
-                durationMinutes,
+                duration.Value,
                 totalPrice,
                 0,
                 sessionTitle,
                 sessionNote);
 
 
-            var amountLeftToPay = price.Value.Amount - amountToBePaid;
-
-            // subtract from wallet if available
-            if (amountToBePaid > 0)
-            {
-                menteeWallet.UpdateBalance(-amountToBePaid);
-                session.AddAmountPaid(amountToBePaid);
-            }
+            
 
             // add session to get ID
-            await context.Sessions.AddAsync(session, cancellationToken);
+            await context.BookedSessions.AddAsync(session, cancellationToken);
 
+            var order = Order.Create(product.Id,
+                product.StoreId,
+                product.StoreSlug,
+                command.Email,
+                command.Name,
+                command.Phone,
+                totalPrice,
+                ProductType.Session,
+                session.ScheduledAt,
+                session.ScheduledAt.AddMinutes(duration.Value.Minutes),
+                command.TimeZoneId,
+                command.Note);
+
+            await context.Orders.AddAsync(order);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
 
             // If there's remaining amount to pay, create payment and initiate Konnect payment
-            if (amountLeftToPay > 0)
+            if (totalPrice > 0)
             {
                 // Update session status to waiting for payment
                 session.SetWaitingForPayment();
 
                 // Create payment record with pending status
-                var payment = new Domain.Entities.Payments.Payment(
-                    command.MenteeId,
-                    "", // Reference will be updated after Konnect response
-                    amountLeftToPay,
-                    session.Id,
-                    mentor.Id,
-                    Domain.Entities.Payments.PaymentStatus.Pending);
+                var payment = new Domain.Entities.Payment(
+                    order.Id,
+                    product.StoreId,
+                    product.Id,
+                    "", // Reference will be updated after Konnect response // TODO : handle reference is "" and not unique errors !!! 
+                    totalPrice,
+                    PaymentStatus.Pending);
 
                 await context.Payments.AddAsync(payment, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
@@ -261,12 +259,12 @@ internal sealed class BookSessionCommandHandler(
 
                 // Create payment with Konnect
                 var paymentResponse = await konnectService.CreatePayment(
-                    (int)(amountLeftToPay * 100), // Convert to cents
+                    (int)(totalPrice * 100), // Convert to cents
                     payment.Id,
-                    menteeUser.FirstName,
-                    menteeUser.LastName,
-                    menteeUser.Email ?? "",
-                    ""); // TODO , Phone number not available in UserDto
+                    command.Name,
+                    "",
+                    command.Email ?? "",
+                    command.Phone);
 
                 if (paymentResponse.IsFailure)
                 {
@@ -304,7 +302,7 @@ internal sealed class BookSessionCommandHandler(
                 // TODO : show this message on front : if the the event is not found on calendar 
                 // check your email 
                 var emails = new List<string>
-                    { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
+                    { command.Email, mentorData.GoogleEmail, mentorData.Email };
 
                 var description = string.IsNullOrEmpty(command.Note)
                     ? session.Title
@@ -322,32 +320,30 @@ internal sealed class BookSessionCommandHandler(
                     };
 
                 // TODO: logic shared with PaymentCompletedDomainEventHandler : centralize it ! 
-                await googleCalendarService.InitializeAsync(mentor.Id);
+                await googleCalendarService.InitializeAsync(mentorData.Id);
 
                 var resEventMentor =
                     await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
 
-                await googleCalendarService.InitializeAsync(command.MenteeId);
-                var resEventMentee =
-                    await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
 
-                if (resEventMentee.IsFailure || resEventMentor.IsFailure)
+                if (resEventMentor.IsFailure)
                 {
                     logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                        session.Id, resEventMentee.Error.Description);
+                        session.Id, resEventMentor.Error.Description);
                     // Continue without calendar event - session should still be confirmed
                 }
 
-                var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
-                    resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
+                var meetLink = resEventMentor.IsSuccess
+                    ? resEventMentor.Value.HangoutLink
+                    : "https://meet.google.com/placeholder";
                 session.Confirm(meetLink);
 
-                var priceAfterReducing = session.Price.Amount - (session.Price.Amount * 0.15m);
+                var priceAfterReducing = session.Price - (session.Price * 0.15m);
 
                 var escrow = new Escrow(priceAfterReducing, session.Id);
                 await context.Escrows.AddAsync(escrow, cancellationToken);
 
-                await SendNotificationsToUsers(session, menteeData.Slug);
+                //await SendNotificationsToUsers(session,);
                 logger.LogInformation("Session {SessionId} fully paid from wallet and confirmed", session.Id);
             }
 

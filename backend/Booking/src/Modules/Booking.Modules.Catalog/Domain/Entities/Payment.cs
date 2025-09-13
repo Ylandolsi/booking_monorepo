@@ -9,10 +9,11 @@ public class Payment : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
     public int Id { get; private set; }
+
     public int StoreId { get; private set; }
     public string Reference { get; private set; }
-    public int UserId { get; private set; }
     public int OrderId { get; private set; }
+    public int ProductId { get; private set; }
     public decimal Price { get; private set; }
     public PaymentStatus Status { get; private set; }
 
@@ -20,11 +21,17 @@ public class Payment : Entity
     {
     }
 
-    public Payment(int userId, int orderId, int storeId , string reference, decimal price, PaymentStatus status)
+    public Payment(
+        int orderId,
+        int storeId,
+        int productId,
+        string reference,
+        decimal price,
+        PaymentStatus status)
     {
         Reference = reference;
         OrderId = orderId;
-        UserId = userId;
+        ProductId = productId;
         StoreId = storeId;
         Price = price;
         Status = status;
