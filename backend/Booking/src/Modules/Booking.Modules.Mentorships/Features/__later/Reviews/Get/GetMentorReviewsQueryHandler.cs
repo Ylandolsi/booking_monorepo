@@ -4,7 +4,7 @@ using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Get;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Get;
 
 internal sealed class GetMentorReviewsQueryHandler(
     MentorshipsDbContext context,

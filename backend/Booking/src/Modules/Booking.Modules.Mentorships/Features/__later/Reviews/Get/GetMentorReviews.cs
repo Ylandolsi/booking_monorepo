@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Get;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Get;
 
 internal sealed class GetMentorReviews : IEndpoint
 {

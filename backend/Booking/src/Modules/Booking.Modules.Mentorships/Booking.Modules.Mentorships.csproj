@@ -9,7 +9,12 @@
     <ItemGroup>
       <Folder Include="Features\Payout\Admin\GetDetailed\" />
       <Folder Include="Features\Payout\User\" />
+      <Folder Include="Features\Products\" />
       <Folder Include="Features\Sessions\Ignore\" />
+      <Folder Include="Features\Stores\CreateStore\" />
+      <Folder Include="Features\Stores\GetMyStore\" />
+      <Folder Include="Features\Stores\GetStoreBySlug\" />
+      <Folder Include="Features\Stores\UpdateStore\" />
       <Folder Include="Persistence\Seed\" />
     </ItemGroup>
 

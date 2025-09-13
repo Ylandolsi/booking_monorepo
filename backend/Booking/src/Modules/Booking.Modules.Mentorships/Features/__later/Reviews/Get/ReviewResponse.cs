@@ -1,4 +1,4 @@
-namespace Booking.Modules.Mentorships.Features.Reviews.Get;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Get;
 
 public sealed record ReviewResponse(
     int Id,

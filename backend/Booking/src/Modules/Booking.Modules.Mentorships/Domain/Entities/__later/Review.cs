@@ -3,7 +3,7 @@ using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 
-namespace Booking.Modules.Mentorships.Domain.Entities;
+namespace Booking.Modules.Mentorships.Domain.Entities.__later;
 
 public class Review : Entity
 {

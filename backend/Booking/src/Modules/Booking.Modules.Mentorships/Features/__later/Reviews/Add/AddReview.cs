@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Add;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Add;
 
 internal sealed class AddReview : IEndpoint
 {

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Add;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Add;
 
 internal sealed class AddReviewCommandValidator : AbstractValidator<AddReviewCommand>
 {

@@ -1,0 +1,76 @@
+namespace Booking.Modules.Catalog.Features;
+
+public static class CatalogEndpoints
+{
+    private const string Base = "api/catalog";
+
+    public static class Stores
+    {
+        public const string Create = Base + "/stores";
+        public const string Update = Base + "/stores/{storeId:int}";
+        public const string CheckSlugAvailability = Base + "/stores/slug-availability/{slug}";
+        public const string UpdatePicture = Base + "/stores/{storeId:int}/picture";
+        public const string UpdateLinks = Base + "/stores/{storeId:int}/links";
+        public const string GetMy = Base + "/stores/me";
+    }
+
+    public static class Products
+    {
+        public static class Sessions
+        {
+            public const string Create = Base + "/products/sessions";
+            public const string Get = Base + "/products/sessions/{productId:int}";
+            public const string Update = Base + "/products/sessions/{productId:int}";
+            public const string UpdateAvailability = Base + "/products/sessions/{sessionProductId:int}/availability";
+        }
+    }
+
+    public static class Orders
+    {
+        public const string Create = Base + "/orders";
+        public const string PaymentWebhook = Base + "/orders/webhook";
+        public const string Get = Base + "/orders/{orderId:int}";
+        public const string GetMy = Base + "/orders/me";
+    }
+    
+    public static class Payouts
+    {
+        public const string Payout = $"{Base}/payout";
+        public const string PayoutHistory = $"{Base}/payout";
+
+        public static class Admin
+        {
+            public const string ApprovePayout = $"{Base}/admin/payout/approve"; // body : payoutId
+            public const string WebhookPayout = $"{Base}/admin/payout/webhook";
+            public const string RejectPayout = $"{Base}/admin/payout/reject"; // body : payoutId 
+            public const string GetAllPayouts = $"{Base}/admin/payout"; // query : status (Pending, Approved, Rejected , Completed) , upToDate , timeZoneId
+            // public const string GetDetailled = $"{Base}/admin/payout/{{payoutId}}";
+        }
+    }
+    public static class Payment
+    {
+        public const string Create = $"{Base}/payments";
+        public const string GetWallet = $"{Base}/payments/wallet";
+        public const string Webhook = $"{Base}/payments/webhook"; //  payment_ref=5f9498735289e405fc7c18ac
+    }
+
+    public static class Availability
+    {
+        public const string SetBulk = $"{Base}/availability/bulk";
+        public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
+        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
+        public const string GetSchedule = $"{Base}/availability/schedule";
+    }
+    
+    public static class Sessions
+    {
+        public const string Book = $"{Base}/sessions";
+
+        /*
+        public const string Cancel = $"{Base}/sessions/{{sessionId}}/cancel";
+        public const string GetDetails = $"{Base}/sessions/{{sessionId}}";
+        */
+        public const string GetSessions = $"{Base}/sessions"; // 
+    }
+
+}

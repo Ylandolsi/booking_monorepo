@@ -1,6 +1,6 @@
 using Booking.Common.Messaging;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Add;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Add;
 
 public sealed record AddReviewCommand(
     int SessionId,

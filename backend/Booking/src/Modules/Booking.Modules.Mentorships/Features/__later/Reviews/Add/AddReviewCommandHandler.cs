@@ -1,13 +1,13 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Domain.Entities;
+using Booking.Modules.Mentorships.Domain.Entities.__later;
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 using Booking.Modules.Mentorships.Domain.Enums;
 using Booking.Modules.Mentorships.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.Reviews.Add;
+namespace Booking.Modules.Mentorships.Features.__later.Reviews.Add;
 
 internal sealed class AddReviewCommandHandler(
     MentorshipsDbContext context,

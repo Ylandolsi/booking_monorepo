@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\Booking.Common\Booking.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Features\Payout\Admin\GetDetailed\" />
+      <Folder Include="Features\Stores\Private\Update\" />
+      <Folder Include="Features\Stores\Public\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Google.Apis">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\google.apis\1.70.0\lib\net6.0\Google.Apis.dll</HintPath>
+      </Reference>
+      <Reference Include="Google.Apis.Auth">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\google.apis.auth\1.70.0\lib\net6.0\Google.Apis.Auth.dll</HintPath>
+      </Reference>
+      <Reference Include="Google.Apis.Calendar.v3">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\google.apis.calendar.v3\1.69.0.3746\lib\net6.0\Google.Apis.Calendar.v3.dll</HintPath>
+      </Reference>
+      <Reference Include="Google.Apis.Core">
+        <HintPath>..\..\..\..\..\..\..\.nuget\packages\google.apis.core\1.70.0\lib\net6.0\Google.Apis.Core.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

@@ -1,4 +1,5 @@
 using Booking.Modules.Mentorships.Domain.Entities;
+using Booking.Modules.Mentorships.Domain.Entities.__later;
 using Booking.Modules.Mentorships.Domain.Entities.Availabilities;
 using Booking.Modules.Mentorships.Domain.Entities.Days;
 using Booking.Modules.Mentorships.Domain.Entities.Mentors;
@@ -23,8 +24,8 @@ public sealed class MentorshipsDbContext : DbContext
     public DbSet<MentorshipRelationship> MentorshipRelationships { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Availability> Availabilities { get; set; }
-    public DbSet<Payment> Payments { get; set; }
     public DbSet<Wallet> Wallets { get; set; }
+    public DbSet<Payment> Payments { get; set; }
     public DbSet<Escrow> Escrows { get; set; }
     public DbSet<Payout> Payouts { get; set; }
 

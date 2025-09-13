@@ -6,6 +6,7 @@ using Booking.Api.Extensions;
 using Booking.Api.Services;
 using Booking.Common;
 using Booking.Common.RealTime;
+using Booking.Modules.Catalog;
 using Booking.Modules.Mentorships;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Mentorships.RecurringJobs;
@@ -43,12 +44,13 @@ builder.Services.AddProblemDetails();
 
 Assembly[] moduleApplicationAssemblies =
 [
+    Booking.Modules.Catalog.AssemblyReference.Assembly,
     Booking.Modules.Mentorships.AssemblyReference.Assembly,
     Booking.Modules.Users.AssemblyReference.Assembly
 ];
 
 
-builder.Services.AddInfrastructure(builder.Configuration , builder);
+builder.Services.AddInfrastructure(builder.Configuration, builder);
 builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
@@ -66,10 +68,11 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.UseHangFire(builder.Configuration);
 
 
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly(), Booking.Modules.Catalog.AssemblyReference.Assembly);
 // for each module add its own app.settings.json ..
 // builder.Configuration.AddModuleConfiguration(["users"]);
 
+builder.Services.AddCatalogModule();
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddMentorshipsModule(builder.Configuration);
 

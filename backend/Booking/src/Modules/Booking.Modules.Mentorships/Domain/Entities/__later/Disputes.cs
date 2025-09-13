@@ -1,6 +1,6 @@
 using Booking.Modules.Mentorships.Domain.Entities.Sessions;
 
-namespace Booking.Modules.Mentorships.Domain.Entities;
+namespace Booking.Modules.Mentorships.Domain.Entities.__later;
 
 public class Dispute
 {
