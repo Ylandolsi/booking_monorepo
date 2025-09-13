@@ -48,7 +48,7 @@ Assembly[] moduleApplicationAssemblies =
 ];
 
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration , builder);
 builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
@@ -100,7 +100,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
 
     // Drop databases
-    /*await usersDb.Database.EnsureDeletedAsync();
+    await usersDb.Database.EnsureDeletedAsync();
     await mentorshipsDb.Database.EnsureDeletedAsync();
     app.ApplyMigrations();
 
@@ -119,7 +119,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     await roleService.CreateRoleAsync("User");
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();*/
+    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 
 }
 

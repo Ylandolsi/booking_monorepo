@@ -15,9 +15,6 @@ export interface BookingHookState {
 }
 
 export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; iamTheMentor: boolean }) {
-  if (!mentorSlug) {
-    return null;
-  }
   const [state, setState] = useState<BookingHookState>({
     selectedDate: new Date(),
     selectedSlot: null,
@@ -38,7 +35,7 @@ export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; 
     { enabled: !!mentorSlug && !!state.selectedDate && !iamTheMentor },
   );
 
-  const bookSessionMutation = useBookSession({ mentorSlug });
+  const bookSessionMutation = useBookSession();
 
   const isLoading = mentorDetailsQuery.isLoading || monthlyAvailabilityQuery.isLoading;
   const hasError = mentorDetailsQuery.isError || monthlyAvailabilityQuery.isError;
@@ -123,10 +120,11 @@ export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; 
         date: state.selectedDate.toISOString().split('T')[0],
         time: state.selectedSlot.startTime,
         duration: 30,
-        price: mentorDetailsQuery.data.hourlyRate || 50,
+        price: mentorDetailsQuery.data.hourlyRate / 2, // TODO : for now only handle 30 min
         currency: '$',
       },
-      total: mentorDetailsQuery.data.hourlyRate || 50,
+      total: mentorDetailsQuery.data.hourlyRate / 2, // TODO : for now only handle 30 min
+      //currency: '$',
     };
   }, [mentorDetailsQuery.data, mentorInfoQuery.data, state.selectedDate, state.selectedSlot, mentorSlug]);
 

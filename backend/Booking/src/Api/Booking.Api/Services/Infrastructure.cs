@@ -11,6 +11,11 @@ using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
+using Npgsql;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
 
 namespace Booking.Api.Services;
 
@@ -18,7 +23,8 @@ public static class Infrastructure
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration) =>
+        IConfiguration configuration,
+        WebApplicationBuilder builder) =>
         services
             .AddCors()
             .AddOptions(configuration)
@@ -30,6 +36,37 @@ public static class Infrastructure
             .AddHealthChecks(configuration)
             .AddAuthenticationInternal(configuration)
             .AddAuthorizationInternal();
+    //.AddObservability(builder);
+
+    /*private static IServiceCollection AddObservability(this IServiceCollection services, WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddOpenTelemetry()
+            .ConfigureResource(resource => resource.AddService("Meetini"))
+            .WithTracing(tracing =>
+            {
+                tracing
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddEntityFrameworkCoreInstrumentation()
+                    .AddRedisInstrumentation()
+                    .AddNpgsql();
+
+                tracing.AddOtlpExporter();
+            });
+
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeScopes = true;
+            logging.IncludeFormattedMessage = true;
+
+            logging.AddOtlpExporter();
+        });
+
+        return  services;
+
+
+    }*/
 
     private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {

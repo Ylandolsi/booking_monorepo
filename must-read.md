@@ -5,6 +5,12 @@
 - [LinkedIn Post on Database Mentorship (Arabic)](https://www.linkedin.com/posts/ahmed-emad-abdelall_%D9%81%D9%8A-%D8%A7%D9%84%D9%85%D9%86%D8%AA%D9%88%D8%B1%D8%B4%D9%8A%D8%A8-%D9%81%D9%8A-%D8%A7%D9%84%D8%AC%D8%B2%D8%A1-%D8%A7%D9%84%D8%AE%D8%A7%D8%B5-%D8%A8%D8%A7%D9%84%D9%80-database-activity-7368965607087607810-qdrH?originalSubdomain=ae) -[db migration add new coloumn](https://www.linkedin.com/posts/muhammedatif_%D8%B3%D8%A4%D8%A7%D9%84-%D8%A7%D9%86%D8%AA%D8%B1%D9%81%D9%8A%D9%88-%D9%84%D9%88-%D8%A7%D8%AD%D9%86%D8%A7-%D8%B9%D9%86%D8%AF%D9%86%D8%A7-table-%D9%83%D8%A8%D9%8A%D8%B1-%D8%AC%D8%AF%D8%A7-activity-7371112657350897664-S83B?utm_source=share&utm_medium=member_ios&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
 
 ---
+- [Background jobs and locks](https://www.linkedin.com/posts/mustafa-kamal-ab681875_concurrency-handling-for-pulling-central-ugcPost-7371629869471850497-Jy-3?utm_source=share&utm_medium=member_ios&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
+--
+
+### how logs can crash a system
+
+-[logs can crash a system](https://www.linkedin.com/posts/ahmed-emad-abdelall_%D8%A7%D8%AC%D8%A7%D8%A8%D8%A9-%D8%B3%D9%88%D8%A7%D9%84-%D8%A7%D9%86%D8%AA%D8%B1%D9%81%D9%8A%D9%88-%D9%87%D9%84-%D8%AA%D8%AA%D8%AE%D9%8A%D9%84-%D8%A5%D9%86-%D8%A7%D9%84%D9%80-log-file-activity-7370437688719650816-Wmvj?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
 
 - [notificaiton] (https://www.linkedin.com/posts/ahmed-emad-abdelall_%D8%B4%D9%83%D8%B1%D8%A7-%D9%84%D9%83%D9%84-%D8%AA%D8%B9%D9%84%D9%8A%D9%82%D8%A7%D8%AA%D9%83%D9%85-%D9%88%D8%A7%D8%AC%D8%A7%D8%A8%D8%AA%D9%83%D9%85-%D8%B9%D9%84%D9%8A-%D8%A7%D9%84%D8%B3%D9%88%D8%A7%D9%84-activity-7364981642525847555-hs0f?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
 - [notifcationqueue](https://www.linkedin.com/feed/update/urn:li:activity:7369750790292303872/)

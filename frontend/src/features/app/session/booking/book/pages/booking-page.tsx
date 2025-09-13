@@ -24,10 +24,7 @@ import { BookingSummary } from '@/features/app/session/booking/book/components';
 import React, { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useAuth } from '@/features/auth';
-import {
-  signalRService,
-  type NotificationSignalR,
-} from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
+import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
 
 function BookingContent() {
@@ -89,55 +86,29 @@ function BookingContent() {
     if (currentUser != null) {
       // needs to be auth
       // Start connection
-      signalRService
-        .startConnection(currentUser.slug)
-        .catch((error) =>
-          console.error('Failed to establish SignalR connection:', error),
-        );
+      signalRService.startConnection(currentUser.slug).catch((error) => console.error('Failed to establish SignalR connection:', error));
 
       // Register callback
       signalRService.addCallback('session_confirmed', sessionConfirmedMentee);
 
       // Cleanup on unmount
       return () => {
-        signalRService.removeCallback(
-          'session_confirmed',
-          sessionConfirmedMentee,
-        );
-        signalRService
-          .stopConnection(currentUser.slug)
-          .catch((error) =>
-            console.error('Error stopping SignalR connection:', error),
-          );
+        signalRService.removeCallback('session_confirmed', sessionConfirmedMentee);
+        signalRService.stopConnection(currentUser.slug).catch((error) => console.error('Error stopping SignalR connection:', error));
       };
     }
   }, [currentUser]);
 
   if (iamTheMentor) {
-    return (
-      <ErrorComponenet
-        title="You can not Book with youself"
-        message="You can not Book with youself"
-      ></ErrorComponenet>
-    );
+    return <ErrorComponenet title="You can not Book with youself" message="You can not Book with youself"></ErrorComponenet>;
   }
 
   if (isLoading) {
-    return (
-      <PageLoading2
-        title="Loading booking page "
-        description="Fetching mentor details and availability"
-      />
-    );
+    return <PageLoading2 title="Loading booking page " description="Fetching mentor details and availability" />;
   }
 
   if (mentorDetailsQuery.error?.message?.includes('not found')) {
-    return (
-      <ErrorComponenet
-        title="Mentor not found"
-        message="Mentor not found. Please check the link or select another mentor."
-      ></ErrorComponenet>
-    );
+    return <ErrorComponenet title="Mentor not found" message="Mentor not found. Please check the link or select another mentor."></ErrorComponenet>;
   }
 
   if (hasError) {
@@ -154,9 +125,7 @@ function BookingContent() {
   }
 
   if (googleRequired) {
-    return (
-      <IntegrationRequired message="You need to integrate your account with google calendar before you can book a session" />
-    );
+    return <IntegrationRequired message="You need to integrate your account with google calendar before you can book a session" />;
   }
 
   // Success page
@@ -238,8 +207,7 @@ function BookingContent() {
       <div className="text-center space-y-6 mb-8">
         <div>
           <h1 className="text-4xl font-bold text- mb-4">
-            Book a Session with {mentorInfoQuery.data?.firstName}{' '}
-            {mentorInfoQuery.data?.lastName}
+            Book a Session with {mentorInfoQuery.data?.firstName} {mentorInfoQuery.data?.lastName}
           </h1>
         </div>
 
@@ -248,9 +216,7 @@ function BookingContent() {
           <div className="flex items-center space-x-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                selectedDate
-                  ? 'bg-primary text-white'
-                  : 'bg-muted-200 text-black'
+                selectedDate ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
               1
@@ -261,9 +227,7 @@ function BookingContent() {
           <div className="flex items-center space-x-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                selectedSlot
-                  ? 'bg-primary text-white'
-                  : 'bg-muted-200 text-black'
+                selectedSlot ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
               2
@@ -274,9 +238,7 @@ function BookingContent() {
           <div className="flex items-center space-x-2">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                bookingSummary
-                  ? 'bg-primary text-white'
-                  : 'bg-muted-200 text-black'
+                bookingSummary ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
               3
@@ -309,24 +271,19 @@ function BookingContent() {
               </Avatar>
               <div className="flex-1">
                 <h3 className="text-xl font-semibold mb-1">
-                  {mentorInfoQuery.data.firstName}{' '}
-                  {mentorInfoQuery.data.lastName}
+                  {mentorInfoQuery.data.firstName} {mentorInfoQuery.data.lastName}
                 </h3>
                 <p className="text-gray-600 mb-2">Professional Mentor</p>
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {['General Mentoring', 'Career Development'].map(
-                    (skill, index) => (
-                      <Badge key={index} variant="secondary">
-                        {skill}
-                      </Badge>
-                    ),
-                  )}
+                  {['General Mentoring', 'Career Development'].map((skill, index) => (
+                    <Badge key={index} variant="secondary">
+                      {skill}
+                    </Badge>
+                  ))}
                 </div>
                 <div className="text-sm text-gray-600">
                   <span className="font-medium">Hourly Rate: </span>
-                  <span className="text-lg font-semibold text-green-600">
-                    ${mentorDetailsQuery.data.hourlyRate || 50}/hour
-                  </span>
+                  <span className="text-lg font-semibold text-green-600">${mentorDetailsQuery.data.hourlyRate || 50}/hour</span>
                 </div>
               </div>
             </div>
@@ -374,7 +331,7 @@ function BookingContent() {
             selectedSlot={selectedSlot}
             onSlotSelect={setSelectedSlot}
             isLoading={monthlyAvailabilityQuery.isLoading}
-            mentorRate={mentorDetailsQuery.data?.hourlyRate || 50}
+            mentorRate={mentorDetailsQuery.data?.hourlyRate}
           />
         </div>
 
@@ -394,19 +351,14 @@ function BookingContent() {
               }
               if (!googleRequired) handleBookSession();
             }}
-            isBookingInProgress={
-              bookSessionMutation.isPending || step === 'confirm'
-            }
+            isBookingInProgress={bookSessionMutation.isPending || step === 'confirm'}
             isBookingDisabled={!selectedDate || !selectedSlot}
           />
 
           {bookSessionMutation.isError && (
             <Alert variant="destructive" className="mt-4">
               {React.createElement(alertIconMap['destructive'])}
-              <AlertDescription>
-                Failed to book session. Please try again or contact support if
-                the issue persists.
-              </AlertDescription>
+              <AlertDescription>Failed to book session. Please try again or contact support if the issue persists.</AlertDescription>
             </Alert>
           )}
         </div>

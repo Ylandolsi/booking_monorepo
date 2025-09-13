@@ -16,11 +16,11 @@ export const bookSession = async (booking: BookSessionRequestType): Promise<Book
   return await api.post<BookSessionResponseType>(MentorshipEndpoints.Sessions.Book, booking);
 };
 
-export function useBookSession({ mentorSlug }: { mentorSlug: string }) {
+export function useBookSession() {
   return useMutation({
     mutationFn: (booking: BookSessionRequestType) => bookSession(booking),
     meta: {
-      invalidatesQuery: [bookingQueryKeys.myBookings(), WalletKeys.wallet(), availabilityQueryKeys.monthlyAvailability(mentorSlug)],
+      invalidatesQuery: [bookingQueryKeys.myBookings(), WalletKeys.wallet()],
       successAction: (data: BookSessionResponseType) => {
         let isValidUrl: boolean = true;
         try {
