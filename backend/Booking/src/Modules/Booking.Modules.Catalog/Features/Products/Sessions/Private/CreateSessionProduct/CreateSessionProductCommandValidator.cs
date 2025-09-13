@@ -1,11 +1,12 @@
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.CreateSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct;
 
 internal sealed class CreateSessionProductCommandValidator : AbstractValidator<CreateSessionProductCommand>
 {
     public CreateSessionProductCommandValidator()
     {
+        /*
         RuleFor(c => c.StoreId)
             .GreaterThan(0)
             .WithMessage("Store ID must be a positive integer.");
@@ -13,6 +14,7 @@ internal sealed class CreateSessionProductCommandValidator : AbstractValidator<C
         RuleFor(c => c.UserId)
             .NotEmpty()
             .WithMessage("User ID is required.");
+            */
 
         RuleFor(c => c.Title)
             .NotEmpty()
@@ -27,14 +29,7 @@ internal sealed class CreateSessionProductCommandValidator : AbstractValidator<C
             .WithMessage("Price must be greater than 0.")
             .LessThan(10000)
             .WithMessage("Price must be less than $10,000.");
-
-        RuleFor(c => c.DurationMinutes)
-            .GreaterThanOrEqualTo(15)
-            .WithMessage("Session duration must be at least 15 minutes.")
-            .LessThanOrEqualTo(480)
-            .WithMessage("Session duration cannot exceed 8 hours.")
-            .Must(d => d % 15 == 0)
-            .WithMessage("Session duration must be in 15-minute increments.");
+        
 
         RuleFor(c => c.BufferTimeMinutes)
             .GreaterThanOrEqualTo(0)
@@ -44,13 +39,6 @@ internal sealed class CreateSessionProductCommandValidator : AbstractValidator<C
             .Must(d => d % 5 == 0)
             .WithMessage("Buffer time must be in 5-minute increments.");
 
-        RuleFor(c => c.Currency)
-            .NotEmpty()
-            .WithMessage("Currency is required.")
-            .Length(3)
-            .WithMessage("Currency must be a 3-letter code (e.g., USD, EUR).")
-            .Matches("^[A-Z]{3}$")
-            .WithMessage("Currency must be uppercase letters only.");
 
         RuleFor(c => c.Subtitle)
             .MaximumLength(100)

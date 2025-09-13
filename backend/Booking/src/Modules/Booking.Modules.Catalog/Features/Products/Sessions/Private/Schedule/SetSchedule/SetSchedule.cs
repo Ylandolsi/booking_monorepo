@@ -15,7 +15,7 @@ internal sealed class SetSchedule : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(MentorshipEndpoints.Availability.SetBulk, async (
+        app.MapPost(CatalogEndpoints.Availability.SetBulk, async (
                 Request request,
                 UserContext userContext,
                 ICommandHandler<SetScheduleCommand> handler,

@@ -3,6 +3,7 @@ using Booking.Common.Results;
 using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
 using Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability;
 using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.GetSchedule;
@@ -17,9 +18,10 @@ public class GetMentorScheduleQueryHandler(
     {
         logger.LogInformation("GetMentorScheduleQuery executed for mentor with id = {MentorId}", query.MentorId);
 
-        var availabilities = await context.Availabilities
+        // TODO : handle if the slug is not a sessionProductSlug ! 
+        var availabilities = await context.SessionAvailabilities
             .AsNoTracking()
-            .Where(av => av.MentorId == query.MentorId)
+            .Where(av => av.SessionProductSlug == query.ProductSlug)
             .ToListAsync(cancellationToken);
 
         var allDays = await context.Days

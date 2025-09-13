@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Booking.Common.Contracts.Users;
 using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Persistence;
 using Hangfire;

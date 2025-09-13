@@ -17,6 +17,9 @@ internal sealed class BookSession : IEndpoint
         string StartTime, // TIMEONLY  
         string EndTime,
         string Title,
+        string Email,
+        string Name,
+        string Phone,
         string TimeZoneId = "Africa/Tunis",
         string? Note = "");
 
@@ -35,6 +38,9 @@ internal sealed class BookSession : IEndpoint
                     request.Date,
                     request.StartTime,
                     request.EndTime,
+                    request.Email,
+                    request.Name,
+                    request.Phone,
                     request.TimeZoneId,
                     request.Note);
 

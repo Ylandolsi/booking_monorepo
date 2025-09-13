@@ -1,4 +1,5 @@
 using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -20,6 +21,8 @@ public sealed class CatalogDbContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Escrow> Escrows { get; set; }
     public DbSet<Payout> Payouts { get; set; }
+    public DbSet<Day> Days { get; set; }
+
     public DbSet<BookedSession> BookedSessions { get; set; }
 
     public DbSet<Wallet> Wallets { get; set; }

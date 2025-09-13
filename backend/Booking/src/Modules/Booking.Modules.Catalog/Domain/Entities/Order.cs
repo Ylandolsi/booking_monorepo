@@ -72,7 +72,6 @@ public class Order : Entity
             CustomerName = customerName,
             CustomerPhone = customerPhone,
             Amount = amount,
-            Currency = currency,
             ProductType = productType,
             ScheduledAt = scheduledAt,
             SessionEndTime = sessionEndTime,
@@ -83,7 +82,7 @@ public class Order : Entity
         };
     }
 
-    
+
     public void SetPaymentInfo(string paymentRef, string? paymentUrl = null)
     {
         PaymentRef = paymentRef;
@@ -109,6 +108,4 @@ public class Order : Entity
         Status = OrderStatus.Cancelled;
         UpdatedAt = DateTime.UtcNow;
     }
-
-    public bool IsGuestOrder => !BuyerId.HasValue;
 }

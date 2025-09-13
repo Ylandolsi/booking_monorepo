@@ -1,4 +1,5 @@
 using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

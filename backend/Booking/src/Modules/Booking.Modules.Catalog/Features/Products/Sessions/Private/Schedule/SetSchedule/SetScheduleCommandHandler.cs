@@ -1,12 +1,15 @@
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
+using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.SetSchedule;
 
 internal sealed class SetScheduleCommandHandler(
-    MentorshipsDbContext context,
+    CatalogDbContext context,
     IUsersModuleApi usersModuleApi,
     ILogger<SetScheduleCommandHandler> logger)
     : ICommandHandler<SetScheduleCommand>
@@ -20,44 +23,34 @@ internal sealed class SetScheduleCommandHandler(
 
         try
         {
-            var mentor = await context.Mentors
+            var sessionProduct = await context.SessionProducts
                 .Include(m => m.Days)
                 .Include(m => m.Availabilities)
-                .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsActive, cancellationToken);
+                .FirstOrDefaultAsync(m => m.Id == command.MentorId && m.IsPublished, cancellationToken);
 
-            if (mentor == null)
+            if (sessionProduct == null)
             {
                 return Result.Failure(
                     Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
             }
 
             string timeZone = "";
-            if (String.IsNullOrEmpty(mentor.TimeZoneId))
+            if (String.IsNullOrEmpty(sessionProduct.TimeZoneId))
             {
-                if (String.IsNullOrEmpty(command.TimeZoneId))
-                {
-                    var userData = await usersModuleApi.GetUserInfo(command.MentorId, cancellationToken);
-                    timeZone = userData.TimeZoneId;
-
-                }
-                else
-                {
-
-                    timeZone = command.TimeZoneId;
-                }
-
+                timeZone = command.TimeZoneId;
                 if (String.IsNullOrEmpty(timeZone))
                 {
                     timeZone = "Africa/Tunis";
                 }
-                mentor.UpdateTimezone(timeZone);
+
+                sessionProduct.UpdateTimeZone(timeZone);
             }
 
             var createdAvailabilityIds = new List<int>();
 
             foreach (var dayRequest in command.DayAvailabilities)
             {
-                var day = mentor.Days.FirstOrDefault(d => d.DayOfWeek == dayRequest.DayOfWeek);
+                var day = sessionProduct.Days.FirstOrDefault(d => d.DayOfWeek == dayRequest.DayOfWeek);
                 if (day == null)
                 {
                     throw new Exception("Mentor should have 7 days when created");
@@ -77,11 +70,11 @@ internal sealed class SetScheduleCommandHandler(
                 // if day is inactive, skip creating time slots
                 if (!dayRequest.IsActive) continue;
 
-                var existingAvailabilities = await context.Availabilities
+                var existingAvailabilities = await context.SessionAvailabilities
                     .Where(a => a.DayId == day.Id)
                     .ToListAsync(cancellationToken);
 
-                context.Availabilities.RemoveRange(existingAvailabilities);
+                context.SessionAvailabilities.RemoveRange(existingAvailabilities);
 
                 foreach (var timeSlot in dayRequest.AvailabilityRanges)
                 {
@@ -102,16 +95,17 @@ internal sealed class SetScheduleCommandHandler(
                     }
 
 
-                    var availability = Domain.Entities.Availabilities.Availability.Create(
-                            command.MentorId,
+                    var availability = SessionAvailability.Create(
+                            sessionProduct.Id,
+                            sessionProduct.ProductSlug,
                             day.Id,
                             dayRequest.DayOfWeek,
                             timeStart,
                             timeEnd,
-                            mentor.TimeZoneId)
+                            sessionProduct.TimeZoneId)
                         ;
 
-                    context.Availabilities.Add(availability);
+                    context.SessionAvailabilities.Add(availability);
                 }
             }
 

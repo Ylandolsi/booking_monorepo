@@ -16,14 +16,15 @@ public class GetMentorSchedule : IEndpoint
     {
         app.MapGet(CatalogEndpoints.Availability.GetSchedule,
                 async (
+                    [FromQuery] string productSlug,
                     [FromQuery] string? timeZoneId,
                     UserContext userContext,
                     IQueryHandler<GetMentorScheduleQuery, List<DayAvailability>> handler,
                     CancellationToken cancellationToken) =>
                 {
-                    timeZoneId = (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId; 
+                    timeZoneId = (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId;
                     int mentorId = userContext.UserId;
-                    var query = new GetMentorScheduleQuery(mentorId, timeZoneId);
+                    var query = new GetMentorScheduleQuery(mentorId, productSlug, timeZoneId);
                     Result<List<DayAvailability>> result = await handler.Handle(query, cancellationToken);
                     return result.Match(Results.Ok, CustomResults.Problem);
                 })

@@ -1,6 +1,6 @@
 using Booking.Modules.Catalog.Domain.ValueObjects;
 
-namespace Booking.Modules.Catalog.Domain.Entities;
+namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
 
 public class SessionProduct : Product
 {
@@ -10,41 +10,44 @@ public class SessionProduct : Product
 
     public string TimeZoneId { get; private set; } = "Africa/Tunis";
 
-    // Availability rules stored 
+    // todo:notImportant custom Availability rules stored 
     //public string? AvailabilityRules { get; private set; }
 
     // Navigation properties for availability (can be expanded later)
     public ICollection<SessionAvailability> Availabilities { get; private set; } = new List<SessionAvailability>();
+    public ICollection<Day> Days { get; private set; } = new List<Day>();
 
-    private SessionProduct() { }
+    private SessionProduct()
+    {
+    }
 
     public static SessionProduct Create(
-        int storeId,
         string title,
+        string subtitle,
+        string description,
+        string clickToPay,
+        string meetingInstructions,
         decimal price,
-        Duration duration,
         Duration? bufferTime = null,
-        string? description = null,
-        string? subtitle = null,
-        string currency = "USD",
         string timeZoneId = "Africa/Tunis")
     {
         var sessionProduct = new SessionProduct();
 
         // Set base properties
-        sessionProduct.StoreId = storeId;
         sessionProduct.Title = title?.Trim() ?? throw new ArgumentException("Title cannot be empty", nameof(title));
         sessionProduct.Subtitle = subtitle?.Trim();
         sessionProduct.Description = description?.Trim();
-        sessionProduct.Price = price >= 0 ? price : throw new ArgumentException("Price cannot be negative", nameof(price));
-        sessionProduct.Currency = !string.IsNullOrWhiteSpace(currency) ? currency.ToUpperInvariant() : throw new ArgumentException("Currency cannot be empty", nameof(currency));
+        sessionProduct.Price =
+            price >= 0 ? price : throw new ArgumentException("Price cannot be negative", nameof(price));
         sessionProduct.CreatedAt = DateTime.UtcNow;
-        sessionProduct.IsPublished = false;
+        sessionProduct.IsPublished = true;
+        sessionProduct.ClickToPay = clickToPay.Trim();
 
         // Set session-specific properties
-        sessionProduct.Duration = duration ?? throw new ArgumentNullException(nameof(duration));
+        sessionProduct.MeetingInstructions = meetingInstructions;
         sessionProduct.BufferTime = bufferTime ?? Duration.FifteenMinutes; // Default 15 min buffer
         sessionProduct.TimeZoneId = timeZoneId;
+
 
         return sessionProduct;
     }
@@ -67,13 +70,25 @@ public class SessionProduct : Product
         UpdatedAt = DateTime.UtcNow;
     }
 
+    public void UpdateTimeZone(string timeZoneId)
+    {
+        if (String.IsNullOrWhiteSpace(timeZoneId))
+        {
+            return;
+        }
+
+        TimeZoneId = timeZoneId;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
     /*public void UpdateAvailabilityRules(string availabilityRules)
     {
         AvailabilityRules = availabilityRules;
         UpdatedAt = DateTime.UtcNow;
     }*/
 
-    public override void UpdateBasicInfo(string title, decimal price, string? subtitle = null, string? description = null)
+    public override void UpdateBasicInfo(string title, decimal price, string? subtitle = null,
+        string? description = null)
     {
         base.UpdateBasicInfo(title, price, subtitle, description);
         // Any session-specific logic for basic info updates can go here

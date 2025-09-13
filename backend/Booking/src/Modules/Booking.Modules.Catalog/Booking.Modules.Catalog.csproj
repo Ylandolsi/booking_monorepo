@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <Folder Include="Features\Payout\Admin\GetDetailed\" />
+      <Folder Include="Features\Products\Sessions\Private\_ignore\" />
       <Folder Include="Features\Stores\Private\Update\" />
       <Folder Include="Features\Stores\Public\" />
     </ItemGroup>

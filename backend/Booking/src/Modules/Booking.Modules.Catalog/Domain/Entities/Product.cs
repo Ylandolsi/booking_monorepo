@@ -8,18 +8,18 @@ public abstract class Product : Entity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; protected set; }
+
     public string ProductSlug { get; protected set; }
     public int StoreId { get; protected set; }
     public string StoreSlug { get; protected set; }
 
-
     public string Title { get; protected set; } = string.Empty;
+    public string ClickToPay { get; protected set; }
     public string? Subtitle { get; protected set; }
     public string? Description { get; protected set; }
     public string? ThumbnailUrl { get; protected set; }
 
     public decimal Price { get; protected set; }
-    public string Currency { get; protected set; } = "USD";
 
     public int DisplayOrder { get; protected set; }
     public bool IsPublished { get; protected set; }
@@ -39,8 +39,8 @@ public abstract class Product : Entity
         int storeId,
         string storeSlug,
         string title,
+        string clickToPay,
         decimal price,
-        string currency = "USD",
         string? subtitle = null,
         string? description = null)
     {
@@ -50,20 +50,17 @@ public abstract class Product : Entity
         if (price < 0)
             throw new ArgumentException("Price cannot be negative", nameof(price));
 
-        if (string.IsNullOrWhiteSpace(currency))
-            throw new ArgumentException("Currency cannot be empty", nameof(currency));
-
         StoreId = storeId;
         Title = title.Trim();
         Subtitle = subtitle?.Trim();
         Description = description?.Trim();
         Price = price;
-        Currency = currency.ToUpperInvariant();
         IsPublished = false;
         CreatedAt = DateTime.UtcNow;
         StoreSlug = storeSlug;
+        ClickToPay = clickToPay;
     }
-    
+
 
     public virtual void UpdateBasicInfo(string title, decimal price, string? subtitle = null,
         string? description = null)

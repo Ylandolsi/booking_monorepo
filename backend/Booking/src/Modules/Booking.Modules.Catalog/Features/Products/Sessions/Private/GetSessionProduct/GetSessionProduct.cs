@@ -1,7 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.GetSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetSessionProduct;
 
 public record GetSessionProductQuery(int ProductId) : IQuery<SessionProductDetailResponse>;
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.GetSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetSessionProduct;
 
 public class GetSessionProductEndpoint : IEndpoint
 {
