@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,10 +15,12 @@ public class CreateSessionProductEndpoint : IEndpoint
         string Title,
         string Subtitle,
         string Description,
+        IFormFile Thumbnail,
         string ClickToPay,
         decimal Price,
         int BufferTimeMinutes,
-        string MeetingInstructions = "",
+        string MeetingInstructions,
+        List<DayAvailability> DayAvailabilities,
         string TimeZoneId = "Africa/Tunis"
     );
 
@@ -37,9 +40,11 @@ public class CreateSessionProductEndpoint : IEndpoint
                     request.Title,
                     request.Subtitle,
                     request.Description,
+                    request.Thumbnail,
                     request.ClickToPay,
                     request.Price,
                     request.BufferTimeMinutes,
+                    request.DayAvailabilities,
                     request.MeetingInstructions,
                     request.TimeZoneId
                 );

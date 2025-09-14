@@ -20,6 +20,7 @@ public class Order : Entity
     public ProductType ProductType { get; private set; }
 
     public decimal Amount { get; private set; }
+    public decimal AmountPaid { get; private set; } = 0;
     public OrderStatus Status { get; private set; }
 
     public string? PaymentRef { get; private set; } // From your payment provider
@@ -82,6 +83,11 @@ public class Order : Entity
         };
     }
 
+    public void SetAmountPaid(decimal amountPaid)
+    {
+        AmountPaid = amountPaid;
+        UpdatedAt = DateTime.UtcNow;
+    }
 
     public void SetPaymentInfo(string paymentRef, string? paymentUrl = null)
     {

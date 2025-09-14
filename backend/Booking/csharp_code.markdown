@@ -1,5 +1,7 @@
 EnumerateArray
 
+        var allDaysOfWeek = Enum.GetValues<DayOfWeek>();
+
 # C# Code Snippets
 
 -         using var scope = _serviceProvider.CreateScope();

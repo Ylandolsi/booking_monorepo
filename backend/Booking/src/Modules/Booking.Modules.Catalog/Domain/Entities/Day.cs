@@ -10,6 +10,8 @@ public class Day : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
+    public int ProductId { get; private set; }
+    public string ProductSlug { get; private set; }
     public int StoreId { get; private set; }
     public string StoreSlug { get; private set; }
 
@@ -23,12 +25,12 @@ public class Day : Entity
     {
     }
 
-    public static Day Create(int storeId, string storeSlug, DayOfWeek dayOfWeek, bool isActive = true)
+    public static Day Create(int productId, string productSlug, DayOfWeek dayOfWeek, bool isActive = true)
     {
         return new Day
         {
-            StoreId = storeId,
-            StoreSlug = storeSlug,
+            ProductId = productId,
+            ProductSlug = productSlug,
             DayOfWeek = dayOfWeek,
             IsActive = isActive,
             CreatedAt = DateTime.UtcNow

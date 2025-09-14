@@ -1,5 +1,10 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.GetSchedule;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
+using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetSessionProduct;
 
@@ -32,7 +37,7 @@ public record AvailabilitySlotResponse(
     bool IsActive
 );
 
-public class GetSessionProductHandler : IQueryHandler<GetSessionProductQuery, SessionProductDetailResponse>
+public class GetSessionProductHandler ( CatalogDbContext context , ILogger<GetSessionProductHandler>logger) : IQueryHandler<GetSessionProductQuery, SessionProductDetailResponse>
 {
     public async Task<Result<SessionProductDetailResponse>> Handle(GetSessionProductQuery query, CancellationToken cancellationToken)
     {
@@ -71,4 +76,58 @@ public class GetSessionProductHandler : IQueryHandler<GetSessionProductQuery, Se
 
         return Result.Success(response);
     }
+    
+    public async Task<Result<List<DayAvailability>>> Handle(GetMentorScheduleQuery query,
+        CancellationToken cancellationToken)
+    {
+        logger.LogInformation("GetMentorScheduleQuery executed for mentor with id = {MentorId}", query.MentorId);
+
+        // TODO : handle if the slug is not a sessionProductSlug ! 
+        var availabilities = await context.SessionAvailabilities
+            .AsNoTracking()
+            .Where(av => av.SessionProductSlug == query.ProductSlug)
+            .ToListAsync(cancellationToken);
+
+        var allDays = await context.Days
+            .Select(d => new { d.DayOfWeek, d.IsActive })
+            .ToListAsync(cancellationToken);
+
+        var availabilityWeek = Enumerable.Range(0, 7)
+            .Select(dayOfWeek =>
+            {
+                var dayAvailabilities = availabilities
+                    .Where(av => (int)av.DayOfWeek == dayOfWeek)
+                    .Select(av =>
+                    {
+                        var (convertedToMenteeTimeZoneStart, convertedToMenteeTimeZoneEnd) =
+                            ConvertAvailability.Convert(
+                                av.TimeRange.StartTime, av.TimeRange.EndTime,
+                                DateOnly.FromDateTime(DateTime.UtcNow), av.TimeZoneId, query.TimeZoneId);
+
+                        return new AvailabilityRange
+                        {
+                            StartTime = TimeOnly.FromDateTime(convertedToMenteeTimeZoneStart).ToString(),
+                            EndTime = TimeOnly.FromDateTime(convertedToMenteeTimeZoneEnd).ToString(),
+                            Id = av.Id
+                        };
+                    })
+                    .ToList();
+
+                var isActive = allDays
+                    .Where(d => (int)d.DayOfWeek == dayOfWeek)
+                    .Select(d => d.IsActive)
+                    .FirstOrDefault();
+
+                return new DayAvailability
+                {
+                    DayOfWeek = (DayOfWeek)dayOfWeek,
+                    IsActive = isActive,
+                    AvailabilityRanges = dayAvailabilities
+                };
+            })
+            .ToList();
+
+        return Result.Success(availabilityWeek);
+    }
+}
 }

@@ -1,9 +1,12 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features;
+using Booking.Modules.Catalog.Features.Payment.Webhook;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Orders.PaymentWebhook;
 
@@ -19,28 +22,21 @@ public class PaymentWebhookEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(CatalogEndpoints.Orders.PaymentWebhook, async (
-            WebhookRequest request,
-            ICommandHandler<ProcessPaymentWebhookCommand, WebhookResponse> handler,
-            HttpContext context) =>
-        {
-            var command = new ProcessPaymentWebhookCommand(
-                request.PaymentReference,
-                request.Status,
-                request.Amount,
-                request.Currency,
-                request.AdditionalData
-            );
+        app.MapGet(CatalogEndpoints.Payment.Webhook, async (
+                [FromQuery] string payment_ref,
+                ICommandHandler<WebhookCommand> handler,
+                ILogger<Webhook> logger,
+                CancellationToken cancellationToken) =>
+            {
+                var command = new WebhookCommand(payment_ref);
+                await handler.Handle(command, cancellationToken);
 
-            var result = await handler.Handle(command, context.RequestAborted);
-
-            return result.IsFailure
-                ? Results.BadRequest(result.Error)
-                : Results.Ok(result.Value);
-        })
-        .WithTags("Orders", "Webhooks")
-        .WithSummary("Process payment webhook")
-        .WithDescription("Handle payment status updates from payment provider")
-        .AllowAnonymous(); // Webhooks typically don't use authorization
+                return Results.Ok();
+            })
+            // TODO: add rate limiter here ! 
+            .WithTags(Tags.Payment, Tags.Webhook, Tags.Order)
+            .WithSummary("Process payment webhook")
+            .WithDescription("Handle payment status updates from payment provider")
+            .AllowAnonymous();
     }
 }

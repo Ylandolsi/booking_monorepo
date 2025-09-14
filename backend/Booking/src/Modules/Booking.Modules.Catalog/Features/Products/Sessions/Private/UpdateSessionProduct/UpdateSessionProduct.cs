@@ -1,114 +1,85 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Common.SlugGenerator;
-using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
-using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
-using Booking.Modules.Catalog.Persistence;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.UpdateSessionProduct;
 
-public record CreateSessionProductCommand(
-    int UserId,
+public record UpdateSessionProductCommand(
+    int ProductId,
+    Guid UserId,
     string Title,
-    string Subtitle,
-    string Description,
-    string ClickToPay,
     decimal Price,
+    int DurationMinutes,
     int BufferTimeMinutes,
-    List<DayAvailability> DayAvailabilities,
-    string MeetingInstructions = "",
-    string TimeZoneId = "Africa/Tunis"
+    string? Subtitle = null,
+    string? Description = null,
+    string? MeetingInstructions = null,
+    string? TimeZoneId = null
 ) : ICommand<SessionProductResponse>;
 
 public record SessionProductResponse(
+    int Id,
+    int StoreId,
     string Title,
-    string Subtitle,
-    string Description,
-    string ClickToPay,
+    string? Subtitle,
+    string? Description,
     decimal Price,
-    string MeetingInstructions
+    string Currency,
+    int DurationMinutes,
+    int BufferTimeMinutes,
+    string? MeetingInstructions,
+    string TimeZoneId,
+    bool IsPublished,
+    DateTime UpdatedAt
 );
 
-public class CreateSessionProductHandler(
-    CatalogDbContext context,
-    IUnitOfWork unitOfWork,
-    SlugGenerator slugGenerator,
-    ILogger<CreateSessionProductCommand> logger)
-    : ICommandHandler<CreateSessionProductCommand, SessionProductResponse>
+public class UpdateSessionProductHandler : ICommandHandler<UpdateSessionProductCommand, SessionProductResponse>
 {
-    public async Task<Result<SessionProductResponse>> Handle(CreateSessionProductCommand command,
-        CancellationToken cancellationToken)
+    public async Task<Result<SessionProductResponse>> Handle(UpdateSessionProductCommand command, CancellationToken cancellationToken)
     {
-        await unitOfWork.BeginTransactionAsync(cancellationToken);
+        // TODO: Get product from database
+        // TODO: Check if it's a SessionProduct
+        // TODO: Verify user owns the store that owns this product
 
-        try
+        // Create Duration value objects
+        var durationResult = Duration.Create(command.DurationMinutes);
+        if (durationResult.IsFailure)
         {
-            var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
-
-            if (store is null)
-            {
-                return Result.Failure<>();
-            }
-
-
-            var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
-            if (bufferTimeResult.IsFailure)
-            {
-                return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
-            }
-
-            string uniqueSlug = await slugGenerator.GenerateUniqueSlug(
-                async (slug) => await context.SessionProducts.AsNoTracking()
-                    .AnyAsync(u => u.ProductSlug == slug, cancellationToken),
-                command.Title
-            );
-            // upload picture : thumbnail : for now default thumbnail but it would be customized for future 
-
-            Checkout checkout = Checkout.Create($"s/{uniqueSlug}", command.Title,)
-
-            // Create the session product
-            var sessionProduct = SessionProduct.Create(
-                uniqueSlug,
-                store.Id,
-                store.Slug,
-                command.Title,
-                command.Subtitle,
-                command.Description,
-                command.ClickToPay,
-                command.MeetingInstructions,
-                command.Price,
-                bufferTimeResult.Value,
-                command.TimeZoneId
-            );
-
-            var sessionCreated = await context.AddAsync(sessionProduct, cancellationToken);
-
-            await SetSchedule(sessionCreated.Entity.Id, command.DayAvailabilities, command.TimeZoneId,
-                cancellationToken);
-
-
-            var response = new SessionProductResponse(
-                sessionProduct.Title,
-                sessionProduct.Subtitle,
-                sessionProduct.Description,
-                sessionProduct.ClickToPay,
-                sessionProduct.Price,
-                sessionProduct.MeetingInstructions
-            );
-
-            return Result.Success(response);
+            return Result.Failure<SessionProductResponse>(durationResult.Error);
         }
-        catch (Exception e)
+
+        var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
+        if (bufferTimeResult.IsFailure)
         {
-            await unitOfWork.RollbackTransactionAsync(cancellationToken);
+            return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
         }
+
+        // TODO: Update the product
+        // sessionProduct.UpdateBasicInfo(command.Title, command.Price, command.Subtitle, command.Description);
+        // sessionProduct.UpdateSessionDetails(durationResult.Value, bufferTimeResult.Value, command.MeetingInstructions, command.TimeZoneId);
+
+        // TODO: Save to database
+
+        // Placeholder response
+        var response = new SessionProductResponse(
+            command.ProductId,
+            1, // Placeholder StoreId
+            command.Title,
+            command.Subtitle,
+            command.Description,
+            command.Price,
+            "USD",
+            command.DurationMinutes,
+            command.BufferTimeMinutes,
+            command.MeetingInstructions,
+            command.TimeZoneId ?? "UTC",
+            false,
+            DateTime.UtcNow
+        );
+
+        return Result.Success(response);
     }
-
-    public async Task<Result> SetSchedule(
+     public async Task<Result> SetSchedule(
         int sessionProductId,
         List<DayAvailability> dayAvailabilities,
         string timeZoneId,

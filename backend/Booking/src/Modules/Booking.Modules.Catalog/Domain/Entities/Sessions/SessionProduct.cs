@@ -10,18 +10,38 @@ public class SessionProduct : Product
 
     public string TimeZoneId { get; private set; } = "Africa/Tunis";
 
-    // todo:notImportant custom Availability rules stored 
+    // todo:notImportant custom ( for more flexibility )  Availability rules stored 
     //public string? AvailabilityRules { get; private set; }
 
     // Navigation properties for availability (can be expanded later)
     public ICollection<SessionAvailability> Availabilities { get; private set; } = new List<SessionAvailability>();
     public ICollection<Day> Days { get; private set; } = new List<Day>();
 
-    private SessionProduct()
+    private SessionProduct(
+        string productSlug,
+        int storeId,
+        string storeSlug,
+        string title,
+        string clickToPay,
+        decimal price,
+        string? subtitle,
+        string? description,
+        string? meetingInstructions,
+        Duration? bufferTime,
+        string timeZoneId) : base(productSlug, storeId, storeSlug, title, clickToPay, price,
+        ProductType.Session, subtitle,
+        description)
     {
+        MeetingInstructions = meetingInstructions?.Trim();
+        BufferTime = bufferTime ?? Duration.FifteenMinutes;
+        TimeZoneId = timeZoneId;
     }
 
+
     public static SessionProduct Create(
+        string productSlug,
+        int storeId,
+        string storeSlug,
         string title,
         string subtitle,
         string description,
@@ -31,25 +51,33 @@ public class SessionProduct : Product
         Duration? bufferTime = null,
         string timeZoneId = "Africa/Tunis")
     {
-        var sessionProduct = new SessionProduct();
+        var sessionProduct = new SessionProduct(
+            productSlug,
+            storeId,
+            storeSlug,
+            title,
+            clickToPay,
+            price,
+            subtitle,
+            description,
+            meetingInstructions,
+            bufferTime,
+            timeZoneId);
 
-        // Set base properties
-        sessionProduct.Title = title?.Trim() ?? throw new ArgumentException("Title cannot be empty", nameof(title));
-        sessionProduct.Subtitle = subtitle?.Trim();
-        sessionProduct.Description = description?.Trim();
-        sessionProduct.Price =
-            price >= 0 ? price : throw new ArgumentException("Price cannot be negative", nameof(price));
-        sessionProduct.CreatedAt = DateTime.UtcNow;
-        sessionProduct.IsPublished = true;
-        sessionProduct.ClickToPay = clickToPay.Trim();
-
-        // Set session-specific properties
-        sessionProduct.MeetingInstructions = meetingInstructions;
-        sessionProduct.BufferTime = bufferTime ?? Duration.FifteenMinutes; // Default 15 min buffer
-        sessionProduct.TimeZoneId = timeZoneId;
-
-
+        sessionProduct.CreateAllDays();
         return sessionProduct;
+        // crete 7 days when sessionProduct created associated to it 
+    }
+
+    private void CreateAllDays()
+    {
+        var allDaysOfWeek = Enum.GetValues<DayOfWeek>();
+
+        foreach (var dayOfWeek in allDaysOfWeek)
+        {
+            var day = Day.Create(Id, ProductSlug, dayOfWeek, isActive: false);
+            Days.Add(day);
+        }
     }
 
     public void UpdateSessionDetails(

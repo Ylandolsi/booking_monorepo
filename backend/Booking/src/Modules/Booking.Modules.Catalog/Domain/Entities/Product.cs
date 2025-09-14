@@ -16,14 +16,18 @@ public abstract class Product : Entity
     public string Title { get; protected set; } = string.Empty;
     public string ClickToPay { get; protected set; }
     public string? Subtitle { get; protected set; }
+
     public string? Description { get; protected set; }
+
+    // TODO : change to Picture ? 
     public string? ThumbnailUrl { get; protected set; }
+
+    public ProductType ProductType { get; protected set; }
 
     public decimal Price { get; protected set; }
 
     public int DisplayOrder { get; protected set; }
     public bool IsPublished { get; protected set; }
-    public Checkout CheckoutPage { get; private set; }
 
     public DateTime CreatedAt { get; protected set; }
     public DateTime? UpdatedAt { get; protected set; }
@@ -31,16 +35,14 @@ public abstract class Product : Entity
     // Navigation properties
     public Store Store { get; protected set; } = default!;
 
-    protected Product()
-    {
-    }
-
     protected Product(
+        string productSlug,
         int storeId,
         string storeSlug,
         string title,
         string clickToPay,
         decimal price,
+        ProductType productType,
         string? subtitle = null,
         string? description = null)
     {
@@ -50,17 +52,19 @@ public abstract class Product : Entity
         if (price < 0)
             throw new ArgumentException("Price cannot be negative", nameof(price));
 
+        ProductSlug = productSlug;
         StoreId = storeId;
         Title = title.Trim();
         Subtitle = subtitle?.Trim();
         Description = description?.Trim();
         Price = price;
-        IsPublished = false;
+        IsPublished = true;
         CreatedAt = DateTime.UtcNow;
         StoreSlug = storeSlug;
         ClickToPay = clickToPay;
     }
 
+    // TODO  : generate a unique ProductSlug 
 
     public virtual void UpdateBasicInfo(string title, decimal price, string? subtitle = null,
         string? description = null)

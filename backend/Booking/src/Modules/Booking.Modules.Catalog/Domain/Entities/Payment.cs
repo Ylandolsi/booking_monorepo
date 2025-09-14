@@ -5,7 +5,6 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Payment : Entity
 {
-    // TODO : maybe add ProductId ? 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
     public int Id { get; private set; }
