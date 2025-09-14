@@ -6,7 +6,7 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
 {
     public BookSessionCommandValidator()
     {
-        RuleFor(c => c.MentorSlug)
+        /*RuleFor(c => c.MentorSlug)
             .NotEmpty()
             .WithMessage("Mentor slug is required.")
             .MaximumLength(100)
@@ -14,7 +14,7 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
 
         RuleFor(c => c.MenteeId)
             .GreaterThan(0)
-            .WithMessage("Mentee ID must be a positive integer.");
+            .WithMessage("Mentee ID must be a positive integer.");*/
 
         RuleFor(c => c.StartTime)
             .NotEmpty()

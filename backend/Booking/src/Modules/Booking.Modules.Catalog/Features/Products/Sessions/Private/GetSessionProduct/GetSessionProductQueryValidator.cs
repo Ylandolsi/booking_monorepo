@@ -6,8 +6,8 @@ internal sealed class GetSessionProductQueryValidator : AbstractValidator<GetSes
 {
     public GetSessionProductQueryValidator()
     {
-        RuleFor(q => q.ProductId)
-            .GreaterThan(0)
-            .WithMessage("Product ID must be a positive integer.");
+        RuleFor(q => q.ProductSlug)
+            .NotEmpty()
+            .WithMessage("Product slug should not be empty.");
     }
 }

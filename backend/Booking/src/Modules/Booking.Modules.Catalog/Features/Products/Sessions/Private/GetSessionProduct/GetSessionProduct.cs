@@ -98,7 +98,7 @@ public class GetSessionProductHandler(
                 sessionProduct.Description,
                 sessionProduct.ThumbnailUrl,
                 sessionProduct.Price,
-                sessionProduct.Duration?.Minutes ?? 30, // Default to 60 minutes if not set
+                sessionProduct.Duration?.Minutes ?? 30, // Default to 30 minutes if not set
                 sessionProduct.BufferTime?.Minutes ?? 15, // Default to 15 minutes if not set
                 sessionProduct.MeetingInstructions,
                 sessionProduct.TimeZoneId,

@@ -23,10 +23,18 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(s => s.Description)
             .HasMaxLength(1000);
 
-    
-        // TODO : add picture Property 
-        
-        
+
+        builder.OwnsOne(s => s.Picture, picture =>
+        {
+            picture.Property(p => p.MainLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            picture.Property(p => p.ThumbnailLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+        });
+
         builder.Property(s => s.IsPublished)
             .IsRequired()
             .HasDefaultValue(false);
@@ -40,7 +48,8 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(s => s.SocialLinks)
             .HasConversion(
                 links => JsonSerializer.Serialize(links, (JsonSerializerOptions?)null),
-                json => JsonSerializer.Deserialize<List<SocialLink>>(json, (JsonSerializerOptions?)null) ?? new List<SocialLink>())
+                json => JsonSerializer.Deserialize<List<SocialLink>>(json, (JsonSerializerOptions?)null) ??
+                        new List<SocialLink>())
             .HasColumnType("jsonb"); // PostgreSQL specific
 
         // Indexes
@@ -55,7 +64,8 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
         // Check constraints
         builder.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
         builder.HasCheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"Slug\")) > 0");
-        builder.HasCheckConstraint("CK_Store_Slug_Format", "\"Slug\" ~ '^[a-z0-9-]+$'"); // Only lowercase letters, numbers, and hyphens
+        builder.HasCheckConstraint("CK_Store_Slug_Format",
+            "\"Slug\" ~ '^[a-z0-9-]+$'"); // Only lowercase letters, numbers, and hyphens
 
         // Relationship to Products
         builder.HasMany(s => s.Products)

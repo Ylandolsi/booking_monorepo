@@ -1,4 +1,4 @@
-using System.ComponentModel;
+/*using System.ComponentModel;
 using Booking.Common.Contracts.Users;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
@@ -100,4 +100,4 @@ public class CompleteWebhook(
 
         session.Confirm(meetLink);
     }
-}
+}*/

@@ -6,9 +6,9 @@ internal sealed class UpdateSessionProductCommandValidator : AbstractValidator<U
 {
     public UpdateSessionProductCommandValidator()
     {
-        RuleFor(c => c.ProductId)
-            .GreaterThan(0)
-            .WithMessage("Product ID must be a positive integer.");
+        RuleFor(q => q.ProductSlug)
+            .NotEmpty()
+            .WithMessage("Product slug should not be empty.");
 
         RuleFor(c => c.UserId)
             .NotEmpty()

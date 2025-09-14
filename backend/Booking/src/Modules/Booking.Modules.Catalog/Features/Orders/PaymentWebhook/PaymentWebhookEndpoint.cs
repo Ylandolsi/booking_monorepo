@@ -1,4 +1,4 @@
-using Booking.Common.Endpoints;
+/*using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features;
 using Booking.Modules.Catalog.Features.Payment.Webhook;
@@ -39,4 +39,4 @@ public class PaymentWebhookEndpoint : IEndpoint
             .WithDescription("Handle payment status updates from payment provider")
             .AllowAnonymous();
     }
-}
+}*/

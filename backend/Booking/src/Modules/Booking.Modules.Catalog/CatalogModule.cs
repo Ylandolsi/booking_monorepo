@@ -1,3 +1,8 @@
+using Booking.Common.Contracts.Mentorships;
+using Booking.Common.Email;
+using Booking.Common.Endpoints;
+using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
+using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -12,7 +17,8 @@ public static class CatalogModule
     {
         return services
             .AddDatabase(configuration)
-            .AddServices();
+            .AddServices()
+            .AddEndpoints(AssemblyReference.Assembly);
     }
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
@@ -34,10 +40,13 @@ public static class CatalogModule
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
+        services.AddScoped<AwsSesEmailService>();
+        services.AddSingleton<EmailTemplateProvider>();
+        services.AddScoped<GoogleCalendarService>();
+        services.AddScoped<StoreService>();
 
         // Add other services here
 
         return services;
     }
-    
 }

@@ -15,7 +15,16 @@ internal class SessionAvailabilityConfiguration : IEntityTypeConfiguration<Sessi
             .HasConversion<int>()
             .IsRequired();
 
-// TODO : add timeRange 
+        builder.OwnsOne(a => a.TimeRange, timeRange =>
+        {
+            timeRange.Property(tr => tr.StartTime)
+                .HasColumnName("start_time")
+                .IsRequired();
+
+            timeRange.Property(tr => tr.EndTime)
+                .HasColumnName("end_time")
+                .IsRequired();
+        });
 
         builder.Property(sa => sa.IsActive)
             .IsRequired()

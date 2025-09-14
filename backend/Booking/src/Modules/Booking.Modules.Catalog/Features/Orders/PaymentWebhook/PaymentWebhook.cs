@@ -1,4 +1,4 @@
-using Booking.Common.Contracts.Users;
+/*using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;
 using Booking.Common.Results;
@@ -96,7 +96,7 @@ public class PaymentWebhookHandler(
             if (successfulTransaction) {
                 amountWithFees = successfulTransaction.amount;
             }
-        }*/
+        }#1#
 
         // Send real-time notifications
         //await SendNotificationsToUsers(session);
@@ -140,7 +140,7 @@ public class PaymentWebhookHandler(
                 );
 
                 await notificationService.SendNotificationAsync(session.MentorId, mentorNotification);
-            #1#
+            #2#
 
             logger.LogInformation("Real-time notifications sent for session {SessionId}", session.Id);
         }
@@ -149,5 +149,5 @@ public class PaymentWebhookHandler(
             logger.LogError(ex, "Failed to send real-time notifications for session {SessionId}", session.Id);
         }
     }
-*/
-}
+#1#
+}*/

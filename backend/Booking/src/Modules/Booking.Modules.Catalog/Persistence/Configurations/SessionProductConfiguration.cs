@@ -34,7 +34,7 @@ internal class SessionProductConfiguration : IEntityTypeConfiguration<SessionPro
         builder.Property(sp => sp.TimeZoneId)
             .HasMaxLength(50)
             .IsRequired()
-            .HasDefaultValue("UTC");
+            .HasDefaultValue("Africa/Tunis");
 
 
         // Relationship to SessionAvailability

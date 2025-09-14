@@ -1,6 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,12 +15,13 @@ public record StoreResponse(
     string Title,
     string Slug,
     string? Description,
-    string? PictureUrl,
+    Picture? Picture,
     bool IsPublished,
     List<SocialLinkResponse> SocialLinks,
     DateTime CreatedAt,
     DateTime? UpdatedAt
 );
+
 
 public record SocialLinkResponse(
     string Platform,
@@ -66,7 +68,7 @@ public class GetMyStoreHandler(
                 store.Title,
                 store.Slug,
                 store.Description,
-                store.Picture?.Url, // Assuming Picture has a Url property
+                store.Picture,
                 store.IsPublished,
                 socialLinks,
                 store.CreatedAt,

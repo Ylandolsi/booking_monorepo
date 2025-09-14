@@ -35,6 +35,7 @@ public abstract class Product : Entity
     // Navigation properties
     public Store Store { get; protected set; } = default!;
 
+    protected Product(){}
     protected Product(
         string productSlug,
         int storeId,

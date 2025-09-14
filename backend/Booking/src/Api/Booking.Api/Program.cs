@@ -68,11 +68,11 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.UseHangFire(builder.Configuration);
 
 
-builder.Services.AddEndpoints(Assembly.GetExecutingAssembly(), Booking.Modules.Catalog.AssemblyReference.Assembly);
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 // for each module add its own app.settings.json ..
 // builder.Configuration.AddModuleConfiguration(["users"]);
 
-builder.Services.AddCatalogModule();
+builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddUsersModule(builder.Configuration);
 builder.Services.AddMentorshipsModule(builder.Configuration);
 

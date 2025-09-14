@@ -17,6 +17,10 @@ public class SessionProduct : Product
     public ICollection<SessionAvailability> Availabilities { get; private set; } = new List<SessionAvailability>();
     public ICollection<Day> Days { get; private set; } = new List<Day>();
 
+    public SessionProduct() : base()
+    {
+    }
+
     private SessionProduct(
         string productSlug,
         int storeId,

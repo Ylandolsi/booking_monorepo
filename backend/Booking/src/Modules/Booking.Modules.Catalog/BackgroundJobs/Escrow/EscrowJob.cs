@@ -1,4 +1,4 @@
-using System.ComponentModel;
+/*using System.ComponentModel;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Persistence;
 using Hangfire;
@@ -51,4 +51,4 @@ public class EscrowJob
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Hangfire Job: Escrow payment job finished.");
     }
-}
+}*/

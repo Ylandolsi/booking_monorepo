@@ -12,7 +12,7 @@ namespace Booking.Modules.Catalog.Features.Stores;
 public class StoreService(
     CatalogDbContext dbContext,
     S3ImageProcessingService imageProcessingService,
-    Logger<StoreService> logger)
+    ILogger<StoreService> logger)
 {
     public async Task<Result<Picture>> UploadPicture(IFormFile file, string storeSlug)
     {

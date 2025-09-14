@@ -48,4 +48,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Tests\Catalog\Products\Sessions\" />
+    </ItemGroup>
+
 </Project>

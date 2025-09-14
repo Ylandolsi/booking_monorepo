@@ -13,8 +13,9 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 public class CreateStoreEndpoint : IEndpoint
 {
     public record CreateStoreRequest(
-        string FullName,
+        string Title,
         string Slug,
+        IFormFile File , 
         string Description = "",
         IReadOnlyList<SocialLink>? SocialLinks = null
     );
@@ -23,7 +24,6 @@ public class CreateStoreEndpoint : IEndpoint
     {
         app.MapPost(CatalogEndpoints.Stores.Create, async (
                 [FromForm] CreateStoreRequest request,
-                [FromForm] IFormFile file,
                 UserContext userContext,
                 ICommandHandler<CreateStoreCommand, StoreResponse> handler,
                 HttpContext context) =>
@@ -33,8 +33,8 @@ public class CreateStoreEndpoint : IEndpoint
                 var command = new CreateStoreCommand(
                     userId,
                     request.Slug,
-                    request.FullName,
-                    file,
+                    request.Title,
+                    request.File,
                     request.SocialLinks,
                     request.Description
                 );

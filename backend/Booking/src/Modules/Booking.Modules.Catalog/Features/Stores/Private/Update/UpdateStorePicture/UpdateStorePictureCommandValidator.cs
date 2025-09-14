@@ -10,7 +10,7 @@ internal sealed class UpdateStorePictureCommandValidator : AbstractValidator<Upd
             .NotEmpty()
             .WithMessage("User ID is required.");
 
-        RuleFor(c => c.PictureFile)
+        RuleFor(c => c.Picture)
             .NotNull()
             .WithMessage("Picture file is required.")
             .Must(file => file.Length > 0)
