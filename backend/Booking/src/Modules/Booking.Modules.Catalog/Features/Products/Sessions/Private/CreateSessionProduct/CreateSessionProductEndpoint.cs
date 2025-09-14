@@ -2,7 +2,6 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -18,6 +17,7 @@ public class CreateSessionProductEndpoint : IEndpoint
         IFormFile Thumbnail,
         string ClickToPay,
         decimal Price,
+        int DurationMinutes,
         int BufferTimeMinutes,
         string MeetingInstructions,
         List<DayAvailability> DayAvailabilities,
@@ -32,7 +32,6 @@ public class CreateSessionProductEndpoint : IEndpoint
                 ICommandHandler<CreateSessionProductCommand, SessionProductResponse> handler,
                 HttpContext context) =>
             {
-                // map to storeId here by cache ! 
                 int userId = userContext.UserId;
 
                 var command = new CreateSessionProductCommand(
@@ -40,9 +39,9 @@ public class CreateSessionProductEndpoint : IEndpoint
                     request.Title,
                     request.Subtitle,
                     request.Description,
-                    request.Thumbnail,
                     request.ClickToPay,
                     request.Price,
+                    request.DurationMinutes,
                     request.BufferTimeMinutes,
                     request.DayAvailabilities,
                     request.MeetingInstructions,

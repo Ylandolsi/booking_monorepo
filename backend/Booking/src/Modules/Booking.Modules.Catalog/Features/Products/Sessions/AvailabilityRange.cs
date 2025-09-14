@@ -1,4 +1,4 @@
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
+namespace Booking.Modules.Catalog.Features.Products.Sessions;
 
 public sealed record AvailabilityRange
 {

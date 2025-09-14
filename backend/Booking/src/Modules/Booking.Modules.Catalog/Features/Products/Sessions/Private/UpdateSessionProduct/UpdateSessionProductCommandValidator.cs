@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.UpdateSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessionProduct;
 
 internal sealed class UpdateSessionProductCommandValidator : AbstractValidator<UpdateSessionProductCommand>
 {

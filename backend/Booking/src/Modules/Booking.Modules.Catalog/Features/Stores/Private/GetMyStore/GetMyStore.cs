@@ -1,5 +1,9 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.GetMyStore;
 
@@ -22,30 +26,60 @@ public record SocialLinkResponse(
     string Url
 );
 
-public class GetMyStoreHandler : IQueryHandler<GetMyStoreQuery, StoreResponse>
+public class GetMyStoreHandler(
+    CatalogDbContext context,
+    ILogger<GetMyStoreHandler> logger) : IQueryHandler<GetMyStoreQuery, StoreResponse>
 {
     public async Task<Result<StoreResponse>> Handle(GetMyStoreQuery request, CancellationToken cancellationToken)
     {
-        // TODO: Get store from database where OwnerId == request.UserId
-        // TODO: Return NotFound if no store exists
+        logger.LogInformation("Getting store for user {UserId}", request.UserId);
 
-        // Placeholder response
-        var response = new StoreResponse(
-            1,
-            "My Awesome Store",
-            "my-awesome-store",
-            "This is a great store with amazing products",
-            "https://cdn.example.com/stores/1/picture.jpg",
-            true,
-            new List<SocialLinkResponse>
+        try
+        {
+            // Validate user ID
+            if (request.UserId <= 0)
             {
-                new("twitter", "https://twitter.com/mystore"),
-                new("instagram", "https://instagram.com/mystore")
-            },
-            DateTime.UtcNow.AddDays(-30),
-            DateTime.UtcNow.AddDays(-1)
-        );
+                logger.LogWarning("Invalid user ID provided: {UserId}", request.UserId);
+                return Result.Failure<StoreResponse>(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
+            }
 
-        return Result.Success(response);
+            // Get store from database
+            var store = await context.Stores
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.UserId == request.UserId, cancellationToken);
+
+            if (store == null)
+            {
+                logger.LogInformation("No store found for user {UserId}", request.UserId);
+                return Result.Failure<StoreResponse>(StoreErros.NotFound);
+            }
+
+            logger.LogInformation("Successfully retrieved store {StoreId} for user {UserId}", store.Id, request.UserId);
+
+            // Map to response
+            var socialLinks = store.SocialLinks
+                .Select(sl => new SocialLinkResponse(sl.Platform, sl.Url))
+                .ToList();
+
+            var response = new StoreResponse(
+                store.Id,
+                store.Title,
+                store.Slug,
+                store.Description,
+                store.Picture?.Url, // Assuming Picture has a Url property
+                store.IsPublished,
+                socialLinks,
+                store.CreatedAt,
+                store.UpdatedAt
+            );
+
+            return Result.Success(response);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving store for user {UserId}", request.UserId);
+            return Result.Failure<StoreResponse>(Error.Problem("Store.Retrieval.Failed",
+                "An error occurred while retrieving the store"));
+        }
     }
 }

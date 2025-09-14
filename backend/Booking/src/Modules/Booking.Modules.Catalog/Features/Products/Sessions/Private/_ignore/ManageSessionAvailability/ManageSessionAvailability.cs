@@ -1,7 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.ManageSessionAvailability;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.ManageSessionAvailability;
 
 public record UpdateSessionAvailabilityCommand(
     int SessionProductId,

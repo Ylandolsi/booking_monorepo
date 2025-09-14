@@ -2,13 +2,12 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.GetSchedule;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.GetSchedule;
 
 public class GetMentorSchedule : IEndpoint
 {

@@ -4,7 +4,7 @@ namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
 
 public class SessionProduct : Product
 {
-    public Duration Duration { get; private set; } = null!;
+    public Duration Duration { get; private set; } = null!; // 30 minutes !
     public Duration BufferTime { get; private set; } = null!;
     public string? MeetingInstructions { get; private set; }
 
@@ -27,6 +27,7 @@ public class SessionProduct : Product
         string? subtitle,
         string? description,
         string? meetingInstructions,
+        Duration? durationTime,
         Duration? bufferTime,
         string timeZoneId) : base(productSlug, storeId, storeSlug, title, clickToPay, price,
         ProductType.Session, subtitle,
@@ -34,6 +35,7 @@ public class SessionProduct : Product
     {
         MeetingInstructions = meetingInstructions?.Trim();
         BufferTime = bufferTime ?? Duration.FifteenMinutes;
+        Duration = durationTime ?? Duration.ThirtyMinutes;
         TimeZoneId = timeZoneId;
     }
 
@@ -48,6 +50,7 @@ public class SessionProduct : Product
         string clickToPay,
         string meetingInstructions,
         decimal price,
+        Duration? durationTime,
         Duration? bufferTime = null,
         string timeZoneId = "Africa/Tunis")
     {
@@ -61,6 +64,7 @@ public class SessionProduct : Product
             subtitle,
             description,
             meetingInstructions,
+            durationTime,
             bufferTime,
             timeZoneId);
 

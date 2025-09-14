@@ -1,7 +1,6 @@
 using Booking.Common.Messaging;
-using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.GetSchedule;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.GetSchedule;
 
 public record GetMentorScheduleQuery(int MentorId, string ProductSlug, string TimeZoneId)
     : IQuery<List<DayAvailability>>;

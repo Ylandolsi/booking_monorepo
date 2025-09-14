@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.ManageSessionAvailability;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.ManageSessionAvailability;
 
 internal sealed class UpdateSessionAvailabilityCommandValidator : AbstractValidator<UpdateSessionAvailabilityCommand>
 {

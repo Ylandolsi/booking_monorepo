@@ -1,30 +1,35 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.UpdateSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessionProduct;
 
 public record UpdateSessionProductCommand(
-    int ProductId,
-    Guid UserId,
+    int UserId,
+    string ProductSlug,
     string Title,
+    string Subtitle,
+    string Description,
+    string ClickToPay,
     decimal Price,
     int DurationMinutes,
     int BufferTimeMinutes,
-    string? Subtitle = null,
-    string? Description = null,
-    string? MeetingInstructions = null,
-    string? TimeZoneId = null
+    List<DayAvailability> DayAvailabilities,
+    string MeetingInstructions = "",
+    string TimeZoneId = "Africa/Tunis"
 ) : ICommand<SessionProductResponse>;
 
 public record SessionProductResponse(
-    int Id,
-    int StoreId,
+    string ProductSlug,
+    string StoreSlug,
     string Title,
     string? Subtitle,
     string? Description,
     decimal Price,
-    string Currency,
     int DurationMinutes,
     int BufferTimeMinutes,
     string? MeetingInstructions,
@@ -33,53 +38,166 @@ public record SessionProductResponse(
     DateTime UpdatedAt
 );
 
-public class UpdateSessionProductHandler : ICommandHandler<UpdateSessionProductCommand, SessionProductResponse>
+public class UpdateSessionProductHandler(
+    CatalogDbContext context,
+    IUnitOfWork unitOfWork,
+    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, SessionProductResponse>
 {
-    public async Task<Result<SessionProductResponse>> Handle(UpdateSessionProductCommand command, CancellationToken cancellationToken)
+    public async Task<Result<SessionProductResponse>> Handle(UpdateSessionProductCommand command,
+        CancellationToken cancellationToken)
     {
-        // TODO: Get product from database
-        // TODO: Check if it's a SessionProduct
-        // TODO: Verify user owns the store that owns this product
+        logger.LogInformation("Updating session product {ProductSlug} for user {UserId}",
+            command.ProductSlug, command.UserId);
 
-        // Create Duration value objects
-        var durationResult = Duration.Create(command.DurationMinutes);
-        if (durationResult.IsFailure)
+        await unitOfWork.BeginTransactionAsync(cancellationToken);
+
+        try
         {
-            return Result.Failure<SessionProductResponse>(durationResult.Error);
-        }
+            // Validate command
+            var validationResult = ValidateCommand(command);
+            if (validationResult.IsFailure)
+            {
+                logger.LogWarning("Session product update validation failed for product {ProductId}: {Error}",
+                    command.ProductSlug, validationResult.Error.Description);
+                return Result.Failure<SessionProductResponse>(validationResult.Error);
+            }
 
-        var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
-        if (bufferTimeResult.IsFailure)
+            // Get session product with store
+            var sessionProduct = await context.SessionProducts
+                .Include(sp => sp.Store)
+                .Include(sp => sp.Days)
+                .Include(sp => sp.Availabilities)
+                .FirstOrDefaultAsync(sp => sp.ProductSlug == command.ProductSlug, cancellationToken);
+
+            if (sessionProduct == null)
+            {
+                logger.LogWarning("Session product {ProductSlug} not found", command.ProductSlug);
+                return Result.Failure<SessionProductResponse>(
+                    Error.NotFound("SessionProduct.NotFound", "Session product not found"));
+            }
+
+            // Verify user owns the store
+            if (sessionProduct.Store.UserId != command.UserId)
+            {
+                logger.LogWarning(
+                    "User {UserId} attempted to update session product {ProductId} owned by user {OwnerId}",
+                    command.UserId, command.ProductSlug, sessionProduct.Store.UserId);
+                return Result.Failure<SessionProductResponse>(
+                    Error.Failure("SessionProduct.NotOwned", "You don't have permission to update this product"));
+            }
+
+            // Store original values for logging
+            var originalTitle = sessionProduct.Title;
+            var originalPrice = sessionProduct.Price;
+
+            // Create Duration value objects
+            var durationResult = Duration.Create(command.DurationMinutes);
+            if (durationResult.IsFailure)
+            {
+                logger.LogWarning("Invalid duration {DurationMinutes} for session product {ProductId}",
+                    command.DurationMinutes, command.ProductSlug);
+                return Result.Failure<SessionProductResponse>(durationResult.Error);
+            }
+
+            var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
+            if (bufferTimeResult.IsFailure)
+            {
+                logger.LogWarning("Invalid buffer time {BufferTimeMinutes} for session product {ProductId}",
+                    command.BufferTimeMinutes, command.ProductSlug);
+                return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
+            }
+
+            // Update basic info
+            sessionProduct.UpdateBasicInfo(command.Title, command.Price, command.Subtitle, command.Description);
+
+            // Update session details
+            sessionProduct.UpdateSessionDetails(
+                durationResult.Value,
+                bufferTimeResult.Value,
+                command.MeetingInstructions,
+                command.TimeZoneId);
+
+            // Update schedule if provided
+            if (command.DayAvailabilities != null)
+            {
+                var scheduleResult = await UpdateSchedule(sessionProduct.Id, command.DayAvailabilities,
+                    command.TimeZoneId ?? sessionProduct.TimeZoneId, cancellationToken);
+                if (scheduleResult.IsFailure)
+                {
+                    logger.LogError("Failed to update schedule for session product {ProductId}: {Error}",
+                        command.ProductSlug, scheduleResult.Error.Description);
+                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    return Result.Failure<SessionProductResponse>(scheduleResult.Error);
+                }
+            }
+
+            // Save changes
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.CommitTransactionAsync(cancellationToken);
+
+            logger.LogInformation("Successfully updated session product {ProductId}. " +
+                                  "Title changed from '{OriginalTitle}' to '{NewTitle}', " +
+                                  "Price changed from {OriginalPrice} to {NewPrice}",
+                command.ProductSlug, originalTitle, command.Title, originalPrice, command.Price);
+
+            // Prepare response
+            var response = new SessionProductResponse(
+                sessionProduct.ProductSlug,
+                sessionProduct.StoreSlug,
+                sessionProduct.Title,
+                sessionProduct.Subtitle,
+                sessionProduct.Description,
+                sessionProduct.Price,
+                sessionProduct.Duration?.Minutes ?? command.DurationMinutes,
+                sessionProduct.BufferTime?.Minutes ?? command.BufferTimeMinutes,
+                sessionProduct.MeetingInstructions,
+                sessionProduct.TimeZoneId,
+                sessionProduct.IsPublished,
+                sessionProduct.UpdatedAt ?? DateTime.UtcNow
+            );
+
+            return Result.Success(response);
+        }
+        catch (Exception ex)
         {
-            return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
+            logger.LogError(ex, "Error updating session product {ProductId} for user {UserId}",
+                command.ProductSlug, command.UserId);
+            await unitOfWork.RollbackTransactionAsync(cancellationToken);
+            return Result.Failure<SessionProductResponse>(Error.Problem("SessionProduct.Update.Failed",
+                "An error occurred while updating the session product"));
         }
-
-        // TODO: Update the product
-        // sessionProduct.UpdateBasicInfo(command.Title, command.Price, command.Subtitle, command.Description);
-        // sessionProduct.UpdateSessionDetails(durationResult.Value, bufferTimeResult.Value, command.MeetingInstructions, command.TimeZoneId);
-
-        // TODO: Save to database
-
-        // Placeholder response
-        var response = new SessionProductResponse(
-            command.ProductId,
-            1, // Placeholder StoreId
-            command.Title,
-            command.Subtitle,
-            command.Description,
-            command.Price,
-            "USD",
-            command.DurationMinutes,
-            command.BufferTimeMinutes,
-            command.MeetingInstructions,
-            command.TimeZoneId ?? "UTC",
-            false,
-            DateTime.UtcNow
-        );
-
-        return Result.Success(response);
     }
-     public async Task<Result> SetSchedule(
+
+    private static Result ValidateCommand(UpdateSessionProductCommand command)
+    {
+        if (String.IsNullOrWhiteSpace(command.ProductSlug))
+            return Result.Failure(Error.Problem("SessionProduct.InvalidSlug", "Product Slug should not be empty "));
+
+        if (command.UserId <= 0)
+            return Result.Failure(Error.Problem("SessionProduct.InvalidUserId", "User ID must be greater than 0"));
+
+        if (string.IsNullOrWhiteSpace(command.Title))
+            return Result.Failure(Error.Problem("SessionProduct.InvalidTitle", "Product title cannot be empty"));
+
+        if (command.Title.Length > 200)
+            return Result.Failure(Error.Problem("SessionProduct.TitleTooLong",
+                "Product title cannot exceed 200 characters"));
+
+        if (command.Price < 0)
+            return Result.Failure(Error.Problem("SessionProduct.InvalidPrice", "Price cannot be negative"));
+
+        if (command.DurationMinutes <= 0 || command.DurationMinutes > 480)
+            return Result.Failure(Error.Problem("SessionProduct.InvalidDuration",
+                "Duration must be between 1 and 480 minutes"));
+
+        if (command.BufferTimeMinutes < 0 || command.BufferTimeMinutes > 240)
+            return Result.Failure(Error.Problem("SessionProduct.InvalidBufferTime",
+                "Buffer time must be between 0 and 240 minutes"));
+
+        return Result.Success();
+    }
+
+    private async Task<Result> UpdateSchedule(
         int sessionProductId,
         List<DayAvailability> dayAvailabilities,
         string timeZoneId,
@@ -87,63 +205,71 @@ public class UpdateSessionProductHandler : ICommandHandler<UpdateSessionProductC
     {
         try
         {
+            logger.LogInformation("Updating schedule for session product {SessionProductId}", sessionProductId);
+
             var sessionProduct = await context.SessionProducts
-                .Include(m => m.Days)
-                .Include(m => m.Availabilities)
-                .FirstOrDefaultAsync(m => m.Id == sessionProductId && m.IsPublished, cancellationToken);
+                .Include(sp => sp.Days)
+                .Include(sp => sp.Availabilities)
+                .FirstOrDefaultAsync(sp => sp.Id == sessionProductId, cancellationToken);
 
             if (sessionProduct == null)
             {
-                return Result.Failure(
-                    Error.NotFound("Mentor.NotFound", "Mentor not found or inactive"));
+                return Result.Failure(Error.NotFound("SessionProduct.NotFound", "Session product not found"));
             }
 
-            string timeZone = "";
-            if (String.IsNullOrEmpty(sessionProduct.TimeZoneId))
+            // Update timezone if provided
+            if (!string.IsNullOrEmpty(timeZoneId))
             {
-                timeZone = timeZoneId;
-                if (String.IsNullOrEmpty(timeZone))
-                {
-                    timeZone = "Africa/Tunis";
-                }
-
-                sessionProduct.UpdateTimeZone(timeZone);
+                sessionProduct.UpdateTimeZone(timeZoneId);
             }
-
-            var createdAvailabilityIds = new List<int>();
 
             foreach (var dayRequest in dayAvailabilities)
             {
                 var day = sessionProduct.Days.FirstOrDefault(d => d.DayOfWeek == dayRequest.DayOfWeek);
                 if (day == null)
                 {
-                    throw new Exception("Mentor should have 7 days when created");
+                    logger.LogError("Day {DayOfWeek} not found for session product {SessionProductId}",
+                        dayRequest.DayOfWeek, sessionProductId);
+                    continue;
                 }
 
+                // Update day active status
                 if (dayRequest.IsActive && !day.IsActive)
                 {
                     var activateResult = day.Activate();
-                    if (activateResult.IsFailure) continue;
+                    if (activateResult.IsFailure)
+                    {
+                        logger.LogWarning("Failed to activate day {DayOfWeek}: {Error}",
+                            dayRequest.DayOfWeek, activateResult.Error.Description);
+                        continue;
+                    }
                 }
                 else if (!dayRequest.IsActive && day.IsActive)
                 {
                     var deactivateResult = day.Deactivate();
-                    if (deactivateResult.IsFailure) continue;
+                    if (deactivateResult.IsFailure)
+                    {
+                        logger.LogWarning("Failed to deactivate day {DayOfWeek}: {Error}",
+                            dayRequest.DayOfWeek, deactivateResult.Error.Description);
+                        continue;
+                    }
                 }
 
-                // if day is inactive, skip creating time slots
+                // Skip creating time slots for inactive days
                 if (!dayRequest.IsActive) continue;
 
+                // Remove existing availabilities for this day
                 var existingAvailabilities = await context.SessionAvailabilities
                     .Where(a => a.DayId == day.Id)
                     .ToListAsync(cancellationToken);
 
                 context.SessionAvailabilities.RemoveRange(existingAvailabilities);
 
+                // Create new availabilities
                 foreach (var timeSlot in dayRequest.AvailabilityRanges)
                 {
-                    if (!TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out TimeOnly timeStart) ||
-                        !TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out TimeOnly timeEnd))
+                    if (!TimeOnly.TryParseExact(timeSlot.StartTime, "HH:mm", out var timeStart) ||
+                        !TimeOnly.TryParseExact(timeSlot.EndTime, "HH:mm", out var timeEnd))
                     {
                         logger.LogWarning("Invalid time format for slot {StartTime}-{EndTime}",
                             timeSlot.StartTime, timeSlot.EndTime);
@@ -158,32 +284,29 @@ public class UpdateSessionProductHandler : ICommandHandler<UpdateSessionProductC
                         continue;
                     }
 
-
                     var availability = SessionAvailability.Create(
-                            sessionProduct.Id,
-                            sessionProduct.ProductSlug,
-                            day.Id,
-                            dayRequest.DayOfWeek,
-                            timeStart,
-                            timeEnd,
-                            sessionProduct.TimeZoneId)
-                        ;
+                        sessionProduct.Id,
+                        sessionProduct.ProductSlug,
+                        day.Id,
+                        dayRequest.DayOfWeek,
+                        timeStart,
+                        timeEnd,
+                        sessionProduct.TimeZoneId);
 
                     context.SessionAvailabilities.Add(availability);
                 }
             }
 
             await context.SaveChangesAsync(cancellationToken);
-
-
-            logger.LogInformation("Successfully processed bulk availability");
+            logger.LogInformation("Successfully updated schedule for session product {SessionProductId}",
+                sessionProductId);
             return Result.Success();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to process bulk availability for mentor {MentorId}", command.MentorId);
-            return Result.Failure(
-                Error.Problem("Availability.BulkSetFailed", "Failed to set bulk availability"));
+            logger.LogError(ex, "Failed to update schedule for session product {SessionProductId}", sessionProductId);
+            return Result.Failure(Error.Problem("SessionProduct.ScheduleUpdateFailed",
+                "Failed to update session product schedule"));
         }
     }
 }

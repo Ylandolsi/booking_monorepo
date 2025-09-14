@@ -1,44 +1,50 @@
+using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.UpdateSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessionProduct;
 
 public class UpdateSessionProductEndpoint : IEndpoint
 {
     public record UpdateSessionProductRequest(
+        string ProductSlug,
         string Title,
+        string Subtitle,
+        string Description,
+        string ClickToPay,
         decimal Price,
         int DurationMinutes,
         int BufferTimeMinutes,
-        string? Subtitle = null,
-        string? Description = null,
-        string? MeetingInstructions = null,
-        string? TimeZoneId = null
+        List<DayAvailability> DayAvailabilities,
+        string MeetingInstructions = "",
+        string TimeZoneId = "Africa/Tunis"
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("api/catalog/products/sessions/{productId:int}", async (
-                int productId,
+        app.MapPut("api/catalog/products/sessions/{productSlug}", async (
+                string productSlug,
+                UserContext userContext,
                 UpdateSessionProductRequest request,
                 ICommandHandler<UpdateSessionProductCommand, SessionProductResponse> handler,
                 CancellationToken cancellationToken) =>
             {
-                // TODO: Get user ID from claims/authentication
-                var userId = Guid.NewGuid(); // Placeholder
+                var userId = userContext.UserId;
 
                 var command = new UpdateSessionProductCommand(
-                    productId,
                     userId,
+                    productSlug,
                     request.Title,
+                    request.Subtitle,
+                    request.Description,
+                    request.ClickToPay,
                     request.Price,
                     request.DurationMinutes,
                     request.BufferTimeMinutes,
-                    request.Subtitle,
-                    request.Description,
+                    request.DayAvailabilities,
                     request.MeetingInstructions,
                     request.TimeZoneId
                 );

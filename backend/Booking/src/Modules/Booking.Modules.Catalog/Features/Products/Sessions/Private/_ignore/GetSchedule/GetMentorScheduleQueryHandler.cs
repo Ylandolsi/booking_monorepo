@@ -1,12 +1,10 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.Shared;
-using Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.GetSchedule;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.GetSchedule;
 
 public class GetMentorScheduleQueryHandler(
     CatalogDbContext context,

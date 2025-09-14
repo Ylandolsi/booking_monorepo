@@ -6,7 +6,7 @@ using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.Schedule.SetSchedule;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private._ignore.SetSchedule;
 
 internal sealed class SetScheduleCommandHandler(
     CatalogDbContext context,
