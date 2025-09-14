@@ -1,6 +1,7 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,7 +11,6 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessi
 public class UpdateSessionProductEndpoint : IEndpoint
 {
     public record UpdateSessionProductRequest(
-        string ProductSlug,
         string Title,
         string Subtitle,
         string Description,
@@ -51,9 +51,7 @@ public class UpdateSessionProductEndpoint : IEndpoint
 
                 var result = await handler.Handle(command, cancellationToken);
 
-                return result.IsFailure
-                    ? Results.BadRequest(result.Error)
-                    : Results.Ok(result.Value);
+                return result.Match(Results.Ok, CustomResults.Problem);
             })
             .WithTags("Products", "Sessions")
             .WithSummary("Update a session product")

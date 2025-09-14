@@ -53,6 +53,8 @@ public class UpdateSessionProductHandler(
 
         try
         {
+            
+            
             // Validate command
             var validationResult = ValidateCommand(command);
             if (validationResult.IsFailure)
@@ -62,12 +64,15 @@ public class UpdateSessionProductHandler(
                 return Result.Failure<SessionProductResponse>(validationResult.Error);
             }
 
+            
+            //TODO  optimize this query 
+            
             // Get session product with store
             var sessionProduct = await context.SessionProducts
                 .Include(sp => sp.Store)
                 .Include(sp => sp.Days)
                 .Include(sp => sp.Availabilities)
-                .FirstOrDefaultAsync(sp => sp.ProductSlug == command.ProductSlug, cancellationToken);
+                .FirstOrDefaultAsync(sp => sp.ProductSlug == command.ProductSlug && sp.Store.UserId == command.UserId , cancellationToken);
 
             if (sessionProduct == null)
             {

@@ -13,9 +13,10 @@ public class GetSessionProductEndpoint : IEndpoint
     {
         app.MapGet("api/catalog/products/sessions/{productSlug}", async (
                 string productSlug,
-                [FromQuery]string timeZoneId, 
+                [FromQuery] string? timeZoneId,
                 IQueryHandler<GetSessionProductQuery, SessionProductDetailResponse> handler) =>
             {
+                timeZoneId ??= "Africa/Tunis";
                 var query = new GetSessionProductQuery(productSlug, timeZoneId);
                 var result = await handler.Handle(query, CancellationToken.None);
 
@@ -23,6 +24,7 @@ public class GetSessionProductEndpoint : IEndpoint
                     ? Results.NotFound(result.Error)
                     : Results.Ok(result.Value);
             })
+            .RequireAuthorization()
             .WithTags("Products", "Sessions")
             .WithSummary("Get session product details")
             .WithDescription("Get detailed information about a session product including availability");

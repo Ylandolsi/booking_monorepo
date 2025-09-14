@@ -1,5 +1,7 @@
 EnumerateArray
 
+(string platform, string url)[]
+
         var allDaysOfWeek = Enum.GetValues<DayOfWeek>();
 
 # C# Code Snippets

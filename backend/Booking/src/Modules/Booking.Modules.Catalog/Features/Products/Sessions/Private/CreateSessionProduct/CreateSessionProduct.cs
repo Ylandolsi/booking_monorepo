@@ -55,7 +55,7 @@ public class CreateSessionProductHandler(
 
         try
         {
-            // Validate command
+            // Validate command : remove it and replace by fluent 
             var validationResult = ValidateCommand(command);
             if (validationResult.IsFailure)
             {

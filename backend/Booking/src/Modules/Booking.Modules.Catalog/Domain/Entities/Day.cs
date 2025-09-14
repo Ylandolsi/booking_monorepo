@@ -12,8 +12,6 @@ public class Day : Entity
 
     public int ProductId { get; private set; }
     public string ProductSlug { get; private set; }
-    public int StoreId { get; private set; }
-    public string StoreSlug { get; private set; }
 
     public DayOfWeek DayOfWeek { get; private set; }
 
