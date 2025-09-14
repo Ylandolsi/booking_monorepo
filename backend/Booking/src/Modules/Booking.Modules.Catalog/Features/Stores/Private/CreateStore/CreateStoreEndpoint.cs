@@ -15,15 +15,19 @@ public class CreateStoreEndpoint : IEndpoint
     public record CreateStoreRequest(
         string Title,
         string Slug,
-        IFormFile File , 
+        IFormFile File,
         string Description = "",
-        IReadOnlyList<SocialLink>? SocialLinks = null
+        List<SocialLink>? SocialLinks = null
     );
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Stores.Create, async (
-                [FromForm] CreateStoreRequest request,
+                [FromForm] string Title,
+                [FromForm] string Slug,
+                [FromForm] IFormFile File,
+                [FromForm] string Description,
+                [FromForm] List<SocialLink>? SocialLinks,
                 UserContext userContext,
                 ICommandHandler<CreateStoreCommand, StoreResponse> handler,
                 HttpContext context) =>
@@ -32,19 +36,20 @@ public class CreateStoreEndpoint : IEndpoint
 
                 var command = new CreateStoreCommand(
                     userId,
-                    request.Slug,
-                    request.Title,
-                    request.File,
-                    request.SocialLinks,
-                    request.Description
+                    Slug,
+                    Title,
+                    File,
+                    SocialLinks,
+                    Description
                 );
 
                 var result = await handler.Handle(command, context.RequestAborted);
 
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
+            //.RequireAuthorization()
             .WithTags("Stores")
             .WithSummary("Create a new store")
-            .RequireAuthorization(); // Require authentication
+            .DisableAntiforgery(); // TODO !!!! 
     }
 }

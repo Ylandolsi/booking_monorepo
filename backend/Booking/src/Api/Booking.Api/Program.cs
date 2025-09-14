@@ -38,6 +38,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 builder.Services.AddControllers();
+// if (!builder.Environment.IsEnvironment("Development"))
+// {
+//     builder.Services.AddAntiforgery();
+// }
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
@@ -146,7 +150,10 @@ app.UseCancellationMiddleware();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
+// if (!app.Environment.IsEnvironment("Development"))
+// {
+//     app.UseAntiforgery();
+// }
 app.UseHangfireDashboard();
 
 RecurringJobs.AddRecurringJobs();

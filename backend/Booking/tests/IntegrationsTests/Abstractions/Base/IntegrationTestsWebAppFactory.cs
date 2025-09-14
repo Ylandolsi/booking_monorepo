@@ -4,6 +4,12 @@ using Amazon.SimpleEmail.Model;
 using Booking.Api;
 using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Mentorships.Persistence;
+using System.Data.Common;
+using Amazon.SimpleEmail;
+using Amazon.SimpleEmail.Model;
+using Booking.Api;
+using Booking.Modules.Mentorships.Options;
+using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Mocking;
 using Microsoft.AspNetCore.Hosting;
@@ -22,7 +28,7 @@ using Testcontainers.PostgreSql;
 namespace IntegrationsTests.Abstractions.Base;
 
 // docker pull datalust/seq:latest
-// docker ps 
+// docker ps
 //private readonly IContainer _seqContainer = new ContainerBuilder()
 //            .WithImage("datalust/seq:latest")
 //            .WithName("seq-test-container")
@@ -81,7 +87,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
 
         builder.ConfigureServices(services =>
         {
-          
+
         });
 
         builder.ConfigureTestServices(services =>
@@ -140,10 +146,26 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                     })
                 .UseSnakeCaseNamingConvention());
 
-            descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IAmazonSimpleEmailService));
-            if (descriptor != null)
+            // Add CatalogDbContext for testing
+            var catalogDescriptor =
+                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<Booking.Modules.Catalog.Persistence.CatalogDbContext>));
+            if (catalogDescriptor != null)
             {
-                services.Remove(descriptor);
+                services.Remove(catalogDescriptor);
+            }
+
+            services.AddDbContext<Booking.Modules.Catalog.Persistence.CatalogDbContext>((sp, options) => options
+                .UseNpgsql(_connectionString,
+                    npgsqlOptions =>
+                    {
+                        npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "catalog");
+                    })
+                .UseSnakeCaseNamingConvention());
+
+            var amazonSesDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IAmazonSimpleEmailService));
+            if (amazonSesDescriptor != null)
+            {
+                services.Remove(amazonSesDescriptor);
             }
 
             var mockSes = CaptureAmazonSESServiceMock.CreateMock(out List<SendEmailRequest> capturedEmails);
@@ -163,6 +185,9 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
 
             var mentorshipsDbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
             await mentorshipsDbContext.Database.MigrateAsync();
+
+            var catalogDbContext = scope.ServiceProvider.GetRequiredService<Booking.Modules.Catalog.Persistence.CatalogDbContext>();
+            await catalogDbContext.Database.MigrateAsync();
         }
 
         await InitializeDbRespawner();
@@ -196,7 +221,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         }
     }
 
-    // respawner : library used to reset db between tests 
+    // respawner : library used to reset db between tests
     private async Task InitializeDbRespawner()
     {
         _connectionString = _dbContainer.GetConnectionString();
@@ -206,10 +231,10 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             // specify that the db is a postgres db
-            // and the schema to be reset is public 
+            // and the schema to be reset is public
             DbAdapter = DbAdapter.Postgres,
             // TODO : add more schemas if needed
-            SchemasToInclude = new[] { "users", "mentorships" }
+            SchemasToInclude = new[] { "users", "mentorships", "catalog" }
         });
     }
 }

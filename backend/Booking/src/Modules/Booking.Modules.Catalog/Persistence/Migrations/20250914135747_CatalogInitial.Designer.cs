@@ -438,11 +438,11 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.ToTable("product", "catalog", t =>
                         {
-                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"DisplayOrder\" >= 0");
+                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
 
-                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"Price\" >= 0");
+                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
 
-                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                         });
 
                     b.UseTptMappingStrategy();
@@ -591,9 +591,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.ToTable("session_availabilities", "catalog", t =>
                         {
-                            t.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"DayOfWeek\" >= 0 AND \"DayOfWeek\" <= 6");
+                            t.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"day_of_week\" >= 0 AND \"day_of_week\" <= 6");
 
-                            t.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"StartTime\" < \"EndTime\"");
+                            t.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"start_time\" < \"end_time\"");
                         });
                 });
 
@@ -662,11 +662,11 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.ToTable("stores", "catalog", t =>
                         {
-                            t.HasCheckConstraint("CK_Store_Slug_Format", "\"Slug\" ~ '^[a-z0-9-]+$'");
+                            t.HasCheckConstraint("CK_Store_Slug_Format", "\"slug\" ~ '^[a-z0-9-]+$'");
 
-                            t.HasCheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"Slug\")) > 0");
+                            t.HasCheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"slug\")) > 0");
 
-                            t.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+                            t.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                         });
                 });
 
@@ -727,11 +727,11 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.ToTable("SessionProducts", "catalog", t =>
                         {
-                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"DisplayOrder\" >= 0");
+                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
 
-                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"Price\" >= 0");
+                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
 
-                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
 
                             t.HasCheckConstraint("CK_SessionProduct_BufferTime_Valid", "\"BufferTimeMinutes\" >= 0 AND \"BufferTimeMinutes\" % 15 = 0");
 

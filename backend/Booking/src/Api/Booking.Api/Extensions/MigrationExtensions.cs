@@ -1,4 +1,5 @@
-﻿using Booking.Modules.Mentorships.Persistence;
+﻿using Booking.Modules.Catalog.Persistence;
+using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,7 @@ public static class MigrationExtensions
 
         ApplyMigration<UsersDbContext>(scope);
         ApplyMigration<MentorshipsDbContext>(scope);
+        ApplyMigration<CatalogDbContext>(scope);
 
         //ApplyMigration<SessionsDbContext>(scope);
     }

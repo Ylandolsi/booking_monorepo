@@ -127,9 +127,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_stores", x => x.id);
-                    table.CheckConstraint("CK_Store_Slug_Format", "\"Slug\" ~ '^[a-z0-9-]+$'");
-                    table.CheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"Slug\")) > 0");
-                    table.CheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+                    table.CheckConstraint("CK_Store_Slug_Format", "\"slug\" ~ '^[a-z0-9-]+$'");
+                    table.CheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"slug\")) > 0");
+                    table.CheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                 });
 
             migrationBuilder.CreateTable(
@@ -173,9 +173,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_product", x => x.id);
-                    table.CheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"DisplayOrder\" >= 0");
-                    table.CheckConstraint("CK_Product_Price_NonNegative", "\"Price\" >= 0");
-                    table.CheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+                    table.CheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
+                    table.CheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
+                    table.CheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                     table.ForeignKey(
                         name: "fk_product_stores_store_id",
                         column: x => x.store_id,
@@ -305,8 +305,8 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_session_availabilities", x => x.id);
-                    table.CheckConstraint("CK_SessionAvailability_DayOfWeek", "\"DayOfWeek\" >= 0 AND \"DayOfWeek\" <= 6");
-                    table.CheckConstraint("CK_SessionAvailability_TimeRange", "\"StartTime\" < \"EndTime\"");
+                    table.CheckConstraint("CK_SessionAvailability_DayOfWeek", "\"day_of_week\" >= 0 AND \"day_of_week\" <= 6");
+                    table.CheckConstraint("CK_SessionAvailability_TimeRange", "\"start_time\" < \"end_time\"");
                     table.ForeignKey(
                         name: "fk_session_availabilities_days_day_id",
                         column: x => x.day_id,

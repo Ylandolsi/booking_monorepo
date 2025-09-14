@@ -21,6 +21,10 @@ builder.ToTable("sessions", t =>
     t.HasCheckConstraint("CK_Session_Date_Valid", "scheduled_at > created_at");
 });
 ```
+### tests
+```bash
+dotnet test tests/IntegrationsTests/IntegrationsTests.csproj --filter "CreateStore_ShouldSucceed_WhenValidDataProvided" -v d
+```
 
 
 ## Entity Framework Migrations

@@ -10,7 +10,6 @@ public class Picture : ValueObject
 
     public Picture(string mainLink = "", string thumbnailLink = "")
     {
-        if (MainLink == null) throw new ArgumentNullException(nameof(MainLink));
         if (!isProfilePictureLinkValid(mainLink) && !isProfilePictureLinkValid(thumbnailLink))
         {
             ResetToDefaultProfilePicture();

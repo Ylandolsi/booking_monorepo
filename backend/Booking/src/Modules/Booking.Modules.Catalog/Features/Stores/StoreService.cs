@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Stores;
 
-
 public class StoreService(
     CatalogDbContext dbContext,
     S3ImageProcessingService imageProcessingService,
@@ -37,11 +36,17 @@ public class StoreService(
         }
 
         var fileName = $"profile_{storeSlug}_{DateTime.UtcNow:yyyyMMddHHmmss}";
-        var imageResult = await imageProcessingService.ProcessImageAsync(file, fileName);
-
-        logger.LogInformation("Successfully updated profile picture for store {storeSlug}", storeSlug);
-        var dto = new Picture(imageResult.OriginalUrl, imageResult.ThumbnailUrl);
-        return Result.Success(dto);
+        try
+        {
+            var imageResult = await imageProcessingService.ProcessImageAsync(file, fileName);
+            logger.LogInformation("Successfully updated profile picture for store {storeSlug}", storeSlug);
+            var dto = new Picture(imageResult.OriginalUrl, imageResult.ThumbnailUrl);
+            return Result.Success(dto);
+        }
+        catch (Exception e)
+        {
+            return Result.Failure<Picture>(Error.Failure("Upload.Image.Failed", e.Message));
+        }
     }
 
     public async Task<bool> CheckSlugAvailability(string slug, int? storeId, bool excludeCurrent,

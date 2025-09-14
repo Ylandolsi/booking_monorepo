@@ -27,7 +27,7 @@ public class StoresTests : CatalogTestBase
         var storeData = CreateValidStoreFormData("My Awesome Store", "my-awesome-store", "A great store description");
 
         // Act
-        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Stores.Create, storeData);
+        var response = await userAct.PostAsync(CatalogEndpoints.Stores.Create, storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -47,7 +47,7 @@ public class StoresTests : CatalogTestBase
         var storeData = CreateValidStoreFormData("Test Store", "test-store");
 
         // Act
-        var response = await unauthClient.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var response = await unauthClient.PostAsync("/api/catalog/stores", storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -68,8 +68,8 @@ public class StoresTests : CatalogTestBase
         var store2Data = CreateValidStoreFormData("Store 2", slug);
 
         // Act
-        var response1 = await user1Act.PostAsJsonAsync("/api/catalog/stores", store1Data);
-        var response2 = await user2Act.PostAsJsonAsync("/api/catalog/stores", store2Data);
+        var response1 = await user1Act.PostAsync("/api/catalog/stores", store1Data);
+        var response2 = await user2Act.PostAsync("/api/catalog/stores", store2Data);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
@@ -87,8 +87,8 @@ public class StoresTests : CatalogTestBase
         var store2Data = CreateValidStoreFormData("Second Store", "second-store");
 
         // Act
-        var response1 = await userAct.PostAsJsonAsync("/api/catalog/stores", store1Data);
-        var response2 = await userAct.PostAsJsonAsync("/api/catalog/stores", store2Data);
+        var response1 = await userAct.PostAsync("/api/catalog/stores", store1Data);
+        var response2 = await userAct.PostAsync("/api/catalog/stores", store2Data);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
@@ -109,7 +109,7 @@ public class StoresTests : CatalogTestBase
         var storeData = CreateValidStoreFormData(title, slug);
 
         // Act
-        var response = await userAct.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var response = await userAct.PostAsync("/api/catalog/stores", storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -129,7 +129,7 @@ public class StoresTests : CatalogTestBase
             });
 
         // Act
-        var response = await userAct.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var response = await userAct.PostAsync("/api/catalog/stores", storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -151,7 +151,7 @@ public class StoresTests : CatalogTestBase
 
         // Create a store first
         var storeData = CreateValidStoreFormData("My Store", "my-store", "Store description");
-        var createResponse = await userAct.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var createResponse = await userAct.PostAsync("/api/catalog/stores", storeData);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         // Act
@@ -203,7 +203,7 @@ public class StoresTests : CatalogTestBase
 
         // Create a store first
         var storeData = CreateValidStoreFormData("Original Store", "original-store");
-        var createResponse = await userAct.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var createResponse = await userAct.PostAsync("/api/catalog/stores", storeData);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         var updateRequest = new
@@ -297,7 +297,7 @@ public class StoresTests : CatalogTestBase
         var storeData = CreateValidStoreFormData("Test Store", slug);
 
         // Create store with the slug
-        var createResponse = await user1Act.PostAsJsonAsync("/api/catalog/stores", storeData);
+        var createResponse = await user1Act.PostAsync("/api/catalog/stores", storeData);
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         // Act
@@ -322,8 +322,9 @@ public class StoresTests : CatalogTestBase
         formData.Add(new StringContent(slug), "Slug");
         formData.Add(new StringContent(description), "Description");
 
-        // Add a dummy image file
-        var imageContent = new ByteArrayContent(Encoding.UTF8.GetBytes("dummy image content"));
+        // Add a minimal valid JPEG image (1x1 pixel)
+        var jpegBytes = Convert.FromBase64String("/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==");
+        var imageContent = new ByteArrayContent(jpegBytes);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         formData.Add(imageContent, "File", "test-image.jpg");
 

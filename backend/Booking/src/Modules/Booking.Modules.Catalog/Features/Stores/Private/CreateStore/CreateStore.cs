@@ -16,7 +16,7 @@ public record CreateStoreCommand(
     string StoreSlug,
     string Title,
     IFormFile Picture,
-    IReadOnlyList<SocialLink>? SocialLinks = null,
+    List<SocialLink>? SocialLinks = null,
     string Description = ""
 ) : ICommand<StoreResponse>;
 
