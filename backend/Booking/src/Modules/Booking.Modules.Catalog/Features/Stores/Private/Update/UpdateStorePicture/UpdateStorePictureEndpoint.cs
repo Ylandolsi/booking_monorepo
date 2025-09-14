@@ -1,6 +1,7 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
 using Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
@@ -30,9 +31,8 @@ public class UpdateStorePictureEndpoint : IEndpoint
 
             var result = await handler.Handle(command, context.RequestAborted);
 
-            return result.IsFailure
-                ? Results.BadRequest(result.Error)
-                : Results.Ok(result.Value);
+            return result.Match(Results.Ok, CustomResults.Problem);
+
         })
         .WithTags("Stores")
         .WithSummary("Update store picture")

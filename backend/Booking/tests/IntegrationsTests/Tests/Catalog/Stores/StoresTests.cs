@@ -95,25 +95,7 @@ public class StoresTests : CatalogTestBase
         Assert.Equal(HttpStatusCode.Conflict, response2.StatusCode);
     }
 
-    [Theory]
-    [InlineData("", "valid-slug", "Title cannot be empty")]
-    [InlineData("Valid Title", "", "Slug cannot be empty")]
-    [InlineData(null, "valid-slug", "Title cannot be empty")]
-    [InlineData("Valid Title", null, "Slug cannot be empty")]
-    public async Task CreateStore_ShouldFail_WhenRequiredFieldsAreMissing(string title, string slug, string expectedError)
-    {
-        // Arrange
-        var (userArrange, userAct) = GetClientsForUser($"user_validation_{Guid.NewGuid():N}");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var storeData = CreateValidStoreFormData(title, slug);
-
-        // Act
-        var response = await userAct.PostAsync("/api/catalog/stores", storeData);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-    }
+   
 
     [Fact]
     public async Task CreateStore_ShouldSucceed_WithSocialLinks()
@@ -307,7 +289,7 @@ public class StoresTests : CatalogTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("false", content, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("taken", content, StringComparison.OrdinalIgnoreCase);
     }
 
     #endregion

@@ -21,16 +21,15 @@ public class UpdateStorePictureHandler(
     StoreService storeService,
     ILogger<UpdateStorePictureHandler> logger) : ICommandHandler<UpdateStorePictureCommand, StoreResponse>
 {
-    // TODO: Inject image processing service (from Common.Uploads)
-
     public async Task<Result<StoreResponse>> Handle(UpdateStorePictureCommand command,
         CancellationToken cancellationToken)
-    {            // TODO : add log here 
-
+    {
+        logger.LogInformation("Updating store picture for user {UserId}",
+            command.UserId);
         var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == command.UserId);
         if (store is null)
-        {            // TODO : add log here 
-
+        {
+            logger.LogWarning("Store not found for user {UserId}", command.UserId);
             return Result.Failure<StoreResponse>(StoreErros.NotFound);
         }
 
@@ -38,12 +37,12 @@ public class UpdateStorePictureHandler(
         store.UpdatePicture(profilePicture.IsSuccess ? profilePicture.Value : new Picture());
 
         await context.SaveChangesAsync(cancellationToken);
-        
+
         var storeLinks = store.SocialLinks
             .Select(sl => new SocialLink(sl.Platform, sl.Url))
             .ToList();
 
-        // TODO : add log here 
+        logger.LogInformation("Successfully updated store {StoreId} for user {UserId}. ", store.Id, command.UserId);
 
         var response = new StoreResponse(
             store.Title,

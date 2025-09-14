@@ -1,6 +1,7 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -21,9 +22,7 @@ public class GetMyStoreEndpoint : IEndpoint
                 var query = new GetMyStoreQuery(userId);
                 var result = await handler.Handle(query, cancellationToken);
 
-                return result.IsFailure
-                    ? Results.NotFound(result.Error)
-                    : Results.Ok(result.Value);
+                return result.Match(Results.Ok, CustomResults.Problem);
             })
             .WithTags("Stores")
             .WithSummary("Get my store")

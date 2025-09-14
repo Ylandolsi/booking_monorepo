@@ -1,12 +1,14 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore.Update;
 using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
@@ -14,7 +16,7 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 public class UpdateStoreEndpoint : IEndpoint
 {
     public record UpdateStoreRequest(
-        string Name,
+        string Title,
         string? Description = null,
         Picture? Picture = null,
         IReadOnlyList<SocialLink>? SocialLinks = null
@@ -32,7 +34,7 @@ public class UpdateStoreEndpoint : IEndpoint
 
                 var command = new UpdateStoreCommand(
                     userId,
-                    request.Name,
+                    request.Title,
                     request.Description,
                     request.Picture,
                     request.SocialLinks
@@ -40,9 +42,7 @@ public class UpdateStoreEndpoint : IEndpoint
 
                 var result = await handler.Handle(command, context.RequestAborted);
 
-                return result.IsFailure
-                    ? Results.BadRequest(result.Error)
-                    : Results.Ok(result.Value);
+                return result.Match(Results.Ok, CustomResults.Problem);
             })
             .WithTags("Stores")
             .WithSummary("Update store comprehensively (title, description, picture, social links)")

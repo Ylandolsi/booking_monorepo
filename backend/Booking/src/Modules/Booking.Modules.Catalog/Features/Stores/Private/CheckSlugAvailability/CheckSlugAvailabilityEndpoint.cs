@@ -1,6 +1,7 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
+using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -22,9 +23,7 @@ public class CheckSlugAvailabilityEndpoint : IEndpoint
                 var query = new CheckSlugAvailabilityQuery(userId, slug, false);
                 var result = await handler.Handle(query, cancellationToken);
 
-                return result.IsFailure
-                    ? Results.BadRequest(result.Error)
-                    : Results.Ok(result.Value);
+                return result.Match(Results.Ok, CustomResults.Problem);
             })
             .WithTags("Stores")
             .WithSummary("Check if a store slug is available")

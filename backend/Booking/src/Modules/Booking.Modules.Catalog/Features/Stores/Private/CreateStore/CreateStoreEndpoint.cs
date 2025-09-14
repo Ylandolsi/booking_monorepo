@@ -47,7 +47,7 @@ public class CreateStoreEndpoint : IEndpoint
 
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
-            //.RequireAuthorization()
+            .RequireAuthorization()
             .WithTags("Stores")
             .WithSummary("Create a new store")
             .DisableAntiforgery(); // TODO !!!! 
