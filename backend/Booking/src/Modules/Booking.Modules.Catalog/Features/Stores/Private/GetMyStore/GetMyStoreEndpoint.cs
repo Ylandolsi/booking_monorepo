@@ -12,7 +12,7 @@ public class GetMyStoreEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/catalog/stores/my-store", async (
+        app.MapGet(CatalogEndpoints.Stores.GetMy, async (
                 UserContext userContext,
                 IQueryHandler<GetMyStoreQuery, StoreResponse> handler,
                 CancellationToken cancellationToken) =>

@@ -7,9 +7,9 @@ public static class CatalogEndpoints
     public static class Stores
     {
         public const string Create = Base + "/stores";
-        public const string Update = Base + "/stores/{storeId:int}";
+        public const string Update = Base + "/stores";
         public const string CheckSlugAvailability = Base + "/stores/slug-availability/{slug}";
-        public const string UpdatePicture = Base + "/stores/{storeId:int}/picture";
+        public const string UpdatePicture = Base + "/stores/picture";
         public const string UpdateLinks = Base + "/stores/{storeId:int}/links";
         public const string UpdateSocialLinks = Base + "/stores/{storeId:int}/social-links";
         public const string GetMy = Base + "/stores/me";
@@ -20,8 +20,8 @@ public static class CatalogEndpoints
         public static class Sessions
         {
             public const string Create = Base + "/products/sessions";
-            public const string Get = Base + "/products/sessions/{productId:int}";
-            public const string Update = Base + "/products/sessions/{productId:int}";
+            public const string Get = Base + "/products/sessions/{productSlug}";
+            public const string Update = Base + "/products/sessions/{productSlug}";
             public const string UpdateAvailability = Base + "/products/sessions/{sessionProductId:int}/availability";
         }
     }

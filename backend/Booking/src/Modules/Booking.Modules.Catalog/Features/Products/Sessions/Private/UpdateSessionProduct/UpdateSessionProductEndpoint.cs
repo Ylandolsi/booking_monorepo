@@ -25,7 +25,7 @@ public class UpdateSessionProductEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("api/catalog/products/sessions/{productSlug}", async (
+        app.MapPut(CatalogEndpoints.Products.Sessions.Update, async (
                 string productSlug,
                 UserContext userContext,
                 UpdateSessionProductRequest request,

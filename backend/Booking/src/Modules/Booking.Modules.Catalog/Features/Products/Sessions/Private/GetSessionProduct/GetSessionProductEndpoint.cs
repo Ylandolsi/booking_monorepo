@@ -11,7 +11,7 @@ public class GetSessionProductEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/catalog/products/sessions/{productSlug}", async (
+        app.MapGet(CatalogEndpoints.Products.Sessions.Get, async (
                 string productSlug,
                 [FromQuery] string? timeZoneId,
                 IQueryHandler<GetSessionProductQuery, SessionProductDetailResponse> handler) =>

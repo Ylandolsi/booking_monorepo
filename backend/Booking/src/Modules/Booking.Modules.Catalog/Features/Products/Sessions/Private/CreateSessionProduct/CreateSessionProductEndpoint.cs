@@ -26,7 +26,7 @@ public class CreateSessionProductEndpoint : IEndpoint
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("api/catalog/products/sessions", async (
+        app.MapPost(CatalogEndpoints.Products.Sessions.Create, async (
                 UserContext userContext,
                 CreateSessionProductRequest request,
                 ICommandHandler<CreateSessionProductCommand, SessionProductResponse> handler,

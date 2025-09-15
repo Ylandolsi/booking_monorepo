@@ -47,7 +47,7 @@ public class StoresTests : CatalogTestBase
         var storeData = CreateValidStoreFormData("Test Store", "test-store");
 
         // Act
-        var response = await unauthClient.PostAsync("/api/catalog/stores", storeData);
+        var response = await unauthClient.PostAsync(CatalogEndpoints.Stores.Create, storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -68,8 +68,8 @@ public class StoresTests : CatalogTestBase
         var store2Data = CreateValidStoreFormData("Store 2", slug);
 
         // Act
-        var response1 = await user1Act.PostAsync("/api/catalog/stores", store1Data);
-        var response2 = await user2Act.PostAsync("/api/catalog/stores", store2Data);
+        var response1 = await user1Act.PostAsync(CatalogEndpoints.Stores.Create, store1Data);
+        var response2 = await user2Act.PostAsync(CatalogEndpoints.Stores.Create, store2Data);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
@@ -87,8 +87,8 @@ public class StoresTests : CatalogTestBase
         var store2Data = CreateValidStoreFormData("Second Store", "second-store");
 
         // Act
-        var response1 = await userAct.PostAsync("/api/catalog/stores", store1Data);
-        var response2 = await userAct.PostAsync("/api/catalog/stores", store2Data);
+        var response1 = await userAct.PostAsync(CatalogEndpoints.Stores.Create, store1Data);
+        var response2 = await userAct.PostAsync(CatalogEndpoints.Stores.Create, store2Data);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
@@ -111,7 +111,7 @@ public class StoresTests : CatalogTestBase
             });
 
         // Act
-        var response = await userAct.PostAsync("/api/catalog/stores", storeData);
+        var response = await userAct.PostAsync(CatalogEndpoints.Stores.Create, storeData);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -137,7 +137,7 @@ public class StoresTests : CatalogTestBase
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         // Act
-        var response = await userAct.GetAsync("/api/catalog/stores/my-store");
+        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -153,7 +153,7 @@ public class StoresTests : CatalogTestBase
         await CreateUserAndLogin(null, null, userArrange);
 
         // Act (don't create a store)
-        var response = await userAct.GetAsync("/api/catalog/stores/my-store");
+        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -166,7 +166,7 @@ public class StoresTests : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await unauthClient.GetAsync("/api/catalog/stores/my-store");
+        var response = await unauthClient.GetAsync(CatalogEndpoints.Stores.GetMy);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -195,7 +195,7 @@ public class StoresTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PutAsJsonAsync("/api/catalog/stores/1", updateRequest);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -218,7 +218,7 @@ public class StoresTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PutAsJsonAsync("/api/catalog/stores/999", updateRequest);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -236,7 +236,7 @@ public class StoresTests : CatalogTestBase
         };
 
         // Act
-        var response = await unauthClient.PutAsJsonAsync("/api/catalog/stores/1", updateRequest);
+        var response = await unauthClient.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -256,7 +256,7 @@ public class StoresTests : CatalogTestBase
         var availableSlug = $"available-slug-{Guid.NewGuid():N}";
 
         // Act
-        var response = await userAct.GetAsync($"/api/catalog/stores/slug-availability/{availableSlug}");
+        var response = await userAct.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", availableSlug));
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -283,7 +283,7 @@ public class StoresTests : CatalogTestBase
         Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
         // Act
-        var response = await user2Act.GetAsync($"/api/catalog/stores/slug-availability/{slug}");
+        var response = await user2Act.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", slug));
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

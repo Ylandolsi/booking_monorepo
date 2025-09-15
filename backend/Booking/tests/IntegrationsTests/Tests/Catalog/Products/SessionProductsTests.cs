@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using Booking.Modules.Catalog.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 using Snapshooter.Xunit;
@@ -63,7 +64,7 @@ public class SessionProductsTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PostAsJsonAsync("/api/catalog/products/sessions", sessionProductRequest);
+        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -102,7 +103,7 @@ public class SessionProductsTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PostAsJsonAsync("/api/catalog/products/sessions", sessionProductRequest);
+        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -122,7 +123,7 @@ public class SessionProductsTests : CatalogTestBase
         };
 
         // Act
-        var response = await unauthClient.PostAsJsonAsync("/api/catalog/products/sessions", sessionProductRequest);
+        var response = await unauthClient.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -163,7 +164,7 @@ public class SessionProductsTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PostAsJsonAsync("/api/catalog/products/sessions", sessionProductRequest);
+        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -185,7 +186,7 @@ public class SessionProductsTests : CatalogTestBase
         var sessionProductSlug = await CreateSessionProductForUser(userAct, "Test Session", 100.0m);
 
         // Act
-        var response = await userAct.GetAsync($"/api/catalog/products/sessions/{sessionProductSlug}");
+        var response = await userAct.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", sessionProductSlug));
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -208,7 +209,7 @@ public class SessionProductsTests : CatalogTestBase
 
         string nonExistingSlug = "no-found";
         // Act
-        var response = await userAct.GetAsync($"/api/catalog/products/sessions/{nonExistingSlug}");
+        var response = await userAct.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", nonExistingSlug));
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -221,7 +222,7 @@ public class SessionProductsTests : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await unauthClient.GetAsync("/api/catalog/products/sessions/slug-slug");
+        var response = await unauthClient.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", "slug-slug"));
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -281,7 +282,7 @@ public class SessionProductsTests : CatalogTestBase
         };
 
         // Act
-        var response = await userAct.PutAsJsonAsync($"/api/catalog/products/sessions/{sessionProductSlug}", updateRequest);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", sessionProductSlug), updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -338,7 +339,7 @@ public class SessionProductsTests : CatalogTestBase
 
 
         // Act
-        var response = await userAct.PutAsJsonAsync("/api/catalog/products/sessions/not-found-slug", updateRequest);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", "not-found-slug"), updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -399,7 +400,7 @@ public class SessionProductsTests : CatalogTestBase
 
 
         // Act - try to update with user2
-        var response = await user2Act.PutAsJsonAsync($"/api/catalog/products/sessions/{sessionProductSlug}", updateRequest);
+        var response = await user2Act.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", sessionProductSlug), updateRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -412,7 +413,7 @@ public class SessionProductsTests : CatalogTestBase
     private async Task CreateStoreForUser(HttpClient userClient, string title, string slug ,string description ="no description")
     {
         var formData = CatalogTestUtilities.StoreTestData.CreateValidStoreFormData(title, slug, description);
-        var response = await userClient.PostAsync("/api/catalog/stores", formData);
+        var response = await userClient.PostAsync(CatalogEndpoints.Stores.Create, formData);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
@@ -444,7 +445,7 @@ public class SessionProductsTests : CatalogTestBase
             TimeZoneId = "Africa/Tunis"
         };
 
-        var response = await userClient.PostAsJsonAsync("/api/catalog/products/sessions", sessionProductRequest);
+        var response = await userClient.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         var responseContent = await response.Content.ReadAsStringAsync();
