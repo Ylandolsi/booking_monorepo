@@ -1,11 +1,13 @@
-/*using System.ComponentModel;
+using System.ComponentModel;
 using Booking.Common.Contracts.Users;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
+using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Persistence;
 using Hangfire;
 using Hangfire.Server;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.BackgroundJobs.Payment;
@@ -18,57 +20,76 @@ public class CompleteWebhook(
 {
     [DisplayName("Complete Webhook Jobs messages")]
     [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
-    public async Task SendAsync(int sessionId, PerformContext? context)
+    public async Task SendAsync(int orderId, PerformContext? context)
     {
-        // TODO : optimize this and pass session not sesionId 
-        var session = await dbContext.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId);
+        // TODO : optimize this and pass order rather than  orderId
+
+        var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
         // TODO : send link to mentor and mentee for confirmation 
         logger.LogInformation(
-            "Handling PaymentCompletedDomainEvent for menteeId:{mentee} , mentorId:{mentor} ,sessionId:{session} with price : {Price} ",
-            session.MenteeId,
-            session.MentorId,
-            session.Id,
-            session.Price.Amount);
+            "Handling PaymentCompletedDomainEvent for order : {orderId} with price : {Price}  for customer  : {customerEmail} ",
+            order.Id,
+            order.Amount,
+            order.CustomerEmail
+        );
 
         var cancellationToken = context?.CancellationToken.ShutdownToken ?? CancellationToken.None;
 
 
         // Only proceed if session is not already confirmed
-        if (session.Status == SessionStatus.Confirmed) // session.Status != SessionStatus.WaitingForPayment
+        if (order.Status == OrderStatus.Completed) // session.Status != SessionStatus.WaitingForPayment
         {
-            logger.LogInformation("Session {SessionId} is already confirmed", session.Id);
+            logger.LogInformation("order {OrdrID} is already completed", order.Id);
             return;
         }
 
-        await CreateMeetAndConfirmSession(session, session.MentorId, session.MenteeId, cancellationToken);
+        if (order.ProductType == ProductType.Session)
+        {
+            var session
+                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.Id == order.ProductId, cancellationToken);
+            if (session is null)
+            {
+                logger.LogError("Failed to find session when handling payment (completeWebhook) for order with id : ",
+                    orderId);
+                return;
+            }
+
+            await CreateMeetAndConfirmSession(session, order, cancellationToken);
 
 
-        // Create escrow for the full session price
-        var priceAfterReducing = session.Price.Amount - (session.Price.Amount * 0.15m);
-        var escrowCreated =
-            new Domain.Entities.Escrow(priceAfterReducing, session.Id);
-        await dbContext.AddAsync(escrowCreated, cancellationToken);
-        await dbContext.SaveChangesAsync(cancellationToken);
+            // Create escrow for the full session price
+            var priceAfterReducing = session.Price - (session.Price * 0.15m);
+            var escrowCreated = new Escrow(priceAfterReducing, session.Id);
+            await dbContext.AddAsync(escrowCreated, cancellationToken);
 
-        logger.LogInformation("Session {SessionId} confirmed with meeting link and escrow created",
-            session.Id);
+            order.MarkAsCompleted();
+
+            await dbContext.SaveChangesAsync(cancellationToken);
+
+            logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
+                order.Id);
+        }
     }
 
 
-    public async Task CreateMeetAndConfirmSession(Session session, int mentorId, int menteeId,
+    public async Task CreateMeetAndConfirmSession(BookedSession session, Order order,
         CancellationToken cancellationToken)
     {
+        // instead of fetching store again we can have : cache : redis ( key : storeId ) value ( userId)  ( but for optimization not now ) 
+
+        var store = dbContext.Stores.FirstOrDefault(s => s.Id == session.StoreId);
+
+
         var sessionStartTime = session.ScheduledAt;
         var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
-        var mentorData = await usersModuleApi.GetUserInfo(mentorId, cancellationToken);
-        var menteeData = await usersModuleApi.GetUserInfo(menteeId, cancellationToken);
+        var mentorData = await usersModuleApi.GetUserInfo(store.UserId, cancellationToken);
 
         var emails = new List<string>
-            { menteeData.GoogleEmail, mentorData.GoogleEmail, mentorData.Email, menteeData.Email };
+            { order.CustomerEmail, mentorData.GoogleEmail, mentorData.Email };
 
         var description =
-            $"Session : {mentorData.FirstName} {mentorData.LastName} & {menteeData.FirstName} {menteeData.LastName} ";
+            $"Session : {mentorData.FirstName} {mentorData.LastName} & {order.CustomerName} ";
 
 
         var meetRequest =
@@ -82,22 +103,21 @@ public class CompleteWebhook(
                 Location = "Online"
             };
 
-        await googleCalendarService.InitializeAsync(mentorId);
+        await googleCalendarService.InitializeAsync(store.UserId);
         var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
 
-        await googleCalendarService.InitializeAsync(menteeId);
-        var resEventMentee = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
 
-        if (resEventMentee.IsFailure || resEventMentor.IsFailure)
+        if (resEventMentor.IsFailure)
         {
             logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                session.Id, resEventMentee.Error.Description);
+                session.Id, resEventMentor.Error.Description);
             // Continue without calendar event - session should still be confirmed
         }
 
-        var meetLink = resEventMentee.IsSuccess ? resEventMentee.Value.HangoutLink :
-            resEventMentor.IsSuccess ? resEventMentor.Value.HangoutLink : "https://meet.google.com/placeholder";
+        var meetLink = resEventMentor.IsSuccess
+            ? resEventMentor.Value.HangoutLink
+            : "Error happened while integration , could you please contact us";
 
         session.Confirm(meetLink);
     }
-}*/
+}

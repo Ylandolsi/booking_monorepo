@@ -33,8 +33,6 @@ public class Order : Entity
     public string? TimeZoneId { get; private set; }
     public string? Note { get; private set; }
 
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
 
     // Navigation properties
@@ -87,6 +85,7 @@ public class Order : Entity
     {
         AmountPaid = amountPaid;
         UpdatedAt = DateTime.UtcNow;
+        if (amountPaid == AmountPaid) Status = OrderStatus.Paid;
     }
 
     public void SetPaymentInfo(string paymentRef, string? paymentUrl = null)

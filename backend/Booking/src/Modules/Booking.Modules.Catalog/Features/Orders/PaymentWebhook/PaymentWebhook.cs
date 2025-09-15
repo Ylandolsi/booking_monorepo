@@ -1,4 +1,4 @@
-/*using Booking.Common.Contracts.Users;
+using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;
 using Booking.Common.Results;
@@ -79,11 +79,12 @@ public class PaymentWebhookHandler(
 
 
         backgroundJobClient.Enqueue<CompleteWebhook>(job =>
-            job.SendAsync(session.Id, null));
+            job.SendAsync(order.Id, null));
 
+        logger.LogInformation("Payment {PaymentRef} completed successfully for product {ProductId}",
+            command.PaymentRef, order.ProductId);
 
-        logger.LogInformation("Payment {PaymentRef} completed successfully for session {SessionId}",
-            command.PaymentRef, session.Id);
+        return Result.Success();
 
 
         // TODO debug response of webhook konnect 
@@ -116,7 +117,7 @@ public class PaymentWebhookHandler(
                 Message: $"Your mentorship session has been confirmed and paid. You'll receive the meeting link soon.",
                 CreatedAt: DateTime.UtcNow
             );
-            // TODO : needs to be cached 
+            // TODO : needs to be cached
             var menteeData = await usersModuleApi.GetUserInfo(session.MenteeId, CancellationToken.None);
 
             await notificationService.SendNotificationAsync(menteeData.Slug, menteeNotification);
@@ -149,5 +150,6 @@ public class PaymentWebhookHandler(
             logger.LogError(ex, "Failed to send real-time notifications for session {SessionId}", session.Id);
         }
     }
-#1#
-}*/
+           */
+    }
+}

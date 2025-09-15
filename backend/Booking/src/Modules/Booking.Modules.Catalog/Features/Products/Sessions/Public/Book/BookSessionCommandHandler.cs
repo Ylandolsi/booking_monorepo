@@ -218,7 +218,8 @@ internal sealed class BookSessionCommandHandler(
             // add session to get ID
             await context.BookedSessions.AddAsync(session, cancellationToken);
 
-            var order = Order.Create(product.Id,
+            var order = Order.Create(
+                product.Id,
                 product.StoreId,
                 product.StoreSlug,
                 command.Email,
@@ -249,6 +250,7 @@ internal sealed class BookSessionCommandHandler(
                     "", // Reference will be updated after Konnect response // TODO : handle reference is "" and not unique errors !!! 
                     totalPrice,
                     PaymentStatus.Pending);
+
 
                 await context.Payments.AddAsync(payment, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);

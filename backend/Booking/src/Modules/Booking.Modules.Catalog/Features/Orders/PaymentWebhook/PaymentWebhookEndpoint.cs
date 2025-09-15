@@ -1,7 +1,6 @@
-/*using Booking.Common.Endpoints;
+using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features;
-using Booking.Modules.Catalog.Features.Payment.Webhook;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,6 @@ public class PaymentWebhookEndpoint : IEndpoint
         app.MapGet(CatalogEndpoints.Payment.Webhook, async (
                 [FromQuery] string payment_ref,
                 ICommandHandler<WebhookCommand> handler,
-                ILogger<Webhook> logger,
                 CancellationToken cancellationToken) =>
             {
                 var command = new WebhookCommand(payment_ref);
@@ -39,4 +37,4 @@ public class PaymentWebhookEndpoint : IEndpoint
             .WithDescription("Handle payment status updates from payment provider")
             .AllowAnonymous();
     }
-}*/
+}
