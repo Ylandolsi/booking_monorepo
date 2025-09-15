@@ -33,6 +33,8 @@ public record SessionProductResponse(
     string ClickToPay,
     decimal Price,
     string MeetingInstructions,
+    int DurationMinutes,
+    int BufferTimeMinutes,
     string TimeZoneId,
     DateTime CreatedAt
 );
@@ -84,11 +86,11 @@ public class CreateSessionProductHandler(
             }
 
             // Validate duration time
-            var durationTimeResult = Duration.Create(command.BufferTimeMinutes);
+            var durationTimeResult = Duration.Create(command.DurationMinutes);
             if (durationTimeResult.IsFailure)
             {
-                logger.LogWarning("Invalid buffer time {BufferTimeMinutes} for user {UserId}",
-                    command.BufferTimeMinutes, command.UserId);
+                logger.LogWarning("Invalid duration time {DurationMinutes} for user {UserId}",
+                    command.DurationMinutes, command.UserId);
                 return Result.Failure<SessionProductResponse>(durationTimeResult.Error);
             }
 
@@ -148,6 +150,8 @@ public class CreateSessionProductHandler(
                 sessionProduct.ClickToPay,
                 sessionProduct.Price,
                 sessionProduct.MeetingInstructions,
+                sessionProduct.Duration.Minutes,
+                sessionProduct.BufferTime.Minutes,
                 sessionProduct.TimeZoneId,
                 sessionProduct.CreatedAt
             );
@@ -182,6 +186,10 @@ public class CreateSessionProductHandler(
         if (command.BufferTimeMinutes < 0 || command.BufferTimeMinutes > 240)
             return Result.Failure(Error.Problem("SessionProduct.InvalidBufferTime",
                 "Buffer time must be between 0 and 240 minutes"));
+        
+        if (command.DurationMinutes < 0 || command.DurationMinutes > 240)
+            return Result.Failure(Error.Problem("SessionProduct.InvalidDurationTime",
+                "Duration time must be between 0 and 240 minutes"));
 
         if (string.IsNullOrWhiteSpace(command.ClickToPay))
             return Result.Failure(

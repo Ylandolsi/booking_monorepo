@@ -22,21 +22,15 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_create_store");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var storeData = CreateValidStoreFormData("My Awesome Store", "my-awesome-store", "A great store description");
+        await CreateUserAndLogin("user_create_store@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response = await userAct.PostAsync(CatalogEndpoints.Stores.Create, storeData);
+        var response = await CatalogTestUtilities.CreateStoreRequest(userAct, "My Awesome Store", "my-awesome-store", "A great store description");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var storeResponse = System.Text.Json.JsonSerializer.Deserialize<dynamic>(responseContent);
-
-        Assert.NotNull(storeResponse);
-
+        await CatalogTestUtilities.VerifyStoreResponse(response, "My Awesome Store");
     }
 
     [Fact]
@@ -44,10 +38,9 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var unauthClient = Factory.CreateClient();
-        var storeData = CreateValidStoreFormData("Test Store", "test-store");
 
         // Act
-        var response = await unauthClient.PostAsync(CatalogEndpoints.Stores.Create, storeData);
+        var response = await CatalogTestUtilities.CreateStoreRequest(unauthClient, "Test Store", "test-store");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -58,18 +51,18 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_duplicate_slug");
-        var (user2Arrange, user2Act) = GetClientsForUser("user2_duplicate_slug");
+        await CreateUserAndLogin("user1_duplicate_slug@example.com", null, user1Arrange);
+        await CatalogTestUtilities.VerifyUser(user1Act);
 
-        await CreateUserAndLogin(null, null, user1Arrange);
-        await CreateUserAndLogin(null, null, user2Arrange);
+        var (user2Arrange, user2Act) = GetClientsForUser("user2_duplicate_slug");
+        await CreateUserAndLogin("user2_duplicate_slug@example.com", null, user2Arrange);
+        await CatalogTestUtilities.VerifyUser(user2Act);
 
         var slug = "duplicate-store-slug";
-        var store1Data = CreateValidStoreFormData("Store 1", slug);
-        var store2Data = CreateValidStoreFormData("Store 2", slug);
 
         // Act
-        var response1 = await user1Act.PostAsync(CatalogEndpoints.Stores.Create, store1Data);
-        var response2 = await user2Act.PostAsync(CatalogEndpoints.Stores.Create, store2Data);
+        var response1 = await CatalogTestUtilities.CreateStoreRequest(user1Act, "Store 1", slug);
+        var response2 = await CatalogTestUtilities.CreateStoreRequest(user2Act, "Store 2", slug);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
@@ -81,43 +74,35 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_already_has_store");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var store1Data = CreateValidStoreFormData("First Store", "first-store");
-        var store2Data = CreateValidStoreFormData("Second Store", "second-store");
+        await CreateUserAndLogin("user_already_has_store@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response1 = await userAct.PostAsync(CatalogEndpoints.Stores.Create, store1Data);
-        var response2 = await userAct.PostAsync(CatalogEndpoints.Stores.Create, store2Data);
+        var response1 = await CatalogTestUtilities.CreateStoreRequest(userAct, "First Store", "first-store");
+        var response2 = await CatalogTestUtilities.CreateStoreRequest(userAct, "Second Store", "second-store");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
         Assert.Equal(HttpStatusCode.Conflict, response2.StatusCode);
     }
 
-   
+
 
     [Fact]
     public async Task CreateStore_ShouldSucceed_WithSocialLinks()
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_with_social_links");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var storeData = CreateStoreFormDataWithSocialLinks("Store with Links", "store-with-links",
-            new[] {
-                ("twitter", "https://twitter.com/mystore"),
-                ("instagram", "https://instagram.com/mystore")
-            });
+        await CreateUserAndLogin("user_with_social_links@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response = await userAct.PostAsync(CatalogEndpoints.Stores.Create, storeData);
+        var response = await CatalogTestUtilities.CreateStoreRequest(
+            userAct, "Store with Links", "store-with-links", "",
+            new[] { ("twitter", "https://twitter.com/mystore"), ("instagram", "https://instagram.com/mystore") });
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        ;
     }
 
     #endregion
@@ -129,20 +114,15 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_store");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        // Create a store first
-        var storeData = CreateValidStoreFormData("My Store", "my-store", "Store description");
-        var createResponse = await userAct.PostAsync("/api/catalog/stores", storeData);
-        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        await CreateUserAndLogin("user_get_store@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "My Store", "my-store", "Store description");
 
         // Act
-        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
+        var response = await CatalogTestUtilities.GetStoreRequest(userAct);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-
     }
 
     [Fact]
@@ -150,10 +130,11 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_no_store");
-        await CreateUserAndLogin(null, null, userArrange);
+        await CreateUserAndLogin("user_no_store@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act (don't create a store)
-        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
+        var response = await CatalogTestUtilities.GetStoreRequest(userAct);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -166,7 +147,7 @@ public class StoresTests : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await unauthClient.GetAsync(CatalogEndpoints.Stores.GetMy);
+        var response = await CatalogTestUtilities.GetStoreRequest(unauthClient);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -181,27 +162,15 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_store");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        // Create a store first
-        var storeData = CreateValidStoreFormData("Original Store", "original-store");
-        var createResponse = await userAct.PostAsync("/api/catalog/stores", storeData);
-        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
-
-        var updateRequest = new
-        {
-            Title = "Updated Store Title",
-            Description = "Updated store description"
-        };
+        await CreateUserAndLogin("user_update_store@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "Original Store", "original-store");
 
         // Act
-        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
+        var response = await CatalogTestUtilities.UpdateStoreRequest(userAct, "Updated Store Title", "Updated store description");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
     }
 
     [Fact]
@@ -209,16 +178,11 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_nonexistent");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var updateRequest = new
-        {
-            Title = "Updated Store Title",
-            Description = "Updated store description"
-        };
+        await CreateUserAndLogin("user_update_nonexistent@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
+        var response = await CatalogTestUtilities.UpdateStoreRequest(userAct, "Updated Store Title", "Updated store description");
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -229,14 +193,9 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var unauthClient = Factory.CreateClient();
-        var updateRequest = new
-        {
-            Title = "Updated Store Title",
-            Description = "Updated store description"
-        };
 
         // Act
-        var response = await unauthClient.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
+        var response = await CatalogTestUtilities.UpdateStoreRequest(unauthClient, "Updated Store Title", "Updated store description");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -251,16 +210,15 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_check_available_slug");
-        await CreateUserAndLogin(null, null, userArrange);
-
+        await CreateUserAndLogin("user_check_available_slug@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
         var availableSlug = $"available-slug-{Guid.NewGuid():N}";
 
         // Act
-        var response = await userAct.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", availableSlug));
+        var response = await CatalogTestUtilities.CheckSlugAvailabilityRequest(userAct, availableSlug);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("true", content, StringComparison.OrdinalIgnoreCase);
     }
@@ -270,60 +228,23 @@ public class StoresTests : CatalogTestBase
     {
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_check_unavailable_slug");
-        var (user2Arrange, user2Act) = GetClientsForUser("user2_check_unavailable_slug");
+        await CreateUserAndLogin("user1_check_unavailable_slug@example.com", null, user1Arrange);
+        await CatalogTestUtilities.VerifyUser(user1Act);
 
-        await CreateUserAndLogin(null, null, user1Arrange);
-        await CreateUserAndLogin(null, null, user2Arrange);
+        var (user2Arrange, user2Act) = GetClientsForUser("user2_check_unavailable_slug");
+        await CreateUserAndLogin("user2_check_unavailable_slug@example.com", null, user2Arrange);
+        await CatalogTestUtilities.VerifyUser(user2Act);
 
         var slug = "taken-slug";
-        var storeData = CreateValidStoreFormData("Test Store", slug);
-
-        // Create store with the slug
-        var createResponse = await user1Act.PostAsync("/api/catalog/stores", storeData);
-        Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
+        await CatalogTestUtilities.CreateStoreForUser(user1Act, "Test Store", slug);
 
         // Act
-        var response = await user2Act.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", slug));
+        var response = await CatalogTestUtilities.CheckSlugAvailabilityRequest(user2Act, slug);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("taken", content, StringComparison.OrdinalIgnoreCase);
-    }
-
-    #endregion
-
-    #region Helper Methods
-
-    private static MultipartFormDataContent CreateValidStoreFormData(string title, string slug, string description = "")
-    {
-        var formData = new MultipartFormDataContent();
-
-        formData.Add(new StringContent(title), "Title");
-        formData.Add(new StringContent(slug), "Slug");
-        formData.Add(new StringContent(description), "Description");
-
-        // Add a minimal valid JPEG image (1x1 pixel)
-        var jpegBytes = Convert.FromBase64String("/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==");
-        var imageContent = new ByteArrayContent(jpegBytes);
-        imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-        formData.Add(imageContent, "File", "test-image.jpg");
-
-        return formData;
-    }
-
-    private static MultipartFormDataContent CreateStoreFormDataWithSocialLinks(string title, string slug, (string platform, string url)[] socialLinks, string description = "")
-    {
-        var formData = CreateValidStoreFormData(title, slug, description);
-
-        for (int i = 0; i < socialLinks.Length; i++)
-        {
-            formData.Add(new StringContent(socialLinks[i].platform), $"SocialLinks[{i}].Platform");
-            formData.Add(new StringContent(socialLinks[i].url), $"SocialLinks[{i}].Url");
-        }
-
-        return formData;
     }
 
     #endregion

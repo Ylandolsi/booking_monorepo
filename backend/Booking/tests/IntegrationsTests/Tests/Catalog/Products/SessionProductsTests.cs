@@ -20,57 +20,23 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_create_session_product");
-        await CreateUserAndLogin(null, null, userArrange);
+        await CreateUserAndLogin("user_create_session_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
 
-        // Create a store first
-        await CreateStoreForUser(userArrange, "Test Store", "test-store");
-
-        var dayAvailabilities = new[]
-        {
-            new
-            {
-                DayOfWeek = DayOfWeek.Monday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "09:00", EndTime = "12:00" },
-                    new { StartTime = "14:00", EndTime = "17:00" }
-                }
-            },
-            new
-            {
-                DayOfWeek = DayOfWeek.Wednesday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "10:00", EndTime = "16:00" }
-                }
-            }
-        };
-
-        var sessionProductRequest = new
-        {
-            Title = "1-on-1 Coaching Session",
-            Subtitle = "Personalized coaching",
-            Description = "A detailed coaching session tailored to your needs",
-            ClickToPay = "Book session now",
-            Price = 100.0m,
-            BufferTimeMinutes = 15,
-            DurationMinutes = 30 ,
-
-            DayAvailabilities = dayAvailabilities,
-            MeetingInstructions = "Join the Zoom meeting 5 minutes early",
-            TimeZoneId = "Africa/Tunis"
-        };
+        var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
+            (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
+            (DayOfWeek.Wednesday, true, new[] { ("10:00", "16:00") })
+        );
 
         // Act
-        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(
+            userAct, "1-on-1 Coaching Session", 100.0m, 15, "Personalized coaching",
+            "A detailed coaching session tailored to your needs", dayAvailabilities);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
+        await CatalogTestUtilities.VerifySessionProductResponse(response, "1-on-1 Coaching Session", 100.0m);
     }
 
     [Fact]
@@ -78,32 +44,11 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_no_store_session_product");
-        await CreateUserAndLogin(null, null, userArrange);
-
-        var sessionProductRequest = new
-        {
-            Title = "1-on-1 Coaching Session",
-            Subtitle = "Personalized coaching",
-            Description = "A coaching session",
-            ClickToPay = "Book now",
-            Price = 100.0m,
-            BufferTimeMinutes = 15,
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" }
-                    }
-                }
-            }
-        };
+        await CreateUserAndLogin("user_no_store_session_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 100.0m);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -114,16 +59,9 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var unauthClient = Factory.CreateClient();
-        var sessionProductRequest = new
-        {
-            Title = "Test Session",
-            Price = 50.0m,
-            BufferTimeMinutes = 15,
-            DayAvailabilities = new object[] { }
-        };
 
         // Act
-        var response = await unauthClient.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(unauthClient, "Test Session", 50.0m);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -137,37 +75,20 @@ public class SessionProductsTests : CatalogTestBase
     public async Task CreateSessionProduct_ShouldFail_WhenInvalidDataProvided(string title, decimal price, int bufferTime, string expectedErrorType)
     {
         // Arrange
-        var (userArrange, userAct) = GetClientsForUser($"user_validation_{Guid.NewGuid():N}");
-        await CreateUserAndLogin(null, null, userArrange);
-        await CreateStoreForUser(userAct, "Test Store", "test-store");
-
-        var sessionProductRequest = new
-        {
-            Title = title,
-            Subtitle = "Test subtitle",
-            Description = "Test description",
-            ClickToPay = "Book now",
-            Price = price,
-            BufferTimeMinutes = bufferTime,
-            DayAvailabilities = new[]
-            {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
-                    {
-                        new { StartTime = "09:00", EndTime = "12:00" }
-                    }
-                }
-            }
-        };
+        var userKey = $"user_validation_{Guid.NewGuid():N}";
+        var (userArrange, userAct) = GetClientsForUser(userKey);
+        await CreateUserAndLogin($"{userKey}@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
 
         // Act
-        var response = await userAct.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(
+            userAct, title, price, bufferTime, "Test subtitle", "Test description",
+            dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        await CatalogTestUtilities.VerifyErrorResponse(response, expectedErrorType);
     }
 
     #endregion
@@ -179,25 +100,18 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_session_product");
-        await CreateUserAndLogin(null, null, userArrange);
-        await CreateStoreForUser(userAct, "Test Store", "test-store");
-
-        // Create a session product first
-        var sessionProductSlug = await CreateSessionProductForUser(userAct, "Test Session", 100.0m);
+        await CreateUserAndLogin("user_get_session_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
+        var sessionProductSlug = await CatalogTestUtilities.CreateSessionProductForUser(userAct, "Test Session", 100.0m);
 
         // Act
-        var response = await userAct.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", sessionProductSlug));
+        var response = await CatalogTestUtilities.GetSessionProductRequest(userAct, sessionProductSlug);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         var responseContent = await response.Content.ReadAsStringAsync();
-        responseContent.MatchSnapshot(matchOptions => matchOptions
-            .IgnoreField("id")
-            .IgnoreField("storeId")
-            .IgnoreField("createdAt")
-            .IgnoreField("updatedAt")
-            .IgnoreField("availabilitySlots[*].id"));
+
     }
 
     [Fact]
@@ -205,11 +119,11 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_nonexistent_product");
-        await CreateUserAndLogin(null, null, userArrange);
+        await CreateUserAndLogin("user_get_nonexistent_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
-        string nonExistingSlug = "no-found";
         // Act
-        var response = await userAct.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", nonExistingSlug));
+        var response = await CatalogTestUtilities.GetSessionProductRequest(userAct, "no-found");
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -222,7 +136,7 @@ public class SessionProductsTests : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await unauthClient.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", "slug-slug"));
+        var response = await CatalogTestUtilities.GetSessionProductRequest(unauthClient, "slug-slug");
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -237,56 +151,24 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_session_product");
-        await CreateUserAndLogin(null, null, userArrange);
-        await CreateStoreForUser(userAct, "Test Store", "test-store");
+        await CreateUserAndLogin("user_update_session_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
+        await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
+        var sessionProductSlug = await CatalogTestUtilities.CreateSessionProductForUser(userAct, "Original Session", 100.0m);
 
-        // Create a session product first
-        var sessionProductSlug = await CreateSessionProductForUser(userAct, "Original Session", 100.0m);
-
-        var dayAvailabilities = new[]
-        {
-            new
-            {
-                DayOfWeek = DayOfWeek.Monday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "09:00", EndTime = "12:00" },
-                    new { StartTime = "14:00", EndTime = "17:00" }
-                }
-            },
-            new
-            {
-                DayOfWeek = DayOfWeek.Wednesday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "10:00", EndTime = "16:00" }
-                }
-            }
-        };
-
-        var updateRequest = new
-        {
-            Title = "1-on-1 Coaching Session",
-            Subtitle = "Personalized coaching",
-            Description = "A detailed coaching session tailored to your needs",
-            ClickToPay = "Book session now",
-            Price = 100.0m,
-            DurationMinutes = 30 ,
-
-            BufferTimeMinutes = 15,
-            MeetingInstructions = "Join the Zoom meeting 5 minutes early",
-            TimeZoneId = "Africa/Tunis",
-            DayAvailabilities = dayAvailabilities,
-        };
+        var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
+            (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
+            (DayOfWeek.Wednesday, true, new[] { ("10:00", "16:00") })
+        );
 
         // Act
-        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", sessionProductSlug), updateRequest);
+        var response = await CatalogTestUtilities.UpdateSessionProductRequest(
+            userAct, sessionProductSlug, "1-on-1 Coaching Session", 100.0m, 30, 15,
+            "Personalized coaching", "A detailed coaching session tailored to your needs",
+            "Join the Zoom meeting 5 minutes early", dayAvailabilities);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
         var responseContent = await response.Content.ReadAsStringAsync();
         responseContent.MatchSnapshot(matchOptions => matchOptions
             .IgnoreField("id")
@@ -299,47 +181,18 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_nonexistent_product");
-        await CreateUserAndLogin(null, null, userArrange);
-        var dayAvailabilities = new[]
-        {
-            new
-            {
-                DayOfWeek = DayOfWeek.Monday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "09:00", EndTime = "12:00" },
-                    new { StartTime = "14:00", EndTime = "17:00" }
-                }
-            },
-            new
-            {
-                DayOfWeek = DayOfWeek.Wednesday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "10:00", EndTime = "16:00" }
-                }
-            }
-        };
+        await CreateUserAndLogin("user_update_nonexistent_product@example.com", null, userArrange);
+        await CatalogTestUtilities.VerifyUser(userAct);
 
-        var updateRequest = new
-        {
-            Title = "1-on-1 Coaching Session",
-            Subtitle = "Personalized coaching",
-            Description = "A detailed coaching session tailored to your needs",
-            ClickToPay = "Book session now",
-            Price = 100.0m,
-            DurationMinutes = 30 ,
-            BufferTimeMinutes = 15,
-            DayAvailabilities = dayAvailabilities,
-            MeetingInstructions = "Join the Zoom meeting 5 minutes early",
-            TimeZoneId = "Africa/Tunis"
-        };
-
+        var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
+            (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
+            (DayOfWeek.Wednesday, true, new[] { ("10:00", "16:00") })
+        );
 
         // Act
-        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", "not-found-slug"), updateRequest);
+        var response = await CatalogTestUtilities.UpdateSessionProductRequest(
+            userAct, "not-found-slug", "1-on-1 Coaching Session", 100.0m, 30, 15,
+            "Personalized coaching", "A detailed coaching session", "Join the Zoom meeting 5 minutes early", dayAvailabilities);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -350,107 +203,28 @@ public class SessionProductsTests : CatalogTestBase
     {
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_owns_product");
+        await CreateUserAndLogin("user1_owns_product@example.com", null, user1Arrange);
+        await CatalogTestUtilities.VerifyUser(user1Act);
+
         var (user2Arrange, user2Act) = GetClientsForUser("user2_tries_update");
+        await CreateUserAndLogin("user2_tries_update@example.com", null, user2Arrange);
+        await CatalogTestUtilities.VerifyUser(user2Act);
 
-        await CreateUserAndLogin(null, null, user1Arrange);
-        await CreateUserAndLogin(null, null, user2Arrange);
+        await CatalogTestUtilities.CreateStoreForUser(user1Act, "User1 Store", "user1-store");
+        var sessionProductSlug = await CatalogTestUtilities.CreateSessionProductForUser(user1Act, "User1 Session", 100.0m);
 
-        await CreateStoreForUser(user1Act, "User1 Store", "user1-store");
-
-        // Create product with user1
-        var sessionProductSlug = await CreateSessionProductForUser(user1Act, "User1 Session", 100.0m);
-
-        var dayAvailabilities = new[]
-        {
-            new
-            {
-                DayOfWeek = DayOfWeek.Monday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "09:00", EndTime = "12:00" },
-                    new { StartTime = "14:00", EndTime = "17:00" }
-                }
-            },
-            new
-            {
-                DayOfWeek = DayOfWeek.Wednesday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "10:00", EndTime = "16:00" }
-                }
-            }
-        };
-
-        var updateRequest = new
-        {
-            Title = "1-on-1 Coaching Session",
-            Subtitle = "Personalized coaching",
-            Description = "A detailed coaching session tailored to your needs",
-            ClickToPay = "Book session now",
-            Price = 100.0m,
-            BufferTimeMinutes = 15,
-            DurationMinutes = 30 ,
-
-            DayAvailabilities = dayAvailabilities,
-            MeetingInstructions = "Join the Zoom meeting 5 minutes early",
-            TimeZoneId = "Africa/Tunis"
-        };
-
+        var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
+            (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
+            (DayOfWeek.Wednesday, true, new[] { ("10:00", "16:00") })
+        );
 
         // Act - try to update with user2
-        var response = await user2Act.PutAsJsonAsync(CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", sessionProductSlug), updateRequest);
+        var response = await CatalogTestUtilities.UpdateSessionProductRequest(
+            user2Act, sessionProductSlug, "1-on-1 Coaching Session", 100.0m, 30, 15,
+            "Personalized coaching", "A detailed coaching session", "Join the Zoom meeting 5 minutes early", dayAvailabilities);
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    #endregion
-
-    #region Helper Methods
-
-    private async Task CreateStoreForUser(HttpClient userClient, string title, string slug ,string description ="no description")
-    {
-        var formData = CatalogTestUtilities.StoreTestData.CreateValidStoreFormData(title, slug, description);
-        var response = await userClient.PostAsync(CatalogEndpoints.Stores.Create, formData);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    private async Task<string> CreateSessionProductForUser(HttpClient userClient, string title, decimal price)
-    {
-        var dayAvailabilities = new[]
-        {
-            new
-            {
-                DayOfWeek = DayOfWeek.Monday,
-                IsActive = true,
-                AvailabilityRanges = new[]
-                {
-                    new { StartTime = "09:00", EndTime = "12:00" }
-                }
-            }
-        };
-
-        var sessionProductRequest = new
-        {
-            Title = title,
-            Subtitle = "Test subtitle",
-            Description = "Test description",
-            ClickToPay = "Book now",
-            Price = price,
-            BufferTimeMinutes = 15,
-            DayAvailabilities = dayAvailabilities,
-            MeetingInstructions = "Test instructions",
-            TimeZoneId = "Africa/Tunis"
-        };
-
-        var response = await userClient.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var jsonDoc = System.Text.Json.JsonDocument.Parse(responseContent);
-        return jsonDoc.RootElement.GetProperty("productSlug").ToString();
     }
 
     #endregion

@@ -15,9 +15,9 @@ public class UpdateStorePictureEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(CatalogEndpoints.Stores.UpdatePicture, async(
-            [FromForm]IFormFile file,
-            UserContext userContext, 
+        app.MapPost(CatalogEndpoints.Stores.UpdatePicture, async (
+            [FromForm] IFormFile file,
+            UserContext userContext,
             ICommandHandler<UpdateStorePictureCommand, StoreResponse> handler,
             HttpContext context) =>
         {

@@ -1,6 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using Booking.Modules.Catalog.Features;
+using IntegrationsTests.Abstractions.Authentication;
+using IntegrationsTests.Abstractions.Base;
 
 namespace IntegrationsTests.Abstractions;
 
@@ -71,7 +74,8 @@ public static class CatalogTestUtilities
             string clickToPay = "Book now",
             string meetingInstructions = "Test instructions",
             string timeZoneId = "Africa/Tunis",
-            object[]? dayAvailabilities = null)
+            object[]? dayAvailabilities = null,
+            int durationMinutes = 60)
         {
             return new
             {
@@ -80,6 +84,7 @@ public static class CatalogTestUtilities
                 Description = description,
                 ClickToPay = clickToPay,
                 Price = price,
+                DurationMinutes = durationMinutes,
                 BufferTimeMinutes = bufferTimeMinutes,
                 DayAvailabilities = dayAvailabilities ?? CreateDefaultDayAvailabilities(),
                 MeetingInstructions = meetingInstructions,
@@ -94,7 +99,9 @@ public static class CatalogTestUtilities
             int bufferTimeMinutes = 15,
             string? subtitle = null,
             string? description = null,
+            string? clickToPay = null,
             string? meetingInstructions = null,
+            string? timeZoneId = null,
             object[]? dayAvailabilities = null)
         {
             var request = new Dictionary<string, object>
@@ -107,7 +114,9 @@ public static class CatalogTestUtilities
 
             if (subtitle != null) request["Subtitle"] = subtitle;
             if (description != null) request["Description"] = description;
+            if (clickToPay != null) request["ClickToPay"] = clickToPay;
             if (meetingInstructions != null) request["MeetingInstructions"] = meetingInstructions;
+            if (timeZoneId != null) request["TimeZoneId"] = timeZoneId;
             if (dayAvailabilities != null) request["DayAvailabilities"] = dayAvailabilities;
 
             return request;
@@ -154,50 +163,132 @@ public static class CatalogTestUtilities
         }
     }
 
-    public static class ApiEndpoints
+    /// <summary>
+    /// Verifies a user account for testing purposes
+    /// </summary>
+    /// <param name="client">The HTTP client to use for verification</param>
+    public static async Task VerifyUser(HttpClient client)
     {
-        public const string CreateStore = "/api/catalog/stores";
-        public const string GetMyStore = "/api/catalog/stores/my-store";
-        public const string UpdateStore = "/api/catalog/stores/{0}";
-        public const string CheckSlugAvailability = "/api/catalog/stores/slug-availability/{0}";
-
-        public const string CreateSessionProduct = "/api/catalog/products/sessions";
-        public const string GetSessionProduct = "/api/catalog/products/sessions/{0}";
-        public const string UpdateSessionProduct = "/api/catalog/products/sessions/{0}";
+        var response = await client.GetAsync("/api/authentication/verify?token=valid_token&email=test@example.com");
+        // Verification is handled by the test infrastructure
     }
 
-    public static async Task<int> CreateStoreAndGetId(HttpClient client, string storeName, string storeSlug, string description = "")
+    public static async Task<string> CreateStoreForUser(
+        HttpClient client,
+        string title,
+        string slug,
+        string description = "")
     {
-        var storeData = StoreTestData.CreateValidStoreFormData(storeName, storeSlug, description);
-        var response = await client.PostAsync(ApiEndpoints.CreateStore, storeData);
+        var storeData = StoreTestData.CreateValidStoreFormData(title, slug, description);
+        var response = await client.PostAsync(CatalogEndpoints.Stores.Create, storeData);
 
         if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Failed to create store. Status: {response.StatusCode}");
 
         var responseContent = await response.Content.ReadAsStringAsync();
         var jsonDoc = System.Text.Json.JsonDocument.Parse(responseContent);
-
-        // Assuming the response contains an ID field
-        return jsonDoc.RootElement.TryGetProperty("id", out var idProperty)
-            ? idProperty.GetInt32()
-            : 1; // Fallback ID
+        return jsonDoc.RootElement.GetProperty("slug").GetString()!;
     }
 
-    public static async Task<int> CreateSessionProductAndGetId(
+    public static async Task<string> CreateSessionProductForUser(
         HttpClient client,
         string title,
         decimal price,
-        int bufferTimeMinutes = 15)
+        int bufferTimeMinutes = 15,
+        string subtitle = "Test subtitle",
+        string description = "Test description",
+        string clickToPay = "Book now",
+        object[]? dayAvailabilities = null,
+        int durationMinutes = 60)
     {
-        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductRequest(title, price, bufferTimeMinutes);
-        var response = await client.PostAsJsonAsync(ApiEndpoints.CreateSessionProduct, sessionProductRequest);
+        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductRequest(
+            title, price, bufferTimeMinutes, subtitle, description, clickToPay,
+            "Test instructions", "Africa/Tunis", dayAvailabilities, durationMinutes);
+
+        var response = await client.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
 
         if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Failed to create session product. Status: {response.StatusCode}");
 
         var responseContent = await response.Content.ReadAsStringAsync();
         var jsonDoc = System.Text.Json.JsonDocument.Parse(responseContent);
-        return jsonDoc.RootElement.GetProperty("id").GetInt32();
+        return jsonDoc.RootElement.GetProperty("productSlug").GetString()!;
+    }
+
+    public static async Task<HttpResponseMessage> CreateStoreRequest(
+        HttpClient client,
+        string title,
+        string slug,
+        string description = "",
+        (string platform, string url)[]? socialLinks = null)
+    {
+        var storeData = StoreTestData.CreateValidStoreFormData(title, slug, description, socialLinks);
+        return await client.PostAsync(CatalogEndpoints.Stores.Create, storeData);
+    }
+
+    public static async Task<HttpResponseMessage> CreateSessionProductRequest(
+        HttpClient client,
+        string title,
+        decimal price,
+        int bufferTimeMinutes = 15,
+        string subtitle = "Test subtitle",
+        string description = "Test description",
+        object[]? dayAvailabilities = null,
+        int durationMinutes = 60)
+    {
+        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductRequest(
+            title, price, bufferTimeMinutes, subtitle, description, "Book now",
+            "Test instructions", "Africa/Tunis", dayAvailabilities, durationMinutes);
+
+        return await client.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+    }
+
+    public static async Task<HttpResponseMessage> UpdateStoreRequest(
+        HttpClient client,
+        string title,
+        string? description = null,
+        (string platform, string url)[]? socialLinks = null)
+    {
+        var updateRequest = StoreTestData.CreateStoreUpdateRequest(title, description, socialLinks);
+        return await client.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
+    }
+
+    public static async Task<HttpResponseMessage> UpdateSessionProductRequest(
+        HttpClient client,
+        string productSlug,
+        string title,
+        decimal price,
+        int durationMinutes = 60,
+        int bufferTimeMinutes = 15,
+        string? subtitle = null,
+        string? description = null,
+        string? meetingInstructions = null,
+        object[]? dayAvailabilities = null,
+        string? clickToPay = "Book now",
+        string? timeZoneId = "Africa/Tunis")
+    {
+        var updateRequest = SessionProductTestData.CreateSessionProductUpdateRequest(
+            title, price, durationMinutes, bufferTimeMinutes, subtitle, description,
+            clickToPay, meetingInstructions, timeZoneId, dayAvailabilities);
+
+        return await client.PutAsJsonAsync(
+            CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", productSlug),
+            updateRequest);
+    }
+
+    public static async Task<HttpResponseMessage> GetStoreRequest(HttpClient client)
+    {
+        return await client.GetAsync(CatalogEndpoints.Stores.GetMy);
+    }
+
+    public static async Task<HttpResponseMessage> GetSessionProductRequest(HttpClient client, string productSlug)
+    {
+        return await client.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", productSlug));
+    }
+
+    public static async Task<HttpResponseMessage> CheckSlugAvailabilityRequest(HttpClient client, string slug)
+    {
+        return await client.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", slug));
     }
 
     public static async Task VerifyStoreResponse(HttpResponseMessage response, string? expectedTitle = null)
