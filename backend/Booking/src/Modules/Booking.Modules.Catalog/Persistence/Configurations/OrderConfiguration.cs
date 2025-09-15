@@ -92,12 +92,10 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired(false);
 
         builder.Property(o => o.CreatedAt)
-            .HasColumnName("created_at")
-            .IsRequired();
-
+            .HasColumnName("created_at"); 
+        
         builder.Property(o => o.UpdatedAt)
-            .HasColumnName("updated_at")
-            .IsRequired(false);
+            .HasColumnName("updated_at");
 
         builder.Property(o => o.CompletedAt)
             .HasColumnName("completed_at")

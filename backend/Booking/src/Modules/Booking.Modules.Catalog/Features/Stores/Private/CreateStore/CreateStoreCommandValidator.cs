@@ -1,8 +1,7 @@
-using Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Stores.CreateStore;
+namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
 internal sealed class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
 {

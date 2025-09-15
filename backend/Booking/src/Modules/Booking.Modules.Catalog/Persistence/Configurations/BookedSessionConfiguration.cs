@@ -19,13 +19,14 @@ internal class BookedSessionConfiguration : IEntityTypeConfiguration<BookedSessi
                 minutes => new Duration(minutes))
             .HasColumnName("DurationMinutes")
             .IsRequired();
-        
+
         builder.Property(sp => sp.MeetLink)
             .HasConversion(
                 meetLink => meetLink!.Url,
                 url => new MeetLink(url))
-            .HasColumnName("MeetLink")
-            .IsRequired();
+            .HasColumnName("MeetLink");
+        
+        
         // TODO : add configuration for amount  , sessionStatus ... 
     }
 }

@@ -327,6 +327,7 @@ public static class MentorshipTestUtilities
     /// <param name="timeZoneId">Timezone for the session</param>
     /// <param name="note">Optional note for the session</param>
     /// <returns>An anonymous object representing the booking request</returns>
+    /// 
     public static object CreateBookingRequest(
         string mentorSlug,
         string date,

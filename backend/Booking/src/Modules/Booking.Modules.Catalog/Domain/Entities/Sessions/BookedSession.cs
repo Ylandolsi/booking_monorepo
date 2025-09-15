@@ -29,6 +29,8 @@ public class BookedSession : Entity
 
     public MeetLink? MeetLink { get; private set; }
     public DateTime ScheduledAt { get; private set; }
+    public DateTime EndsAt { get; private set; }
+
     public DateTime? ConfirmedAt { get; private set; }
 
 
@@ -64,7 +66,6 @@ public class BookedSession : Entity
             CreatedAt = DateTime.UtcNow,
             ScheduledAt = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Utc),
             Title = title,
-            
         };
 
         return session;
@@ -96,6 +97,7 @@ public class BookedSession : Entity
             Status = SessionStatus.Booked,
             CreatedAt = DateTime.UtcNow,
             ScheduledAt = scheduledAt,
+            EndsAt = scheduledAt.AddMinutes(duration.Minutes),
             Title = title,
         };
 

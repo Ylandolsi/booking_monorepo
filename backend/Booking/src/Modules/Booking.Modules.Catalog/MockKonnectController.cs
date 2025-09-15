@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Mentorships.Features.test.Konnect;
+namespace Booking.Modules.Catalog;
 
 [ApiController]
 [Route("v2")]

@@ -108,8 +108,8 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                 options.ApiKey = "test-api-key";
                 options.WalletKey = "test-wallet";
                 options.PaymentLifespan = 100;
-                options.Webhook = "mentorships/payments/webhook";
-                options.PayoutWebhook = "mentorships/admin/payout/webhook";
+                options.Webhook = "api/catalog/payments/webhook";
+                options.PayoutWebhook = "api/catalog/admin/payout/webhook";
             });
 
             var descriptor = services.SingleOrDefault(d => d.ServiceType ==

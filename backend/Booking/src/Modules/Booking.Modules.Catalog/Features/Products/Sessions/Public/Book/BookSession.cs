@@ -12,7 +12,6 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Book;
 internal sealed class BookSession : IEndpoint
 {
     public sealed record Request(
-        int BuyerId,
         string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
         string StartTime, // TIMEONLY  
         string EndTime,

@@ -1,4 +1,4 @@
-namespace Booking.Modules.Catalog.Features.Payment;
+namespace Booking.Modules.Catalog.Features.Orders;
 
 public class PaymentService
 {

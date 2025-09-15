@@ -152,13 +152,14 @@ internal sealed class BookSessionCommandHandler(
              * thisSessionStart <= endOtherSession
              * thisSessionEnd >=  startOtherSession
              */
-            .AnyAsync(s => sessionStartDateTimeUtc <= s.ScheduledAt.AddMinutes(s.Duration.Minutes) &&
+            .AnyAsync(s => sessionStartDateTimeUtc <= s.EndsAt &&
                            sessionEndDateTimeUtc >= s.ScheduledAt,
                 cancellationToken);
 
         if (hasConflict)
         {
-            logger.LogWarning("Session conflict detected for mentor {ProductSlug} on {Date} from {StartTime} to {EndTime}",
+            logger.LogWarning(
+                "Session conflict detected for mentor {ProductSlug} on {Date} from {StartTime} to {EndTime}",
                 product.ProductSlug, command.Date, command.StartTime, command.EndTime);
             return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.TimeConflict",
                 "The requested time slot conflicts with an existing session"));
@@ -290,9 +291,8 @@ internal sealed class BookSessionCommandHandler(
                 }
             }
             else
-            {
+            { // FREE SESSION 
                 // TODO extract this into function : used on webhookCommandHandler 
-                // Fully paid from wallet - create escrow immediately
 
 
                 var sessionStartTime = session.ScheduledAt;
@@ -337,15 +337,13 @@ internal sealed class BookSessionCommandHandler(
                 var meetLink = resEventMentor.IsSuccess
                     ? resEventMentor.Value.HangoutLink
                     : "Error happened while integration , could you please contact us";
+                
                 session.Confirm(meetLink);
-
-                var priceAfterReducing = session.Price - (session.Price * 0.15m);
-
-                var escrow = new Escrow(priceAfterReducing, session.Id);
-                await context.Escrows.AddAsync(escrow, cancellationToken);
-
+                order.MarkAsCompleted();
+                
+                
                 //await SendNotificationsToUsers(session,);
-                logger.LogInformation("Session {SessionId} fully paid from wallet and confirmed", session.Id);
+                logger.LogInformation("Session {SessionId} free", session.Id);
             }
 
             await context.SaveChangesAsync(cancellationToken);
@@ -381,7 +379,7 @@ internal sealed class BookSessionCommandHandler(
                 Message: $"Your mentorship session has been confirmed and paid. You'll receive the meeting link soon.",
                 CreatedAt: DateTime.UtcNow
             );
-            // TODO : needs to be cached 
+            // TODO : needs to be cached
 
             await notificationService.SendNotificationAsync(menteeSlug, menteeNotification);
 

@@ -2,14 +2,13 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.UpdateStorePicture;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
 
 public class UpdateStorePictureEndpoint : IEndpoint
 {

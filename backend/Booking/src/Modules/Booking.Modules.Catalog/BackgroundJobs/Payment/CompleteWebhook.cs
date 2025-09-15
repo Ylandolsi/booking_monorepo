@@ -49,7 +49,7 @@ public class CompleteWebhook(
                 = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.Id == order.ProductId, cancellationToken);
             if (session is null)
             {
-                logger.LogError("Failed to find session when handling payment (completeWebhook) for order with id : ",
+                logger.LogError("Failed to find session when handling payment (completeWebhook) for order with id : ", // TODO FIX log 
                     orderId);
                 return;
             }
@@ -103,21 +103,30 @@ public class CompleteWebhook(
                 Location = "Online"
             };
 
-        await googleCalendarService.InitializeAsync(store.UserId);
-        var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+        try
 
-
-        if (resEventMentor.IsFailure)
         {
-            logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                session.Id, resEventMentor.Error.Description);
-            // Continue without calendar event - session should still be confirmed
+            await googleCalendarService.InitializeAsync(store.UserId);
+
+            var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+            if (resEventMentor.IsFailure)
+            {
+                logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
+                    session.Id, resEventMentor.Error.Description);
+                // Continue without calendar event - session should still be confirmed
+            }
+
+            var meetLink = resEventMentor.IsSuccess
+                ? resEventMentor.Value.HangoutLink
+                : "https://meet.google.com/error-happened-could-you-please-contact-us";
+            session.Confirm(meetLink);
+            return; 
+        }
+        catch (Exception e)
+        {
+            logger.LogError("Error happened with google calendar for order Id ... "); // TODO complete this log! 
         }
 
-        var meetLink = resEventMentor.IsSuccess
-            ? resEventMentor.Value.HangoutLink
-            : "Error happened while integration , could you please contact us";
-
-        session.Confirm(meetLink);
+        session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
     }
 }

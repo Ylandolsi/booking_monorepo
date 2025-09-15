@@ -1,4 +1,5 @@
-how inhertiance works in store ( navigation property to products) : sessionProducts implement products and appear int that navigation property 
+how inhertiance works in store ( navigation property to products) : sessionProducts implement products and appear int
+that navigation property
 
 # .NET and EF Core Commands
 
@@ -31,8 +32,15 @@ dotnet test tests/IntegrationsTests/IntegrationsTests.csproj --filter "CreateSto
 
 ## Entity Framework Migrations
 
-Add migrations for the Users module:
-
+Add migrations for the Users module: ```bash
+    dotnet ef migrations add FixUpdatedAt \
+  --project src/Modules/Booking.Modules.Catalog/Booking.Modules.Catalog.csproj \
+  --startup-project src/Api/Booking.Api/Booking.Api.csproj \
+  --context CatalogDbContext \
+  --configuration Debug \
+  --output-dir Persistence/Migrations
+```
+    
 ```bash
 dotnet ef migrations add Initial \
   --project src/Modules/Booking.Modules.Users/Booking.Modules.Users.csproj \
@@ -75,8 +83,10 @@ dotnet ef migrations add InitialMentorshipsMigration --startup-project ../Api/Bo
 ## JSON Serialization Notes
 
 - `System.Text.Json` is case-insensitive by default, but `Newtonsoft.Json` is case-sensitive.
-- When returning EF Core entities directly, `System.Text.Json` serializes every public getter (mapped or not), so properties like `DomainEvents` may appear in the output despite not being database columns.
+- When returning EF Core entities directly, `System.Text.Json` serializes every public getter (mapped or not), so
+  properties like `DomainEvents` may appear in the output despite not being database columns.
 
 ## Background Jobs in Tests
 
-In integration tests, background jobs need to be triggered manually because they are not automatically executed in the test environment.
+In integration tests, background jobs need to be triggered manually because they are not automatically executed in the
+test environment.
