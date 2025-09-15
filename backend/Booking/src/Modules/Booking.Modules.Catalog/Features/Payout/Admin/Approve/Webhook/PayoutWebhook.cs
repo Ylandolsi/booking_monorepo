@@ -47,24 +47,25 @@ public class PayoutWebhookCommandHandler(
 
         if (payout is null)
         {
-            logger.LogError("Webhook ( admin approve payout ) paymentRef :{ref}, dosent exists in payout table",
+            logger.LogWarning("Webhook (admin approve payout) received invalid paymentRef: {PaymentRef}",
                 command.PaymentRef);
-            return Result.Failure(Error.None);
+            return Result.Failure(Error.NotFound("Payout.NotFound", "Payout not found for the provided payment reference"));
         }
 
         if (payout.Status == PayoutStatus.Completed)
         {
-            logger.LogError(
-                "Webhook ( admin approve payout ) trying to handle a payout (ref = {ref}) already completed ",
+            logger.LogWarning(
+                "Webhook (admin approve payout) attempting to process already completed payout with reference: {PaymentRef}",
                 command.PaymentRef);
 
-            return Result.Failure(Error.None);
+            return Result.Failure(Error.Conflict("Payout.AlreadyCompleted", "Payout has already been completed"));
         }
 
         var paymentDetails = await konnectService.GetPaymentDetails(command.PaymentRef);
         if (paymentDetails.IsFailure)
         {
-            logger.LogError(paymentDetails.Error.Description);
+            logger.LogError("Failed to retrieve payment details from Konnect for paymentRef: {PaymentRef}. Error: {Error}",
+                command.PaymentRef, paymentDetails.Error.Description);
             return Result.Failure(paymentDetails.Error);
         }
 
@@ -75,10 +76,10 @@ public class PayoutWebhookCommandHandler(
         if (wallet is null)
         {
             logger.LogError(
-                "Admin is trying to reject payout with id {id}  , but Failed to find wallet of user with id{userId} ",
-                payout.Id, payout.UserId);
+                "Failed to find wallet for user {UserId} when processing payout {PayoutId} with reference {PaymentRef}",
+                payout.UserId, payout.Id, command.PaymentRef);
 
-            return Result.Failure(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
+            return Result.Failure(Error.NotFound("Wallet.NotFound", "Wallet not found for the user"));
         }
 
         wallet.UpdatePendingBalance(-payout.Amount);
