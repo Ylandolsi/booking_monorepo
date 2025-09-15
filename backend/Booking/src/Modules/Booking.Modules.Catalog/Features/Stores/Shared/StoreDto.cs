@@ -12,5 +12,4 @@ public record StoreResponse(
     bool IsPublished,
     DateTime CreatedAt,
     IReadOnlyList<SocialLink> SocialLinks
-
 );

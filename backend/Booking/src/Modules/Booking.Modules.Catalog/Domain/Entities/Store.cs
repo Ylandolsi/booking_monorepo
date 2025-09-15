@@ -17,9 +17,7 @@ public class Store : Entity
     public string? Description { get; private set; }
     public Picture Picture { get; private set; }
 
-    public bool IsPublished { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
+    public bool IsPublished { get; private set; } = true;
 
     // STEP 1 : name/slug : STEP 2 profile picture , bio 
     public int Step { get; private set; }
@@ -50,7 +48,7 @@ public class Store : Entity
             Title = title.Trim(),
             Slug = slug.Trim().ToLowerInvariant(),
             Description = description?.Trim(),
-            IsPublished = false,
+            IsPublished = true,
             CreatedAt = DateTime.UtcNow
         };
 

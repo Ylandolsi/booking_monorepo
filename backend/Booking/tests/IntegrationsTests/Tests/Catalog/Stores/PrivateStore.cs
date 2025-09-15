@@ -9,11 +9,13 @@ using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Catalog.Stores;
 
-public class StoresTests : CatalogTestBase
+public class PrivateStore : CatalogTestBase
 {
-    public StoresTests(IntegrationTestsWebAppFactory factory) : base(factory)
+    public PrivateStore(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
+
+
 
     #region Create Store Tests
 

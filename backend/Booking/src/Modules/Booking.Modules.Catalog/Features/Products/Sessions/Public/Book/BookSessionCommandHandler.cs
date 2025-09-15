@@ -124,7 +124,7 @@ internal sealed class BookSessionCommandHandler(
 
 
         // Check if the time slot is available 
-        bool mentorAvailable = await context.SessionAvailabilities
+        bool productAvailable = await context.SessionAvailabilities
             .AnyAsync(a =>
                     a.SessionProductId == product.Id &&
                     a.IsActive &&
@@ -133,12 +133,12 @@ internal sealed class BookSessionCommandHandler(
                     a.TimeRange.EndTime >= TimeOnly.FromDateTime(sessionEndDateTimeTimeZoneMentor),
                 cancellationToken);
 
-        if (!mentorAvailable)
+        if (!productAvailable)
         {
-            logger.LogWarning("Mentor {MentorId} is not available on {DayOfWeek} from {StartTime} to {EndTime}",
+            logger.LogWarning("Product {ProductSlug} is not available on {DayOfWeek} from {StartTime} to {EndTime}",
                 product.ProductSlug, requestedDayOfWeek, command.StartTime, command.EndTime);
-            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.MentorNotAvailable",
-                "Mentor is not available at the requested time"));
+            return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.Product.IsNotAvailable",
+                "Session product is not available at the requested time"));
         }
 
         // Check for conflicting sessions
@@ -158,7 +158,7 @@ internal sealed class BookSessionCommandHandler(
 
         if (hasConflict)
         {
-            logger.LogWarning("Session conflict detected for mentor {MentorId} on {Date} from {StartTime} to {EndTime}",
+            logger.LogWarning("Session conflict detected for mentor {ProductSlug} on {Date} from {StartTime} to {EndTime}",
                 product.ProductSlug, command.Date, command.StartTime, command.EndTime);
             return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.TimeConflict",
                 "The requested time slot conflicts with an existing session"));
@@ -187,7 +187,7 @@ internal sealed class BookSessionCommandHandler(
             if (String.IsNullOrEmpty(mentorData.GoogleEmail))
             {
                 logger.LogError(
-                    "user tries to book a session with a mentor  {MentorId } who is not integrated with google calendar ",
+                    "user tries to book a session with a mentor  {ProductSlug } who is not integrated with google calendar ",
                     mentorData.Slug);
                 return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.Not.Integrated.Google.Calendar",
                     "Your mentor is not integrated with  google calendar"));
@@ -199,6 +199,8 @@ internal sealed class BookSessionCommandHandler(
                 : command.Title;
 
             var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
+
+            // TODO : not now : add the current session booked to redis to avoid concurrency ! 
 
             var session = BookedSession.Create(
                 product.Id,
@@ -332,7 +334,7 @@ internal sealed class BookSessionCommandHandler(
 
                 var meetLink = resEventMentor.IsSuccess
                     ? resEventMentor.Value.HangoutLink
-                    : "https://meet.google.com/placeholder";
+                    : "Error happened while integration , could you please contact us";
                 session.Confirm(meetLink);
 
                 var priceAfterReducing = session.Price - (session.Price * 0.15m);
@@ -348,14 +350,14 @@ internal sealed class BookSessionCommandHandler(
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             logger.LogInformation(
-                "Successfully booked session {SessionId} for mentor {MentorId} and User {name} on {Date} from {StartTime} to {EndTime}",
+                "Successfully booked session {SessionId} for mentor {ProductSlug} and User {name} on {Date} from {StartTime} to {EndTime}",
                 session.Id, product.ProductSlug, command.Name, command.Date, command.StartTime, command.EndTime);
 
             return Result.Success(new BookSessionRepsonse(paymentLink));
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to book session for mentor {MentorId} and mentee",
+            logger.LogError(ex, "Failed to book session for mentor {ProductSlug} and mentee",
                 product.ProductSlug);
 
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
@@ -399,7 +401,7 @@ internal sealed class BookSessionCommandHandler(
                     }
                 );
 
-                await notificationService.SendNotificationAsync(session.MentorId, mentorNotification);
+                await notificationService.SendNotificationAsync(session.ProductSlug, mentorNotification);
             #1#
 
             logger.LogInformation("Real-time notifications sent for session {SessionId}", session.Id);

@@ -28,10 +28,7 @@ public abstract class Product : Entity
 
     public int DisplayOrder { get; protected set; }
     public bool IsPublished { get; protected set; }
-
-    public DateTime CreatedAt { get; protected set; }
-    public DateTime? UpdatedAt { get; protected set; }
-
+    
     // Navigation properties
     public Store Store { get; protected set; } = default!;
 

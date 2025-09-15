@@ -1,3 +1,5 @@
+how inhertiance works in store ( navigation property to products) : sessionProducts implement products and appear int that navigation property 
+
 # .NET and EF Core Commands
 
 In EF Core, if you don’t configure anything, it uses your C# property names (usually PascalCase).

@@ -1,3 +1,7 @@
+dotnet test --filter "FullyQualifiedName~StoresTests" --verbosity normal
+dotnet test tests/IntegrationsTests/Tests/Catalog/Stores/StoresTests.cs --verbosity normal
+
+dotnet test tests/IntegrationsTests/IntegrationsTests.csproj --filter "CreateStore_ShouldSucceed_WhenValidDataProvided" -v n
 EnumerateArray
 
 (string platform, string url)[]

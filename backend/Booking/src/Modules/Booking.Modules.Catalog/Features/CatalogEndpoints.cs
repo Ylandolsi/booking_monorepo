@@ -13,6 +13,8 @@ public static class CatalogEndpoints
         public const string UpdateLinks = Base + "/stores/{storeId:int}/links";
         public const string UpdateSocialLinks = Base + "/stores/{storeId:int}/social-links";
         public const string GetMy = Base + "/stores/me";
+
+        public const string GetPublic = Base + "/stores/{slug}";
     }
 
     public static class Products

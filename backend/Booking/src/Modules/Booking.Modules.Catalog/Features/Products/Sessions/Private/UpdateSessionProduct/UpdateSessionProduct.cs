@@ -158,7 +158,7 @@ public class UpdateSessionProductHandler(
                 sessionProduct.MeetingInstructions,
                 sessionProduct.TimeZoneId,
                 sessionProduct.IsPublished,
-                sessionProduct.UpdatedAt ?? DateTime.UtcNow
+                sessionProduct.UpdatedAt
             );
 
             return Result.Success(response);

@@ -1,0 +1,2 @@
+* test published/unpublished store and how does they appear 
+* change picture test 
