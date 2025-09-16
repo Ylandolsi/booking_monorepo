@@ -1,5 +1,36 @@
+## https://claude.ai/chat/a5dd9237-52e8-49c8-88e6-703768f4caaf
+
+## https://cloud.google.com/products/alloydb?hl=en
+
+## https://chriscooper0.github.io/calendar/
+
 how inhertiance works in store ( navigation property to products) : sessionProducts implement products and appear int
 that navigation property
+
+If you actually want to save the enum as a string in the database:
+
+You need to configure EF Core explicitly, e.g.:
+modelBuilder
+.Entity<Payout>()
+.Property(p => p.Status)
+.HasConversion<string>();
+This way:
+
+DB column → "Pending" / "Completed"
+
+## JSON → "Pending" / "Completed"
+
+request aborted vs cancellation token
+| Aspect | `HttpContext.RequestAborted` | `cancellationToken` (method param) |
+| ----------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
+| **Scope** | Only for the current HTTP request | General-purpose, can be chained or created manually |
+| **Triggered by** | Client disconnects, request times out | Whatever cancellation policy you define (timeouts, linked tokens, manual cancel) |
+| **Control** | Framework-controlled | You (developer) decide |
+| **Best practice** | Use it to stop work when client goes away | Use it for explicit cancellation needs beyond HTTP lifecycle |
+
+---
+
+PolyJSON
 
 # .NET and EF Core Commands
 
@@ -40,7 +71,7 @@ Add migrations for the Users module: ```bash
   --configuration Debug \
   --output-dir Persistence/Migrations
 ```
-    
+
 ```bash
 dotnet ef migrations add Initial \
   --project src/Modules/Booking.Modules.Users/Booking.Modules.Users.csproj \

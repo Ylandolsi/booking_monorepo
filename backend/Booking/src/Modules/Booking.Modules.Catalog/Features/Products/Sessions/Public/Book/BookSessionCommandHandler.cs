@@ -9,9 +9,9 @@ using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Utils;
 using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Mentorships.Features.Payment;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Text.RegularExpressions;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Book;
 
@@ -22,55 +22,13 @@ internal sealed class BookSessionCommandHandler(
     NotificationService notificationService,
     IUnitOfWork unitOfWork,
     GoogleCalendarService googleCalendarService,
+    IValidator<BookSessionCommand> validator,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>
 {
-    private static readonly Regex EmailRegex = new(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
-    private static readonly Regex PhoneRegex = new(@"^\+?[\d\s\-\(\)]+$", RegexOptions.Compiled);
-
-    private Result ValidateInput(BookSessionCommand command)
-    {
-        var errors = new List<string>();
-
-        // Email validation
-        if (string.IsNullOrWhiteSpace(command.Email) || !EmailRegex.IsMatch(command.Email))
-        {
-            errors.Add("Valid email address is required");
-        }
-
-        // Phone validation
-        if (string.IsNullOrWhiteSpace(command.Phone) || !PhoneRegex.IsMatch(command.Phone))
-        {
-            errors.Add("Valid phone number is required");
-        }
-
-        // Name validation
-        if (string.IsNullOrWhiteSpace(command.Name) || command.Name.Length < 2)
-        {
-            errors.Add("Name must be at least 2 characters long");
-        }
-
-        // TimeZone validation
-        try
-        {
-            TimeZoneInfo.FindSystemTimeZoneById(command.TimeZoneId);
-        }
-        catch (TimeZoneNotFoundException)
-        {
-            errors.Add("Invalid timezone identifier");
-        }
-
-        if (errors.Any())
-        {
-            return Result.Failure(Error.Validation("Input.Invalid", string.Join("; ", errors)));
-        }
-
-        return Result.Success();
-    }
-
     private async Task<Result<string>> CreateCalendarEventAndGetMeetLink(
         BookedSession session,
         BookSessionCommand command,
-        string mentorUserId,
+        int mentorUserId,
         CancellationToken cancellationToken)
     {
         try
@@ -107,7 +65,8 @@ internal sealed class BookSessionCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Exception occurred while creating calendar event for session {SessionId}: {ErrorMessage}",
+            logger.LogError(ex,
+                "Exception occurred while creating calendar event for session {SessionId}: {ErrorMessage}",
                 session.Id, ex.Message);
             return Result.Success("https://meet.google.com/error-happened-could-you-please-contact-us");
         }
@@ -153,12 +112,6 @@ internal sealed class BookSessionCommandHandler(
             "Booking session for mentor {ProductSlug} on {Date} from {StartTime} to {EndTime}",
             command.ProductSlug, command.Date, command.StartTime, command.EndTime);
 
-        // Validate input first
-        var inputValidation = ValidateInput(command);
-        if (inputValidation.IsFailure)
-        {
-            return Result.Failure<BookSessionRepsonse>(inputValidation.Error);
-        }
 
         await unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -275,7 +228,8 @@ internal sealed class BookSessionCommandHandler(
         // Validate calculated price
         if (totalPrice < 0)
         {
-            logger.LogError("Calculated negative price {Price} for session with product {ProductSlug} and duration {Duration} minutes",
+            logger.LogError(
+                "Calculated negative price {Price} for session with product {ProductSlug} and duration {Duration} minutes",
                 totalPrice, product.ProductSlug, durationMinutes);
             return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.InvalidPrice",
                 "Invalid price calculation. Please contact support."));
@@ -338,7 +292,7 @@ internal sealed class BookSessionCommandHandler(
                 command.TimeZoneId,
                 command.Note);
 
-            await context.Orders.AddAsync(order);
+            await context.Orders.AddAsync(order, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
 
@@ -394,9 +348,13 @@ internal sealed class BookSessionCommandHandler(
                 }
             }
             else
-            { // FREE SESSION 
-                var meetLinkResult = await CreateCalendarEventAndGetMeetLink(session, command, storeData.UserId, cancellationToken);
-                var meetLink = meetLinkResult.IsSuccess ? meetLinkResult.Value : "Error happened while integration, could you please contact us";
+            {
+                // FREE SESSION 
+                var meetLinkResult =
+                    await CreateCalendarEventAndGetMeetLink(session, command, storeData.UserId, cancellationToken);
+                var meetLink = meetLinkResult.IsSuccess
+                    ? meetLinkResult.Value
+                    : "Error happened while integration, could you please contact us";
 
                 session.Confirm(meetLink);
                 order.MarkAsCompleted();
@@ -415,7 +373,8 @@ internal sealed class BookSessionCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to book session for mentor {ProductSlug} and customer {CustomerName}. Error: {ErrorMessage}",
+            logger.LogError(ex,
+                "Failed to book session for mentor {ProductSlug} and customer {CustomerName}. Error: {ErrorMessage}",
                 command.ProductSlug, command.Name, ex.Message);
 
             await unitOfWork.RollbackTransactionAsync(cancellationToken);

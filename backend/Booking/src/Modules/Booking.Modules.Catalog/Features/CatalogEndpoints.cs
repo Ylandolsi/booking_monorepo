@@ -21,11 +21,14 @@ public static class CatalogEndpoints
     {
         public static class Sessions
         {
-            public const string Create = Base + "/products/sessions";
-            public const string Get = Base + "/products/sessions/{productSlug}";
-            public const string Update = Base + "/products/sessions/{productSlug}";
-            public const string UpdateAvailability = Base + "/products/sessions/{sessionProductId:int}/availability";
+            public const string Create = Base + "/products/s";
+            public const string Get = Base + "/products/s/{productSlug}";
+            public const string Update = Base + "/products/s/{productSlug}";
+            public const string Book = $"{Base}/products/s";
+            public const string GetSessions = $"{Base}/s"; // 
+
         }
+
     }
 
     public static class Orders
@@ -65,15 +68,6 @@ public static class CatalogEndpoints
         public const string GetSchedule = $"{Base}/availability/schedule";
     }
 
-    public static class Sessions
-    {
-        public const string Book = $"{Base}/sessions";
 
-        /*
-        public const string Cancel = $"{Base}/sessions/{{sessionId}}/cancel";
-        public const string GetDetails = $"{Base}/sessions/{{sessionId}}";
-        */
-        public const string GetSessions = $"{Base}/sessions"; // 
-    }
 
 }
