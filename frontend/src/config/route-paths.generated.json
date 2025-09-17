@@ -8,8 +8,16 @@
     "EMAIL_VERIFICATION": "/auth/email-verification",
     "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verified"
   },
+  "STORE": {
+    "ROOT": "/store",
+    "INDEX": "/store/index",
+    "DASHBOARD": "/store/dashboard",
+    "VIEW": "/store/$storeSlug",
+    "PRODUCT": "/store/$storeSlug/$productSlug"
+  },
   "APP": {
     "INDEX": "/app",
+    "LINKI": "/app/linki",
     "BOOKING": {
       "SESSION": "/app/booking/session/$mentorSlug"
     },

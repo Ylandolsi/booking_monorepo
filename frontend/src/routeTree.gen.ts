@@ -11,12 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as StoreRouteRouteImport } from './routes/store/route'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoreIndexRouteImport } from './routes/store/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
+import { Route as StoreDashboardRouteImport } from './routes/store/dashboard'
+import { Route as StoreStoreSlugRouteImport } from './routes/store/$storeSlug'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -24,9 +28,13 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthEmailVerifiedRouteImport } from './routes/auth/email-verified'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
+import { Route as AppStoreRouteImport } from './routes/app/store'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
+import { Route as AppLinkiRouteImport } from './routes/app/linki'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
+import { Route as StoreStoreSlugProductSlugRouteImport } from './routes/store/$storeSlug/$productSlug'
+import { Route as AppStoreSetupRouteImport } from './routes/app/store.setup'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
@@ -44,6 +52,11 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoreRouteRoute = StoreRouteRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -59,6 +72,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoreIndexRoute = StoreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => StoreRouteRoute,
+} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -73,6 +91,16 @@ const TestDashboardRoute = TestDashboardRouteImport.update({
   id: '/test/dashboard',
   path: '/test/dashboard',
   getParentRoute: () => rootRouteImport,
+} as any)
+const StoreDashboardRoute = StoreDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => StoreRouteRoute,
+} as any)
+const StoreStoreSlugRoute = StoreStoreSlugRouteImport.update({
+  id: '/$storeSlug',
+  path: '/$storeSlug',
+  getParentRoute: () => StoreRouteRoute,
 } as any)
 const ErrorExpSimpleLoadingDemoRoute =
   ErrorExpSimpleLoadingDemoRouteImport.update({
@@ -110,6 +138,11 @@ const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   path: '/email-verification',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppStoreRoute = AppStoreRouteImport.update({
+  id: '/store',
+  path: '/store',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppPayoutsRoute = AppPayoutsRouteImport.update({
   id: '/payouts',
   path: '/payouts',
@@ -120,10 +153,26 @@ const AppMeetsRoute = AppMeetsRouteImport.update({
   path: '/meets',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppLinkiRoute = AppLinkiRouteImport.update({
+  id: '/linki',
+  path: '/linki',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppIntegrationRoute = AppIntegrationRouteImport.update({
   id: '/integration',
   path: '/integration',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const StoreStoreSlugProductSlugRoute =
+  StoreStoreSlugProductSlugRouteImport.update({
+    id: '/$productSlug',
+    path: '/$productSlug',
+    getParentRoute: () => StoreStoreSlugRoute,
+  } as any)
+const AppStoreSetupRoute = AppStoreSetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => AppStoreRoute,
 } as any)
 const AppProfileUserSlugRoute = AppProfileUserSlugRouteImport.update({
   id: '/profile/$userSlug',
@@ -162,11 +211,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
+  '/store': typeof StoreRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
+  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/store': typeof AppStoreRouteWithChildren
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -174,13 +226,18 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/store/$storeSlug': typeof StoreStoreSlugRouteWithChildren
+  '/store/dashboard': typeof StoreDashboardRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
+  '/store/': typeof StoreIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
+  '/app/store/setup': typeof AppStoreSetupRoute
+  '/store/$storeSlug/$productSlug': typeof StoreStoreSlugProductSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -190,8 +247,10 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
+  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/store': typeof AppStoreRouteWithChildren
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -199,13 +258,18 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/store/$storeSlug': typeof StoreStoreSlugRouteWithChildren
+  '/store/dashboard': typeof StoreDashboardRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
+  '/store': typeof StoreIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
+  '/app/store/setup': typeof AppStoreSetupRoute
+  '/store/$storeSlug/$productSlug': typeof StoreStoreSlugProductSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -214,11 +278,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
+  '/store': typeof StoreRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
+  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/store': typeof AppStoreRouteWithChildren
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -226,13 +293,18 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/store/$storeSlug': typeof StoreStoreSlugRouteWithChildren
+  '/store/dashboard': typeof StoreDashboardRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
+  '/store/': typeof StoreIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
+  '/app/store/setup': typeof AppStoreSetupRoute
+  '/store/$storeSlug/$productSlug': typeof StoreStoreSlugProductSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -242,11 +314,14 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/store'
     | '/home'
     | '/unauthorized'
     | '/app/integration'
+    | '/app/linki'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -254,13 +329,18 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/store/$storeSlug'
+    | '/store/dashboard'
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
+    | '/store/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
+    | '/app/store/setup'
+    | '/store/$storeSlug/$productSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
@@ -270,8 +350,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/unauthorized'
     | '/app/integration'
+    | '/app/linki'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -279,13 +361,18 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/store/$storeSlug'
+    | '/store/dashboard'
     | '/test/dashboard'
     | '/test/img'
     | '/app'
+    | '/store'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
+    | '/app/store/setup'
+    | '/store/$storeSlug/$productSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   id:
@@ -293,11 +380,14 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/store'
     | '/home'
     | '/unauthorized'
     | '/app/integration'
+    | '/app/linki'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -305,13 +395,18 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/store/$storeSlug'
+    | '/store/dashboard'
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
+    | '/store/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/profile/$userSlug'
+    | '/app/store/setup'
+    | '/store/$storeSlug/$productSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesById: FileRoutesById
@@ -320,6 +415,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  StoreRouteRoute: typeof StoreRouteRouteWithChildren
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
@@ -343,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/store': {
+      id: '/store'
+      path: '/store'
+      fullPath: '/store'
+      preLoaderRoute: typeof StoreRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -364,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/store/': {
+      id: '/store/'
+      path: '/'
+      fullPath: '/store/'
+      preLoaderRoute: typeof StoreIndexRouteImport
+      parentRoute: typeof StoreRouteRoute
+    }
     '/app/': {
       id: '/app/'
       path: '/'
@@ -384,6 +494,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/test/dashboard'
       preLoaderRoute: typeof TestDashboardRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/store/dashboard': {
+      id: '/store/dashboard'
+      path: '/dashboard'
+      fullPath: '/store/dashboard'
+      preLoaderRoute: typeof StoreDashboardRouteImport
+      parentRoute: typeof StoreRouteRoute
+    }
+    '/store/$storeSlug': {
+      id: '/store/$storeSlug'
+      path: '/$storeSlug'
+      fullPath: '/store/$storeSlug'
+      preLoaderRoute: typeof StoreStoreSlugRouteImport
+      parentRoute: typeof StoreRouteRoute
     }
     '/error-exp/simple-loading-demo': {
       id: '/error-exp/simple-loading-demo'
@@ -434,6 +558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/app/store': {
+      id: '/app/store'
+      path: '/store'
+      fullPath: '/app/store'
+      preLoaderRoute: typeof AppStoreRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/payouts': {
       id: '/app/payouts'
       path: '/payouts'
@@ -448,12 +579,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMeetsRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/linki': {
+      id: '/app/linki'
+      path: '/linki'
+      fullPath: '/app/linki'
+      preLoaderRoute: typeof AppLinkiRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/integration': {
       id: '/app/integration'
       path: '/integration'
       fullPath: '/app/integration'
       preLoaderRoute: typeof AppIntegrationRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/store/$storeSlug/$productSlug': {
+      id: '/store/$storeSlug/$productSlug'
+      path: '/$productSlug'
+      fullPath: '/store/$storeSlug/$productSlug'
+      preLoaderRoute: typeof StoreStoreSlugProductSlugRouteImport
+      parentRoute: typeof StoreStoreSlugRoute
+    }
+    '/app/store/setup': {
+      id: '/app/store/setup'
+      path: '/setup'
+      fullPath: '/app/store/setup'
+      preLoaderRoute: typeof AppStoreSetupRouteImport
+      parentRoute: typeof AppStoreRoute
     }
     '/app/profile/$userSlug': {
       id: '/app/profile/$userSlug'
@@ -500,6 +652,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppStoreRouteChildren {
+  AppStoreSetupRoute: typeof AppStoreSetupRoute
+}
+
+const AppStoreRouteChildren: AppStoreRouteChildren = {
+  AppStoreSetupRoute: AppStoreSetupRoute,
+}
+
+const AppStoreRouteWithChildren = AppStoreRoute._addFileChildren(
+  AppStoreRouteChildren,
+)
+
 interface AppAdminPayoutRequestsRouteChildren {
   AppAdminPayoutRequestsRequestIdRoute: typeof AppAdminPayoutRequestsRequestIdRoute
 }
@@ -516,8 +680,10 @@ const AppAdminPayoutRequestsRouteWithChildren =
 
 interface AppRouteRouteChildren {
   AppIntegrationRoute: typeof AppIntegrationRoute
+  AppLinkiRoute: typeof AppLinkiRoute
   AppMeetsRoute: typeof AppMeetsRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
+  AppStoreRoute: typeof AppStoreRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
@@ -528,8 +694,10 @@ interface AppRouteRouteChildren {
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIntegrationRoute: AppIntegrationRoute,
+  AppLinkiRoute: AppLinkiRoute,
   AppMeetsRoute: AppMeetsRoute,
   AppPayoutsRoute: AppPayoutsRoute,
+  AppStoreRoute: AppStoreRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
@@ -564,10 +732,39 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
   AuthRouteRouteChildren,
 )
 
+interface StoreStoreSlugRouteChildren {
+  StoreStoreSlugProductSlugRoute: typeof StoreStoreSlugProductSlugRoute
+}
+
+const StoreStoreSlugRouteChildren: StoreStoreSlugRouteChildren = {
+  StoreStoreSlugProductSlugRoute: StoreStoreSlugProductSlugRoute,
+}
+
+const StoreStoreSlugRouteWithChildren = StoreStoreSlugRoute._addFileChildren(
+  StoreStoreSlugRouteChildren,
+)
+
+interface StoreRouteRouteChildren {
+  StoreStoreSlugRoute: typeof StoreStoreSlugRouteWithChildren
+  StoreDashboardRoute: typeof StoreDashboardRoute
+  StoreIndexRoute: typeof StoreIndexRoute
+}
+
+const StoreRouteRouteChildren: StoreRouteRouteChildren = {
+  StoreStoreSlugRoute: StoreStoreSlugRouteWithChildren,
+  StoreDashboardRoute: StoreDashboardRoute,
+  StoreIndexRoute: StoreIndexRoute,
+}
+
+const StoreRouteRouteWithChildren = StoreRouteRoute._addFileChildren(
+  StoreRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
+  StoreRouteRoute: StoreRouteRouteWithChildren,
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,

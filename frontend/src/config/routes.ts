@@ -25,9 +25,20 @@ export const ROUTE_PATHS = {
     EMAIL_VERIFICATION_VERIFIED: '/auth/email-verified',
   },
 
+  // Store routes
+  STORE: {
+    ROOT: '/store',
+    INDEX: '/store/index',
+    DASHBOARD: '/store/dashboard',
+    VIEW: '/store/$storeSlug',
+    PRODUCT: '/store/$storeSlug/$productSlug',
+  },
+
   // App routes
   APP: {
     INDEX: '/app',
+    LINKI: '/app/linki',
+    STORE: '/app/store',
     BOOKING: {
       SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
     },
@@ -96,55 +107,35 @@ export const routeBuilder = {
   // Auth routes
   auth: {
     login: (params?: { redirectTo?: string }) => {
-      const query = params?.redirectTo
-        ? `?redirectTo=${encodeURIComponent(params.redirectTo)}`
-        : '';
+      const query = params?.redirectTo ? `?redirectTo=${encodeURIComponent(params.redirectTo)}` : '';
       return `${ROUTE_PATHS.AUTH.LOGIN}${query}`;
     },
     register: (params?: { redirectTo?: string }) => {
-      const query = params?.redirectTo
-        ? `?redirectTo=${encodeURIComponent(params.redirectTo)}`
-        : '';
+      const query = params?.redirectTo ? `?redirectTo=${encodeURIComponent(params.redirectTo)}` : '';
       return `${ROUTE_PATHS.AUTH.REGISTER}${query}`;
     },
     forgotPassword: (params?: { redirectTo?: string }) => {
-      const query = params?.redirectTo
-        ? `?redirectTo=${encodeURIComponent(params.redirectTo)}`
-        : '';
+      const query = params?.redirectTo ? `?redirectTo=${encodeURIComponent(params.redirectTo)}` : '';
       return `${ROUTE_PATHS.AUTH.FORGOT_PASSWORD}${query}`;
     },
-    resetPassword: (params?: {
-      redirectTo?: string;
-      email?: string;
-      token?: string;
-    }) => {
+    resetPassword: (params?: { redirectTo?: string; email?: string; token?: string }) => {
       const searchParams = new URLSearchParams();
       if (params?.redirectTo) searchParams.set('redirectTo', params.redirectTo);
       if (params?.email) searchParams.set('email', params.email);
       if (params?.token) searchParams.set('token', params.token);
-      const query = searchParams.toString()
-        ? `?${searchParams.toString()}`
-        : '';
+      const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
       return `${ROUTE_PATHS.AUTH.RESET_PASSWORD}${query}`;
     },
-    emailVerification: (params?: {
-      redirectTo?: string;
-      email?: string;
-      token?: string;
-    }) => {
+    emailVerification: (params?: { redirectTo?: string; email?: string; token?: string }) => {
       const searchParams = new URLSearchParams();
       if (params?.redirectTo) searchParams.set('redirectTo', params.redirectTo);
       if (params?.email) searchParams.set('email', params.email);
       if (params?.token) searchParams.set('token', params.token);
-      const query = searchParams.toString()
-        ? `?${searchParams.toString()}`
-        : '';
+      const query = searchParams.toString() ? `?${searchParams.toString()}` : '';
       return `${ROUTE_PATHS.AUTH.EMAIL_VERIFICATION}${query}`;
     },
     emailVerificationVerified: (params?: { redirectTo?: string }) => {
-      const query = params?.redirectTo
-        ? `?redirectTo=${encodeURIComponent(params.redirectTo)}`
-        : '';
+      const query = params?.redirectTo ? `?redirectTo=${encodeURIComponent(params.redirectTo)}` : '';
       return `${ROUTE_PATHS.AUTH.EMAIL_VERIFICATION_VERIFIED}${query}`;
     },
   },
@@ -156,11 +147,7 @@ export const routeBuilder = {
 
   // Booking routes
   booking: {
-    session: (mentorSlug: string) =>
-      ROUTE_PATHS.APP.BOOKING.SESSION.replace(
-        ROUTE_PARAMS.MENTOR_SLUG,
-        mentorSlug,
-      ),
+    session: (mentorSlug: string) => ROUTE_PATHS.APP.BOOKING.SESSION.replace(ROUTE_PARAMS.MENTOR_SLUG, mentorSlug),
   },
 
   meets: {
@@ -175,8 +162,7 @@ export const routeBuilder = {
 
   // Profile routes
   profile: {
-    user: (userSlug: string) =>
-      ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
+    user: (userSlug: string) => ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
 
     integrations: () => ROUTE_PATHS.APP.PROFILE.INTEGRATIONS,
   },
@@ -188,11 +174,7 @@ export const routeBuilder = {
   // Admin routes
   admin: {
     payoutRequests: () => ROUTE_PATHS.APP.ADMIN.PAYOUT_REQUESTS,
-    payoutRequestDetails: (requestId: string) =>
-      ROUTE_PATHS.APP.ADMIN.PAYOUT_REQUEST_DETAILS.replace(
-        ROUTE_PARAMS.REQUEST_ID,
-        requestId,
-      ),
+    payoutRequestDetails: (requestId: string) => ROUTE_PATHS.APP.ADMIN.PAYOUT_REQUEST_DETAILS.replace(ROUTE_PARAMS.REQUEST_ID, requestId),
   },
 
   // Error/Test routes
@@ -228,8 +210,7 @@ export const routes = {
   isBookingRoute: (path: string) => path.startsWith('/booking'),
   isMentorRoute: (path: string) => path.startsWith('/mentor'),
   isProfileRoute: (path: string) => path.startsWith('/profile'),
-  isTestRoute: (path: string) =>
-    path.startsWith('/test') || path.startsWith('/error-exp'),
+  isTestRoute: (path: string) => path.startsWith('/test') || path.startsWith('/error-exp'),
 };
 
 // Export default for convenience
