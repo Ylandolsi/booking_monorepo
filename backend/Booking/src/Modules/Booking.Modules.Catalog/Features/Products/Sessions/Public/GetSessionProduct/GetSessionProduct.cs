@@ -4,7 +4,7 @@ using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.GetSessionProduct;
 
 public record GetSessionProductQuery(string ProductSlug, string TimeZoneId) : IQuery<SessionProductDetailResponse>;
 

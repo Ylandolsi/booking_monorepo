@@ -21,11 +21,12 @@ public static class CatalogEndpoints
     {
         public static class Sessions
         {
-            public const string Create = Base + "/products/s";
-            public const string Get = Base + "/products/s/{productSlug}";
-            public const string Update = Base + "/products/s/{productSlug}";
+            public const string Create = $"{Base}/products/s/create";
+            public const string Get = $"{Base}/products/s/{{productSlug}}";
+            public const string Update = $"{Base}/products/s/{{productSlug}}";
             public const string Book = $"{Base}/products/s";
-            public const string GetSessions = $"{Base}/s"; // 
+            public const string GetSessions = $"{Base}/s"; 
+            
 
         }
 
@@ -33,10 +34,10 @@ public static class CatalogEndpoints
 
     public static class Orders
     {
-        public const string Create = Base + "/orders";
-        public const string PaymentWebhook = Base + "/orders/webhook";
-        public const string Get = Base + "/orders/{orderId:int}";
-        public const string GetMy = Base + "/orders/me";
+        public const string Create = $"{Base}" + "/orders";
+        public const string PaymentWebhook = $"{Base}" + "/orders/webhook";
+        public const string Get = $"{Base}" + "/orders/{orderId:int}";
+        public const string GetMy = $"{Base}" + "/orders/me";
     }
 
     public static class Payouts
@@ -67,7 +68,6 @@ public static class CatalogEndpoints
         public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
         public const string GetSchedule = $"{Base}/availability/schedule";
     }
-
 
 
 }

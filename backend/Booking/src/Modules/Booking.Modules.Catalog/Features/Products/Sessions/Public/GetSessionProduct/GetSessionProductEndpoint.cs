@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.GetSessionProduct;
 
 public class GetSessionProductEndpoint : IEndpoint
 {

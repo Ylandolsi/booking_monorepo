@@ -23,20 +23,7 @@ public record UpdateSessionProductCommand(
     string TimeZoneId = "Africa/Tunis"
 ) : ICommand<SessionProductResponse>;
 
-public record SessionProductResponse(
-    string ProductSlug,
-    string StoreSlug,
-    string Title,
-    string? Subtitle,
-    string? Description,
-    decimal Price,
-    int DurationMinutes,
-    int BufferTimeMinutes,
-    string? MeetingInstructions,
-    string TimeZoneId,
-    bool IsPublished,
-    DateTime UpdatedAt
-);
+
 
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
@@ -53,20 +40,6 @@ public class UpdateSessionProductHandler(
 
         try
         {
-            
-            
-            // Validate command
-            var validationResult = ValidateCommand(command);
-            if (validationResult.IsFailure)
-            {
-                logger.LogWarning("Session product update validation failed for product {ProductId}: {Error}",
-                    command.ProductSlug, validationResult.Error.Description);
-                return Result.Failure<SessionProductResponse>(validationResult.Error);
-            }
-
-            
-            //TODO  optimize this query 
-            
             // Get session product with store
             var sessionProduct = await context.SessionProducts
                 .Include(sp => sp.Store)
@@ -145,21 +118,24 @@ public class UpdateSessionProductHandler(
                                   "Price changed from {OriginalPrice} to {NewPrice}",
                 command.ProductSlug, originalTitle, command.Title, originalPrice, command.Price);
 
-            // Prepare response
-            var response = new SessionProductResponse(
-                sessionProduct.ProductSlug,
-                sessionProduct.StoreSlug,
-                sessionProduct.Title,
-                sessionProduct.Subtitle,
-                sessionProduct.Description,
-                sessionProduct.Price,
-                sessionProduct.Duration?.Minutes ?? command.DurationMinutes,
-                sessionProduct.BufferTime?.Minutes ?? command.BufferTimeMinutes,
-                sessionProduct.MeetingInstructions,
-                sessionProduct.TimeZoneId,
-                sessionProduct.IsPublished,
-                sessionProduct.UpdatedAt
-            );
+            var response = new SessionProductResponse
+            {
+                ProductSlug = sessionProduct.ProductSlug,
+                StoreSlug = sessionProduct.StoreSlug,
+                Title = sessionProduct.Title,
+                Subtitle = sessionProduct.Subtitle,
+                Description = sessionProduct.Description,
+                ClickToPay = sessionProduct.ClickToPay,
+                Price = sessionProduct.Price,
+                MeetingInstructions = sessionProduct.MeetingInstructions,
+                DurationMinutes = sessionProduct.Duration.Minutes,
+                BufferTimeMinutes = sessionProduct.BufferTime.Minutes,
+                TimeZoneId = sessionProduct.TimeZoneId,
+                IsPublished = sessionProduct.IsPublished,
+                UpdatedAt = sessionProduct.UpdatedAt,
+                CreatedAt = sessionProduct.CreatedAt
+            };
+
 
             return Result.Success(response);
         }
@@ -171,35 +147,6 @@ public class UpdateSessionProductHandler(
             return Result.Failure<SessionProductResponse>(Error.Problem("SessionProduct.Update.Failed",
                 "An error occurred while updating the session product"));
         }
-    }
-
-    private static Result ValidateCommand(UpdateSessionProductCommand command)
-    {
-        if (String.IsNullOrWhiteSpace(command.ProductSlug))
-            return Result.Failure(Error.Problem("SessionProduct.InvalidSlug", "Product Slug should not be empty "));
-
-        if (command.UserId <= 0)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidUserId", "User ID must be greater than 0"));
-
-        if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(Error.Problem("SessionProduct.InvalidTitle", "Product title cannot be empty"));
-
-        if (command.Title.Length > 200)
-            return Result.Failure(Error.Problem("SessionProduct.TitleTooLong",
-                "Product title cannot exceed 200 characters"));
-
-        if (command.Price < 0)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidPrice", "Price cannot be negative"));
-
-        if (command.DurationMinutes <= 0 || command.DurationMinutes > 480)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidDuration",
-                "Duration must be between 1 and 480 minutes"));
-
-        if (command.BufferTimeMinutes < 0 || command.BufferTimeMinutes > 240)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidBufferTime",
-                "Buffer time must be between 0 and 240 minutes"));
-
-        return Result.Success();
     }
 
     private async Task<Result> UpdateSchedule(

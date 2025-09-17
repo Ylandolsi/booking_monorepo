@@ -11,8 +11,8 @@ internal sealed class UpdateSessionProductCommandValidator : AbstractValidator<U
             .WithMessage("Product slug should not be empty.");
 
         RuleFor(c => c.UserId)
-            .NotEmpty()
-            .WithMessage("User ID is required.");
+            .GreaterThan(0)
+            .WithMessage("User ID must be greater than 0.");
 
         RuleFor(c => c.Title)
             .NotEmpty()
@@ -23,26 +23,32 @@ internal sealed class UpdateSessionProductCommandValidator : AbstractValidator<U
             .WithMessage("Product title must be at least 3 characters.");
 
         RuleFor(c => c.Price)
-            .GreaterThan(0)
-            .WithMessage("Price must be greater than 0.")
+            .GreaterThanOrEqualTo(0)
+            .WithMessage("Price cannot be negative.")
             .LessThan(10000)
             .WithMessage("Price must be less than $10,000.");
 
         RuleFor(c => c.DurationMinutes)
-            .GreaterThanOrEqualTo(15)
-            .WithMessage("Session duration must be at least 15 minutes.")
+            .GreaterThan(0)
+            .WithMessage("Duration must be greater than 0.")
             .LessThanOrEqualTo(480)
-            .WithMessage("Session duration cannot exceed 8 hours.")
+            .WithMessage("Duration cannot exceed 8 hours.")
             .Must(d => d % 15 == 0)
             .WithMessage("Session duration must be in 15-minute increments.");
 
         RuleFor(c => c.BufferTimeMinutes)
             .GreaterThanOrEqualTo(0)
             .WithMessage("Buffer time cannot be negative.")
-            .LessThanOrEqualTo(60)
-            .WithMessage("Buffer time cannot exceed 60 minutes.")
+            .LessThanOrEqualTo(240)
+            .WithMessage("Buffer time cannot exceed 240 minutes.")
             .Must(d => d % 5 == 0)
             .WithMessage("Buffer time must be in 5-minute increments.");
+
+        RuleFor(c => c.ClickToPay)
+            .NotEmpty()
+            .WithMessage("Click to pay text cannot be empty.")
+            .MaximumLength(500)
+            .WithMessage("Click to pay text cannot exceed 500 characters.");
 
         RuleFor(c => c.Subtitle)
             .MaximumLength(100)

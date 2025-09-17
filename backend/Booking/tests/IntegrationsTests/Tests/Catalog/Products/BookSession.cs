@@ -16,6 +16,7 @@ public class BookSessionTests : CatalogTestBase
 {
     public BookSessionTests(IntegrationTestsWebAppFactory factory) : base(factory)
     {
+        
     }
 
     [Fact]
@@ -62,7 +63,8 @@ public class BookSessionTests : CatalogTestBase
 
         // Act - Step 1: Book the session
         var bookingResponse =
-            await unauthClient.PostAsJsonAsync(CatalogEndpoints.Sessions.Book + $"?productSlug={sessionProductSlug}",
+            await unauthClient.PostAsJsonAsync(
+                CatalogEndpoints.Products.Sessions.Book + $"?productSlug={sessionProductSlug}",
                 bookingRequest);
 
         // Assert - Booking should succeed and return payment URL
@@ -76,24 +78,25 @@ public class BookSessionTests : CatalogTestBase
         // Verify session is created with WaitingForPayment status
         var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-        
-        var latestSession = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductSlug ==  sessionProductSlug);
+
+        var latestSession =
+            await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductSlug == sessionProductSlug);
         var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.ProductId == latestSession.ProductId);
-        Assert.Equal(SessionStatus.WaitingForPayment ,latestSession.Status);
+        Assert.Equal(SessionStatus.WaitingForPayment, latestSession.Status);
 
         // Act - Step 2: Complete payment via mock Konnect
         var paymentResponse = await CompletePaymentViaMockKonnect(paymentRef, userAct);
         Assert.True(paymentResponse.success);
 
         // Wait a bit for webhook processing
-        await Task.Delay(100000);
+        await Task.Delay(10000);
         scope = Factory.Services.CreateScope();
         dbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-        latestSession = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductSlug ==  sessionProductSlug);
+        latestSession = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductSlug == sessionProductSlug);
         order = await dbContext.Orders.FirstOrDefaultAsync(o => o.ProductId == latestSession.ProductId);
         // Assert - Session should be confirmed with meeting link and escrow created
-        Assert.Equal(SessionStatus.Confirmed,latestSession.Status);
-        
+        Assert.Equal(SessionStatus.Confirmed, latestSession.Status);
+
         /// TOOD :
         //var escrow = //
         //await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);

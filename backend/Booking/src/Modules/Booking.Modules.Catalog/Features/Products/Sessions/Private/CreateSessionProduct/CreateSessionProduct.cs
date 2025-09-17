@@ -25,19 +25,6 @@ public record CreateSessionProductCommand(
     string TimeZoneId = "Africa/Tunis"
 ) : ICommand<SessionProductResponse>;
 
-public record SessionProductResponse(
-    string ProductSlug,
-    string Title,
-    string Subtitle,
-    string Description,
-    string ClickToPay,
-    decimal Price,
-    string MeetingInstructions,
-    int DurationMinutes,
-    int BufferTimeMinutes,
-    string TimeZoneId,
-    DateTime CreatedAt
-);
 
 public class CreateSessionProductHandler(
     CatalogDbContext context,
@@ -57,15 +44,6 @@ public class CreateSessionProductHandler(
 
         try
         {
-            // Validate command : remove it and replace by fluent 
-            var validationResult = ValidateCommand(command);
-            if (validationResult.IsFailure)
-            {
-                logger.LogWarning("Session product creation validation failed for user {UserId}: {Error}",
-                    command.UserId, validationResult.Error.Description);
-                return Result.Failure<SessionProductResponse>(validationResult.Error);
-            }
-
             // Get user's store
             var store = await context.Stores
                 .FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
@@ -141,20 +119,24 @@ public class CreateSessionProductHandler(
                 "Successfully created session product {ProductId} with slug {ProductSlug} for user {UserId}",
                 sessionCreated.Entity.Id, sessionCreated.Entity.ProductSlug, command.UserId);
 
-            // Prepare response
-            var response = new SessionProductResponse(
-                sessionCreated.Entity.ProductSlug,
-                sessionProduct.Title,
-                sessionProduct.Subtitle,
-                sessionProduct.Description,
-                sessionProduct.ClickToPay,
-                sessionProduct.Price,
-                sessionProduct.MeetingInstructions,
-                sessionProduct.Duration.Minutes,
-                sessionProduct.BufferTime.Minutes,
-                sessionProduct.TimeZoneId,
-                sessionProduct.CreatedAt
-            );
+            var response = new SessionProductResponse
+            {
+                ProductSlug = sessionProduct.ProductSlug,
+                StoreSlug = sessionProduct.StoreSlug,
+                Title = sessionProduct.Title,
+                Subtitle = sessionProduct.Subtitle,
+                Description = sessionProduct.Description,
+                ClickToPay = sessionProduct.ClickToPay,
+                Price = sessionProduct.Price,
+                MeetingInstructions = sessionProduct.MeetingInstructions,
+                DurationMinutes = sessionProduct.Duration.Minutes,
+                BufferTimeMinutes = sessionProduct.BufferTime.Minutes,
+                TimeZoneId = sessionProduct.TimeZoneId,
+                IsPublished = sessionProduct.IsPublished,
+                UpdatedAt = sessionProduct.UpdatedAt,
+                CreatedAt = sessionProduct.CreatedAt
+            };
+
 
             return Result.Success(response);
         }
@@ -166,63 +148,6 @@ public class CreateSessionProductHandler(
             return Result.Failure<SessionProductResponse>(Error.Problem("SessionProduct.Creation.Failed",
                 "An error occurred while creating the session product"));
         }
-    }
-
-    private static Result ValidateCommand(CreateSessionProductCommand command)
-    {
-        if (command.UserId <= 0)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidUserId", "User ID must be greater than 0"));
-
-        if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(Error.Problem("SessionProduct.InvalidTitle", "Product title cannot be empty"));
-
-        if (command.Title.Length > 200)
-            return Result.Failure(Error.Problem("SessionProduct.TitleTooLong",
-                "Product title cannot exceed 200 characters"));
-
-        if (command.Price < 0)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidPrice", "Price cannot be negative"));
-
-        if (command.BufferTimeMinutes < 0 || command.BufferTimeMinutes > 240)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidBufferTime",
-                "Buffer time must be between 0 and 240 minutes"));
-        
-        if (command.DurationMinutes < 0 || command.DurationMinutes > 240)
-            return Result.Failure(Error.Problem("SessionProduct.InvalidDurationTime",
-                "Duration time must be between 0 and 240 minutes"));
-
-        if (string.IsNullOrWhiteSpace(command.ClickToPay))
-            return Result.Failure(
-                Error.Problem("SessionProduct.InvalidClickToPay", "Click to pay text cannot be empty"));
-
-        if (command.DayAvailabilities == null || !command.DayAvailabilities.Any())
-            return Result.Failure(Error.Problem("SessionProduct.NoAvailability",
-                "At least one day availability must be provided"));
-
-        // Validate availability ranges
-        foreach (var dayAvailability in command.DayAvailabilities.Where(d => d.IsActive))
-        {
-            if (dayAvailability.AvailabilityRanges == null || !dayAvailability.AvailabilityRanges.Any())
-                continue;
-
-            foreach (var range in dayAvailability.AvailabilityRanges)
-            {
-                if (!TimeOnly.TryParseExact(range.StartTime, "HH:mm", out var startTime) ||
-                    !TimeOnly.TryParseExact(range.EndTime, "HH:mm", out var endTime))
-                {
-                    return Result.Failure(Error.Problem("SessionProduct.InvalidTimeFormat",
-                        "Time must be in HH:mm format"));
-                }
-
-                if (endTime <= startTime)
-                {
-                    return Result.Failure(Error.Problem("SessionProduct.InvalidTimeRange",
-                        "End time must be after start time"));
-                }
-            }
-        }
-
-        return Result.Success();
     }
 
     private async Task<Result> SetSchedule(

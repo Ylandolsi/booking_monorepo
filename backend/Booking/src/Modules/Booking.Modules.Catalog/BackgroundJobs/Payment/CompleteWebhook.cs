@@ -54,10 +54,12 @@ public class CompleteWebhook(
                 = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.Id == order.ProductId, cancellationToken);
             if (session is null)
             {
-                logger.LogError("Failed to find session when handling payment (completeWebhook) for order with id: {OrderId}",
+                logger.LogError(
+                    "Failed to find session when handling payment (completeWebhook) for order with id: {OrderId}",
                     orderId);
                 return;
             }
+
             await CreateMeetAndConfirmSession(session, order, cancellationToken);
 
 
@@ -73,6 +75,8 @@ public class CompleteWebhook(
             logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
                 order.Id);
         }
+
+        return ; 
     }
 
 
@@ -84,7 +88,8 @@ public class CompleteWebhook(
             var store = await dbContext.Stores.FirstOrDefaultAsync(s => s.Id == session.StoreId, cancellationToken);
             if (store == null)
             {
-                logger.LogError("Store not found for session {SessionId} with storeId {StoreId}", session.Id, session.StoreId);
+                logger.LogError("Store not found for session {SessionId} with storeId {StoreId}", session.Id,
+                    session.StoreId);
                 session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
                 return;
             }

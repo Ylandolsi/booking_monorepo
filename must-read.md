@@ -7,6 +7,16 @@
 ---
 - [Background jobs and locks](https://www.linkedin.com/posts/mustafa-kamal-ab681875_concurrency-handling-for-pulling-central-ugcPost-7371629869471850497-Jy-3?utm_source=share&utm_medium=member_ios&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg)
 --
+--
+SQL QUERY PLANS  OPTIMIZATION 
+- [milan linkedin post ( and blog ) ](https://www.linkedin.com/feed/?highlightedUpdateUrn=urn%3Ali%3Aactivity%3A7373298904362110976&highlightedUpdateType=REACTIONS_BY_YOUR_NETWORK&origin=REACTIONS_BY_YOUR_NETWORK&showCommentBox=true)
+
+----
+
+-- system driven UI ( both front and backend : must read ! good idea ) https://www.linkedin.com/posts/yangshun_a-concept-every-full-stack-engineer-should-activity-7373975709024780288-DIL9?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEUmzPsBllTvX8bXt7YIrmvtM-d7ZO0Tmxg 
+
+---
+
 
 ### how logs can crash a system
 
