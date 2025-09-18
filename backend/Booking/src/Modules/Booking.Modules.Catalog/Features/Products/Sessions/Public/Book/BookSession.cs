@@ -25,7 +25,7 @@ internal sealed class BookSession : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Products.Sessions.Book, async (
-                [FromQuery] string productSlug,
+                string productSlug,
                 [FromBody] Request request,
                 UserContext userContext,
                 ICommandHandler<BookSessionCommand, BookSessionRepsonse> handler,

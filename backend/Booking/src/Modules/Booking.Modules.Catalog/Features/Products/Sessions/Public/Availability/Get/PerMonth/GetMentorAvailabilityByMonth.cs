@@ -1,6 +1,7 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,8 @@ internal sealed class GetMentorAvailabilityByMonth : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(CatalogEndpoints.Availability.GetMonthly, async (
-                [FromQuery] string productSlug,
+        app.MapGet(CatalogEndpoints.Products.Sessions.GetMonthlyAv, async (
+                string productSlug,
                 [FromQuery] int year,
                 [FromQuery] int month,
                 [FromQuery] string? timeZoneId,

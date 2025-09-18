@@ -10,6 +10,7 @@ public class PublicStore : CatalogTestBase
     public PublicStore(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
+
     [Fact]
     public async Task GetPublicStore_ShouldReturnStore_WithProductDetails()
     {
@@ -25,11 +26,11 @@ public class PublicStore : CatalogTestBase
 
         await CatalogTestUtilities.CreateSessionProductRequest(
             userAct, "1-on-1 Coaching Session", 100.0m, 15, "Personalized coaching",
-            "A detailed coaching session tailored to your needs", dayAvailabilities);
+            "A detailed coaching session tailored to your needs", "clicktoPay", dayAvailabilities);
 
         var responsePublicStore =
             await userAct.GetAsync(CatalogEndpoints.Stores.GetPublic.Replace("{slug}", "test-store"));
-        
+
 
         Assert.Equal(HttpStatusCode.OK, responsePublicStore.StatusCode);
         var content = await responsePublicStore.Content.ReadAsStringAsync();
@@ -42,7 +43,5 @@ public class PublicStore : CatalogTestBase
         Assert.True(root.TryGetProperty("socialLinks", out _), "Response should contain socialLinks");
         Assert.True(root.TryGetProperty("picture", out _), "Response should contain picture");
         Assert.True(root.TryGetProperty("description", out _), "Response should contain description");
-        
     }
-    
 }

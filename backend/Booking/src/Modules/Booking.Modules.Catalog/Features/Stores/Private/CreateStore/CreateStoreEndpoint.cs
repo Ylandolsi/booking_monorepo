@@ -12,22 +12,24 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
 public class CreateStoreEndpoint : IEndpoint
 {
-    public record CreateStoreRequest(
-        string Title,
-        string Slug,
-        IFormFile File,
-        string Description = "",
-        List<SocialLink>? SocialLinks = null
-    );
+    public record Request
+    {
+        public string Title { get; init; }
+        public string Slug { get; init; }
+        public IFormFile File { get; init; }
+        public string Description { get; init; }
+        public List<SocialLink>? SocialLinks { get; init; }
+    }
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Stores.Create, async (
-                [FromForm] string Title,
+                [FromForm] Request request,
+                /*[FromForm] string Title,
                 [FromForm] string Slug,
                 [FromForm] IFormFile File,
                 [FromForm] string Description,
-                [FromForm] List<SocialLink>? SocialLinks,
+                [FromForm] List<SocialLink>? SocialLinks,*/
                 UserContext userContext,
                 ICommandHandler<CreateStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>
@@ -36,11 +38,11 @@ public class CreateStoreEndpoint : IEndpoint
 
                 var command = new CreateStoreCommand(
                     userId,
-                    Slug,
-                    Title,
-                    File,
-                    SocialLinks,
-                    Description
+                    request.Slug,
+                    request.Title,
+                    request.File,
+                    request.SocialLinks,
+                    request.Description
                 );
 
                 var result = await handler.Handle(command, context.RequestAborted);
@@ -49,7 +51,7 @@ public class CreateStoreEndpoint : IEndpoint
             })
             .RequireAuthorization()
             .WithTags("Stores")
-            .WithSummary("Create a new store")
+            .WithSummary("Createc a new store")
             .DisableAntiforgery(); // TODO !!!! 
     }
 }

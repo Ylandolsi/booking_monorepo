@@ -5,6 +5,7 @@ using Booking.Common.Results;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct;
@@ -29,11 +30,10 @@ public class CreateSessionProductEndpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Products.Sessions.Create, async (
+                [FromForm] CreateSessionProductRequest request,
                 UserContext userContext,
-                CreateSessionProductRequest request,
                 ICommandHandler<CreateSessionProductCommand, PatchPostProductResponse> handler,
-                
-                HttpContext context) =>
+                CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
 
@@ -53,13 +53,14 @@ public class CreateSessionProductEndpoint : IEndpoint
                     request.TimeZoneId
                 );
 
-                var result = await handler.Handle(command, context.RequestAborted);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
+            .RequireAuthorization()
             .WithTags("Products", "Sessions")
             .WithSummary("Create a new session product")
             .WithDescription("Create a new bookable session product in a store")
-            .RequireAuthorization();
+            .DisableAntiforgery(); // TODO !!!! 
     }
 }

@@ -25,7 +25,6 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_create_store");
         await CreateUserAndLogin("user_create_store@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
         var response = await CatalogTestUtilities.CreateStoreRequest(userAct, "My Awesome Store", "my-awesome-store", "A great store description");
@@ -53,11 +52,9 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_duplicate_slug");
         await CreateUserAndLogin("user1_duplicate_slug@example.com", null, user1Arrange);
-        await CatalogTestUtilities.VerifyUser(user1Act);
 
         var (user2Arrange, user2Act) = GetClientsForUser("user2_duplicate_slug");
         await CreateUserAndLogin("user2_duplicate_slug@example.com", null, user2Arrange);
-        await CatalogTestUtilities.VerifyUser(user2Act);
 
         var slug = "duplicate-store-slug";
 
@@ -76,7 +73,6 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_already_has_store");
         await CreateUserAndLogin("user_already_has_store@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
         var response1 = await CatalogTestUtilities.CreateStoreRequest(userAct, "First Store", "first-store");
@@ -95,7 +91,6 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_with_social_links");
         await CreateUserAndLogin("user_with_social_links@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
         var response = await CatalogTestUtilities.CreateStoreRequest(
@@ -116,11 +111,11 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_store");
         await CreateUserAndLogin("user_get_store@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         await CatalogTestUtilities.CreateStoreForUser(userAct, "My Store", "my-store", "Store description");
 
         // Act
-        var response = await CatalogTestUtilities.GetStoreRequest(userAct);
+        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
+
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -132,10 +127,10 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_no_store");
         await CreateUserAndLogin("user_no_store@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act (don't create a store)
-        var response = await CatalogTestUtilities.GetStoreRequest(userAct);
+        var response = await userAct.GetAsync(CatalogEndpoints.Stores.GetMy);
+
 
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -148,7 +143,7 @@ public class PrivateStore : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await CatalogTestUtilities.GetStoreRequest(unauthClient);
+        var response = await unauthClient.GetAsync(CatalogEndpoints.Stores.GetMy);
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -164,12 +159,11 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_store");
         await CreateUserAndLogin("user_update_store@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         await CatalogTestUtilities.CreateStoreForUser(userAct, "Original Store", "original-store");
 
         // Act
-        var response = await CatalogTestUtilities.UpdateStoreRequest(userAct, "Updated Store Title", "Updated store description");
-
+        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -180,11 +174,10 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_nonexistent");
         await CreateUserAndLogin("user_update_nonexistent@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
-        var response = await CatalogTestUtilities.UpdateStoreRequest(userAct, "Updated Store Title", "Updated store description");
-
+        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -196,8 +189,8 @@ public class PrivateStore : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await CatalogTestUtilities.UpdateStoreRequest(unauthClient, "Updated Store Title", "Updated store description");
-
+        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var response = await unauthClient.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -212,7 +205,6 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_check_available_slug");
         await CreateUserAndLogin("user_check_available_slug@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         var availableSlug = $"available-slug-{Guid.NewGuid():N}";
 
         // Act
@@ -230,11 +222,9 @@ public class PrivateStore : CatalogTestBase
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_check_unavailable_slug");
         await CreateUserAndLogin("user1_check_unavailable_slug@example.com", null, user1Arrange);
-        await CatalogTestUtilities.VerifyUser(user1Act);
 
         var (user2Arrange, user2Act) = GetClientsForUser("user2_check_unavailable_slug");
         await CreateUserAndLogin("user2_check_unavailable_slug@example.com", null, user2Arrange);
-        await CatalogTestUtilities.VerifyUser(user2Act);
 
         var slug = "taken-slug";
         await CatalogTestUtilities.CreateStoreForUser(user1Act, "Test Store", slug);

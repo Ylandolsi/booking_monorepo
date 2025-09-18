@@ -16,7 +16,6 @@ public class BookSessionTests : CatalogTestBase
 {
     public BookSessionTests(IntegrationTestsWebAppFactory factory) : base(factory)
     {
-        
     }
 
     [Fact]
@@ -36,8 +35,11 @@ public class BookSessionTests : CatalogTestBase
             (DayOfWeek.Wednesday, true, new[] { ("10:00", "16:00") })
         );
 
-        var sessionProductSlug =
-            await CatalogTestUtilities.CreateSessionProductForUser(userAct, "Test Session", 100.0m, 15,
+        var sessionProductSlug = await CatalogTestUtilities.CreateSessionProductForUser(
+                userAct,
+                "Test Session",
+                100.0m,
+                15,
                 "Test subtitle",
                 "Test description",
                 "Book now",
@@ -62,9 +64,8 @@ public class BookSessionTests : CatalogTestBase
         };
 
         // Act - Step 1: Book the session
-        var bookingResponse =
-            await unauthClient.PostAsJsonAsync(
-                CatalogEndpoints.Products.Sessions.Book + $"?productSlug={sessionProductSlug}",
+        var bookingResponse =  await unauthClient.PostAsJsonAsync(
+                CatalogEndpoints.Products.Sessions.Book.Replace("{{productSlug}}", sessionProductSlug),
                 bookingRequest);
 
         // Assert - Booking should succeed and return payment URL

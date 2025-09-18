@@ -12,7 +12,7 @@ internal sealed class GetMentorAvailabilityByDay : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(CatalogEndpoints.Availability.GetDaily, async (
+        app.MapGet(CatalogEndpoints.Products.Sessions.GetDailyAv, async (
                 [FromQuery] string productSlug,
                 [FromQuery] string date,
                 [FromQuery] string? timeZoneId,

@@ -28,7 +28,7 @@ using Serilog;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(8080);  // Binds to 0.0.0.0:5000 (IPv4) and [::]:5000 (IPv6)
+    options.ListenAnyIP(8080); // Binds to 0.0.0.0:5000 (IPv4) and [::]:5000 (IPv6)
 });
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
@@ -38,10 +38,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 builder.Services.AddControllers();
-// if (!builder.Environment.IsEnvironment("Development"))
-// {
-//     builder.Services.AddAntiforgery();
-// }
+// builder.Services.AddAntiforgery();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
@@ -63,7 +60,6 @@ builder.Services.AddEmailSender(builder.Configuration);
 
 //builder.Services.TryAddSingleton(typeof(IUserIdProvider), typeof(SignalRCustomUserIdProvider));
 builder.Services.AddSignalR();
-
 
 
 builder.Services.AddScoped<NotificationService>();
@@ -105,7 +101,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
-
     // Drop databases
     await usersDb.Database.EnsureDeletedAsync();
     await mentorshipsDb.Database.EnsureDeletedAsync();
@@ -127,7 +122,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
     await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
-
 }
 
 app.MapHealthChecks("health", new HealthCheckOptions
@@ -150,10 +144,10 @@ app.UseCancellationMiddleware();
 app.UseAuthentication();
 
 app.UseAuthorization();
-// if (!app.Environment.IsEnvironment("Development"))
-// {
-//     app.UseAntiforgery();
-// }
+
+
+// app.UseAntiforgery();
+
 app.UseHangfireDashboard();
 
 RecurringJobs.AddRecurringJobs();

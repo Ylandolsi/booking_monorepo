@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using Booking.Modules.Catalog.Features;
+using Booking.Modules.Catalog.Features.Products.Sessions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -33,13 +35,15 @@ public static class CatalogTestUtilities
                 }
             }
 
-            var jpegBytes = Convert.FromBase64String("/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==");
+            var jpegBytes = Convert.FromBase64String(
+                "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==");
             var imageContent = new ByteArrayContent(jpegBytes);
             imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
             formData.Add(imageContent, "File", "test-image.jpg");
 
             return formData;
         }
+
 
         public static object CreateStoreUpdateRequest(
             string title,
@@ -56,7 +60,8 @@ public static class CatalogTestUtilities
 
             if (socialLinks != null)
             {
-                request["SocialLinks"] = socialLinks.Select(sl => new { Platform = sl.platform, Url = sl.url }).ToArray();
+                request["SocialLinks"] =
+                    socialLinks.Select(sl => new { Platform = sl.platform, Url = sl.url }).ToArray();
             }
 
             return request;
@@ -65,7 +70,9 @@ public static class CatalogTestUtilities
 
     public static class SessionProductTestData
     {
-        public static object CreateValidSessionProductRequest(
+        // create 
+
+        public static MultipartFormDataContent CreateValidSessionProductFormData(
             string title,
             decimal price,
             int bufferTimeMinutes = 15,
@@ -74,103 +81,129 @@ public static class CatalogTestUtilities
             string clickToPay = "Book now",
             string meetingInstructions = "Test instructions",
             string timeZoneId = "Africa/Tunis",
-            object[]? dayAvailabilities = null,
+            ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities =
+                null,
             int durationMinutes = 60)
         {
-            return new
+            var formData = new MultipartFormDataContent();
+
+            formData.Add(new StringContent(title), "Title");
+            formData.Add(new StringContent(subtitle), "Subtitle");
+
+            formData.Add(new StringContent(price.ToString(CultureInfo.InvariantCulture)), "Price");
+            formData.Add(new StringContent(description), "Description");
+            formData.Add(new StringContent(clickToPay), "ClickToPay");
+            formData.Add(new StringContent(bufferTimeMinutes.ToString()), "DurationMinutes");
+            formData.Add(new StringContent(durationMinutes.ToString()), "BufferTimeMinutes");
+            formData.Add(new StringContent(meetingInstructions), "MeetingInstructions");
+            formData.Add(new StringContent(timeZoneId), "TimeZoneId");
+
+            var previewBase64 =
+                "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==";
+            var previewBytes = Convert.FromBase64String(previewBase64);
+
+            var thumbnailBase64 =
+                "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/AB//2Q==";
+            var thumbnailBytes = Convert.FromBase64String(thumbnailBase64);
+
+
+            var previewContent = new ByteArrayContent(previewBytes);
+            previewContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+            formData.Add(previewContent, "PreviewImage", "preview.jpg");
+
+            var thumbnailContent = new ByteArrayContent(thumbnailBytes);
+            thumbnailContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+            formData.Add(thumbnailContent, "ThumbnailImage", "thumbnail.jpg");
+
+
+            // Add dayAv if provided 
+            if (dayAvailabilities != null)
             {
-                Title = title,
-                Subtitle = subtitle,
-                Description = description,
-                ClickToPay = clickToPay,
-                Price = price,
-                DurationMinutes = durationMinutes,
-                BufferTimeMinutes = bufferTimeMinutes,
-                DayAvailabilities = dayAvailabilities ?? CreateDefaultDayAvailabilities(),
-                MeetingInstructions = meetingInstructions,
-                TimeZoneId = timeZoneId
-            };
+                for (int i = 0; i < dayAvailabilities.Length; i++)
+                {
+                    // DayOfWeek
+                    formData.Add(
+                        new StringContent(((int)dayAvailabilities[i].DayOfWeek).ToString()),
+                        $"DayAvailabilities[{i}].DayOfWeek"
+                    );
+
+                    // IsActive
+                    formData.Add(
+                        new StringContent(dayAvailabilities[i].IsActive.ToString().ToLower()), // "true"/"false"
+                        $"DayAvailabilities[{i}].IsActive"
+                    );
+
+                    // AvailabilityRanges
+                    for (int j = 0; j < dayAvailabilities[i].AvailabilityRanges.Count; j++)
+                    {
+                        formData.Add(
+                            new StringContent(dayAvailabilities[i].AvailabilityRanges[j].StartTime),
+                            $"DayAvailabilities[{i}].AvailabilityRanges[{j}].StartTime"
+                        );
+                        formData.Add(
+                            new StringContent(dayAvailabilities[i].AvailabilityRanges[j].EndTime),
+                            $"DayAvailabilities[{i}].AvailabilityRanges[{j}].EndTime"
+                        );
+                    }
+                }
+            }
+
+            return formData;
         }
 
-        public static object CreateSessionProductUpdateRequest(
-            string title,
-            decimal price,
-            int durationMinutes = 60,
-            int bufferTimeMinutes = 15,
-            string? subtitle = null,
-            string? description = null,
-            string? clickToPay = null,
-            string? meetingInstructions = null,
-            string? timeZoneId = null,
-            object[]? dayAvailabilities = null)
-        {
-            var request = new Dictionary<string, object>
-            {
-                ["Title"] = title,
-                ["Price"] = price,
-                ["DurationMinutes"] = durationMinutes,
-                ["BufferTimeMinutes"] = bufferTimeMinutes
-            };
-
-            if (subtitle != null) request["Subtitle"] = subtitle;
-            if (description != null) request["Description"] = description;
-            if (clickToPay != null) request["ClickToPay"] = clickToPay;
-            if (meetingInstructions != null) request["MeetingInstructions"] = meetingInstructions;
-            if (timeZoneId != null) request["TimeZoneId"] = timeZoneId;
-            if (dayAvailabilities != null) request["DayAvailabilities"] = dayAvailabilities;
-
-            return request;
-        }
-
-        public static object[] CreateDefaultDayAvailabilities()
+        public static (DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges)[]
+            CreateDefaultDayAvailabilities()
         {
             return new[]
             {
-                new
-                {
-                    DayOfWeek = DayOfWeek.Monday,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
+                (
+                    DayOfWeek: DayOfWeek.Monday,
+                    IsActive: true,
+                    AvailabilityRanges: new List<AvailabilityRange>
                     {
-                        new { StartTime = "09:00", EndTime = "12:00" },
-                        new { StartTime = "14:00", EndTime = "17:00" }
+                        new AvailabilityRange { StartTime = "09:00", EndTime = "12:00" },
+                        new AvailabilityRange { StartTime = "14:00", EndTime = "17:00" }
                     }
-                },
-                new
-                {
-                    DayOfWeek = DayOfWeek.Wednesday,
-                    IsActive = true,
-                    AvailabilityRanges = new[]
+                ),
+                (
+                    DayOfWeek: DayOfWeek.Wednesday,
+                    IsActive: true,
+                    AvailabilityRanges: new List<AvailabilityRange>
                     {
-                        new { StartTime = "10:00", EndTime = "16:00" }
+                        new AvailabilityRange { StartTime = "10:00", EndTime = "16:00" }
                     }
-                }
+                )
             };
         }
 
-        public static object[] CreateCustomDayAvailabilities(params (DayOfWeek day, bool isActive, (string start, string end)[] ranges)[] dayConfigs)
+
+        public static (DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges)[]?
+            CreateCustomDayAvailabilities(
+                params (DayOfWeek day, bool isActive, (string start, string end)[] ranges)[] dayConfigs)
         {
-            return dayConfigs.Select(config => new
-            {
-                DayOfWeek = config.day,
-                IsActive = config.isActive,
-                AvailabilityRanges = config.ranges.Select(range => new
-                {
-                    StartTime = range.start,
-                    EndTime = range.end
-                }).ToArray()
-            }).ToArray();
+            return dayConfigs.Select(config => (
+                DayOfWeek: config.day,
+                IsActive: config.isActive,
+                AvailabilityRanges: config.ranges
+                    .Select(range => new AvailabilityRange
+                    {
+                        StartTime = range.start,
+                        EndTime = range.end
+                    })
+                    .ToList()
+            )).ToArray();
         }
     }
 
-    /// <summary>
-    /// Verifies a user account for testing purposes
-    /// </summary>
-    /// <param name="client">The HTTP client to use for verification</param>
-    public static async Task VerifyUser(HttpClient client)
+    public static async Task<HttpResponseMessage> CreateStoreRequest(
+        HttpClient client,
+        string title,
+        string slug,
+        string description = "",
+        (string platform, string url)[]? socialLinks = null)
     {
-        var response = await client.GetAsync("/api/authentication/verify?token=valid_token&email=test@example.com");
-        // Verification is handled by the test infrastructure
+        var storeData = StoreTestData.CreateValidStoreFormData(title, slug, description, socialLinks);
+        return await client.PostAsync(CatalogEndpoints.Stores.Create, storeData);
     }
 
     public static async Task<string> CreateStoreForUser(
@@ -179,8 +212,7 @@ public static class CatalogTestUtilities
         string slug,
         string description = "")
     {
-        var storeData = StoreTestData.CreateValidStoreFormData(title, slug, description);
-        var response = await client.PostAsync(CatalogEndpoints.Stores.Create, storeData);
+        var response = await CreateStoreRequest(client, title, slug, description);
 
         if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Failed to create store. Status: {response.StatusCode}");
@@ -198,14 +230,19 @@ public static class CatalogTestUtilities
         string subtitle = "Test subtitle",
         string description = "Test description",
         string clickToPay = "Book now",
-        object[]? dayAvailabilities = null,
+        ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities = null,
         int durationMinutes = 60)
     {
-        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductRequest(
-            title, price, bufferTimeMinutes, subtitle, description, clickToPay,
-            "Test instructions", "Africa/Tunis", dayAvailabilities, durationMinutes);
-
-        var response = await client.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        var response = await CreateSessionProductRequest(
+            client,
+            title,
+            price,
+            bufferTimeMinutes,
+            subtitle,
+            description,
+            clickToPay,
+            dayAvailabilities,
+            durationMinutes);
 
         if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Failed to create session product. Status: {response.StatusCode}");
@@ -215,16 +252,6 @@ public static class CatalogTestUtilities
         return jsonDoc.RootElement.GetProperty("slug").GetString()!;
     }
 
-    public static async Task<HttpResponseMessage> CreateStoreRequest(
-        HttpClient client,
-        string title,
-        string slug,
-        string description = "",
-        (string platform, string url)[]? socialLinks = null)
-    {
-        var storeData = StoreTestData.CreateValidStoreFormData(title, slug, description, socialLinks);
-        return await client.PostAsync(CatalogEndpoints.Stores.Create, storeData);
-    }
 
     public static async Task<HttpResponseMessage> CreateSessionProductRequest(
         HttpClient client,
@@ -233,25 +260,25 @@ public static class CatalogTestUtilities
         int bufferTimeMinutes = 15,
         string subtitle = "Test subtitle",
         string description = "Test description",
-        object[]? dayAvailabilities = null,
+        string clickToPay = "Book now",
+        ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities = null,
         int durationMinutes = 60)
     {
-        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductRequest(
-            title, price, bufferTimeMinutes, subtitle, description, "Book now",
-            "Test instructions", "Africa/Tunis", dayAvailabilities, durationMinutes);
+        var sessionProductRequest = SessionProductTestData.CreateValidSessionProductFormData(
+            title,
+            price,
+            bufferTimeMinutes,
+            subtitle,
+            description,
+            clickToPay,
+            "Test instructions",
+            "Africa/Tunis",
+            dayAvailabilities,
+            durationMinutes);
 
-        return await client.PostAsJsonAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
+        return await client.PostAsync(CatalogEndpoints.Products.Sessions.Create, sessionProductRequest);
     }
 
-    public static async Task<HttpResponseMessage> UpdateStoreRequest(
-        HttpClient client,
-        string title,
-        string? description = null,
-        (string platform, string url)[]? socialLinks = null)
-    {
-        var updateRequest = StoreTestData.CreateStoreUpdateRequest(title, description, socialLinks);
-        return await client.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
-    }
 
     public static async Task<HttpResponseMessage> UpdateSessionProductRequest(
         HttpClient client,
@@ -263,23 +290,27 @@ public static class CatalogTestUtilities
         string? subtitle = null,
         string? description = null,
         string? meetingInstructions = null,
-        object[]? dayAvailabilities = null,
+        ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities = null,
         string? clickToPay = "Book now",
         string? timeZoneId = "Africa/Tunis")
     {
-        var updateRequest = SessionProductTestData.CreateSessionProductUpdateRequest(
-            title, price, durationMinutes, bufferTimeMinutes, subtitle, description,
-            clickToPay, meetingInstructions, timeZoneId, dayAvailabilities);
+        var updateRequest = SessionProductTestData.CreateValidSessionProductFormData(
+            title,
+            price,
+            durationMinutes,
+            subtitle,
+            description,
+            clickToPay,
+            meetingInstructions,
+            timeZoneId
+            , dayAvailabilities,
+            durationMinutes);
 
-        return await client.PutAsJsonAsync(
+        return await client.PutAsync(
             CatalogEndpoints.Products.Sessions.Update.Replace("{productSlug}", productSlug),
             updateRequest);
     }
 
-    public static async Task<HttpResponseMessage> GetStoreRequest(HttpClient client)
-    {
-        return await client.GetAsync(CatalogEndpoints.Stores.GetMy);
-    }
 
     public static async Task<HttpResponseMessage> GetSessionProductRequest(HttpClient client, string productSlug)
     {
@@ -289,39 +320,5 @@ public static class CatalogTestUtilities
     public static async Task<HttpResponseMessage> CheckSlugAvailabilityRequest(HttpClient client, string slug)
     {
         return await client.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", slug));
-    }
-
-    public static async Task VerifySessionProductResponse(HttpResponseMessage response, string? expectedTitle = null, decimal? expectedPrice = null)
-    {
-        var content = await response.Content.ReadAsStringAsync();
-        var jsonDoc = System.Text.Json.JsonDocument.Parse(content);
-        var root = jsonDoc.RootElement;
-
-        Assert.True(root.TryGetProperty("title", out _), "Response should contain title");
-        Assert.True(root.TryGetProperty("price", out _), "Response should contain price");
-        Assert.True(root.TryGetProperty("durationMinutes", out _), "Response should contain durationMinutes");
-        Assert.True(root.TryGetProperty("bufferTimeMinutes", out _), "Response should contain bufferTimeMinutes");
-
-        if (expectedTitle != null)
-        {
-            var actualTitle = root.GetProperty("title").GetString();
-            Assert.Equal(expectedTitle, actualTitle);
-        }
-
-        if (expectedPrice != null)
-        {
-            var actualPrice = root.GetProperty("price").GetDecimal();
-            Assert.Equal(expectedPrice.Value, actualPrice);
-        }
-    }
-
-    public static async Task VerifyErrorResponse(HttpResponseMessage response, string? expectedErrorCode = null)
-    {
-        var content = await response.Content.ReadAsStringAsync();
-
-        if (!string.IsNullOrEmpty(expectedErrorCode))
-        {
-            Assert.Contains(expectedErrorCode, content, StringComparison.OrdinalIgnoreCase);
-        }
     }
 }

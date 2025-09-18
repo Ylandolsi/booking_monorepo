@@ -12,23 +12,22 @@ public class SessionProductsTests : CatalogTestBase
 {
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public SessionProductsTests(IntegrationTestsWebAppFactory factory, ITestOutputHelper testOutputHelper) : base(factory)
+    public SessionProductsTests(IntegrationTestsWebAppFactory factory, ITestOutputHelper testOutputHelper) :
+        base(factory)
     {
         _testOutputHelper = testOutputHelper;
     }
 
     #region Create Session Product Tests
 
-  
-
     [Fact]
     public async Task CreateSessionProduct_ShouldSucceed_WhenValidDataProvided()
     {
         // Arrange
-        var (userArrange, userAct) = GetClientsForUser("user_create_session_product");
-        await CreateUserAndLogin("user_create_session_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
-        await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
+        //var (userArrange, userAct) = GetClientsForUser("CreateSessionProduct_ShouldSucceed_WhenValidDataProvided");
+        var httpclient = Factory.CreateClient();
+        await CreateUserAndLogin(null, null, httpclient);
+        await CatalogTestUtilities.CreateStoreForUser(httpclient, "Test Store", "test-store");
 
         var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
             (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
@@ -37,8 +36,8 @@ public class SessionProductsTests : CatalogTestBase
 
         // Act
         var response = await CatalogTestUtilities.CreateSessionProductRequest(
-            userAct, "1-on-1 Coaching Session", 100.0m, 15, "Personalized coaching",
-            "A detailed coaching session tailored to your needs", dayAvailabilities);
+            httpclient, "1-on-1 Coaching Session", 100.0m, 15, "Personalized coaching",
+            "A detailed coaching session tailored to your needs", "clicktoPay", dayAvailabilities);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -50,7 +49,6 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_no_store_session_product");
         await CreateUserAndLogin("user_no_store_session_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
         var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 100.0m);
@@ -84,7 +82,6 @@ public class SessionProductsTests : CatalogTestBase
         var userKey = $"user_validation_{Guid.NewGuid():N}";
         var (userArrange, userAct) = GetClientsForUser(userKey);
         await CreateUserAndLogin($"{userKey}@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
 
         // Act
@@ -106,7 +103,6 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_session_product");
         await CreateUserAndLogin("user_get_session_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
         var sessionProductSlug =
             await CatalogTestUtilities.CreateSessionProductForUser(userAct, "Test Session", 100.0m);
@@ -125,7 +121,6 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_get_nonexistent_product");
         await CreateUserAndLogin("user_get_nonexistent_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         // Act
         var response = await CatalogTestUtilities.GetSessionProductRequest(userAct, "no-found");
@@ -157,7 +152,6 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_session_product");
         await CreateUserAndLogin("user_update_session_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
         await CatalogTestUtilities.CreateStoreForUser(userAct, "Test Store", "test-store");
         var sessionProductSlug =
             await CatalogTestUtilities.CreateSessionProductForUser(userAct, "Original Session", 100.0m);
@@ -176,7 +170,6 @@ public class SessionProductsTests : CatalogTestBase
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var responseContent = await response.Content.ReadAsStringAsync();
-
     }
 
     [Fact]
@@ -185,7 +178,6 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (userArrange, userAct) = GetClientsForUser("user_update_nonexistent_product");
         await CreateUserAndLogin("user_update_nonexistent_product@example.com", null, userArrange);
-        await CatalogTestUtilities.VerifyUser(userAct);
 
         var dayAvailabilities = CatalogTestUtilities.SessionProductTestData.CreateCustomDayAvailabilities(
             (DayOfWeek.Monday, true, new[] { ("09:00", "12:00"), ("14:00", "17:00") }),
@@ -208,11 +200,9 @@ public class SessionProductsTests : CatalogTestBase
         // Arrange
         var (user1Arrange, user1Act) = GetClientsForUser("user1_owns_product");
         await CreateUserAndLogin("user1_owns_product@example.com", null, user1Arrange);
-        await CatalogTestUtilities.VerifyUser(user1Act);
 
         var (user2Arrange, user2Act) = GetClientsForUser("user2_tries_update");
         await CreateUserAndLogin("user2_tries_update@example.com", null, user2Arrange);
-        await CatalogTestUtilities.VerifyUser(user2Act);
 
         await CatalogTestUtilities.CreateStoreForUser(user1Act, "User1 Store", "user1-store");
         var sessionProductSlug =

@@ -2,7 +2,7 @@ namespace Booking.Modules.Catalog.Features;
 
 public static class CatalogEndpoints
 {
-    private const string Base = "api/catalog";
+    private const string Base = "api";
 
     public static class Stores
     {
@@ -10,8 +10,6 @@ public static class CatalogEndpoints
         public const string Update = Base + "/stores";
         public const string CheckSlugAvailability = Base + "/stores/slug-availability/{slug}";
         public const string UpdatePicture = Base + "/stores/picture";
-        public const string UpdateLinks = Base + "/stores/{storeId:int}/links";
-        public const string UpdateSocialLinks = Base + "/stores/{storeId:int}/social-links";
         public const string GetMy = Base + "/stores/me";
 
         public const string GetPublic = Base + "/stores/{slug}";
@@ -22,20 +20,21 @@ public static class CatalogEndpoints
         public static class Sessions
         {
             public const string Create = $"{Base}/products/s/create";
-            public const string Get = $"{Base}/products/s/{{productSlug}}";
             public const string Update = $"{Base}/products/s/{{productSlug}}";
-            public const string Book = $"{Base}/products/s";
-            public const string GetSessions = $"{Base}/s"; 
+            public const string GetSessions = $"{Base}/s"; // get booked session for the store owner 
             
-
+            // PUBLIC : 
+            public const string Get = $"{Base}/products/s/{{productSlug}}";
+            public const string Book = $"{Base}/products/s/{{productSlug}}";
+            public const string GetDailyAv = $"{Base}/products/s/{{productSlug}}/availability"; // Query: date
+            public const string GetMonthlyAv = $"{Base}/products/s/{{productSlug}}/availability/month"; // Query: year, month , timeZoneId
+     
         }
 
     }
 
     public static class Orders
     {
-        public const string Create = $"{Base}" + "/orders";
-        public const string PaymentWebhook = $"{Base}" + "/orders/webhook";
         public const string Get = $"{Base}" + "/orders/{orderId:int}";
         public const string GetMy = $"{Base}" + "/orders/me";
     }
@@ -61,13 +60,7 @@ public static class CatalogEndpoints
         public const string Webhook = $"{Base}/payments/webhook"; //  payment_ref=5f9498735289e405fc7c18ac
     }
 
-    public static class Availability
-    {
-        public const string SetBulk = $"{Base}/availability/bulk";
-        public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
-        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
-        public const string GetSchedule = $"{Base}/availability/schedule";
-    }
+
 
 
 }
