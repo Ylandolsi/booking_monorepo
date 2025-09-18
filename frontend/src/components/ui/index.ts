@@ -31,3 +31,4 @@ export * from './avatar';
 export * from './tabs';
 export * from './switch';
 export * from './calendar';
+export * from './accordion';
