@@ -261,9 +261,11 @@ public static class CatalogTestUtilities
         string subtitle = "Test subtitle",
         string description = "Test description",
         string clickToPay = "Book now",
-        ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities = null,
+        ( DayOfWeek DayOfWeek, bool IsActive, List<AvailabilityRange> AvailabilityRanges )[]? dayAvailabilities = null ,
         int durationMinutes = 60)
     {
+        dayAvailabilities ??= SessionProductTestData.CreateDefaultDayAvailabilities();
+        
         var sessionProductRequest = SessionProductTestData.CreateValidSessionProductFormData(
             title,
             price,

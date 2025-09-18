@@ -25,11 +25,6 @@ public class CreateStoreEndpoint : IEndpoint
     {
         app.MapPost(CatalogEndpoints.Stores.Create, async (
                 [FromForm] Request request,
-                /*[FromForm] string Title,
-                [FromForm] string Slug,
-                [FromForm] IFormFile File,
-                [FromForm] string Description,
-                [FromForm] List<SocialLink>? SocialLinks,*/
                 UserContext userContext,
                 ICommandHandler<CreateStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>

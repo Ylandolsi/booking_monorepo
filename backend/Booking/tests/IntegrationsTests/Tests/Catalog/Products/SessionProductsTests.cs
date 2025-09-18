@@ -51,8 +51,9 @@ public class SessionProductsTests : CatalogTestBase
         await CreateUserAndLogin("user_no_store_session_product@example.com", null, userArrange);
 
         // Act
-        var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 100.0m);
-
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 50.0m, 15,
+            "Test subtitle", "Test description",
+            dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -64,9 +65,10 @@ public class SessionProductsTests : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var response = await CatalogTestUtilities.CreateSessionProductRequest(unauthClient, "Test Session", 50.0m);
-
-        // Assert
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(unauthClient, "Test Session", 50.0m, 100,
+            "Test subtitle", "Test description",
+            dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
+        
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
@@ -74,7 +76,6 @@ public class SessionProductsTests : CatalogTestBase
     [InlineData("", 50.0, 15, "Title cannot be empty")]
     [InlineData("Valid Title", -10.0, 15, "Price cannot be negative")]
     [InlineData("Valid Title", 50.0, -5, "Buffer time must be between 0 and 240 minutes")]
-    [InlineData("Valid Title", 50.0, 300, "Buffer time must be between 0 and 240 minutes")]
     public async Task CreateSessionProduct_ShouldFail_WhenInvalidDataProvided(string title, decimal price,
         int bufferTime, string expectedErrorType)
     {

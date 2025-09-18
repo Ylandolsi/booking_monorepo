@@ -12,7 +12,7 @@ public class CheckSlugAvailabilityEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("api/catalog/stores/slug-availability/{slug}", async (
+        app.MapGet(CatalogEndpoints.Stores.CheckSlugAvailability, async (
                 string slug,
                 UserContext userContext,
                 IQueryHandler<CheckSlugAvailabilityQuery, SlugAvailabilityResponse> handler,

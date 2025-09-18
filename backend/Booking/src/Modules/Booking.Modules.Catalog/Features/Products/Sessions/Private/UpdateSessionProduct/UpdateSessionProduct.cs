@@ -4,6 +4,7 @@ using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Persistence;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -17,6 +18,12 @@ public record UpdateSessionProductCommand(
     string Description,
     string ClickToPay,
     decimal Price,
+    //  either keep old URL or upload new file
+    string? PreviewImageUrl,
+    IFormFile? PreviewImage,
+    string? ThumbnailImageUrl,
+    IFormFile? ThumbnailImage,
+    
     int DurationMinutes,
     int BufferTimeMinutes,
     List<DayAvailability> DayAvailabilities,
@@ -24,12 +31,11 @@ public record UpdateSessionProductCommand(
     string TimeZoneId = "Africa/Tunis"
 ) : ICommand<PatchPostProductResponse>;
 
-
-
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, PatchPostProductResponse>
+    ILogger<UpdateSessionProductHandler> logger)
+    : ICommandHandler<UpdateSessionProductCommand, PatchPostProductResponse>
 {
     public async Task<Result<PatchPostProductResponse>> Handle(UpdateSessionProductCommand command,
         CancellationToken cancellationToken)
@@ -46,7 +52,8 @@ public class UpdateSessionProductHandler(
                 .Include(sp => sp.Store)
                 .Include(sp => sp.Days)
                 .Include(sp => sp.Availabilities)
-                .FirstOrDefaultAsync(sp => sp.ProductSlug == command.ProductSlug && sp.Store.UserId == command.UserId , cancellationToken);
+                .FirstOrDefaultAsync(sp => sp.ProductSlug == command.ProductSlug && sp.Store.UserId == command.UserId,
+                    cancellationToken);
 
             if (sessionProduct == null)
             {
@@ -119,8 +126,8 @@ public class UpdateSessionProductHandler(
                                   "Price changed from {OriginalPrice} to {NewPrice}",
                 command.ProductSlug, originalTitle, command.Title, originalPrice, command.Price);
 
-            
-            return Result.Success( new PatchPostProductResponse(command.ProductSlug));
+
+            return Result.Success(new PatchPostProductResponse(command.ProductSlug));
         }
         catch (Exception ex)
         {
