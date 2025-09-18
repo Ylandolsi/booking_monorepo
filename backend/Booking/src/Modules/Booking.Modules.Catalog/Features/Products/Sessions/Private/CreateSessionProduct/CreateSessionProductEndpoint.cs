@@ -14,7 +14,8 @@ public class CreateSessionProductEndpoint : IEndpoint
         string Title,
         string Subtitle,
         string Description,
-        IFormFile Thumbnail,
+        IFormFile? PreviewImage,
+        IFormFile? ThumbnailImage,
         string ClickToPay,
         decimal Price,
         int DurationMinutes,
@@ -29,7 +30,7 @@ public class CreateSessionProductEndpoint : IEndpoint
         app.MapPost(CatalogEndpoints.Products.Sessions.Create, async (
                 UserContext userContext,
                 CreateSessionProductRequest request,
-                ICommandHandler<CreateSessionProductCommand, SessionProductResponse> handler,
+                ICommandHandler<CreateSessionProductCommand, string> handler,
                 HttpContext context) =>
             {
                 int userId = userContext.UserId;
@@ -41,6 +42,8 @@ public class CreateSessionProductEndpoint : IEndpoint
                     request.Description,
                     request.ClickToPay,
                     request.Price,
+                    request.PreviewImage,
+                    request.ThumbnailImage,
                     request.DurationMinutes,
                     request.BufferTimeMinutes,
                     request.DayAvailabilities,

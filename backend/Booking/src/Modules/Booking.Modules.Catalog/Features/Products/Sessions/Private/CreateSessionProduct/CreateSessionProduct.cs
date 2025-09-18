@@ -18,12 +18,14 @@ public record CreateSessionProductCommand(
     string Description,
     string ClickToPay,
     decimal Price,
+    IFormFile? PreviewImage , 
+    IFormFile? ThumbnailImage,
     int DurationMinutes,
     int BufferTimeMinutes,
     List<DayAvailability> DayAvailabilities,
     string MeetingInstructions = "",
     string TimeZoneId = "Africa/Tunis"
-) : ICommand<SessionProductResponse>;
+) : ICommand<string>;
 
 
 public class CreateSessionProductHandler(
@@ -31,9 +33,9 @@ public class CreateSessionProductHandler(
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
     ILogger<CreateSessionProductHandler> logger)
-    : ICommandHandler<CreateSessionProductCommand, SessionProductResponse>
+    : ICommandHandler<CreateSessionProductCommand, string>
 {
-    public async Task<Result<SessionProductResponse>> Handle(CreateSessionProductCommand command,
+    public async Task<Result<string>> Handle(CreateSessionProductCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation(
@@ -46,12 +48,13 @@ public class CreateSessionProductHandler(
         {
             // Get user's store
             var store = await context.Stores
+                .Include(s => s.Products)
                 .FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
 
             if (store is null)
             {
                 logger.LogWarning("No store found for user {UserId}", command.UserId);
-                return Result.Failure<SessionProductResponse>(StoreErros.NotFound);
+                return Result.Failure<string>(StoreErros.NotFound);
             }
 
             // Validate buffer time
@@ -60,7 +63,7 @@ public class CreateSessionProductHandler(
             {
                 logger.LogWarning("Invalid buffer time {BufferTimeMinutes} for user {UserId}",
                     command.BufferTimeMinutes, command.UserId);
-                return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
+                return Result.Failure<string>(bufferTimeResult.Error);
             }
 
             // Validate duration time
@@ -69,7 +72,7 @@ public class CreateSessionProductHandler(
             {
                 logger.LogWarning("Invalid duration time {DurationMinutes} for user {UserId}",
                     command.DurationMinutes, command.UserId);
-                return Result.Failure<SessionProductResponse>(durationTimeResult.Error);
+                return Result.Failure<string>(durationTimeResult.Error);
             }
 
             // Generate unique slug
@@ -95,9 +98,17 @@ public class CreateSessionProductHandler(
                 command.TimeZoneId
             );
 
+            
+            var maxOrder = store.Products.Any() ? store.Products.Max(p => p.DisplayOrder) : 0;
+            sessionProduct.UpdateDisplayOrder(maxOrder + 1);
+            
+            
             // Add to context
             var sessionCreated = await context.AddAsync(sessionProduct, cancellationToken);
 
+            // upload the pictures ! 
+            
+            
             // Save the product first to get the ID
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -109,7 +120,7 @@ public class CreateSessionProductHandler(
                 logger.LogError("Failed to set schedule for session product {ProductId}: {Error}",
                     sessionCreated.Entity.Id, scheduleResult.Error.Description);
                 await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Failure<SessionProductResponse>(scheduleResult.Error);
+                return Result.Failure<string>(scheduleResult.Error);
             }
 
             // Commit transaction
@@ -118,34 +129,15 @@ public class CreateSessionProductHandler(
             logger.LogInformation(
                 "Successfully created session product {ProductId} with slug {ProductSlug} for user {UserId}",
                 sessionCreated.Entity.Id, sessionCreated.Entity.ProductSlug, command.UserId);
-
-            var response = new SessionProductResponse
-            {
-                ProductSlug = sessionProduct.ProductSlug,
-                StoreSlug = sessionProduct.StoreSlug,
-                Title = sessionProduct.Title,
-                Subtitle = sessionProduct.Subtitle,
-                Description = sessionProduct.Description,
-                ClickToPay = sessionProduct.ClickToPay,
-                Price = sessionProduct.Price,
-                MeetingInstructions = sessionProduct.MeetingInstructions,
-                DurationMinutes = sessionProduct.Duration.Minutes,
-                BufferTimeMinutes = sessionProduct.BufferTime.Minutes,
-                TimeZoneId = sessionProduct.TimeZoneId,
-                IsPublished = sessionProduct.IsPublished,
-                UpdatedAt = sessionProduct.UpdatedAt,
-                CreatedAt = sessionProduct.CreatedAt
-            };
-
-
-            return Result.Success(response);
+            
+            return Result.Success(sessionProduct.ProductSlug);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error creating session product for user {UserId} with title {Title}",
                 command.UserId, command.Title);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<SessionProductResponse>(Error.Problem("SessionProduct.Creation.Failed",
+            return Result.Failure<string>(Error.Problem("SessionProduct.Creation.Failed",
                 "An error occurred while creating the session product"));
         }
     }

@@ -13,9 +13,11 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 public record UpdateStoreCommand(
     int UserId,
     string Title,
+    Dictionary<string , int> Orders, //  product slug is a key , order : int 
     string? Description = null,
     Picture? Picture = null,
     IReadOnlyList<SocialLink>? SocialLinks = null
+    
 ) : ICommand<StoreResponse>;
 
 public class UpdateStoreHandler(
@@ -43,6 +45,7 @@ public class UpdateStoreHandler(
 
             // Get existing store
             var store = await context.Stores
+                .Include(s => s.Products)
                 .FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
 
             if (store is null)
@@ -63,6 +66,19 @@ public class UpdateStoreHandler(
             if (command.Picture != null)
             {
                 store.UpdatePicture(command.Picture);
+            }
+
+            foreach (var product in store.Products)
+            {
+                if (command.Orders.ContainsKey(product.ProductSlug))
+                {
+                    int order = command.Orders[product.ProductSlug];
+                    if (order != product.DisplayOrder && order != 0)
+                    {
+                        product.UpdateDisplayOrder(order);
+                    }
+                }
+                
             }
 
             // Save changes

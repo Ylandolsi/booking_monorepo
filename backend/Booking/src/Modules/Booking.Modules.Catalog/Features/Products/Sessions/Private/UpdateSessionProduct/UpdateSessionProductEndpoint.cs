@@ -29,7 +29,7 @@ public class UpdateSessionProductEndpoint : IEndpoint
                 string productSlug,
                 UserContext userContext,
                 UpdateSessionProductRequest request,
-                ICommandHandler<UpdateSessionProductCommand, SessionProductResponse> handler,
+                ICommandHandler<UpdateSessionProductCommand, string> handler,
                 CancellationToken cancellationToken) =>
             {
                 var userId = userContext.UserId;

@@ -21,16 +21,16 @@ public record UpdateSessionProductCommand(
     List<DayAvailability> DayAvailabilities,
     string MeetingInstructions = "",
     string TimeZoneId = "Africa/Tunis"
-) : ICommand<SessionProductResponse>;
+) : ICommand<string>;
 
 
 
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, SessionProductResponse>
+    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, string>
 {
-    public async Task<Result<SessionProductResponse>> Handle(UpdateSessionProductCommand command,
+    public async Task<Result<string>> Handle(UpdateSessionProductCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating session product {ProductSlug} for user {UserId}",
@@ -50,7 +50,7 @@ public class UpdateSessionProductHandler(
             if (sessionProduct == null)
             {
                 logger.LogWarning("Session product {ProductSlug} not found", command.ProductSlug);
-                return Result.Failure<SessionProductResponse>(
+                return Result.Failure<string>(
                     Error.NotFound("SessionProduct.NotFound", "Session product not found"));
             }
 
@@ -60,7 +60,7 @@ public class UpdateSessionProductHandler(
                 logger.LogWarning(
                     "User {UserId} attempted to update session product {ProductId} owned by user {OwnerId}",
                     command.UserId, command.ProductSlug, sessionProduct.Store.UserId);
-                return Result.Failure<SessionProductResponse>(
+                return Result.Failure<string>(
                     Error.Failure("SessionProduct.NotOwned", "You don't have permission to update this product"));
             }
 
@@ -74,7 +74,7 @@ public class UpdateSessionProductHandler(
             {
                 logger.LogWarning("Invalid duration {DurationMinutes} for session product {ProductId}",
                     command.DurationMinutes, command.ProductSlug);
-                return Result.Failure<SessionProductResponse>(durationResult.Error);
+                return Result.Failure<string>(durationResult.Error);
             }
 
             var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
@@ -82,7 +82,7 @@ public class UpdateSessionProductHandler(
             {
                 logger.LogWarning("Invalid buffer time {BufferTimeMinutes} for session product {ProductId}",
                     command.BufferTimeMinutes, command.ProductSlug);
-                return Result.Failure<SessionProductResponse>(bufferTimeResult.Error);
+                return Result.Failure<string>(bufferTimeResult.Error);
             }
 
             // Update basic info
@@ -105,7 +105,7 @@ public class UpdateSessionProductHandler(
                     logger.LogError("Failed to update schedule for session product {ProductId}: {Error}",
                         command.ProductSlug, scheduleResult.Error.Description);
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    return Result.Failure<SessionProductResponse>(scheduleResult.Error);
+                    return Result.Failure<string>(scheduleResult.Error);
                 }
             }
 
@@ -118,33 +118,15 @@ public class UpdateSessionProductHandler(
                                   "Price changed from {OriginalPrice} to {NewPrice}",
                 command.ProductSlug, originalTitle, command.Title, originalPrice, command.Price);
 
-            var response = new SessionProductResponse
-            {
-                ProductSlug = sessionProduct.ProductSlug,
-                StoreSlug = sessionProduct.StoreSlug,
-                Title = sessionProduct.Title,
-                Subtitle = sessionProduct.Subtitle,
-                Description = sessionProduct.Description,
-                ClickToPay = sessionProduct.ClickToPay,
-                Price = sessionProduct.Price,
-                MeetingInstructions = sessionProduct.MeetingInstructions,
-                DurationMinutes = sessionProduct.Duration.Minutes,
-                BufferTimeMinutes = sessionProduct.BufferTime.Minutes,
-                TimeZoneId = sessionProduct.TimeZoneId,
-                IsPublished = sessionProduct.IsPublished,
-                UpdatedAt = sessionProduct.UpdatedAt,
-                CreatedAt = sessionProduct.CreatedAt
-            };
-
-
-            return Result.Success(response);
+            
+            return Result.Success(command.ProductSlug);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error updating session product {ProductId} for user {UserId}",
                 command.ProductSlug, command.UserId);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<SessionProductResponse>(Error.Problem("SessionProduct.Update.Failed",
+            return Result.Failure<string>(Error.Problem("SessionProduct.Update.Failed",
                 "An error occurred while updating the session product"));
         }
     }

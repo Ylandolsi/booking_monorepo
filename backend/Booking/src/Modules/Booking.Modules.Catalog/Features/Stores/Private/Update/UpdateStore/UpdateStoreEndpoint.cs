@@ -17,6 +17,7 @@ public class UpdateStoreEndpoint : IEndpoint
 {
     public record UpdateStoreRequest(
         string Title,
+        Dictionary<string, int> Orders,
         string? Description = null,
         Picture? Picture = null,
         IReadOnlyList<SocialLink>? SocialLinks = null
@@ -35,6 +36,7 @@ public class UpdateStoreEndpoint : IEndpoint
                 var command = new UpdateStoreCommand(
                     userId,
                     request.Title,
+                    request.Orders,
                     request.Description,
                     request.Picture,
                     request.SocialLinks

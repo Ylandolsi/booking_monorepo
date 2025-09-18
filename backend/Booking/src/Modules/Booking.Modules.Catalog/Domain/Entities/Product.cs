@@ -20,8 +20,8 @@ public abstract class Product : Entity
     public string? Description { get; protected set; }
 
     // TODO : change to Picture ? 
-    public string? ThumbnailUrl { get; protected set; }
-
+    public Picture? Preview { get; protected set; }
+    public Picture? Thumbnail { get; protected set; }
     public ProductType ProductType { get; protected set; }
 
     public decimal Price { get; protected set; }
@@ -80,12 +80,19 @@ public abstract class Product : Entity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void UpdateThumbnail(string thumbnailUrl)
+    public void UpdatePictures(Picture thumbnail, Picture preview)
     {
-        if (string.IsNullOrWhiteSpace(thumbnailUrl))
-            throw new ArgumentException("Thumbnail URL cannot be empty", nameof(thumbnailUrl));
-
-        ThumbnailUrl = thumbnailUrl;
+        UpdateThumbnail(thumbnail);
+        UpdatePreview(preview);
+    }
+    public void UpdateThumbnail(Picture thumbnail)
+    {
+        Thumbnail = thumbnail;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void UpdatePreview(Picture preview)
+    {
+        Preview = preview;
         UpdatedAt = DateTime.UtcNow;
     }
 

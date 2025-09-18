@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -13,7 +14,8 @@ public record SessionProductDetailResponse(
     string Title,
     string? Subtitle,
     string? Description,
-    string? ThumbnailUrl,
+    Picture Preview,
+    Picture? Thumbnail,
     decimal Price,
     int DurationMinutes,
     int BufferTimeMinutes,
@@ -96,7 +98,8 @@ public class GetSessionProductHandler(
                 sessionProduct.Title,
                 sessionProduct.Subtitle,
                 sessionProduct.Description,
-                sessionProduct.ThumbnailUrl,
+                sessionProduct.Preview,
+                sessionProduct.Thumbnail,
                 sessionProduct.Price,
                 sessionProduct.Duration?.Minutes ?? 30, // Default to 30 minutes if not set
                 sessionProduct.BufferTime?.Minutes ?? 15, // Default to 15 minutes if not set

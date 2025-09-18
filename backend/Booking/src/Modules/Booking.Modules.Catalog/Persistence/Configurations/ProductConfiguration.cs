@@ -25,8 +25,28 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Description)
             .HasMaxLength(2000);
 
-        builder.Property(p => p.ThumbnailUrl)
-            .HasMaxLength(500);
+
+        builder.OwnsOne(s => s.Preview, picture =>
+        {
+            picture.Property(p => p.MainLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            picture.Property(p => p.ThumbnailLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+        });
+        
+        builder.OwnsOne(s => s.Thumbnail, picture =>
+        {
+            picture.Property(p => p.MainLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            picture.Property(p => p.ThumbnailLink)
+                .HasMaxLength(2048)
+                .IsRequired();
+        });
 
         builder.Property(p => p.Price)
             .HasColumnType("decimal(18,2)")
