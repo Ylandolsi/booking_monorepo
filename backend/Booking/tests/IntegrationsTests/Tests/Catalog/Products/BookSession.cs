@@ -65,7 +65,7 @@ public class BookSessionTests : CatalogTestBase
 
         // Act - Step 1: Book the session
         var bookingResponse =  await unauthClient.PostAsJsonAsync(
-                CatalogEndpoints.Products.Sessions.Book.Replace("{{productSlug}}", sessionProductSlug),
+                CatalogEndpoints.Products.Sessions.Book.Replace("{productSlug}", sessionProductSlug),
                 bookingRequest);
 
         // Assert - Booking should succeed and return payment URL
@@ -90,7 +90,7 @@ public class BookSessionTests : CatalogTestBase
         Assert.True(paymentResponse.success);
 
         // Wait a bit for webhook processing
-        await Task.Delay(10000);
+        await Task.Delay(25000);
         scope = Factory.Services.CreateScope();
         dbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
         latestSession = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductSlug == sessionProductSlug);

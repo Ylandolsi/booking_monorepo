@@ -325,7 +325,6 @@ public class MockKonnectController : ControllerBase
             _logger.LogWarning("No webhook URL configured for payment {PaymentRef}", payment.Reference);
             return;
         }
-
         try
         {
             var httpClient = _httpClientFactory.CreateClient("KonnectClient");

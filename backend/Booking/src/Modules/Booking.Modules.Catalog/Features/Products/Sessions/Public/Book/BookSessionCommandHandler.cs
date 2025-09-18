@@ -336,16 +336,14 @@ internal sealed class BookSessionCommandHandler(
                     return Result.Failure<BookSessionRepsonse>(
                         Error.Problem("Payment.CreationFailed", "Failed to create payment. Please try again."));
                 }
-                else
-                {
-                    // Update payment reference
-                    payment.UpdateReference(paymentResponse.Value.PaymentRef);
 
-                    paymentLink = paymentResponse.Value.PayUrl;
+                // Update payment reference
+                payment.UpdateReference(paymentResponse.Value.PaymentRef);
 
-                    logger.LogInformation("Payment created with reference {PaymentRef} for session {SessionId}",
-                        paymentResponse.Value.PaymentRef, session.Id);
-                }
+                paymentLink = paymentResponse.Value.PayUrl;
+
+                logger.LogInformation("Payment created with reference {PaymentRef} for session {SessionId}",
+                    paymentResponse.Value.PaymentRef, session.Id);
             }
             else
             {

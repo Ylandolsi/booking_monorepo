@@ -8,6 +8,7 @@ using System.Data.Common;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Booking.Api;
+using Booking.Modules.Catalog.Features;
 using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Presistence;
@@ -108,8 +109,8 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                 options.ApiKey = "test-api-key";
                 options.WalletKey = "test-wallet";
                 options.PaymentLifespan = 100;
-                options.Webhook = "api/catalog/payments/webhook";
-                options.PayoutWebhook = "api/catalog/admin/payout/webhook";
+                options.Webhook = CatalogEndpoints.Payment.Webhook;
+                options.PayoutWebhook = CatalogEndpoints.Payouts.Admin.WebhookPayout;
             });
 
             var descriptor = services.SingleOrDefault(d => d.ServiceType ==
