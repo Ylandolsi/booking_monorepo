@@ -14,14 +14,14 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePict
 public record UpdateStorePictureCommand(
     int UserId,
     IFormFile Picture
-) : ICommand<StoreResponse>;
+) : ICommand<string>;
 
 public class UpdateStorePictureHandler(
     CatalogDbContext context,
     StoreService storeService,
-    ILogger<UpdateStorePictureHandler> logger) : ICommandHandler<UpdateStorePictureCommand, StoreResponse>
+    ILogger<UpdateStorePictureHandler> logger) : ICommandHandler<UpdateStorePictureCommand, string>
 {
-    public async Task<Result<StoreResponse>> Handle(UpdateStorePictureCommand command,
+    public async Task<Result<string>> Handle(UpdateStorePictureCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating store picture for user {UserId}",
@@ -30,30 +30,19 @@ public class UpdateStorePictureHandler(
         if (store is null)
         {
             logger.LogWarning("Store not found for user {UserId}", command.UserId);
-            return Result.Failure<StoreResponse>(StoreErros.NotFound);
+            return Result.Failure<string>(StoreErros.NotFound);
         }
 
         var profilePicture = await storeService.UploadPicture(command.Picture, store.Slug);
         store.UpdatePicture(profilePicture.IsSuccess ? profilePicture.Value : new Picture());
 
         await context.SaveChangesAsync(cancellationToken);
-
-        var storeLinks = store.SocialLinks
-            .Select(sl => new SocialLink(sl.Platform, sl.Url))
-            .ToList();
+        
 
         logger.LogInformation("Successfully updated store {StoreId} for user {UserId}. ", store.Id, command.UserId);
 
-        var response = new StoreResponse(
-            store.Title,
-            store.Slug,
-            store.Description,
-            store.Picture,
-            store.IsPublished,
-            store.CreatedAt,
-            storeLinks
-        );
+ 
 
-        return Result.Success(response);
+        return Result.Success(store.Slug);
     }
 }

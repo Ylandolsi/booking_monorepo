@@ -29,7 +29,7 @@ public class CreateStoreEndpoint : IEndpoint
                 [FromForm] string Description,
                 [FromForm] List<SocialLink>? SocialLinks,
                 UserContext userContext,
-                ICommandHandler<CreateStoreCommand, StoreResponse> handler,
+                ICommandHandler<CreateStoreCommand, string> handler,
                 HttpContext context) =>
             {
                 var userId = userContext.UserId;

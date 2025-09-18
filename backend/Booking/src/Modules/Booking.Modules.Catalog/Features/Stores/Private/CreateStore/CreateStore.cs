@@ -18,16 +18,16 @@ public record CreateStoreCommand(
     IFormFile Picture,
     List<SocialLink>? SocialLinks = null,
     string Description = ""
-) : ICommand<StoreResponse>;
+) : ICommand<string>;
 
 public class CreateStoreHandler(
     CatalogDbContext dbContext,
     StoreService storeService,
     IUnitOfWork unitOfWork,
     ILogger<CreateStoreHandler> logger)
-    : ICommandHandler<CreateStoreCommand, StoreResponse>
+    : ICommandHandler<CreateStoreCommand, string>
 {
-    public async Task<Result<StoreResponse>> Handle(CreateStoreCommand command, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(CreateStoreCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation(
             "Creating store for user {UserId} with slug {StoreSlug} and title {Title}",
@@ -43,7 +43,7 @@ public class CreateStoreHandler(
             {
                 logger.LogWarning("Store creation validation failed for user {UserId}: {Error}",
                     command.UserId, validationResult.Error.Description);
-                return Result.Failure<StoreResponse>(validationResult.Error);
+                return Result.Failure<string>(validationResult.Error);
             }
 
             // Check if user already has a store
@@ -54,7 +54,7 @@ public class CreateStoreHandler(
             {
                 logger.LogWarning("User {UserId} already has a store with ID {StoreId}",
                     command.UserId, existingStore.Id);
-                return Result.Failure<StoreResponse>(Error.Conflict("Store.AlreadyExists",
+                return Result.Failure<string>(Error.Conflict("Store.AlreadyExists",
                     "User already has a store"));
             }
 
@@ -64,7 +64,7 @@ public class CreateStoreHandler(
             {
                 logger.LogWarning("Store slug {StoreSlug} is not available for user {UserId}",
                     command.StoreSlug, command.UserId);
-                return Result.Failure<StoreResponse>(Error.Conflict("Store.Slug.NotAvailable",
+                return Result.Failure<string>(Error.Conflict("Store.Slug.NotAvailable",
                     "Store slug is not available, please try another one"));
             }
 
@@ -92,29 +92,14 @@ public class CreateStoreHandler(
             logger.LogInformation("Successfully created store {StoreId} with slug {StoreSlug} for user {UserId}",
                 store.Id, store.Slug, command.UserId);
 
-            // Prepare response
-            var storeLinks = store.SocialLinks
-                .Select(sl => new SocialLink(sl.Platform, sl.Url))
-                .ToList();
-
-            var response = new StoreResponse(
-                store.Title,
-                store.Slug,
-                store.Description,
-                store.Picture,
-                store.IsPublished,
-                store.CreatedAt,
-                storeLinks
-            );
-
-            return Result.Success(response);
+            return Result.Success(store.Slug);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error creating store for user {UserId} with slug {StoreSlug}",
                 command.UserId, command.StoreSlug);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<StoreResponse>(Error.Problem("Store.Creation.Failed",
+            return Result.Failure<string>(Error.Problem("Store.Creation.Failed",
                 "An error occurred while creating the store"));
         }
     }

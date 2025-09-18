@@ -291,24 +291,6 @@ public static class CatalogTestUtilities
         return await client.GetAsync(CatalogEndpoints.Stores.CheckSlugAvailability.Replace("{slug}", slug));
     }
 
-    public static async Task VerifyStoreResponse(HttpResponseMessage response, string? expectedTitle = null)
-    {
-        var content = await response.Content.ReadAsStringAsync();
-        var jsonDoc = System.Text.Json.JsonDocument.Parse(content);
-        var root = jsonDoc.RootElement;
-
-        Assert.True(root.TryGetProperty("title", out _), "Response should contain title");
-        Assert.True(root.TryGetProperty("slug", out _), "Response should contain slug");
-        Assert.True(root.TryGetProperty("isPublished", out _), "Response should contain isPublished");
-        Assert.True(root.TryGetProperty("createdAt", out _), "Response should contain createdAt");
-
-        if (expectedTitle != null)
-        {
-            var actualTitle = root.GetProperty("title").GetString();
-            Assert.Equal(expectedTitle, actualTitle);
-        }
-    }
-
     public static async Task VerifySessionProductResponse(HttpResponseMessage response, string? expectedTitle = null, decimal? expectedPrice = null)
     {
         var content = await response.Content.ReadAsStringAsync();

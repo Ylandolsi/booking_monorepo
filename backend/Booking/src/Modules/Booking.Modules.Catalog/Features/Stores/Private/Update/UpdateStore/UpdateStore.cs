@@ -18,14 +18,14 @@ public record UpdateStoreCommand(
     Picture? Picture = null,
     IReadOnlyList<SocialLink>? SocialLinks = null
     
-) : ICommand<StoreResponse>;
+) : ICommand<string>;
 
 public class UpdateStoreHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, StoreResponse>
+    ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, string>
 {
-    public async Task<Result<StoreResponse>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating store for user {UserId} with title {Title}",
             command.UserId, command.Title);
@@ -40,7 +40,7 @@ public class UpdateStoreHandler(
             {
                 logger.LogWarning("Store update validation failed for user {UserId}: {Error}",
                     command.UserId, validationResult.Error.Description);
-                return Result.Failure<StoreResponse>(validationResult.Error);
+                return Result.Failure<string>(validationResult.Error);
             }
 
             // Get existing store
@@ -51,7 +51,7 @@ public class UpdateStoreHandler(
             if (store is null)
             {
                 logger.LogWarning("Store not found for user {UserId}", command.UserId);
-                return Result.Failure<StoreResponse>(StoreErros.NotFound);
+                return Result.Failure<string>(StoreErros.NotFound);
             }
 
             // Store original values for logging
@@ -91,28 +91,15 @@ public class UpdateStoreHandler(
                 store.Id, command.UserId, originalTitle, command.Title,
                 originalDescription, command.Description);
 
-            // Prepare response
-            var storeLinks = store.SocialLinks
-                .Select(sl => new SocialLink(sl.Platform, sl.Url))
-                .ToList();
+            
 
-            var response = new StoreResponse(
-                store.Title,
-                store.Slug,
-                store.Description,
-                store.Picture,
-                store.IsPublished,
-                store.CreatedAt,
-                storeLinks
-            );
-
-            return Result.Success(response);
+            return Result.Success(store.Slug);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error updating store for user {UserId}", command.UserId);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<StoreResponse>(Error.Problem("Store.Update.Failed",
+            return Result.Failure<string>(Error.Problem("Store.Update.Failed",
                 "An error occurred while updating the store"));
         }
     }

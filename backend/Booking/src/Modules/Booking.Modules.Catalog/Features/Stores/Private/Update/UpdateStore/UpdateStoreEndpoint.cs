@@ -28,7 +28,7 @@ public class UpdateStoreEndpoint : IEndpoint
         app.MapPut(CatalogEndpoints.Stores.Update, async (
                 [FromBody] UpdateStoreRequest request,
                 UserContext userContext,
-                ICommandHandler<UpdateStoreCommand, StoreResponse> handler,
+                ICommandHandler<UpdateStoreCommand, string> handler,
                 HttpContext context) =>
             {
                 var userId = userContext.UserId; // Placeholder

@@ -32,7 +32,6 @@ public class PrivateStore : CatalogTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        await CatalogTestUtilities.VerifyStoreResponse(response, "My Awesome Store");
     }
 
     [Fact]
