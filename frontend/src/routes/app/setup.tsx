@@ -16,7 +16,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Store, Upload, User, Link, CheckCircle, Calendar, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X } from 'lucide-react';
+import { Store, Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X, Calendar } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -25,6 +25,7 @@ export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
 });
 
+// TODO : handle when the cropped image is not saved it should be showed on the phone mock
 function RouteComponent() {
   const navigate = useNavigate();
   const createStoreMutation = useCreateStore();
@@ -578,7 +579,7 @@ function RouteComponent() {
 
         <div className="flex justify-center">
           <IPhoneMockup screenWidth={320}>
-            <div className="p-6 text-center bg-background min-h-full">
+            <div className="p-6 text-center bg-background min-h-full overflow-y-auto">
               <div className="w-20 h-20 bg-gradient-to-r from-primary to-scondary rounded-full mx-auto mb-4 flex items-center justify-center">
                 {previewImage ? (
                   <img src={previewImage} alt="Profile" className="w-full h-full rounded-full object-cover" onError={() => setPreviewImage('')} />
@@ -612,7 +613,7 @@ function RouteComponent() {
                 </div>
               )}
 
-              {/* <div className="space-y-3">
+              <div className="space-y-3">
                 <div className="bg-muted rounded-lg p-4 text-left border border-border">
                   <div className="flex items-center gap-2 mb-1">
                     <Calendar className="w-3 h-3 text-primary" />
@@ -626,7 +627,7 @@ function RouteComponent() {
                   <div className="font-semibold text-foreground">Digital Guide</div>
                   <div className="text-primary font-semibold">$29</div>
                 </div>
-              </div> */}
+              </div>
             </div>
           </IPhoneMockup>
         </div>
