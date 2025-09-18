@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IPhoneMockup } from 'react-device-mockup';
@@ -15,8 +15,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Store, Upload, User, Link, CheckCircle, Calendar, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Store, Upload, User, Link, CheckCircle, Calendar, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
+import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
@@ -30,19 +33,22 @@ function RouteComponent() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  // Image upload states
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState<any>();
+  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
+  const [step, setStep] = useState<'select' | 'crop'>('select');
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<CreateStoreInput>({
     resolver: zodResolver(createStoreSchema),
     defaultValues: {
       title: '',
       slug: '',
       description: '',
-      socialLinks: {
-        instagram: '',
-        twitter: '',
-        facebook: '',
-        youtube: '',
-        website: '',
-      },
+      socialLinks: [],
     },
   });
 
@@ -57,16 +63,9 @@ function RouteComponent() {
     form.setValue('slug', slug);
   };
 
-  const handleImagePreview = (url: string) => {
-    setPreviewImage(url);
-  };
-
-  const onSubmit = async (data: any) => {
-    const socialLinksArray = Object.entries(data.socialLinks || {})
-      .map(([platform, url]) => ({ platform, url: url as string }))
-      .filter((link) => link.url);
+  const onSubmit = async (data: CreateStoreInput) => {
     try {
-      await createStoreMutation.mutateAsync({ ...data, socialLinks: socialLinksArray });
+      await createStoreMutation.mutateAsync(data);
       navigate({ to: ROUTE_PATHS.APP.STORE });
     } catch (error) {
       console.error('Failed to create store:', error);
@@ -95,6 +94,137 @@ function RouteComponent() {
     } else {
       setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
     }
+  };
+
+  // Image upload functions
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedImage(reader.result as string);
+        setCroppedImageUrl(null);
+        setStep('crop');
+        setIsUploadDialogOpen(true);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const centerAspectCrop = (mediaWidth: number, mediaHeight: number, aspect: number) => {
+    return centerCrop(
+      makeAspectCrop(
+        {
+          unit: '%',
+          width: 80,
+        },
+        aspect,
+        mediaWidth,
+        mediaHeight,
+      ),
+      mediaWidth,
+      mediaHeight,
+    );
+  };
+
+  const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<string> => {
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    canvas.width = cropData.width;
+    canvas.height = cropData.height;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('No 2d context');
+    }
+
+    ctx.drawImage(
+      image,
+      cropData.x * scaleX,
+      cropData.y * scaleY,
+      cropData.width * scaleX,
+      cropData.height * scaleY,
+      0,
+      0,
+      cropData.width,
+      cropData.height,
+    );
+
+    return new Promise<string>((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            console.error('Canvas is empty');
+            return;
+          }
+          resolve(URL.createObjectURL(blob));
+        },
+        'image/jpeg',
+        0.9,
+      );
+    });
+  };
+
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const { width, height } = e.currentTarget;
+    imgRef.current = e.currentTarget;
+    const newCrop = centerAspectCrop(width, height, 1);
+    setCrop(newCrop);
+  };
+
+  const handleCropComplete = async (cropData: PixelCrop) => {
+    if (imgRef.current && cropData.width && cropData.height) {
+      try {
+        const croppedImage = await getCroppedImg(imgRef.current, cropData);
+        setCroppedImageUrl(croppedImage);
+        setPreviewImage(croppedImage); // Update preview immediately
+      } catch (error) {
+        console.error('Error cropping image:', error);
+      }
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!croppedImageUrl) {
+      console.error('No cropped image to upload');
+      return;
+    }
+
+    // Convert URL to File
+    const response = await fetch(croppedImageUrl);
+    const blob = await response.blob();
+    const file = new File([blob], 'profile-picture.jpg', { type: blob.type });
+
+    form.setValue('picture', file);
+    setPreviewImage(croppedImageUrl);
+    handleCloseDialog();
+  };
+
+  const handleCloseDialog = () => {
+    if (selectedImage) URL.revokeObjectURL(selectedImage);
+    if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
+
+    setSelectedImage(null);
+    setCroppedImageUrl(null);
+    setCrop(undefined);
+    setStep('select');
+    setIsUploadDialogOpen(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleBackToSelect = () => {
+    if (selectedImage) URL.revokeObjectURL(selectedImage);
+    if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
+
+    setSelectedImage(null);
+    setCroppedImageUrl(null);
+    setCrop(undefined);
+    setStep('select');
   };
 
   return (
@@ -179,13 +309,17 @@ function RouteComponent() {
                   <Upload className="w-4 h-4" />
                   Profile Picture (Optional)
                 </Label>
-                <Input
-                  type="url"
-                  placeholder="https://example.com/your-photo.jpg"
-                  className=" border-border text-foreground"
-                  onChange={(e) => handleImagePreview(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground">Enter a URL to your profile picture for live preview</p>
+                <div className="flex items-center gap-4">
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
+                  <Label
+                    htmlFor="profile-picture-input"
+                    className="flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  >
+                    <Camera className="w-6 h-6 text-gray-400 mr-2" />
+                    <span className="text-gray-600 font-medium">Choose a photo</span>
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
               </div>
 
               {/* Collapsible Social Media Section */}
@@ -203,7 +337,7 @@ function RouteComponent() {
                       <FormField
                         key={key}
                         control={form.control}
-                        name={`socialLinks.${key}` as any}
+                        name="socialLinks"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="flex items-center gap-2 text-foreground">
@@ -211,7 +345,21 @@ function RouteComponent() {
                               {label}
                             </FormLabel>
                             <FormControl>
-                              <Input placeholder={`https://${key}.com/your-profile`} className=" border-border text-foreground" {...field} />
+                              <Input
+                                placeholder={`https://${key}.com/your-profile`}
+                                className=" border-border text-foreground"
+                                value={field.value?.find((link: any) => link.platform === key)?.url || ''}
+                                onChange={(e) => {
+                                  const currentLinks = field.value || [];
+                                  const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
+                                  if (existingIndex >= 0) {
+                                    currentLinks[existingIndex].url = e.target.value;
+                                  } else {
+                                    currentLinks.push({ platform: key, url: e.target.value });
+                                  }
+                                  field.onChange(currentLinks.filter((link: any) => link.url));
+                                }}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -228,7 +376,7 @@ function RouteComponent() {
                         <FormField
                           key={key}
                           control={form.control}
-                          name={`socialLinks.${key}` as any}
+                          name="socialLinks"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="flex items-center gap-2 text-foreground">
@@ -236,7 +384,21 @@ function RouteComponent() {
                                 {label}
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder={`https://${key}.com/your-profile`} className=" border-border text-foreground" {...field} />
+                                <Input
+                                  placeholder={`https://${key}.com/your-profile`}
+                                  className=" border-border text-foreground"
+                                  value={field.value?.find((link: any) => link.platform === key)?.url || ''}
+                                  onChange={(e) => {
+                                    const currentLinks = field.value || [];
+                                    const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
+                                    if (existingIndex >= 0) {
+                                      currentLinks[existingIndex].url = e.target.value;
+                                    } else {
+                                      currentLinks.push({ platform: key, url: e.target.value });
+                                    }
+                                    field.onChange(currentLinks.filter((link: any) => link.url));
+                                  }}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -322,6 +484,91 @@ function RouteComponent() {
         </Card>
       </div>
 
+      {/* Upload Picture Dialog */}
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Profile Picture</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {step === 'select' && (
+              <div className="space-y-4">
+                <Label
+                  htmlFor="profile-picture-input-dialog"
+                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <Camera className="w-12 h-12 text-gray-400 mb-4" />
+                  <p className="text-gray-600 font-medium">Choose a photo</p>
+                  <p className="text-sm text-gray-400">PNG, JPG up to 10MB</p>
+                </Label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                  id="profile-picture-input-dialog"
+                />
+              </div>
+            )}
+
+            {step === 'crop' && selectedImage && (
+              <div className="space-y-4">
+                <div className="flex justify-center">
+                  <div className="w-full max-w-sm">
+                    <ReactCrop
+                      crop={crop}
+                      aspect={1}
+                      onChange={(c) => setCrop(c)}
+                      onComplete={handleCropComplete}
+                      className="rounded-lg overflow-hidden"
+                    >
+                      <img
+                        ref={imgRef}
+                        src={selectedImage}
+                        onLoad={handleImageLoad}
+                        alt="Profile picture"
+                        className="max-h-64 w-full object-contain"
+                      />
+                    </ReactCrop>
+                  </div>
+                </div>
+
+                {croppedImageUrl && (
+                  <div className="text-center">
+                    <p className="mb-2 text-sm text-gray-600">Preview:</p>
+                    <div className="flex justify-center">
+                      <img src={croppedImageUrl} alt="Cropped preview" className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="flex justify-between">
+            {step === 'select' ? (
+              <Button onClick={handleCloseDialog} variant="outline" className="w-full">
+                Cancel
+              </Button>
+            ) : (
+              <div className="flex gap-2 w-full">
+                <Button onClick={handleBackToSelect} variant="outline">
+                  <X className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+
+                <Button onClick={handleUpload} disabled={!croppedImageUrl} className="flex-1">
+                  <Check className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+              </div>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Live Preview - keeping the same */}
       <div className="flex-1 max-w-sm animate-in slide-in-from-right duration-700">
         <div className="text-center mb-4">
@@ -346,14 +593,14 @@ function RouteComponent() {
                 {watchedValues.description || 'Your store description will appear here...'}
               </p>
 
-              {watchedValues.socialLinks && Object.values(watchedValues.socialLinks).some((link) => link) && (
+              {watchedValues.socialLinks && watchedValues.socialLinks.length > 0 && (
                 <div className="flex justify-center gap-4 mb-6">
                   {socialPlatforms.map(
                     ({ key, icon: Icon }) =>
-                      watchedValues.socialLinks?.[key as keyof typeof watchedValues.socialLinks] && (
+                      watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url && (
                         <a
                           key={key}
-                          href={watchedValues.socialLinks[key as keyof typeof watchedValues.socialLinks]}
+                          href={watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:text-accent transition-colors"

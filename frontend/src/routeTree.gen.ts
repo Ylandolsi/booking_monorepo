@@ -30,6 +30,7 @@ import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppLinkiRouteImport } from './routes/app/linki'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
+import { Route as AppEditstoreRouteImport } from './routes/app/editstore'
 import { Route as AppStoreSetupRouteImport } from './routes/app/store.setup'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
@@ -144,6 +145,11 @@ const AppIntegrationRoute = AppIntegrationRouteImport.update({
   path: '/integration',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppEditstoreRoute = AppEditstoreRouteImport.update({
+  id: '/editstore',
+  path: '/editstore',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppStoreSetupRoute = AppStoreSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
+  '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/editstore'
     | '/app/integration'
     | '/app/linki'
     | '/app/meets'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/editstore'
     | '/app/integration'
     | '/app/linki'
     | '/app/meets'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/home'
     | '/unauthorized'
+    | '/app/editstore'
     | '/app/integration'
     | '/app/linki'
     | '/app/meets'
@@ -524,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIntegrationRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/editstore': {
+      id: '/app/editstore'
+      path: '/editstore'
+      fullPath: '/app/editstore'
+      preLoaderRoute: typeof AppEditstoreRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/store/setup': {
       id: '/app/store/setup'
       path: '/setup'
@@ -603,6 +622,7 @@ const AppAdminPayoutRequestsRouteWithChildren =
   )
 
 interface AppRouteRouteChildren {
+  AppEditstoreRoute: typeof AppEditstoreRoute
   AppIntegrationRoute: typeof AppIntegrationRoute
   AppLinkiRoute: typeof AppLinkiRoute
   AppMeetsRoute: typeof AppMeetsRoute
@@ -618,6 +638,7 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppEditstoreRoute: AppEditstoreRoute,
   AppIntegrationRoute: AppIntegrationRoute,
   AppLinkiRoute: AppLinkiRoute,
   AppMeetsRoute: AppMeetsRoute,
