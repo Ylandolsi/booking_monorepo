@@ -13,19 +13,19 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 public record UpdateStoreCommand(
     int UserId,
     string Title,
-    Dictionary<string , int> Orders, //  product slug is a key , order : int 
+    Dictionary<string , int>? Orders, //  product slug is a key , order : int 
     string? Description = null,
     Picture? Picture = null,
     IReadOnlyList<SocialLink>? SocialLinks = null
     
-) : ICommand<string>;
+) : ICommand<PatchPostStoreResponse>;
 
 public class UpdateStoreHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, string>
+    ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, PatchPostStoreResponse>
 {
-    public async Task<Result<string>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
+    public async Task<Result<PatchPostStoreResponse>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating store for user {UserId} with title {Title}",
             command.UserId, command.Title);
@@ -40,7 +40,7 @@ public class UpdateStoreHandler(
             {
                 logger.LogWarning("Store update validation failed for user {UserId}: {Error}",
                     command.UserId, validationResult.Error.Description);
-                return Result.Failure<string>(validationResult.Error);
+                return Result.Failure<PatchPostStoreResponse>(validationResult.Error);
             }
 
             // Get existing store
@@ -51,7 +51,7 @@ public class UpdateStoreHandler(
             if (store is null)
             {
                 logger.LogWarning("Store not found for user {UserId}", command.UserId);
-                return Result.Failure<string>(StoreErros.NotFound);
+                return Result.Failure<PatchPostStoreResponse>(StoreErros.NotFound);
             }
 
             // Store original values for logging
@@ -70,9 +70,8 @@ public class UpdateStoreHandler(
 
             foreach (var product in store.Products)
             {
-                if (command.Orders.ContainsKey(product.ProductSlug))
+                if (command.Orders.TryGetValue(product.ProductSlug , out var order))
                 {
-                    int order = command.Orders[product.ProductSlug];
                     if (order != product.DisplayOrder && order != 0)
                     {
                         product.UpdateDisplayOrder(order);
@@ -93,13 +92,13 @@ public class UpdateStoreHandler(
 
             
 
-            return Result.Success(store.Slug);
+            return Result.Success(new PatchPostStoreResponse(store.Slug));
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error updating store for user {UserId}", command.UserId);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<string>(Error.Problem("Store.Update.Failed",
+            return Result.Failure<PatchPostStoreResponse>(Error.Problem("Store.Update.Failed",
                 "An error occurred while updating the store"));
         }
     }

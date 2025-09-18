@@ -2,6 +2,7 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,16 +22,16 @@ public record UpdateSessionProductCommand(
     List<DayAvailability> DayAvailabilities,
     string MeetingInstructions = "",
     string TimeZoneId = "Africa/Tunis"
-) : ICommand<string>;
+) : ICommand<PatchPostProductResponse>;
 
 
 
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, string>
+    ILogger<UpdateSessionProductHandler> logger) : ICommandHandler<UpdateSessionProductCommand, PatchPostProductResponse>
 {
-    public async Task<Result<string>> Handle(UpdateSessionProductCommand command,
+    public async Task<Result<PatchPostProductResponse>> Handle(UpdateSessionProductCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating session product {ProductSlug} for user {UserId}",
@@ -50,7 +51,7 @@ public class UpdateSessionProductHandler(
             if (sessionProduct == null)
             {
                 logger.LogWarning("Session product {ProductSlug} not found", command.ProductSlug);
-                return Result.Failure<string>(
+                return Result.Failure<PatchPostProductResponse>(
                     Error.NotFound("SessionProduct.NotFound", "Session product not found"));
             }
 
@@ -60,7 +61,7 @@ public class UpdateSessionProductHandler(
                 logger.LogWarning(
                     "User {UserId} attempted to update session product {ProductId} owned by user {OwnerId}",
                     command.UserId, command.ProductSlug, sessionProduct.Store.UserId);
-                return Result.Failure<string>(
+                return Result.Failure<PatchPostProductResponse>(
                     Error.Failure("SessionProduct.NotOwned", "You don't have permission to update this product"));
             }
 
@@ -74,7 +75,7 @@ public class UpdateSessionProductHandler(
             {
                 logger.LogWarning("Invalid duration {DurationMinutes} for session product {ProductId}",
                     command.DurationMinutes, command.ProductSlug);
-                return Result.Failure<string>(durationResult.Error);
+                return Result.Failure<PatchPostProductResponse>(durationResult.Error);
             }
 
             var bufferTimeResult = Duration.Create(command.BufferTimeMinutes);
@@ -82,7 +83,7 @@ public class UpdateSessionProductHandler(
             {
                 logger.LogWarning("Invalid buffer time {BufferTimeMinutes} for session product {ProductId}",
                     command.BufferTimeMinutes, command.ProductSlug);
-                return Result.Failure<string>(bufferTimeResult.Error);
+                return Result.Failure<PatchPostProductResponse>(bufferTimeResult.Error);
             }
 
             // Update basic info
@@ -105,7 +106,7 @@ public class UpdateSessionProductHandler(
                     logger.LogError("Failed to update schedule for session product {ProductId}: {Error}",
                         command.ProductSlug, scheduleResult.Error.Description);
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    return Result.Failure<string>(scheduleResult.Error);
+                    return Result.Failure<PatchPostProductResponse>(scheduleResult.Error);
                 }
             }
 
@@ -119,14 +120,14 @@ public class UpdateSessionProductHandler(
                 command.ProductSlug, originalTitle, command.Title, originalPrice, command.Price);
 
             
-            return Result.Success(command.ProductSlug);
+            return Result.Success( new PatchPostProductResponse(command.ProductSlug));
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error updating session product {ProductId} for user {UserId}",
                 command.ProductSlug, command.UserId);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<string>(Error.Problem("SessionProduct.Update.Failed",
+            return Result.Failure<PatchPostProductResponse>(Error.Problem("SessionProduct.Update.Failed",
                 "An error occurred while updating the session product"));
         }
     }

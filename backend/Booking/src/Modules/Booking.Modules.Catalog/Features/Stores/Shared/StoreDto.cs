@@ -4,6 +4,7 @@ namespace Booking.Modules.Catalog.Features.Stores.Shared;
 
 public record SocialLink(string Platform, string Url);
 
+public record PatchPostStoreResponse(string Slug);
 public record StoreResponse(
     string Title,
     string Slug,

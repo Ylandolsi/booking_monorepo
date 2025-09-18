@@ -17,7 +17,7 @@ public class UpdateStorePictureEndpoint : IEndpoint
         app.MapPost(CatalogEndpoints.Stores.UpdatePicture, async (
             [FromForm] IFormFile file,
             UserContext userContext,
-            ICommandHandler<UpdateStorePictureCommand, string> handler,
+            ICommandHandler<UpdateStorePictureCommand, PatchPostStoreResponse> handler,
             HttpContext context) =>
         {
             // TODO: Get user ID from claims/authentication

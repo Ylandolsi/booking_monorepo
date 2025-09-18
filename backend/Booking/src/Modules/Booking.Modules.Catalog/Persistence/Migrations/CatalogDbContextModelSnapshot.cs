@@ -398,11 +398,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("subtitle");
 
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("thumbnail_url");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -768,7 +763,65 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_product_stores_store_id");
 
+                    b.OwnsOne("Booking.Modules.Catalog.Domain.ValueObjects.Picture", "Preview", b1 =>
+                        {
+                            b1.Property<int>("ProductId")
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("MainLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("preview_main_link");
+
+                            b1.Property<string>("ThumbnailLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("preview_thumbnail_link");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId")
+                                .HasConstraintName("fk_product_product_id");
+                        });
+
+                    b.OwnsOne("Booking.Modules.Catalog.Domain.ValueObjects.Picture", "Thumbnail", b1 =>
+                        {
+                            b1.Property<int>("ProductId")
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("MainLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("thumbnail_main_link");
+
+                            b1.Property<string>("ThumbnailLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("thumbnail_thumbnail_link");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId")
+                                .HasConstraintName("fk_product_product_id");
+                        });
+
+                    b.Navigation("Preview");
+
                     b.Navigation("Store");
+
+                    b.Navigation("Thumbnail");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Sessions.SessionAvailability", b =>

@@ -17,7 +17,7 @@ public class UpdateStoreEndpoint : IEndpoint
 {
     public record UpdateStoreRequest(
         string Title,
-        Dictionary<string, int> Orders,
+        Dictionary<string, int>? Orders = null ,
         string? Description = null,
         Picture? Picture = null,
         IReadOnlyList<SocialLink>? SocialLinks = null
@@ -28,7 +28,7 @@ public class UpdateStoreEndpoint : IEndpoint
         app.MapPut(CatalogEndpoints.Stores.Update, async (
                 [FromBody] UpdateStoreRequest request,
                 UserContext userContext,
-                ICommandHandler<UpdateStoreCommand, string> handler,
+                ICommandHandler<UpdateStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>
             {
                 var userId = userContext.UserId; // Placeholder

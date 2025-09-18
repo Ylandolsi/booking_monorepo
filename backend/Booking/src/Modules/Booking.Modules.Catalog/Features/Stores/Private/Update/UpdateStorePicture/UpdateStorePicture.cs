@@ -14,14 +14,14 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePict
 public record UpdateStorePictureCommand(
     int UserId,
     IFormFile Picture
-) : ICommand<string>;
+) : ICommand<PatchPostStoreResponse>;
 
 public class UpdateStorePictureHandler(
     CatalogDbContext context,
     StoreService storeService,
-    ILogger<UpdateStorePictureHandler> logger) : ICommandHandler<UpdateStorePictureCommand, string>
+    ILogger<UpdateStorePictureHandler> logger) : ICommandHandler<UpdateStorePictureCommand, PatchPostStoreResponse>
 {
-    public async Task<Result<string>> Handle(UpdateStorePictureCommand command,
+    public async Task<Result<PatchPostStoreResponse>> Handle(UpdateStorePictureCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating store picture for user {UserId}",
@@ -30,19 +30,18 @@ public class UpdateStorePictureHandler(
         if (store is null)
         {
             logger.LogWarning("Store not found for user {UserId}", command.UserId);
-            return Result.Failure<string>(StoreErros.NotFound);
+            return Result.Failure<PatchPostStoreResponse>(StoreErros.NotFound);
         }
 
         var profilePicture = await storeService.UploadPicture(command.Picture, store.Slug);
         store.UpdatePicture(profilePicture.IsSuccess ? profilePicture.Value : new Picture());
 
         await context.SaveChangesAsync(cancellationToken);
-        
+
 
         logger.LogInformation("Successfully updated store {StoreId} for user {UserId}. ", store.Id, command.UserId);
 
- 
 
-        return Result.Success(store.Slug);
+        return Result.Success(new PatchPostStoreResponse(store.Slug));
     }
 }

@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -30,7 +31,8 @@ public class CreateSessionProductEndpoint : IEndpoint
         app.MapPost(CatalogEndpoints.Products.Sessions.Create, async (
                 UserContext userContext,
                 CreateSessionProductRequest request,
-                ICommandHandler<CreateSessionProductCommand, string> handler,
+                ICommandHandler<CreateSessionProductCommand, PatchPostProductResponse> handler,
+                
                 HttpContext context) =>
             {
                 int userId = userContext.UserId;

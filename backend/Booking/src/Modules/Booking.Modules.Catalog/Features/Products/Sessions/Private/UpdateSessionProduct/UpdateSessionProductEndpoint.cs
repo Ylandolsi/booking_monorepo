@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -29,7 +30,7 @@ public class UpdateSessionProductEndpoint : IEndpoint
                 string productSlug,
                 UserContext userContext,
                 UpdateSessionProductRequest request,
-                ICommandHandler<UpdateSessionProductCommand, string> handler,
+                ICommandHandler<UpdateSessionProductCommand, PatchPostProductResponse> handler,
                 CancellationToken cancellationToken) =>
             {
                 var userId = userContext.UserId;

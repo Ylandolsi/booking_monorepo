@@ -212,7 +212,7 @@ public static class CatalogTestUtilities
 
         var responseContent = await response.Content.ReadAsStringAsync();
         var jsonDoc = System.Text.Json.JsonDocument.Parse(responseContent);
-        return jsonDoc.RootElement.GetProperty("productSlug").GetString()!;
+        return jsonDoc.RootElement.GetProperty("slug").GetString()!;
     }
 
     public static async Task<HttpResponseMessage> CreateStoreRequest(
