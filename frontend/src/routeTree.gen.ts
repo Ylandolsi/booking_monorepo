@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
+import { Route as StoreBuilderRouteImport } from './routes/store-builder'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
@@ -42,6 +43,11 @@ import { Route as AppAdminPayoutRequestsRequestIdRouteImport } from './routes/ap
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
   path: '/unauthorized',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoreBuilderRoute = StoreBuilderRouteImport.update({
+  id: '/store-builder',
+  path: '/store-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeRoute = HomeRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
+  '/store-builder': typeof StoreBuilderRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
+  '/store-builder': typeof StoreBuilderRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
+  '/store-builder': typeof StoreBuilderRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/home'
+    | '/store-builder'
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/home'
+    | '/store-builder'
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/home'
+    | '/store-builder'
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
@@ -381,6 +393,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   HomeRoute: typeof HomeRoute
+  StoreBuilderRoute: typeof StoreBuilderRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
@@ -394,6 +407,13 @@ declare module '@tanstack/react-router' {
       path: '/unauthorized'
       fullPath: '/unauthorized'
       preLoaderRoute: typeof UnauthorizedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/store-builder': {
+      id: '/store-builder'
+      path: '/store-builder'
+      fullPath: '/store-builder'
+      preLoaderRoute: typeof StoreBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -674,6 +694,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   HomeRoute: HomeRoute,
+  StoreBuilderRoute: StoreBuilderRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,

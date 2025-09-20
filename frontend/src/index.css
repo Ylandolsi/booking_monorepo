@@ -9,6 +9,21 @@
   @apply transition-transform ease-in-out duration-300;
 }
 
+/* Line clamp utilities */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 :root {
   --background: oklch(0.9232 0.0026 48.7171);
   --foreground: oklch(0.2795 0.0368 260.031);
