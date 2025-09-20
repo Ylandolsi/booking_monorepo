@@ -62,8 +62,8 @@ function RouteComponent() {
               />{' '}
               <div className="flex flex-col ml-4  ">
                 <div>
-                  <h2>1:1 coaching session </h2>
-                  <p className="text-muted-foreground">50$</p>
+                  <h2 className="font-bold text-foreground text-2xl">1:1 Coaching session </h2>
+                  <p className="font-bold  text-primary text-xl">50$</p>
                 </div>
               </div>
             </div>
