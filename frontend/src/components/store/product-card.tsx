@@ -1,14 +1,83 @@
 import { cn } from '@/lib/cn';
 import type { Product } from '@/types/product';
 
+type DisplayMode = 'full' | 'compact';
+
 interface ProductCardProps {
   product: Product;
   onClick?: () => void;
   showActions?: boolean;
+  displayMode?: DisplayMode;
+  onEdit?: () => void;
+  onDelete?: () => void;
   className?: string;
 }
 
-export function ProductCard({ product, onClick, showActions = false, className }: ProductCardProps) {
+export function ProductCard({ product, onClick, showActions = false, displayMode = 'full', onEdit, onDelete, className }: ProductCardProps) {
+  if (displayMode === 'compact') {
+    return (
+      <div
+        className={cn(
+          'bg-card rounded-xl p-4 shadow-sm border border-border',
+          'hover:shadow-md transition-shadow',
+          onClick && 'cursor-pointer',
+          className,
+        )}
+        onClick={onClick}
+      >
+        <div className="flex items-center space-x-4">
+          {/* Icon */}
+          <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+            {product.coverImage ? (
+              <img src={product.coverImage} alt={product.title} className="w-full h-full object-cover rounded-lg" />
+            ) : (
+              <span className="text-2xl">{product.type === 'booking' ? '📅' : '📁'}</span>
+            )}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-foreground line-clamp-1">{product.title}</h3>
+            {product.subtitle && <p className="text-sm text-muted-foreground line-clamp-1">{product.subtitle}</p>}
+          </div>
+
+          {/* Price and CTA */}
+          <div className="flex items-center space-x-3 flex-shrink-0">
+            <span className="text-lg font-bold text-primary">{product.price}</span>
+            <button className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+              {product.ctaText}
+            </button>
+          </div>
+        </div>
+
+        {/* Actions Menu (if enabled) */}
+        {showActions && (
+          <div className="mt-3 pt-3 border-t border-border flex justify-end space-x-2">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit?.();
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded"
+            >
+              Edit
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.();
+              }}
+              className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Full display mode (default)
   return (
     <div
       className={cn(
@@ -52,8 +121,24 @@ export function ProductCard({ product, onClick, showActions = false, className }
       {/* Actions Menu (if enabled) */}
       {showActions && (
         <div className="mt-3 pt-3 border-t border-border flex justify-end space-x-2">
-          <button className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded">Edit</button>
-          <button className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded">Delete</button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.();
+            }}
+            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
+            className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded"
+          >
+            Delete
+          </button>
         </div>
       )}
     </div>
