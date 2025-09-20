@@ -11,6 +11,7 @@ interface ProductData {
   coverImage: File | null;
   ctaText: string;
   type: 'booking' | 'digital';
+  thumbnailMode: 'compact' | 'expanded';
 }
 
 interface AddProductFlowProps {
@@ -42,7 +43,11 @@ export function AddProductFlow({ onComplete, onCancel, className }: AddProductFl
 
   const handleComplete = () => {
     if (productData.type && productData.title && productData.price) {
-      onComplete(productData as ProductData);
+      const finalData = {
+        ...productData,
+        thumbnailMode: productData.thumbnailMode || 'expanded',
+      } as ProductData;
+      onComplete(finalData);
     }
   };
 

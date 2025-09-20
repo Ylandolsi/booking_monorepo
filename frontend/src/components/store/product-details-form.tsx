@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
+import { ThumbnailModeSelector } from './thumbnail-mode-selector';
 
 interface ProductData {
   title: string;
@@ -9,6 +10,7 @@ interface ProductData {
   coverImage: File | null;
   ctaText: string;
   type: 'booking' | 'digital';
+  thumbnailMode: 'compact' | 'expanded';
 }
 
 interface ProductDetailsFormProps {
@@ -114,6 +116,9 @@ export function ProductDetailsForm({ productType, data, onChange, onNext, onBack
           </div>
         </div>
       </div>
+
+      {/* Thumbnail Display Mode */}
+      <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />
 
       {/* Description */}
       <div className="space-y-2">
