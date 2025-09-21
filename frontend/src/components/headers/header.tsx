@@ -2,11 +2,8 @@ import { Logo } from '@/components/logo';
 import { Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/features/auth';
 import { useSideBar } from '@/stores';
-import { LazyImage } from '@/utils';
 import { CreditCard, Menu } from 'lucide-react';
-import { useAppNavigation } from '@/hooks';
 import { useGetWallet } from '@/features/shared/get-wallet';
-import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 
 function BalanceHeader() {
   const { data: walletData, isLoading } = useGetWallet();
@@ -31,7 +28,6 @@ function BalanceHeader() {
 export function Header() {
   const { setSidebarOpen } = useSideBar();
   const { currentUser } = useAuth();
-  const navigate = useAppNavigation();
 
   if (!currentUser || currentUser == undefined) return null;
 
@@ -46,32 +42,11 @@ export function Header() {
           <Logo className="h-8" />
         </div>
 
-        {/* Right side - Profile and Notifications */}
         {
           <div className="flex h-7.5 items-center gap-2">
-            {/* <Button
-              variant="ghost"
-              size="sm"
-              className="h-10 w-10 p-0 hover:bg-muted relative"
-            >
-              <Bell className="w-5 h-5" />
-              <Badge
-                variant="destructive"
-                className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
-              >
-                3
-              </Badge>
-            </Button> */}
             <BalanceHeader />
 
-            <Button variant="ghost" size="sm" onClick={() => navigate.goToProfile(currentUser.slug)} className="hover:bg-muted h-10 px-2">
-              <LazyImage
-                className="ring-primary/20 h-7 w-7 rounded-full object-cover ring-2"
-                src={currentUser?.profilePicture.profilePictureLink || FALLBACK_PROFILE_PICTURE}
-                alt="profile-pic"
-                placeholder={currentUser?.profilePicture.thumbnailUrlPictureLink || FALLBACK_PROFILE_PICTURE}
-              />
-            </Button>
+            {/* // TODO change this with link of store preview */}
           </div>
         }
       </div>

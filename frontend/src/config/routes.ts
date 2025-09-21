@@ -51,7 +51,6 @@ export const ROUTE_PATHS = {
 
     // Profile routes
     PROFILE: {
-      USER: `/app/profile/${ROUTE_PARAMS.USER_SLUG}`,
       INTEGRATIONS: `/app/integration`,
     },
 
@@ -87,20 +86,6 @@ export const ROUTE_PATHS = {
 
 // Type for route paths
 export type RoutePath = typeof ROUTE_PATHS;
-
-// Route parameter types
-export interface RouteParams {
-  mentorSlug?: string;
-  userSlug?: string;
-  requestId?: string;
-}
-
-// Query parameter types
-export interface QueryParams {
-  redirectTo?: string;
-  email?: string;
-  token?: string;
-}
 
 // Route builder utilities
 export const routeBuilder = {
@@ -160,10 +145,7 @@ export const routeBuilder = {
     setSchedule: () => ROUTE_PATHS.APP.MENTOR.SET_SCHEDULE,
   },
 
-  // Profile routes
   profile: {
-    user: (userSlug: string) => ROUTE_PATHS.APP.PROFILE.USER.replace(ROUTE_PARAMS.USER_SLUG, userSlug),
-
     integrations: () => ROUTE_PATHS.APP.PROFILE.INTEGRATIONS,
   },
 
@@ -211,6 +193,9 @@ export const routes = {
   isMentorRoute: (path: string) => path.startsWith('/mentor'),
   isProfileRoute: (path: string) => path.startsWith('/profile'),
   isTestRoute: (path: string) => path.startsWith('/test') || path.startsWith('/error-exp'),
+
+  // is protected route (app, booking, mentor, profile)
+  // isPublic route
 };
 
 // Export default for convenience

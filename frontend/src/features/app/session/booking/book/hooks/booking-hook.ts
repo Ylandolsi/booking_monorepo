@@ -2,7 +2,9 @@ import { useCallback, useState } from 'react';
 import type { BookingSummaryType, BookSessionRequestType, DayAvailabilityType, SessionSlotType } from '@/features/app/session/booking';
 import { useMentorDetails } from '@/features/app/mentor/become';
 import { useBookSession, useMonthlyAvailability } from '@/features/app/session/booking';
-import { useProfile } from '@/features/app/profile';
+import { api, Endpoints } from '@/lib';
+import type { User } from '@/types/api';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
 
@@ -186,4 +188,21 @@ export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; 
     resetBooking,
     handleBookSession,
   };
+}
+
+// TODO : review this hook
+export const userInfo = async (userSlug?: string) => {
+  if (userSlug === undefined || userSlug === '') {
+    throw new Error('userSlug is required');
+  }
+  return await api.get<User>(Endpoints.GetUser.replace('{userSlug}', userSlug));
+};
+
+export function useProfile(userSlug?: string, overrides?: Partial<UseQueryOptions<User, Error, User>>) {
+  return useQuery({
+    queryKey: ['user', userSlug],
+    queryFn: () => userInfo(userSlug),
+    enabled: !!userSlug,
+    ...overrides,
+  });
 }

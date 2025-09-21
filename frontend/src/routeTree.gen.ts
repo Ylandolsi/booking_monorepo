@@ -32,7 +32,6 @@ import { Route as AppMystoreRouteImport } from './routes/app/mystore'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AppEditstoreRouteImport } from './routes/app/editstore'
-import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
 import { Route as AppAdminPayoutRequestsRouteImport } from './routes/app/admin/payout-requests'
@@ -155,11 +154,6 @@ const AppEditstoreRoute = AppEditstoreRouteImport.update({
   path: '/editstore',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppProfileUserSlugRoute = AppProfileUserSlugRouteImport.update({
-  id: '/profile/$userSlug',
-  path: '/profile/$userSlug',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppMentorSetScheduleRoute = AppMentorSetScheduleRouteImport.update({
   id: '/mentor/set-schedule',
   path: '/mentor/set-schedule',
@@ -215,7 +209,6 @@ export interface FileRoutesByFullPath {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -245,7 +238,6 @@ export interface FileRoutesByTo {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -277,7 +269,6 @@ export interface FileRoutesById {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/profile/$userSlug': typeof AppProfileUserSlugRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
 }
@@ -310,7 +301,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/profile/$userSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesByTo: FileRoutesByTo
@@ -340,7 +330,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/profile/$userSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   id:
@@ -371,7 +360,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/profile/$userSlug'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
   fileRoutesById: FileRoutesById
@@ -552,13 +540,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEditstoreRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/app/profile/$userSlug': {
-      id: '/app/profile/$userSlug'
-      path: '/profile/$userSlug'
-      fullPath: '/app/profile/$userSlug'
-      preLoaderRoute: typeof AppProfileUserSlugRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/app/mentor/set-schedule': {
       id: '/app/mentor/set-schedule'
       path: '/mentor/set-schedule'
@@ -622,7 +603,6 @@ interface AppRouteRouteChildren {
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
-  AppProfileUserSlugRoute: typeof AppProfileUserSlugRoute
   AppBookingSessionMentorSlugRoute: typeof AppBookingSessionMentorSlugRoute
 }
 
@@ -637,7 +617,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
-  AppProfileUserSlugRoute: AppProfileUserSlugRoute,
   AppBookingSessionMentorSlugRoute: AppBookingSessionMentorSlugRoute,
 }
 
