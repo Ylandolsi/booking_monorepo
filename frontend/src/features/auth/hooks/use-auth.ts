@@ -1,12 +1,4 @@
-import { routeBuilder } from '@/config';
-import {
-  useUser,
-  useLogin,
-  useRegister,
-  useLogout,
-  useForgotPassword,
-  useResetPassword,
-} from '@/features/auth';
+import { useUser, useLogin, useRegister, useLogout, useForgotPassword, useResetPassword } from '@/api/auth';
 import { useAppNavigation } from '@/hooks';
 
 export const useAuth = () => {

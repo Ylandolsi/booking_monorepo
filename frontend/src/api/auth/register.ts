@@ -1,11 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api/api-client';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import type { RegisterInput } from '@/features/auth';
 
-const registerUser = async (data: RegisterInput): Promise<void> =>
-  await api.post(Endpoints.Register, data);
+const registerUser = async (data: RegisterInput): Promise<void> => await api.post(Endpoints.Register, data);
 
 export const useRegister = ({
   onSuccess,
@@ -15,9 +14,7 @@ export const useRegister = ({
   return useMutation({
     mutationFn: registerUser,
     onSuccess: () => {
-      toast.success(
-        'Registration successful! Please check your email for verification.',
-      );
+      toast.success('Registration successful! Please check your email for verification.');
       onSuccess?.();
     },
     onError: (error) => {

@@ -1,7 +1,7 @@
 import { useQuery, queryOptions } from '@tanstack/react-query';
 import type { User } from '@/types/api';
 import { api, Endpoints } from '@/lib';
-import { authQueryKeys } from '@/features/auth';
+import { authQueryKeys } from '@/api/auth';
 
 export const getCurrentUser = async (): Promise<User> => {
   const response = await api.get<User>(Endpoints.GetCurrentUser);

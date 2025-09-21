@@ -1,11 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-  resetPasswordSchema,
-  useResetPassword,
-  AUTH_PLACEHOLDERS,
-  type ResetPasswordInput,
-} from '@/features/auth';
+import { resetPasswordSchema, AUTH_PLACEHOLDERS, type ResetPasswordInput } from '@/features/auth';
 import {
   CardContent,
   CardDescription,
@@ -20,6 +15,7 @@ import {
   Button,
 } from '@/components/ui';
 import { PasswordInput } from '@/components/ui';
+import { useResetPassword } from '@/api/auth';
 
 type ResetPasswordPageProps = {
   onSuccess: () => void;
@@ -27,11 +23,7 @@ type ResetPasswordPageProps = {
   token: string;
 };
 
-export const ResetPasswordPage = ({
-  onSuccess,
-  email,
-  token,
-}: ResetPasswordPageProps) => {
+export const ResetPasswordPage = ({ onSuccess, email, token }: ResetPasswordPageProps) => {
   const resetPassword = useResetPassword({ onSuccess });
 
   const form = useForm<ResetPasswordInput>({
@@ -51,19 +43,12 @@ export const ResetPasswordPage = ({
   return (
     <>
       <CardDescription className="text-center sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Reset Password
-        </h2>
-        <p className="text-muted-foreground mx-2 mt-2">
-          Enter your new password.
-        </p>
+        <h2 className="text-2xl font-semibold tracking-tight">Reset Password</h2>
+        <p className="text-muted-foreground mx-2 mt-2">Enter your new password.</p>
       </CardDescription>
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 lg:space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 lg:space-y-6">
             <FormField
               control={form.control}
               name="password"
@@ -71,10 +56,7 @@ export const ResetPasswordPage = ({
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <PasswordInput
-                      placeholder={AUTH_PLACEHOLDERS.password}
-                      {...field}
-                    />
+                    <PasswordInput placeholder={AUTH_PLACEHOLDERS.password} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,30 +69,20 @@ export const ResetPasswordPage = ({
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <PasswordInput
-                      placeholder={AUTH_PLACEHOLDERS.confirmPassword}
-                      {...field}
-                    />
+                    <PasswordInput placeholder={AUTH_PLACEHOLDERS.confirmPassword} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={resetPassword.isPending}
-            >
+            <Button type="submit" className="w-full" disabled={resetPassword.isPending}>
               {resetPassword.isPending ? 'Resetting...' : 'Reset Password'}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Link
-          className="text-primary flex justify-center hover:underline"
-          href="/auth/login"
-        >
+        <Link className="text-primary flex justify-center hover:underline" href="/auth/login">
           Back to login
         </Link>
       </CardFooter>

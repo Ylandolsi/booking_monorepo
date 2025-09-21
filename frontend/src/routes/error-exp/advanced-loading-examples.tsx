@@ -23,7 +23,7 @@
 //   Unauthorized,
 // } from '@/components/errors';
 // import { Button, Card, Badge } from '@/components/ui';
-// import { authQueryKeys } from '@/features/auth';
+// import { authQueryKeys } from '@/api/auth';
 
 // // ============================================================================
 // // MOCK API FUNCTIONS

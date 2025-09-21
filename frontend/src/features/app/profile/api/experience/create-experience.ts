@@ -1,8 +1,8 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import type { ExperienceType } from '../../types';
 import { useMutation } from '@tanstack/react-query';
-import { authQueryKeys } from '@/features/auth';
+import { authQueryKeys } from '@/api/auth';
 
 export const addExperience = async (experience: ExperienceType) => {
   return await api.post<number>(Endpoints.AddExperience, experience);
@@ -10,8 +10,7 @@ export const addExperience = async (experience: ExperienceType) => {
 
 export function useAddExperience() {
   return useMutation({
-    mutationFn: ({ experience }: { experience: ExperienceType }) =>
-      addExperience(experience),
+    mutationFn: ({ experience }: { experience: ExperienceType }) => addExperience(experience),
     meta: {
       invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Experience added successfully',

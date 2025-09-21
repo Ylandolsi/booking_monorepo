@@ -1,23 +1,16 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import type { EducationType } from '@/features/app/profile';
 import { useMutation } from '@tanstack/react-query';
-import { authQueryKeys } from '@/features/auth';
+import { authQueryKeys } from '@/api/auth';
 
-export const updateEducation = async (
-  educationId: number,
-  education: EducationType,
-) => {
-  await api.put<void>(
-    Endpoints.UpdateEducation.replace('{educationId}', String(educationId)),
-    education,
-  );
+export const updateEducation = async (educationId: number, education: EducationType) => {
+  await api.put<void>(Endpoints.UpdateEducation.replace('{educationId}', String(educationId)), education);
 };
 
 export function useUpdateEducation() {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: EducationType }) =>
-      updateEducation(id, data),
+    mutationFn: ({ id, data }: { id: number; data: EducationType }) => updateEducation(id, data),
     meta: {
       invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Education updated successfully',

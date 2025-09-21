@@ -1,8 +1,8 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import type { EducationType } from '@/features/app/profile';
 import { useMutation } from '@tanstack/react-query';
-import { authQueryKeys } from '@/features/auth';
+import { authQueryKeys } from '@/api/auth';
 
 export const addEducation = async (education: EducationType) => {
   return await api.post<number>(Endpoints.AddEducation, education);
@@ -10,8 +10,7 @@ export const addEducation = async (education: EducationType) => {
 
 export function useAddEducation() {
   return useMutation({
-    mutationFn: ({ education }: { education: EducationType }) =>
-      addEducation(education),
+    mutationFn: ({ education }: { education: EducationType }) => addEducation(education),
     meta: {
       invalidatesQuery: [authQueryKeys.currentUser()],
       successMessage: 'Education added successfully',

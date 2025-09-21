@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import { useMutation } from '@tanstack/react-query';
 
 export const updateLanguage = async (languageIds: number[]) => {
@@ -8,8 +8,7 @@ export const updateLanguage = async (languageIds: number[]) => {
 
 export function useUpdateLanguages() {
   return useMutation({
-    mutationFn: ({ languages }: { languages: number[] }) =>
-      updateLanguage(languages),
+    mutationFn: ({ languages }: { languages: number[] }) => updateLanguage(languages),
 
     meta: {
       invalidatesQuery: [['languages']],

@@ -1,11 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-  loginInputSchema,
-  useLogin,
-  type LoginInput,
-  AUTH_PLACEHOLDERS,
-} from '@/features/auth';
+import { loginInputSchema, type LoginInput, AUTH_PLACEHOLDERS } from '@/features/auth';
 import { routes } from '@/config/routes';
 
 import {
@@ -22,8 +17,7 @@ import {
   Link,
   PasswordInput,
 } from '@/components/ui';
-
-import { googleOIDC } from '../../api/oauth-api';
+import { googleOIDC, useLogin } from '@/api/auth';
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -48,10 +42,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
     <>
       <CardContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 lg:space-y-6"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 lg:space-y-6">
             <FormField
               control={form.control}
               name="email"
@@ -59,11 +50,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input
-                      type="email"
-                      placeholder={AUTH_PLACEHOLDERS.email}
-                      {...field}
-                    />
+                    <Input type="email" placeholder={AUTH_PLACEHOLDERS.email} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -76,10 +63,7 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <PasswordInput
-                      placeholder={AUTH_PLACEHOLDERS.password}
-                      {...field}
-                    />
+                    <PasswordInput placeholder={AUTH_PLACEHOLDERS.password} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -92,29 +76,19 @@ export const LoginForm = ({ onSuccess }: LoginFormProps) => {
         </Form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => googleOIDC()}
-        >
+        <Button variant="outline" className="w-full" onClick={() => googleOIDC()}>
           Login with Google
         </Button>
       </CardFooter>
       <div className="flex flex-col items-center">
         <div className="text-foreground mt-4 ml-2 text-center text-sm font-bold">
-          <Link
-            className="text-primary/70 hover:text-primary"
-            href={routes.to.auth.forgotPassword()}
-          >
+          <Link className="text-primary/70 hover:text-primary" href={routes.to.auth.forgotPassword()}>
             Forget your password?
           </Link>
         </div>
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Don't have an account?{' '}
-          <Link
-            className="text-primary hover:underline"
-            href={routes.to.auth.register()}
-          >
+          <Link className="text-primary hover:underline" href={routes.to.auth.register()}>
             Register
           </Link>
         </div>

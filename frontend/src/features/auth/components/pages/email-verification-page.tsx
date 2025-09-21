@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  Link,
-  Spinner,
-} from '@/components/ui';
-import { verifyEmail } from '../../api/verify-email';
+import { CardContent, CardDescription, CardFooter, Link, Spinner } from '@/components/ui';
+import { verifyEmail } from '@/api/auth';
 
 type EmailVerificationPageProps = {
   onSuccess: () => void;
@@ -14,11 +8,7 @@ type EmailVerificationPageProps = {
   email: string | undefined;
 };
 
-export const EmailVerificationPage = ({
-  onSuccess,
-  token,
-  email,
-}: EmailVerificationPageProps) => {
+export const EmailVerificationPage = ({ onSuccess, token, email }: EmailVerificationPageProps) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -56,12 +46,9 @@ export const EmailVerificationPage = ({
   return (
     <>
       <CardDescription className="text-center sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Verify Your Email
-        </h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Verify Your Email</h2>
         <p className="text-muted-foreground mx-2 mt-2">
-          We sent a verification email to your account. Please check your inbox
-          and click the link to confirm.
+          We sent a verification email to your account. Please check your inbox and click the link to confirm.
         </p>
         {loading && <Spinner />}
         {error && <p className="mt-4 text-red-500">{error}</p>}
@@ -93,10 +80,7 @@ export const EmailVerificationPage = ({
         )}
       </CardFooter>
 
-      <Link
-        className="text-primary mt-2 flex justify-center hover:underline"
-        href="/auth/login"
-      >
+      <Link className="text-primary mt-2 flex justify-center hover:underline" href="/auth/login">
         Back to login
       </Link>
     </>

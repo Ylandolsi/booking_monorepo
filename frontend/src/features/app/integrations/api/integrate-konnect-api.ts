@@ -1,7 +1,7 @@
 import { api } from '@/lib';
-import { IntegrateKonnectWallet } from '@/lib/api/user-endpoints';
+import { IntegrateKonnectWallet } from '@/api/auth/auth-endpoints';
 import { useMutation } from '@tanstack/react-query';
-import { authQueryKeys } from '@/features/auth';
+import { authQueryKeys } from '@/api/auth';
 
 const integateWithKonnect = async (walledId: string): Promise<void> => {
   await api.post(IntegrateKonnectWallet, {

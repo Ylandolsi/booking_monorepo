@@ -1,23 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/lib/api/api-client';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 import type { ResetPasswordInput } from '@/features/auth';
 
-const resetPassword = async (data: ResetPasswordInput): Promise<void> =>
-  await api.post<void>(Endpoints.ResetPasswordVerify, data);
+const resetPassword = async (data: ResetPasswordInput): Promise<void> => await api.post<void>(Endpoints.ResetPasswordVerify, data);
 
-export const useResetPassword = ({
-  onSuccess,
-}: { onSuccess?: () => void } = {}) => {
+export const useResetPassword = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   return useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
       console.log('password reset successfully');
       onSuccess?.();
-      toast.success(
-        'Password reset successfully. Please login with your new password.',
-      );
+      toast.success('Password reset successfully. Please login with your new password.');
     },
     onError: (error) => {
       console.error('Reset password failed:', error);

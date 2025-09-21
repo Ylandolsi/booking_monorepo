@@ -1,5 +1,4 @@
 export * from './verify-email';
-export * from './oauth-api';
 export * from './login';
 export * from './register';
 export * from './logout';
@@ -7,3 +6,4 @@ export * from './forgot-password';
 export * from './reset-password';
 export * from './user';
 export * from './auth-keys';
+export * from './oauth-api';

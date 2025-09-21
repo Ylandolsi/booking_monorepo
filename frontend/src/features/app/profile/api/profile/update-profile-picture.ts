@@ -1,16 +1,11 @@
 import { api } from '@/lib';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ProfilePictureType } from '@/features/app/profile/types';
-import { authQueryKeys } from '@/features/auth';
-import * as Endpoints from '@/lib/api/user-endpoints';
+import { authQueryKeys } from '@/api/auth';
+import * as Endpoints from '@/api/auth/auth-endpoints';
 
-async function updateProfilePicture(
-  body: FormData,
-): Promise<ProfilePictureType> {
-  return await api.put<ProfilePictureType>(
-    Endpoints.UpdateProfilePicture,
-    body,
-  );
+async function updateProfilePicture(body: FormData): Promise<ProfilePictureType> {
+  return await api.put<ProfilePictureType>(Endpoints.UpdateProfilePicture, body);
 }
 
 export function useUpdateProfilePicture() {
