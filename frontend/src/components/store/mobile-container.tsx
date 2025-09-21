@@ -6,9 +6,5 @@ interface MobileContainerProps {
 }
 
 export function MobileContainer({ children, className }: MobileContainerProps) {
-  return (
-    <div className={cn('max-w-sm mx-auto bg-background rounded-xl shadow-lg overflow-hidden', 'min-h-screen flex flex-col', className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn('flex flex-col h-full w-full', className)}>{children}</div>;
 }

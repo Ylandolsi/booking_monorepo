@@ -116,7 +116,7 @@ export function DraggableProductList({
               onDelete={() => onProductDelete?.(product)}
               showActions={showActions}
               displayMode={displayMode}
-              className={showActions ? 'pl-10' : ''}
+              className={showActions ? '' : ''}
             />
           </div>
         </div>

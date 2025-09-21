@@ -20,6 +20,7 @@ import { Store, Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Y
 import { ROUTE_PATHS } from '@/config/routes';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { MobileContainer } from '@/components/store';
 
 export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
@@ -579,6 +580,7 @@ function RouteComponent() {
 
         <div className="flex justify-center">
           <IPhoneMockup screenWidth={320}>
+            {/* <MobileContainer> */}
             <div className="p-6 text-center bg-background min-h-full overflow-y-auto">
               <div className="w-20 h-20 bg-gradient-to-r from-primary to-scondary rounded-full mx-auto mb-4 flex items-center justify-center">
                 {previewImage ? (
@@ -629,6 +631,7 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
+            {/* </MobileContainer> */}
           </IPhoneMockup>
         </div>
       </div>
