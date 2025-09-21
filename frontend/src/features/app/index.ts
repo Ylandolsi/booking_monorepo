@@ -2,3 +2,4 @@ export * from './session/booking';
 export * from './mentor';
 export * from './payout';
 export * from './session';
+export * from './store';

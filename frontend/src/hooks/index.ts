@@ -7,3 +7,4 @@ export * from './use-query-state';
 export * from './use-mentor';
 export * from './use-navigation';
 export * from './use-time-filter';
+export * from './use-upload-picture';
