@@ -1,22 +1,15 @@
-import type { SocialLink, Store } from '@/api/stores';
-
-export interface CreateStoreInput {
-  title: string;
-  slug: string;
-  description?: string;
-  picture?: File;
-  socialLinks?: SocialLink[];
-}
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createStore, validateCreateStoreInput } from '../stores-api';
+import type { CreateStoreInput } from '../stores-api';
+import { STORE_QUERY_KEY } from '../../stores-keys';
 
 export interface CreateStoreResponse {
   slug: string;
 }
 
-export const createStore = async (data: CreateStoreInput): Promise<CreateStoreResponse> => {
-  console.log(' createStore with data:', data);
-
-  return { slug: 'slug-123' };
-};
+// Re-export for backward compatibility
+export type { CreateStoreInput };
+export { createStore, validateCreateStoreInput };
 
 export const useCreateStore = () => {
   const queryClient = useQueryClient();

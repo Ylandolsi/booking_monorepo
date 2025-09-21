@@ -1,29 +1,22 @@
-import type { SocialLink } from '@/api/stores/stores';
-import type { Picture } from '@/api/stores/types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateStore, validateUpdateStoreInput } from '../stores-api';
+import type { UpdateStoreInput } from '../stores-api';
+import { storeKeys, STORE_QUERY_KEY } from '../../stores-keys';
 
-interface UpdateStoreInput {
-  Title: string;
-  Orders?: Record<string, number>;
-  Description?: string;
-  Picture?: Picture;
-  SocialLinks?: readonly SocialLink[];
-}
-
-interface UpdateStoreResponse {
-  slug: string;
-}
-
-export const updateStore = async (data: UpdateStoreInput): Promise<UpdateStoreResponse> => {
-  console.log('mock: updateStore with data:', data);
-  return { slug: 'slug-123' };
-};
+// Re-export for backward compatibility
+export type { UpdateStoreInput };
+export { updateStore, validateUpdateStoreInput };
 
 export const useUpdateStore = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data: UpdateStoreInput) => updateStore(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [STORE_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: storeKeys.myStore() });
+    },
     meta: {
-      invalidatesQuery: ['store', 'my-store'],
       successMessage: 'Store updated successfully!',
     },
   });

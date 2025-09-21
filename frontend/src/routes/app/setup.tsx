@@ -3,9 +3,8 @@ import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IPhoneMockup } from 'react-device-mockup';
-import { useCreateStore } from '@/features/store/hooks';
-import { createStoreSchema } from '@/features/store/lib';
-import type { CreateStoreInput } from '@/features/store/types';
+import { z } from 'zod';
+
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +20,7 @@ import { ROUTE_PATHS } from '@/config/routes';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer } from '@/components/store';
+import { ProductType, useCreateStore, type CreateStoreInput } from '@/api/stores';
 
 export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
@@ -230,18 +230,18 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col items-center md:flex-row w-full   gap-8 md:items-start justify-around">
+    <div className="flex w-full flex-col items-center justify-around gap-8 md:flex-row md:items-start">
       {/* Setup Form */}
-      <div className="flex-1 max-w-lg">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-scondary rounded-2xl mb-4">
-            <Store className="w-8 h-8 text-primary-foreground" />
+      <div className="max-w-lg flex-1">
+        <div className="mb-8 text-center">
+          <div className="from-primary to-scondary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r">
+            <Store className="text-primary-foreground h-8 w-8" />
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-scondary bg-clip-text text-transparent">Create Your Linki Store</h1>
+          <h1 className="from-primary to-scondary bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1>
           <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p>
         </div>
 
-        <Card className="p-6 border-0 shadow-xl bg-card/80 backdrop-blur-sm animate-in fade-in duration-500">
+        <Card className="bg-card/80 animate-in fade-in border-0 p-6 shadow-xl backdrop-blur-sm duration-500">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -249,14 +249,14 @@ function RouteComponent() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-foreground">
-                      <User className="w-4 h-4" />
+                    <FormLabel className="text-foreground flex items-center gap-2">
+                      <User className="h-4 w-4" />
                       Store Name *
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Your Amazing Store"
-                        className="text-lg py-3  border-border text-foreground"
+                        className="border-border text-foreground py-3 text-lg"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -274,19 +274,19 @@ function RouteComponent() {
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-foreground">
-                      <Link className="w-4 h-4" />
+                    <FormLabel className="text-foreground flex items-center gap-2">
+                      <Link className="h-4 w-4" />
                       Unique Slug *
                     </FormLabel>
                     <div className="flex">
-                      <div className=" text-center flex items-center justify-center px-2 bg-muted border border-r-0 rounded-l-md text-sm text-muted-foreground">
+                      <div className="bg-muted text-muted-foreground flex items-center justify-center rounded-l-md border border-r-0 px-2 text-center text-sm">
                         linki.store/
                       </div>
                       <FormControl>
-                        <Input placeholder="your-store" className="rounded-l-none text-lg py-3  border-border text-foreground" {...field} />
+                        <Input placeholder="your-store" className="border-border text-foreground rounded-l-none py-3 text-lg" {...field} />
                       </FormControl>
                     </div>
-                    <p className="text-xs text-muted-foreground">This will be your store's URL: linki.store/{watchedValues.slug || 'your-store'}</p>
+                    <p className="text-muted-foreground text-xs">This will be your store's URL: linki.store/{watchedValues.slug || 'your-store'}</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -299,7 +299,7 @@ function RouteComponent() {
                   <FormItem>
                     <FormLabel className="text-foreground">Store Description</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Tell your customers what you offer..." rows={3} className=" border-border text-foreground" {...field} />
+                      <Textarea placeholder="Tell your customers what you offer..." rows={3} className="border-border text-foreground" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -307,21 +307,21 @@ function RouteComponent() {
               />
 
               <div className="space-y-2">
-                <Label className="flex items-center gap-2 text-foreground">
-                  <Upload className="w-4 h-4" />
+                <Label className="text-foreground flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
                   Profile Picture (Optional)
                 </Label>
                 <div className="flex items-center gap-4">
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
                   <Label
                     htmlFor="profile-picture-input"
-                    className="flex items-center justify-center w-full h-12 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
                   >
-                    <Camera className="w-6 h-6 text-gray-400 mr-2" />
-                    <span className="text-gray-600 font-medium">Choose a photo</span>
+                    <Camera className="mr-2 h-6 w-6 text-gray-400" />
+                    <span className="font-medium text-gray-600">Choose a photo</span>
                   </Label>
                 </div>
-                <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
+                <p className="text-muted-foreground text-xs">PNG, JPG up to 10MB</p>
               </div>
 
               {/* Collapsible Social Media Section */}
@@ -329,7 +329,7 @@ function RouteComponent() {
                 <AccordionItem value="social-links">
                   <AccordionTrigger className="text-foreground hover:text-primary">
                     <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4" />
+                      <Globe className="h-4 w-4" />
                       Add Social Links (Optional)
                     </div>
                   </AccordionTrigger>
@@ -342,14 +342,14 @@ function RouteComponent() {
                         name="socialLinks"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="flex items-center gap-2 text-foreground">
-                              <Icon className="w-4 h-4" />
+                            <FormLabel className="text-foreground flex items-center gap-2">
+                              <Icon className="h-4 w-4" />
                               {label}
                             </FormLabel>
                             <FormControl>
                               <Input
                                 placeholder={`https://${key}.com/your-profile`}
-                                className=" border-border text-foreground"
+                                className="border-border text-foreground"
                                 value={field.value?.find((link: any) => link.platform === key)?.url || ''}
                                 onChange={(e) => {
                                   const currentLinks = field.value || [];
@@ -381,14 +381,14 @@ function RouteComponent() {
                           name="socialLinks"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="flex items-center gap-2 text-foreground">
-                                <Icon className="w-4 h-4" />
+                              <FormLabel className="text-foreground flex items-center gap-2">
+                                <Icon className="h-4 w-4" />
                                 {label}
                               </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder={`https://${key}.com/your-profile`}
-                                  className=" border-border text-foreground"
+                                  className="border-border text-foreground"
                                   value={field.value?.find((link: any) => link.platform === key)?.url || ''}
                                   onChange={(e) => {
                                     const currentLinks = field.value || [];
@@ -413,20 +413,20 @@ function RouteComponent() {
                       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                         <PopoverTrigger asChild>
                           <div
-                            className="  w-full bg-gradient-to-br from-primary to-primary/20 text-background p-3 rounded-md flex items-center gap-2 border-border hover:bg-primary transition-all duration-200"
+                            className="from-primary to-primary/20 text-background border-border hover:bg-primary flex w-full items-center gap-2 rounded-md bg-gradient-to-br p-3 transition-all duration-200"
                             onClick={() => {
                               setIsPopoverOpen(true);
                             }}
                           >
-                            <Plus className="w-4 h-4" />
+                            <Plus className="h-4 w-4" />
                             Add Another Platform
                           </div>
                         </PopoverTrigger>
                         <PopoverContent className="w-64 p-4" side="top" align="center">
                           <div className="grid gap-4">
                             <div className="space-y-2">
-                              <h4 className="font-medium leading-none">Select Platforms</h4>
-                              <p className="text-sm text-muted-foreground">Choose which platforms to add</p>
+                              <h4 className="leading-none font-medium">Select Platforms</h4>
+                              <p className="text-muted-foreground text-sm">Choose which platforms to add</p>
                             </div>
                             <div className="grid gap-2">
                               {availablePlatforms.map(({ key, label, icon: Icon }) => (
@@ -440,9 +440,9 @@ function RouteComponent() {
                                   />
                                   <label
                                     htmlFor={key}
-                                    className="flex items-center gap-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                    className="flex cursor-pointer items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                   >
-                                    <Icon className="w-4 h-4" />
+                                    <Icon className="h-4 w-4" />
                                     {label}
                                   </label>
                                 </div>
@@ -452,9 +452,9 @@ function RouteComponent() {
                                 size="sm"
                                 onClick={handleAddPlatforms}
                                 disabled={selectedPlatforms.length === 0}
-                                className="w-full mt-2"
+                                className="mt-2 w-full"
                               >
-                                <Check className="w-4 h-4 mr-2" />
+                                <Check className="mr-2 h-4 w-4" />
                                 Add Selected ({selectedPlatforms.length})
                               </Button>
                             </div>
@@ -469,14 +469,14 @@ function RouteComponent() {
               <Button
                 type="submit"
                 size="lg"
-                className="w-full bg-gradient-to-r from-primary to-scondary hover:from-primary hover:to-accent text-primary-foreground transition-all duration-300"
+                className="from-primary to-scondary hover:from-primary hover:to-accent text-primary-foreground w-full bg-gradient-to-r transition-all duration-300"
                 disabled={createStoreMutation.isPending}
               >
                 {createStoreMutation.isPending ? (
                   'Creating Store...'
                 ) : (
                   <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <CheckCircle className="mr-2 h-4 w-4" />
                     Create My Store
                   </>
                 )}
@@ -498,10 +498,10 @@ function RouteComponent() {
               <div className="space-y-4">
                 <Label
                   htmlFor="profile-picture-input-dialog"
-                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                  className="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
                 >
-                  <Camera className="w-12 h-12 text-gray-400 mb-4" />
-                  <p className="text-gray-600 font-medium">Choose a photo</p>
+                  <Camera className="mb-4 h-12 w-12 text-gray-400" />
+                  <p className="font-medium text-gray-600">Choose a photo</p>
                   <p className="text-sm text-gray-400">PNG, JPG up to 10MB</p>
                 </Label>
                 <input
@@ -524,7 +524,7 @@ function RouteComponent() {
                       aspect={1}
                       onChange={(c) => setCrop(c)}
                       onComplete={handleCropComplete}
-                      className="rounded-lg overflow-hidden"
+                      className="overflow-hidden rounded-lg"
                     >
                       <img
                         ref={imgRef}
@@ -541,7 +541,7 @@ function RouteComponent() {
                   <div className="text-center">
                     <p className="mb-2 text-sm text-gray-600">Preview:</p>
                     <div className="flex justify-center">
-                      <img src={croppedImageUrl} alt="Cropped preview" className="w-20 h-20 rounded-full object-cover border-2 border-gray-200" />
+                      <img src={croppedImageUrl} alt="Cropped preview" className="h-20 w-20 rounded-full border-2 border-gray-200 object-cover" />
                     </div>
                   </div>
                 )}
@@ -555,14 +555,14 @@ function RouteComponent() {
                 Cancel
               </Button>
             ) : (
-              <div className="flex gap-2 w-full">
+              <div className="flex w-full gap-2">
                 <Button onClick={handleBackToSelect} variant="outline">
-                  <X className="w-4 h-4 mr-2" />
+                  <X className="mr-2 h-4 w-4" />
                   Back
                 </Button>
 
                 <Button onClick={handleUpload} disabled={!croppedImageUrl} className="flex-1">
-                  <Check className="w-4 h-4 mr-2" />
+                  <Check className="mr-2 h-4 w-4" />
                   Save
                 </Button>
               </div>
@@ -575,22 +575,22 @@ function RouteComponent() {
       <div className="sticky top-4">
         <IPhoneMockup screenWidth={320}>
           <MobileContainer>
-            <div className="w-20 h-20 bg-gradient-to-r from-primary to-scondary rounded-full mx-auto mb-4 flex items-center justify-center">
+            <div className="from-primary to-scondary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r">
               {previewImage ? (
-                <img src={previewImage} alt="Profile" className="w-full h-full rounded-full object-cover" onError={() => setPreviewImage('')} />
+                <img src={previewImage} alt="Profile" className="h-full w-full rounded-full object-cover" onError={() => setPreviewImage('')} />
               ) : (
-                <User className="w-8 h-8 text-primary-foreground" />
+                <User className="text-primary-foreground h-8 w-8" />
               )}
             </div>
 
-            <h2 className="text-xl font-bold text-foreground mb-2">{watchedValues.title || 'Your Store Name'}</h2>
+            <h2 className="text-foreground mb-2 text-xl font-bold">{watchedValues.title || 'Your Store Name'}</h2>
 
-            <p className="text-muted-foreground text-sm mb-4 leading-relaxed break-words text-wrap line-clamp-3 ">
+            <p className="text-muted-foreground mb-4 line-clamp-3 text-sm leading-relaxed text-wrap break-words">
               {watchedValues.description || 'Your store description will appear here...'}
             </p>
 
             {watchedValues.socialLinks && watchedValues.socialLinks.length > 0 && (
-              <div className="flex justify-center gap-4 mb-6">
+              <div className="mb-6 flex justify-center gap-4">
                 {socialPlatforms.map(
                   ({ key, icon: Icon }) =>
                     watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url && (
@@ -601,7 +601,7 @@ function RouteComponent() {
                         rel="noopener noreferrer"
                         className="text-primary hover:text-accent transition-colors"
                       >
-                        <Icon className="w-5 h-5" />
+                        <Icon className="h-5 w-5" />
                       </a>
                     ),
                 )}
@@ -609,17 +609,17 @@ function RouteComponent() {
             )}
 
             <div className="space-y-3">
-              <div className="bg-muted rounded-lg p-4 text-left border border-border">
-                <div className="flex items-center gap-2 mb-1">
-                  <Calendar className="w-3 h-3 text-primary" />
-                  <span className="text-xs text-muted-foreground">1:1 Coaching Call</span>
+              <div className="bg-muted border-border rounded-lg border p-4 text-left">
+                <div className="mb-1 flex items-center gap-2">
+                  <Calendar className="text-primary h-3 w-3" />
+                  <span className="text-muted-foreground text-xs">1:1 Coaching Call</span>
                 </div>
-                <div className="font-semibold text-foreground">Book a Call</div>
+                <div className="text-foreground font-semibold">Book a Call</div>
                 <div className="text-primary font-semibold">$99</div>
               </div>
-              <div className="bg-muted rounded-lg p-4 text-left border border-border">
-                <div className="text-xs text-muted-foreground mb-1">Sample Product</div>
-                <div className="font-semibold text-foreground">Digital Guide</div>
+              <div className="bg-muted border-border rounded-lg border p-4 text-left">
+                <div className="text-muted-foreground mb-1 text-xs">Sample Product</div>
+                <div className="text-foreground font-semibold">Digital Guide</div>
                 <div className="text-primary font-semibold">$29</div>
               </div>
             </div>
@@ -629,3 +629,51 @@ function RouteComponent() {
     </div>
   );
 }
+
+export const createStoreSchema = z.object({
+  title: z.string().min(3, 'Store name must be at least 3 characters'),
+  slug: z
+    .string()
+    .min(3, 'Slug must be at least 3 characters')
+    .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
+  description: z.string().optional(),
+  picture: z.instanceof(File).optional(),
+  socialLinks: z
+    .array(
+      z.object({
+        platform: z.string(),
+        url: z.string().url('Invalid URL'),
+      }),
+    )
+    .optional(),
+});
+
+export const updateStoreSchema = createStoreSchema.partial().extend({
+  id: z.number(),
+});
+
+const createProductBaseSchema = z.object({
+  title: z.string().min(3, 'Product title is required'),
+  subtitle: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().min(0, 'Price cannot be negative'),
+  clickToPay: z.string().min(1, 'Button text is required'),
+  thumbnail: z.instanceof(File).optional(),
+});
+
+export const createSessionProductSchema = createProductBaseSchema.extend({
+  productType: z.literal(ProductType.Session),
+  duration: z.number().positive('Duration must be positive'),
+  bufferTime: z.number().min(0, 'Buffer time cannot be negative'),
+  meetingInstructions: z.string().optional(),
+  timeZoneId: z.string().min(1, 'Time zone is required'),
+});
+
+export const createDigitalProductSchema = createProductBaseSchema.extend({
+  productType: z.literal(ProductType.DigitalDownload),
+  files: z.array(z.instanceof(File)).min(1, 'At least one file is required'),
+  deliveryUrl: z.string().url('Invalid URL').optional(),
+  previewImage: z.instanceof(File).optional(),
+});
+
+export const createProductSchema = z.discriminatedUnion('productType', [createSessionProductSchema, createDigitalProductSchema]);

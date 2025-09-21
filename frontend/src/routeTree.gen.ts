@@ -30,7 +30,6 @@ import { Route as AppSetupRouteImport } from './routes/app/setup'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMystoreRouteImport } from './routes/app/mystore'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
-import { Route as AppLinkiRouteImport } from './routes/app/linki'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AppEditstoreRouteImport } from './routes/app/editstore'
 import { Route as AppProfileUserSlugRouteImport } from './routes/app/profile.$userSlug'
@@ -146,11 +145,6 @@ const AppMeetsRoute = AppMeetsRouteImport.update({
   path: '/meets',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppLinkiRoute = AppLinkiRouteImport.update({
-  id: '/linki',
-  path: '/linki',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppIntegrationRoute = AppIntegrationRouteImport.update({
   id: '/integration',
   path: '/integration',
@@ -203,7 +197,6 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
-  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
@@ -234,7 +227,6 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
-  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
@@ -267,7 +259,6 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
   '/app/integration': typeof AppIntegrationRoute
-  '/app/linki': typeof AppLinkiRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
@@ -301,7 +292,6 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
-    | '/app/linki'
     | '/app/meets'
     | '/app/mystore'
     | '/app/payouts'
@@ -332,7 +322,6 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
-    | '/app/linki'
     | '/app/meets'
     | '/app/mystore'
     | '/app/payouts'
@@ -364,7 +353,6 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/editstore'
     | '/app/integration'
-    | '/app/linki'
     | '/app/meets'
     | '/app/mystore'
     | '/app/payouts'
@@ -550,13 +538,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMeetsRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/app/linki': {
-      id: '/app/linki'
-      path: '/linki'
-      fullPath: '/app/linki'
-      preLoaderRoute: typeof AppLinkiRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/app/integration': {
       id: '/app/integration'
       path: '/integration'
@@ -633,7 +614,6 @@ const AppAdminPayoutRequestsRouteWithChildren =
 interface AppRouteRouteChildren {
   AppEditstoreRoute: typeof AppEditstoreRoute
   AppIntegrationRoute: typeof AppIntegrationRoute
-  AppLinkiRoute: typeof AppLinkiRoute
   AppMeetsRoute: typeof AppMeetsRoute
   AppMystoreRoute: typeof AppMystoreRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
@@ -649,7 +629,6 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppEditstoreRoute: AppEditstoreRoute,
   AppIntegrationRoute: AppIntegrationRoute,
-  AppLinkiRoute: AppLinkiRoute,
   AppMeetsRoute: AppMeetsRoute,
   AppMystoreRoute: AppMystoreRoute,
   AppPayoutsRoute: AppPayoutsRoute,
