@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -11,10 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X } from 'lucide-react';
+import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
-import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
 import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
