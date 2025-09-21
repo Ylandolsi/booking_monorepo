@@ -71,36 +71,15 @@ export function EnhancedStoreBuilderDemo() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 p-4">
+    <div className="bg-muted/30 min-h-screen p-4">
       {/* Navigation */}
-      <div className="max-w-4xl mx-auto mb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-4">Enhanced Store Builder Demo</h1>
+      <div className="mx-auto mb-6 max-w-4xl">
+        <h1 className="text-foreground mb-4 text-2xl font-bold">Enhanced Store Builder Demo</h1>
 
-        <div className="bg-card p-4 rounded-lg border border-border mb-4">
-          <h2 className="font-semibold text-foreground mb-2">✨ New Features</h2>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>
-              • <strong>Product Display Modes:</strong> Switch between full and compact views
-            </li>
-            <li>
-              • <strong>Focused Live Preview:</strong> See individual products during creation
-            </li>
-            <li>
-              • <strong>Responsive Builder:</strong> Desktop layout with side-by-side editing
-            </li>
-            <li>
-              • <strong>Edit Products:</strong> Click "Edit" on any product to modify it
-            </li>
-            <li>
-              • <strong>Drag & Drop:</strong> Reorder products by dragging (when logged in as owner)
-            </li>
-          </ul>
-        </div>
-
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="mb-4 flex flex-wrap gap-2">
           <button
             onClick={() => setCurrentView('store-setup')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentView === 'store-setup' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
             }`}
           >
@@ -109,7 +88,7 @@ export function EnhancedStoreBuilderDemo() {
 
           <button
             onClick={() => setCurrentView('dashboard')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentView === 'dashboard' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
             }`}
           >
@@ -118,7 +97,7 @@ export function EnhancedStoreBuilderDemo() {
 
           <button
             onClick={() => setCurrentView('product-creation')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentView === 'product-creation' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
             }`}
           >
@@ -127,7 +106,7 @@ export function EnhancedStoreBuilderDemo() {
 
           <button
             onClick={() => setCurrentView('preview-demo')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
               currentView === 'preview-demo' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
             }`}
           >
@@ -137,9 +116,9 @@ export function EnhancedStoreBuilderDemo() {
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         {currentView === 'store-setup' && (
-          <div className="max-w-md mx-auto bg-card p-6 rounded-xl shadow-lg">
+          <div className="bg-card mx-auto max-w-md rounded-xl p-6 shadow-lg">
             <StoreSetupForm onSubmit={handleStoreSetup} isLoading={false} />
           </div>
         )}
@@ -173,59 +152,6 @@ export function EnhancedStoreBuilderDemo() {
         {currentView === 'product-detail' && selectedProduct && (
           <ProductDetailPage product={selectedProduct} store={mockStore} onPurchase={() => alert('Purchase flow would start here!')} />
         )}
-
-        {currentView === 'preview-demo' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Form Side */}
-            <div className="bg-card p-6 rounded-xl shadow-lg">
-              <h3 className="text-lg font-semibold mb-4">Edit Product Details</h3>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Product title"
-                  value={previewData.title || ''}
-                  onChange={(e) => setPreviewData((prev) => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg"
-                />
-                <input
-                  type="text"
-                  placeholder="Subtitle"
-                  value={previewData.subtitle || ''}
-                  onChange={(e) => setPreviewData((prev) => ({ ...prev, subtitle: e.target.value }))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg"
-                />
-                <input
-                  type="number"
-                  placeholder="Price"
-                  value={previewData.price || ''}
-                  onChange={(e) => setPreviewData((prev) => ({ ...prev, price: e.target.value }))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg"
-                />
-                <textarea
-                  placeholder="Description"
-                  value={previewData.description || ''}
-                  onChange={(e) => setPreviewData((prev) => ({ ...prev, description: e.target.value }))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg"
-                  rows={3}
-                />
-                <select
-                  value={previewData.type || 'digital'}
-                  onChange={(e) => setPreviewData((prev) => ({ ...prev, type: e.target.value as 'booking' | 'digital' }))}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg"
-                >
-                  <option value="digital">Digital Download</option>
-                  <option value="booking">1:1 Booking</option>
-                </select>
-                <p className="text-sm text-muted-foreground">Changes will appear in the focused preview →</p>
-              </div>
-            </div>
-
-            {/* Preview Side */}
-            <div>
-              <FocusedProductPreview productData={previewData} storeData={mockStore} />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Back Button for Product Detail/Edit */}
@@ -233,7 +159,7 @@ export function EnhancedStoreBuilderDemo() {
         <div className="fixed top-4 left-4 z-50">
           <button
             onClick={() => setCurrentView('dashboard')}
-            className="bg-card text-foreground px-4 py-2 rounded-lg shadow-lg border border-border hover:bg-accent transition-colors"
+            className="bg-card text-foreground border-border hover:bg-accent rounded-lg border px-4 py-2 shadow-lg transition-colors"
           >
             ← Back to Dashboard
           </button>
