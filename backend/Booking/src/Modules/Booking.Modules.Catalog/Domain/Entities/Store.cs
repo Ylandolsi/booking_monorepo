@@ -10,7 +10,7 @@ public class Store : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
     public int Id { get; private set; }
-    public int UserId { get; private set; } // FK to User
+    public int UserId { get; private set; } // FK to User // TODO
 
     public string Title { get; private set; } = string.Empty;
     public string Slug { get; private set; } = string.Empty;

@@ -76,3 +76,67 @@ export function StoreHeader({ store, className }: StoreHeaderProps) {
     </div>
   );
 }
+
+// interface Store {
+//   name: string;
+//   description?: string;
+//   profilePicture?: string;
+//   socialLinks?: {
+//     instagram?: string;
+//     twitter?: string;
+//     website?: string;
+//   };
+// }
+
+// interface StoreHeaderProps {
+//   store: Store;
+//   className?: string;
+// }
+
+// const socialPlatforms = [
+//   { key: 'instagram', label: 'Instagram', icon: Instagram },
+//   { key: 'twitter', label: 'Twitter', icon: Twitter },
+//   { key: 'facebook', label: 'Facebook', icon: Facebook },
+//   { key: 'youtube', label: 'YouTube', icon: Youtube },
+//   { key: 'website', label: 'Website', icon: Globe },
+// ];
+
+// export function StoreHeader({ store, className }: StoreHeaderProps) {
+//   return (
+//     <div className={cn('bg-card text-center', className)}>
+//       {/* Profile Picture */}
+//       <div className="from-primary to-scondary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r">
+//         {previewImage ? (
+//           <img src={previewImage} alt="Profile" className="h-full w-full rounded-full object-cover" onError={() => setPreviewImage('')} />
+//         ) : (
+//           <User className="text-primary-foreground h-8 w-8" />
+//         )}
+//       </div>
+
+//       <h2 className="text-foreground mb-2 text-xl font-bold">{store.title || 'Your Store Name'}</h2>
+
+//       <p className="text-muted-foreground mb-4 line-clamp-3 text-sm leading-relaxed text-wrap break-words">
+//         {store.description || 'Your store description will appear here...'}
+//       </p>
+
+//       {store.socialLinks && store.socialLinks.length > 0 && (
+//         <div className="mb-6 flex justify-center gap-4">
+//           {socialPlatforms.map(
+//             ({ key, icon: Icon }) =>
+//               store.socialLinks?.find((link: any) => link.platform === key)?.url && (
+//                 <a
+//                   key={key}
+//                   href={store.socialLinks?.find((link: any) => link.platform === key)?.url}
+//                   target="_blank"
+//                   rel="noopener noreferrer"
+//                   className="text-primary hover:text-accent transition-colors"
+//                 >
+//                   <Icon className="h-5 w-5" />
+//                 </a>
+//               ),
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
