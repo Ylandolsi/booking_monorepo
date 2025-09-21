@@ -17,7 +17,6 @@ public record UpdateStoreCommand(
     string? Description = null,
     Picture? Picture = null,
     IReadOnlyList<SocialLink>? SocialLinks = null
-    
 ) : ICommand<PatchPostStoreResponse>;
 
 public class UpdateStoreHandler(

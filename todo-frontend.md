@@ -78,6 +78,19 @@ export function useMentorDetails(
     })
   );
 }
+-----
+
+export const useIntegrateWithKonnect = () => {
+  return useMutation({
+    mutationFn: (walledId: string) => integateWithKonnect(walledId),
+    meta: {
+      invalidatesQuery: [authQueryKeys.currentUser()],
+      successMessage: 'Successfully integrated with Konnect',
+      errorMessage: 'Failed to integrate with Konnect',
+    },
+  });
+};
+
 ```
 
 - Codegen from an openapi spec using orval.dev. This generated all the api code as well as mock data. The setting we used was api functions rather than hooks
