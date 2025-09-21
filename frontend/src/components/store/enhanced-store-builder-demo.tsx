@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { EnhancedStorefrontDashboard, StoreSetupForm, EditProductFlow, ProductDetailPage, FocusedProductPreview } from '@/components/store';
+import { EnhancedStorefrontDashboard, EditProductFlow, ProductDetailPage } from '@/components/store';
 import { mockStore, mockProducts } from '@/lib/mock-data';
 import type { Product } from '@/types/product';
 import { AddProductFlowV2 } from './add-product-flow-v2';
@@ -117,15 +117,8 @@ export function EnhancedStoreBuilderDemo() {
 
       {/* Content */}
       <div className="mx-auto max-w-4xl">
-        {currentView === 'store-setup' && (
-          <div className="bg-card mx-auto max-w-md rounded-xl p-6 shadow-lg">
-            <StoreSetupForm onSubmit={handleStoreSetup} isLoading={false} />
-          </div>
-        )}
-
         {currentView === 'dashboard' && (
           <EnhancedStorefrontDashboard
-            store={mockStore}
             products={products}
             onAddProduct={handleAddProduct}
             onProductClick={handleProductClick}

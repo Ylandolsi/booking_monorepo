@@ -1,4 +1,5 @@
 import type { Store } from '@/api/stores';
+import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { cn } from '@/lib/cn';
 import { socialPlatforms } from '@/routes/app/setup';
 import { User } from 'lucide-react';
@@ -14,12 +15,13 @@ interface StoreHeaderProps {
 }
 
 export function StoreHeader({ store, className }: StoreHeaderProps) {
+  console.log('store pic', store.picture);
   return (
     <div className={cn('bg-card text-center', className)}>
       {/* Profile Picture */}
-      <div className="from-primary to-scondary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r">
+      <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
         {store.picture ? (
-          <img src={store.picture.mainLink} alt="Profile" className="h-full w-full rounded-full object-cover" onError={() => setPreviewImage('')} />
+          <img src={store.picture.mainLink} alt="Profile" className="h-full w-full rounded-full object-cover" />
         ) : (
           <User className="text-primary-foreground h-8 w-8" />
         )}

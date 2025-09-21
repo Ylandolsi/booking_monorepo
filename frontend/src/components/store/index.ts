@@ -1,7 +1,6 @@
 export { MobileContainer } from './mobile-container';
 export { StoreHeader } from './store-header';
 export { ScrollableContent } from './scrollable-content';
-export { StoreSetupForm } from './store-setup-form';
 export { SlugField } from './slug-field';
 export { ProductCard } from './product-card';
 export { ProductList } from './product-list';

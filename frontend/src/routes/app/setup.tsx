@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useState, useRef, useEffect } from 'react';
+import { useForm, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,27 +12,42 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X, Calendar } from 'lucide-react';
+import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
-import { createStoreSchema, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
+import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
+import useDebounce from '@/hooks/use-debounce';
 
 export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
 });
 
-// TODO : handle when the cropped image is not saved it should be showed on the phone mock
-function RouteComponent() {
-  const navigate = useNavigate();
-  const createStoreMutation = useCreateStore();
-  const [previewImage, setPreviewImage] = useState<string>('');
-  const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+export interface uploadPictureState {
+  setIsUploadDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCroppedImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
 
-  // Image upload states
+  isUploadDialogOpen: boolean;
+  selectedImage: string | null;
+
+  croppedImageUrl: string | null;
+  step: 'select' | 'crop';
+  imgRef: React.MutableRefObject<HTMLImageElement | null>;
+  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
+
+  setCrop: React.Dispatch<React.SetStateAction<PixelCrop | undefined>>;
+  crop: PixelCrop | undefined;
+
+  handleCloseDialog: () => void;
+  handleImageLoad: (e: React.SyntheticEvent<HTMLImageElement>) => void;
+  handleUpload: () => void;
+  handleBackToSelect: () => void;
+  handleCropComplete: (cropData: PixelCrop) => void;
+  handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const useUploadPicture = ({ form }: { form: UseFormReturn<createStoreInput> }): uploadPictureState => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<any>();
@@ -41,53 +56,6 @@ function RouteComponent() {
   const imgRef = useRef<HTMLImageElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const form = useForm<createStoreInput>({
-    resolver: zodResolver(createStoreSchema),
-    defaultValues: {
-      title: '',
-      slug: '',
-      description: '',
-      socialLinks: [],
-      picture: undefined,
-    },
-  });
-
-  const watchedValues = form.watch();
-
-  const generateSlug = (title: string) => {
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-    form.setValue('slug', slug);
-  };
-
-  const onSubmit = async (data: createStoreInput) => {
-    try {
-      await createStoreMutation.mutateAsync(data);
-      navigate({ to: ROUTE_PATHS.APP.STORE });
-    } catch (error) {
-      console.error('Failed to create store:', error);
-    }
-  };
-
-  const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'twitter'].includes(p.key));
-
-  const handleAddPlatforms = () => {
-    setAdditionalPlatforms([...additionalPlatforms, ...selectedPlatforms]);
-    setSelectedPlatforms([]);
-    setIsPopoverOpen(false);
-  };
-
-  const handleCheckboxChange = (key: string, checked: boolean) => {
-    if (checked) {
-      setSelectedPlatforms([...selectedPlatforms, key]);
-    } else {
-      setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
-    }
-  };
-
   // Image upload functions
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -95,7 +63,7 @@ function RouteComponent() {
       const reader = new FileReader();
       reader.onload = () => {
         setSelectedImage(reader.result as string);
-        setCroppedImageUrl(null);
+        setCroppedImageUrl(reader.result as string);
         setStep('crop');
         setIsUploadDialogOpen(true);
       };
@@ -171,7 +139,6 @@ function RouteComponent() {
       try {
         const croppedImage = await getCroppedImg(imgRef.current, cropData);
         setCroppedImageUrl(croppedImage);
-        setPreviewImage(croppedImage); // Update preview immediately
       } catch (error) {
         console.error('Error cropping image:', error);
       }
@@ -190,7 +157,6 @@ function RouteComponent() {
     const file = new File([blob], 'profile-picture.jpg', { type: blob.type });
 
     form.setValue('picture', file);
-    setPreviewImage(croppedImageUrl);
     handleCloseDialog();
   };
 
@@ -198,8 +164,8 @@ function RouteComponent() {
     if (selectedImage) URL.revokeObjectURL(selectedImage);
     if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
 
-    setSelectedImage(null);
-    setCroppedImageUrl(null);
+    // setSelectedImage(null);
+    // setCroppedImageUrl(null);
     setCrop(undefined);
     setStep('select');
     setIsUploadDialogOpen(false);
@@ -217,6 +183,116 @@ function RouteComponent() {
     setCroppedImageUrl(null);
     setCrop(undefined);
     setStep('select');
+  };
+
+  return {
+    setIsUploadDialogOpen,
+    setCroppedImageUrl,
+    isUploadDialogOpen,
+    selectedImage,
+    croppedImageUrl,
+    step,
+    imgRef,
+    fileInputRef,
+    setCrop,
+    crop,
+
+    handleCloseDialog,
+    handleImageLoad,
+    handleUpload,
+    handleBackToSelect,
+    handleCropComplete,
+    handleFileSelect,
+  };
+};
+
+// TODO : handle when the cropped image is not saved it should be showed on the phone mock
+function RouteComponent() {
+  const navigate = useNavigate();
+
+  const createStoreMutation = useCreateStore();
+  const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const form = useForm<createStoreInput>({
+    resolver: zodResolver(createStoreSchema),
+    defaultValues: {
+      title: '',
+      slug: '',
+      description: '',
+      socialLinks: [],
+      picture: undefined,
+    },
+  });
+
+  const {
+    setIsUploadDialogOpen,
+    isUploadDialogOpen,
+    selectedImage,
+    croppedImageUrl,
+    setCrop,
+    crop,
+    step,
+    imgRef,
+    handleImageLoad,
+    fileInputRef,
+    handleUpload,
+    handleBackToSelect,
+    handleCropComplete,
+    handleFileSelect,
+    handleCloseDialog,
+  } = useUploadPicture({ form });
+
+  const watchedValues = form.watch();
+
+  const debouncedSlug = useDebounce(watchedValues.slug, 500);
+
+  const { data: slugAvailabilityResponse } = useCheckSlugAvailability(debouncedSlug, debouncedSlug.length >= 3);
+  const slugAvailable = slugAvailabilityResponse?.isAvailable;
+
+  useEffect(() => {
+    if (slugAvailable === false && debouncedSlug.length >= 3) {
+      form.setError('slug', { type: 'manual', message: 'Slug is already taken' });
+    } else {
+      if (form.formState.errors.slug?.type === 'manual') {
+        form.clearErrors('slug');
+      }
+    }
+  }, [slugAvailable, form]);
+
+  const generateSlug = (title: string) => {
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    form.setValue('slug', slug);
+  };
+
+  const onSubmit = async (data: createStoreInput) => {
+    try {
+      await createStoreMutation.mutateAsync(data);
+      navigate({ to: ROUTE_PATHS.APP.STORE });
+    } catch (error) {
+      console.error('Failed to create store:', error);
+    }
+  };
+
+  const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'twitter'].includes(p.key));
+
+  const handleAddPlatforms = () => {
+    setAdditionalPlatforms([...additionalPlatforms, ...selectedPlatforms]);
+    setSelectedPlatforms([]);
+    setIsPopoverOpen(false);
+  };
+
+  const handleCheckboxChange = (key: string, checked: boolean) => {
+    if (checked) {
+      setSelectedPlatforms([...selectedPlatforms, key]);
+    } else {
+      setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
+    }
   };
 
   return (
