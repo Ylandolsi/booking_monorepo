@@ -104,11 +104,11 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
       showPreview={true}
       className={className}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex h-full flex-col">
         {/* Header */}
         <div className="px-6 pt-6 pb-4">
-          <div className="text-center mb-4">
-            <h2 className="text-xl font-semibold text-foreground mb-2">Edit Product</h2>
+          <div className="mb-4 text-center">
+            <h2 className="text-foreground mb-2 text-xl font-semibold">Edit Product</h2>
             <p className="text-muted-foreground">Update your {productData.type === 'booking' ? 'booking service' : 'digital product'}</p>
           </div>
 
@@ -130,38 +130,38 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 px-6 pb-6 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto px-6 pb-6">
           {activeTab === 'general' && (
             <div className="space-y-6">
               {/* Title */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Title *</label>
+                <label className="text-foreground block text-sm font-medium">Title *</label>
                 <input
                   type="text"
                   value={productData.title}
                   onChange={(e) => setProductData((prev) => ({ ...prev, title: e.target.value }))}
                   placeholder={productData.type === 'booking' ? '30-minute Strategy Call' : 'Ultimate Course Bundle'}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {/* Subtitle */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Subtitle</label>
+                <label className="text-foreground block text-sm font-medium">Subtitle</label>
                 <input
                   type="text"
                   value={productData.subtitle}
                   onChange={(e) => setProductData((prev) => ({ ...prev, subtitle: e.target.value }))}
                   placeholder="A brief description of what you offer"
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {/* Price */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Price *</label>
+                <label className="text-foreground block text-sm font-medium">Price *</label>
                 <div className="flex">
-                  <span className="inline-flex items-center px-3 py-2 bg-muted border border-r-0 border-border rounded-l-lg text-muted-foreground">
+                  <span className="bg-muted border-border text-muted-foreground inline-flex items-center rounded-l-lg border border-r-0 px-3 py-2">
                     $
                   </span>
                   <input
@@ -169,7 +169,7 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
                     value={productData.price}
                     onChange={(e) => setProductData((prev) => ({ ...prev, price: e.target.value }))}
                     placeholder="99"
-                    className="flex-1 px-3 py-2 bg-input border border-border rounded-r-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring flex-1 rounded-r-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                     min="0"
                     step="0.01"
                   />
@@ -178,17 +178,17 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
 
               {/* Cover Image */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Cover Image</label>
+                <label className="text-foreground block text-sm font-medium">Cover Image</label>
                 <div className="flex items-start space-x-4">
-                  <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted flex items-center justify-center border border-border">
+                  <div className="bg-muted border-border flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border">
                     {productData.coverImage ? (
                       <img
                         src={typeof productData.coverImage === 'string' ? productData.coverImage : URL.createObjectURL(productData.coverImage)}
                         alt="Cover preview"
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
-                      <span className="text-muted-foreground text-xs text-center">No image</span>
+                      <span className="text-muted-foreground text-center text-xs">No image</span>
                     )}
                   </div>
                   <div className="flex-1">
@@ -202,11 +202,11 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
                         }}
                         className="hidden"
                       />
-                      <span className="inline-flex items-center px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors">
+                      <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors">
                         Change Image
                       </span>
                     </label>
-                    <p className="text-xs text-muted-foreground mt-1">Recommended: 400×400px or square format</p>
+                    <p className="text-muted-foreground mt-1 text-xs">Recommended: 400×400px or square format</p>
                   </div>
                 </div>
               </div>
@@ -219,25 +219,25 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
 
               {/* Description */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Description *</label>
+                <label className="text-foreground block text-sm font-medium">Description *</label>
                 <textarea
                   value={productData.description}
                   onChange={(e) => setProductData((prev) => ({ ...prev, description: e.target.value }))}
                   placeholder="Describe what customers will get..."
                   rows={4}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-full resize-none rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 />
               </div>
 
               {/* CTA Text */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Button Text</label>
+                <label className="text-foreground block text-sm font-medium">Button Text</label>
                 <input
                   type="text"
                   value={productData.ctaText}
                   onChange={(e) => setProductData((prev) => ({ ...prev, ctaText: e.target.value }))}
                   placeholder={productData.type === 'booking' ? 'Book Now' : 'Buy Now'}
-                  className="w-full px-3 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="bg-input border-border text-foreground placeholder:text-muted-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
                 />
               </div>
             </div>
@@ -262,9 +262,9 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
         </div>
 
         {/* Fixed Bottom Navigation */}
-        <div className="border-t border-border bg-card px-6 py-4">
+        <div className="border-border bg-card border-t px-6 py-4">
           <div className="flex space-x-3">
-            <button onClick={onCancel} className="flex-1 py-3 px-4 border border-border rounded-lg text-foreground hover:bg-muted transition-colors">
+            <button onClick={onCancel} className="border-border text-foreground hover:bg-muted flex-1 rounded-lg border px-4 py-3 transition-colors">
               Cancel
             </button>
 
@@ -272,7 +272,7 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
               onClick={handleComplete}
               disabled={!isValid}
               className={cn(
-                'flex-1 py-3 px-4 rounded-lg font-semibold transition-all',
+                'flex-1 rounded-lg px-4 py-3 font-semibold transition-all',
                 isValid ? 'bg-primary text-primary-foreground hover:opacity-90' : 'bg-muted text-muted-foreground cursor-not-allowed',
               )}
             >

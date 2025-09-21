@@ -7,7 +7,6 @@ export { ProductCard } from './product-card';
 export { ProductList } from './product-list';
 export { EmptyState } from './empty-state';
 export { AddProductButton } from './add-product-button';
-export { StorefrontDashboard } from './storefront-dashboard';
 export { EnhancedStorefrontDashboard } from './enhanced-storefront-dashboard';
 export { ProductTypeSelector } from './product-type-selector';
 export { ProductDetailsForm } from './product-details-form';

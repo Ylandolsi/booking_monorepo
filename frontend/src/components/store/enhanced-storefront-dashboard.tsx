@@ -7,6 +7,8 @@ import { EmptyState } from './empty-state';
 import { AddProductButton } from './add-product-button';
 import { DisplayModeSelector } from './display-mode-selector';
 import type { Product } from '@/types/product';
+import { IPhoneMockup } from 'react-device-mockup';
+import { cn } from '@/lib/cn';
 
 interface Store {
   name: string;
@@ -47,17 +49,17 @@ export function EnhancedStorefrontDashboard({
   const [displayMode, setDisplayMode] = useState<DisplayMode>('full');
 
   return (
-    <MobileContainer className={className}>
-      <StoreHeader store={store} />
+    <IPhoneMockup screenWidth={400}>
+      <MobileContainer className={cn('items-center space-y-4', className)}>
+        <StoreHeader store={store} />
 
-      {/* Controls (only visible to owner) */}
-      {isOwner && products.length > 0 && (
-        <div className="px-4 py-2 border-b border-border bg-muted/30">
-          <DisplayModeSelector displayMode={displayMode} onChange={setDisplayMode} />
-        </div>
-      )}
+        {/* Controls (only visible to owner) */}
+        {/* {isOwner && products.length > 0 && (
+          <div className="bg-muted/30 b mt-4">
+            <DisplayModeSelector displayMode={displayMode} onChange={setDisplayMode} />
+          </div>
+        )} */}
 
-      <ScrollableContent>
         {products.length === 0 ? (
           <EmptyState onAddProduct={isOwner ? onAddProduct : undefined} />
         ) : (
@@ -75,7 +77,7 @@ export function EnhancedStorefrontDashboard({
             {isOwner && <AddProductButton onClick={onAddProduct} />}
           </>
         )}
-      </ScrollableContent>
-    </MobileContainer>
+      </MobileContainer>
+    </IPhoneMockup>
   );
 }

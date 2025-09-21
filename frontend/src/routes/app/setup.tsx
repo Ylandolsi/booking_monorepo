@@ -230,7 +230,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full   gap-8 items-start justify-around">
+    <div className="flex flex-col items-center md:flex-row w-full   gap-8 md:items-start justify-around">
       {/* Setup Form */}
       <div className="flex-1 max-w-lg">
         <div className="text-center mb-8">
@@ -572,68 +572,59 @@ function RouteComponent() {
       </Dialog>
 
       {/* Live Preview - keeping the same */}
-      <div className="flex-1 max-w-sm animate-in slide-in-from-right duration-700">
-        <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold text-foreground">Live Preview</h3>
-          <p className="text-sm text-muted-foreground">See how your store will look</p>
-        </div>
+      <div className="sticky top-4">
+        <IPhoneMockup screenWidth={320}>
+          <MobileContainer>
+            <div className="w-20 h-20 bg-gradient-to-r from-primary to-scondary rounded-full mx-auto mb-4 flex items-center justify-center">
+              {previewImage ? (
+                <img src={previewImage} alt="Profile" className="w-full h-full rounded-full object-cover" onError={() => setPreviewImage('')} />
+              ) : (
+                <User className="w-8 h-8 text-primary-foreground" />
+              )}
+            </div>
 
-        <div className="flex justify-center">
-          <IPhoneMockup screenWidth={320}>
-            {/* <MobileContainer> */}
-            <div className="p-6 text-center bg-background min-h-full overflow-y-auto">
-              <div className="w-20 h-20 bg-gradient-to-r from-primary to-scondary rounded-full mx-auto mb-4 flex items-center justify-center">
-                {previewImage ? (
-                  <img src={previewImage} alt="Profile" className="w-full h-full rounded-full object-cover" onError={() => setPreviewImage('')} />
-                ) : (
-                  <User className="w-8 h-8 text-primary-foreground" />
+            <h2 className="text-xl font-bold text-foreground mb-2">{watchedValues.title || 'Your Store Name'}</h2>
+
+            <p className="text-muted-foreground text-sm mb-4 leading-relaxed break-words text-wrap line-clamp-3 ">
+              {watchedValues.description || 'Your store description will appear here...'}
+            </p>
+
+            {watchedValues.socialLinks && watchedValues.socialLinks.length > 0 && (
+              <div className="flex justify-center gap-4 mb-6">
+                {socialPlatforms.map(
+                  ({ key, icon: Icon }) =>
+                    watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url && (
+                      <a
+                        key={key}
+                        href={watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:text-accent transition-colors"
+                      >
+                        <Icon className="w-5 h-5" />
+                      </a>
+                    ),
                 )}
               </div>
+            )}
 
-              <h2 className="text-xl font-bold text-foreground mb-2">{watchedValues.title || 'Your Store Name'}</h2>
-
-              <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                {watchedValues.description || 'Your store description will appear here...'}
-              </p>
-
-              {watchedValues.socialLinks && watchedValues.socialLinks.length > 0 && (
-                <div className="flex justify-center gap-4 mb-6">
-                  {socialPlatforms.map(
-                    ({ key, icon: Icon }) =>
-                      watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url && (
-                        <a
-                          key={key}
-                          href={watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-accent transition-colors"
-                        >
-                          <Icon className="w-5 h-5" />
-                        </a>
-                      ),
-                  )}
+            <div className="space-y-3">
+              <div className="bg-muted rounded-lg p-4 text-left border border-border">
+                <div className="flex items-center gap-2 mb-1">
+                  <Calendar className="w-3 h-3 text-primary" />
+                  <span className="text-xs text-muted-foreground">1:1 Coaching Call</span>
                 </div>
-              )}
-
-              <div className="space-y-3">
-                <div className="bg-muted rounded-lg p-4 text-left border border-border">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="w-3 h-3 text-primary" />
-                    <span className="text-xs text-muted-foreground">1:1 Coaching Call</span>
-                  </div>
-                  <div className="font-semibold text-foreground">Book a Call</div>
-                  <div className="text-primary font-semibold">$99</div>
-                </div>
-                <div className="bg-muted rounded-lg p-4 text-left border border-border">
-                  <div className="text-xs text-muted-foreground mb-1">Sample Product</div>
-                  <div className="font-semibold text-foreground">Digital Guide</div>
-                  <div className="text-primary font-semibold">$29</div>
-                </div>
+                <div className="font-semibold text-foreground">Book a Call</div>
+                <div className="text-primary font-semibold">$99</div>
+              </div>
+              <div className="bg-muted rounded-lg p-4 text-left border border-border">
+                <div className="text-xs text-muted-foreground mb-1">Sample Product</div>
+                <div className="font-semibold text-foreground">Digital Guide</div>
+                <div className="text-primary font-semibold">$29</div>
               </div>
             </div>
-            {/* </MobileContainer> */}
-          </IPhoneMockup>
-        </div>
+          </MobileContainer>
+        </IPhoneMockup>
       </div>
     </div>
   );

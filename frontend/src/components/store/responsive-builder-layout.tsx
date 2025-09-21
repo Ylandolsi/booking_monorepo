@@ -16,22 +16,18 @@ interface ResponsiveBuilderLayoutProps {
 
 export function ResponsiveBuilderLayout({ children, previewData, storeData, showPreview = true, className }: ResponsiveBuilderLayoutProps) {
   return (
-    <div className={cn('min-h-screen bg-muted/30', className)}>
-      <div className="max-w-7xl mx-auto p-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className={cn('bg-muted/30 min-h-screen', className)}>
+      <div className="mx-auto max-w-7xl p-4">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Form Side */}
-          <div className="order-2 lg:order-1">
-            <div className="bg-card rounded-xl shadow-lg border border-border">{children}</div>
-          </div>
+          <div className="bg-card border-border rounded-xl border shadow-lg">{children}</div>
 
           {/* Preview Side */}
-          {showPreview && (
-            <div className="order-1 lg:order-2">
-              <div className="lg:sticky lg:top-4">
-                <FocusedProductPreview productData={previewData} storeData={storeData} />
-              </div>
+          <div>
+            <div className="lg:sticky lg:top-4">
+              <FocusedProductPreview productData={previewData} storeData={storeData} />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

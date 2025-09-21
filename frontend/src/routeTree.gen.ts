@@ -26,7 +26,6 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthEmailVerifiedRouteImport } from './routes/auth/email-verified'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
-import { Route as AppStoreRouteImport } from './routes/app/store'
 import { Route as AppSetupRouteImport } from './routes/app/setup'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMystoreRouteImport } from './routes/app/mystore'
@@ -127,11 +126,6 @@ const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   path: '/email-verification',
   getParentRoute: () => AuthRouteRoute,
 } as any)
-const AppStoreRoute = AppStoreRouteImport.update({
-  id: '/store',
-  path: '/store',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppSetupRoute = AppSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -214,7 +208,6 @@ export interface FileRoutesByFullPath {
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/setup': typeof AppSetupRoute
-  '/app/store': typeof AppStoreRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -246,7 +239,6 @@ export interface FileRoutesByTo {
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/setup': typeof AppSetupRoute
-  '/app/store': typeof AppStoreRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -280,7 +272,6 @@ export interface FileRoutesById {
   '/app/mystore': typeof AppMystoreRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/setup': typeof AppSetupRoute
-  '/app/store': typeof AppStoreRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -315,7 +306,6 @@ export interface FileRouteTypes {
     | '/app/mystore'
     | '/app/payouts'
     | '/app/setup'
-    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -347,7 +337,6 @@ export interface FileRouteTypes {
     | '/app/mystore'
     | '/app/payouts'
     | '/app/setup'
-    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -380,7 +369,6 @@ export interface FileRouteTypes {
     | '/app/mystore'
     | '/app/payouts'
     | '/app/setup'
-    | '/app/store'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -534,13 +522,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
-    '/app/store': {
-      id: '/app/store'
-      path: '/store'
-      fullPath: '/app/store'
-      preLoaderRoute: typeof AppStoreRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/app/setup': {
       id: '/app/setup'
       path: '/setup'
@@ -657,7 +638,6 @@ interface AppRouteRouteChildren {
   AppMystoreRoute: typeof AppMystoreRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
   AppSetupRoute: typeof AppSetupRoute
-  AppStoreRoute: typeof AppStoreRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
@@ -674,7 +654,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMystoreRoute: AppMystoreRoute,
   AppPayoutsRoute: AppPayoutsRoute,
   AppSetupRoute: AppSetupRoute,
-  AppStoreRoute: AppStoreRoute,
   AppIndexRoute: AppIndexRoute,
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
