@@ -31,6 +31,8 @@ public class UpdateSessionProductEndpoint : IEndpoint
         public string MeetingInstructions { get; init; }
         public List<DayAvailability> DayAvailabilities { get; init; }
         public string? TimeZoneId { get; init; } = "Africa/Tunis";
+
+        
     }
 
 

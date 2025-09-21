@@ -21,3 +21,11 @@ export const ProductType = {
   DigitalDownload: 'DigitalDownload',
 } as const;
 export type ProductType = (typeof ProductType)[keyof typeof ProductType];
+
+export interface BuyProductRequest {
+  startTime: string; // ISO date string
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  customerMessage?: string;
+}

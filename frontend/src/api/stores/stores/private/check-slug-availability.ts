@@ -1,11 +1,22 @@
+import { storeKeys } from '@/api/stores/stores-keys';
+import { api } from '@/lib';
+import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
 import { useQuery } from '@tanstack/react-query';
-import { checkSlugAvailability } from '../stores-api';
-import { storeKeys } from '../../stores-keys';
-import type { SlugAvailabilityResponse } from '../stores-api';
 
-// Re-export for backward compatibility
-export { checkSlugAvailability };
-export type { SlugAvailabilityResponse };
+export interface SlugAvailabilityResponse {
+  isAvailable: boolean;
+  slug: string;
+}
+
+export const checkSlugAvailability = async (slug: string): Promise<SlugAvailabilityResponse> => {
+  try {
+    const response = await api.get<SlugAvailabilityResponse>(CatalogEndpoints.Stores.CheckSlugAvailability(slug));
+    return response;
+  } catch (error) {
+    console.error(`Error checking slug availability for ${slug}:`, error);
+    throw error;
+  }
+};
 
 export function useCheckSlugAvailability(slug: string, enabled = true) {
   return useQuery({

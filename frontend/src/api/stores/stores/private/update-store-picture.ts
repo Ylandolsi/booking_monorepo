@@ -1,22 +1,48 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateStorePicture } from '../stores-api';
-import type { UpdateStorePictureInput } from '../stores-api';
-import { storeKeys, STORE_QUERY_KEY } from '../../stores-keys';
+import { STORE_QUERY_KEY, storeKeys } from '@/api/stores/stores-keys';
+import { api, toFormData, validateFile } from '@/lib';
+import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
+import { useMutation } from '@tanstack/react-query';
 
-// Re-export for backward compatibility
-export type { UpdateStorePictureInput };
-export { updateStorePicture };
+export interface UpdateStorePictureInput {
+  picture: File;
+}
+export interface UpdateStorePictureResponse {
+  picture: File;
+}
+
+export const updateStorePicture = async (data: UpdateStorePictureInput): Promise<UpdateStorePictureResponse> => {
+  // Validate the picture file
+  const validation = validateFile(data.picture, {
+    maxSizeInMB: 5,
+    allowedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+    required: true,
+  });
+
+  if (!validation.isValid) {
+    throw new Error(validation.error || 'Invalid file');
+  }
+
+  // Create FormData for the request
+  const formData = toFormData({
+    file: data.picture,
+  });
+
+  try {
+    const response = await api.patch<UpdateStorePictureResponse>(CatalogEndpoints.Stores.UpdatePicture, formData);
+
+    return response;
+  } catch (error) {
+    console.error('Error updating store picture:', error);
+    throw error;
+  }
+};
 
 export const useUpdateStorePicture = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (data: UpdateStorePictureInput) => updateStorePicture(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [STORE_QUERY_KEY] });
-      queryClient.invalidateQueries({ queryKey: storeKeys.myStore() });
-    },
+
     meta: {
+      invalidatesQuery: [[STORE_QUERY_KEY], storeKeys.myStore()],
       successMessage: 'Store picture updated successfully!',
     },
   });
