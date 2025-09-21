@@ -1,5 +1,6 @@
 import { cn } from '@/lib/cn';
 import type { Product } from '@/types/product';
+import { Button } from '../ui';
 
 type DisplayMode = 'full' | 'compact';
 
@@ -28,37 +29,37 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
         )}
         onClick={onClick}
       >
-        <div className="flex items-center space-x-4">
-          {/* Thumbnail/Icon with conditional sizing */}
-          <div
-            className={cn(
-              'rounded-lg bg-muted flex items-center justify-center flex-shrink-0',
-              thumbnailMode === 'compact' ? 'w-8 h-8' : 'w-12 h-12',
-            )}
-          >
-            {product.coverImage ? (
-              <img src={product.coverImage} alt={product.title} className="w-full h-full object-cover rounded-lg" />
-            ) : (
-              <span className={cn(thumbnailMode === 'compact' ? 'text-base' : 'text-2xl')}>{product.type === 'booking' ? '📅' : '📁'}</span>
-            )}
+        <div className="flex flex-col items-stretch gap-4">
+          {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
+          <div className="flex items-start w-full gap-3">
+            <div
+              className={cn(
+                'rounded-lg bg-muted flex items-center justify-center flex-shrink-0 overflow-hidden',
+                thumbnailMode === 'compact' ? 'w-8 h-8' : 'w-12 h-12',
+              )}
+            >
+              {product.coverImage ? (
+                <img src={product.coverImage} alt={product.title} className="w-full h-full object-cover" />
+              ) : (
+                <span className={cn(thumbnailMode === 'compact' ? 'text-base' : 'text-2xl')}>{product.type === 'booking' ? '📅' : '📁'}</span>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-foreground  overflow-hidden break-words">{product.title}</h3>
+              {product.subtitle && <p className="text-sm text-muted-foreground break-words overflow-hidden">{product.subtitle}</p>}
+            </div>
+
+            <div className="flex-none ml-2 text-right">
+              <span className="text-lg font-bold text-primary">{product.price}</span>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-foreground line-clamp-1">{product.title}</h3>
-            {product.subtitle && <p className="text-sm text-muted-foreground line-clamp-1">{product.subtitle}</p>}
-          </div>
-
-          {/* Price and CTA */}
-          <div className="flex items-center space-x-3 flex-shrink-0">
-            <span className="text-lg font-bold text-primary">{product.price}</span>
-            <button className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
-              {product.ctaText}
-            </button>
-          </div>
+          <Button className="bg-primary text-primary-foreground px-3 py-1.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity w-full">
+            {product.ctaText}
+          </Button>
         </div>
 
-        {/* Actions Menu (if enabled) */}
         {showActions && (
           <div className="mt-3 pt-3 border-t border-border flex justify-end space-x-2">
             <button

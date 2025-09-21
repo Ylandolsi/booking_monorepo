@@ -11,7 +11,6 @@ export { StorefrontDashboard } from './storefront-dashboard';
 export { EnhancedStorefrontDashboard } from './enhanced-storefront-dashboard';
 export { ProductTypeSelector } from './product-type-selector';
 export { ProductDetailsForm } from './product-details-form';
-export { AddProductFlow } from './add-product-flow';
 export { EditProductFlow } from './edit-product-flow';
 export { LivePreview } from './live-preview';
 export { FocusedProductPreview } from './focused-product-preview';

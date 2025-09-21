@@ -1,14 +1,8 @@
 import { useState } from 'react';
-import {
-  EnhancedStorefrontDashboard,
-  StoreSetupForm,
-  AddProductFlow,
-  EditProductFlow,
-  ProductDetailPage,
-  FocusedProductPreview,
-} from '@/components/store';
+import { EnhancedStorefrontDashboard, StoreSetupForm, EditProductFlow, ProductDetailPage, FocusedProductPreview } from '@/components/store';
 import { mockStore, mockProducts } from '@/lib/mock-data';
 import type { Product } from '@/types/product';
+import { AddProductFlowV2 } from './add-product-flow-v2';
 
 type View = 'store-setup' | 'dashboard' | 'product-creation' | 'product-edit' | 'product-detail' | 'preview-demo';
 
@@ -164,7 +158,7 @@ export function EnhancedStoreBuilderDemo() {
         )}
 
         {currentView === 'product-creation' && (
-          <AddProductFlow onComplete={handleProductCreated} onCancel={() => setCurrentView('dashboard')} storeData={mockStore} />
+          <AddProductFlowV2 onComplete={handleProductCreated} onCancel={() => setCurrentView('dashboard')} storeData={mockStore} />
         )}
 
         {currentView === 'product-edit' && selectedProduct && (

@@ -18,6 +18,7 @@
   "APP": {
     "INDEX": "/app",
     "LINKI": "/app/linki",
+    "STORE": "/app/store",
     "BOOKING": {
       "SESSION": "/app/booking/session/$mentorSlug"
     },

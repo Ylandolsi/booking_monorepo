@@ -11,12 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnauthorizedRouteImport } from './routes/unauthorized'
 import { Route as StoreBuilderEnhancedRouteImport } from './routes/store-builder-enhanced'
-import { Route as StoreBuilderRouteImport } from './routes/store-builder'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as TestThumbnailModesRouteImport } from './routes/test/thumbnail-modes'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
@@ -51,11 +51,6 @@ const StoreBuilderEnhancedRoute = StoreBuilderEnhancedRouteImport.update({
   path: '/store-builder-enhanced',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StoreBuilderRoute = StoreBuilderRouteImport.update({
-  id: '/store-builder',
-  path: '/store-builder',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -80,6 +75,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const TestThumbnailModesRoute = TestThumbnailModesRouteImport.update({
+  id: '/test/thumbnail-modes',
+  path: '/test/thumbnail-modes',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
@@ -205,7 +205,6 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
-  '/store-builder': typeof StoreBuilderRoute
   '/store-builder-enhanced': typeof StoreBuilderEnhancedRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
@@ -225,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
@@ -237,7 +237,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
-  '/store-builder': typeof StoreBuilderRoute
   '/store-builder-enhanced': typeof StoreBuilderEnhancedRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
@@ -257,6 +256,7 @@ export interface FileRoutesByTo {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
@@ -271,7 +271,6 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
-  '/store-builder': typeof StoreBuilderRoute
   '/store-builder-enhanced': typeof StoreBuilderEnhancedRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/editstore': typeof AppEditstoreRoute
@@ -291,6 +290,7 @@ export interface FileRoutesById {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
@@ -306,7 +306,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/home'
-    | '/store-builder'
     | '/store-builder-enhanced'
     | '/unauthorized'
     | '/app/editstore'
@@ -326,6 +325,7 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/thumbnail-modes'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
@@ -338,7 +338,6 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/home'
-    | '/store-builder'
     | '/store-builder-enhanced'
     | '/unauthorized'
     | '/app/editstore'
@@ -358,6 +357,7 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/thumbnail-modes'
     | '/app'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
@@ -371,7 +371,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/home'
-    | '/store-builder'
     | '/store-builder-enhanced'
     | '/unauthorized'
     | '/app/editstore'
@@ -391,6 +390,7 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/thumbnail-modes'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
@@ -405,12 +405,12 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   HomeRoute: typeof HomeRoute
-  StoreBuilderRoute: typeof StoreBuilderRoute
   StoreBuilderEnhancedRoute: typeof StoreBuilderEnhancedRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
+  TestThumbnailModesRoute: typeof TestThumbnailModesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -427,13 +427,6 @@ declare module '@tanstack/react-router' {
       path: '/store-builder-enhanced'
       fullPath: '/store-builder-enhanced'
       preLoaderRoute: typeof StoreBuilderEnhancedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/store-builder': {
-      id: '/store-builder'
-      path: '/store-builder'
-      fullPath: '/store-builder'
-      preLoaderRoute: typeof StoreBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home': {
@@ -470,6 +463,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/test/thumbnail-modes': {
+      id: '/test/thumbnail-modes'
+      path: '/test/thumbnail-modes'
+      fullPath: '/test/thumbnail-modes'
+      preLoaderRoute: typeof TestThumbnailModesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/test/img': {
       id: '/test/img'
@@ -714,12 +714,12 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AuthRouteRoute: AuthRouteRouteWithChildren,
   HomeRoute: HomeRoute,
-  StoreBuilderRoute: StoreBuilderRoute,
   StoreBuilderEnhancedRoute: StoreBuilderEnhancedRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
+  TestThumbnailModesRoute: TestThumbnailModesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

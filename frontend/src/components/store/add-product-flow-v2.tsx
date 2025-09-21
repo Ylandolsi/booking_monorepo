@@ -25,7 +25,7 @@ interface AddProductFlowProps {
   className?: string;
 }
 
-export function AddProductFlow({ onComplete, onCancel, storeData = { name: 'Your Store' }, className }: AddProductFlowProps) {
+export function AddProductFlowV2({ onComplete, onCancel, storeData = { name: 'Your Store' }, className }: AddProductFlowProps) {
   const [step, setStep] = useState<'type-selection' | 'details' | 'specific-fields'>('type-selection');
   const [productData, setProductData] = useState<Partial<ProductData>>({});
 
