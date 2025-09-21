@@ -16,15 +16,15 @@ export function ContentLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthGuard requireAuth={true} redirectTo="/auth/login">
-      <div className="flex h-screen  bg-gradient-to-br  from-background/10 to-muted/10">
+      <div className="from-background/10 to-muted/10 flex h-screen bg-gradient-to-br">
         {/* Sidebar - Now at the layout level */}
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} collapsed={collapsed} setCollapsed={setCollapsed} />
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden pb-10 lg:pb-0">
+        <div className="flex flex-1 flex-col overflow-hidden pb-10 lg:pb-0">
           <Header />
           {/* Page Content */}
-          <main className="flex-1 overflow-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-20 ">{children}</main>
+          <main className="flex-1 overflow-auto px-4 py-6 pb-20 sm:px-6 sm:py-8 lg:px-8">{children}</main>
 
           {/* Bottom Navigation - Mobile Only */}
           <BottomNav />

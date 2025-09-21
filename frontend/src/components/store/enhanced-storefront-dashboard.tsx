@@ -9,6 +9,9 @@ import { DisplayModeSelector } from './display-mode-selector';
 import type { Product } from '@/types/product';
 import { IPhoneMockup } from 'react-device-mockup';
 import { cn } from '@/lib/cn';
+import { useMyStore } from '@/api/stores';
+import { LoadingState } from '@/components/ui';
+import { ErrorComponenet } from '@/components/errors';
 
 interface Store {
   name: string;
@@ -24,7 +27,6 @@ interface Store {
 type DisplayMode = 'full' | 'compact';
 
 interface EnhancedStorefrontDashboardProps {
-  store: Store;
   products: Product[];
   onAddProduct?: () => void;
   onProductClick?: (product: Product) => void;
@@ -36,7 +38,6 @@ interface EnhancedStorefrontDashboardProps {
 }
 
 export function EnhancedStorefrontDashboard({
-  store,
   products,
   onAddProduct,
   onProductClick,
@@ -46,38 +47,46 @@ export function EnhancedStorefrontDashboard({
   isOwner = false,
   className,
 }: EnhancedStorefrontDashboardProps) {
+  const { data: store, isLoading, error } = useMyStore();
   const [displayMode, setDisplayMode] = useState<DisplayMode>('full');
 
-  return (
-    <IPhoneMockup screenWidth={400}>
-      <MobileContainer className={cn('items-center space-y-4', className)}>
-        <StoreHeader store={store} />
+  if (isLoading) {
+    return <LoadingState type="spinner" />;
+  }
 
-        {/* Controls (only visible to owner) */}
-        {/* {isOwner && products.length > 0 && (
+  if (error || !store) {
+    return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+  }
+
+  console.log('Store data:', store, isLoading, error);
+  return (
+    <MobileContainer screenWidth={500} className={cn('items-center space-y-4', className)}>
+      <StoreHeader store={store} />
+
+      {/* Controls (only visible to owner) */}
+      {/* {isOwner && products.length > 0 && (
           <div className="bg-muted/30 b mt-4">
             <DisplayModeSelector displayMode={displayMode} onChange={setDisplayMode} />
           </div>
         )} */}
 
-        {products.length === 0 ? (
-          <EmptyState onAddProduct={isOwner ? onAddProduct : undefined} />
-        ) : (
-          <>
-            <DraggableProductList
-              products={products}
-              onProductClick={onProductClick}
-              onProductEdit={onProductEdit}
-              onProductDelete={onProductDelete}
-              onReorder={onProductsReorder || (() => {})}
-              showActions={isOwner}
-              displayMode={displayMode}
-            />
+      {products.length === 0 ? (
+        <EmptyState onAddProduct={isOwner ? onAddProduct : undefined} />
+      ) : (
+        <>
+          <DraggableProductList
+            products={products}
+            onProductClick={onProductClick}
+            onProductEdit={onProductEdit}
+            onProductDelete={onProductDelete}
+            onReorder={onProductsReorder || (() => {})}
+            showActions={isOwner}
+            displayMode={displayMode}
+          />
 
-            {isOwner && <AddProductButton onClick={onAddProduct} />}
-          </>
-        )}
-      </MobileContainer>
-    </IPhoneMockup>
+          {isOwner && <AddProductButton onClick={onAddProduct} />}
+        </>
+      )}
+    </MobileContainer>
   );
 }

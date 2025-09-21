@@ -33,16 +33,14 @@ export function FocusedProductPreview({ productData, storeData, className }: Foc
 
   return (
     <div className="bg-muted/10 p-4">
-      <IPhoneMockup screenWidth={320}>
-        <MobileContainer>
-          {/* TODO : add header ?  */}
-          <div className="p-4">
-            {/* TODO : make display mode dynamic ?  */}
+      <MobileContainer>
+        {/* TODO : add header ?  */}
+        <div className="p-4">
+          {/* TODO : make display mode dynamic ?  */}
 
-            <ProductCard product={previewProduct} displayMode="full" />
-          </div>
-        </MobileContainer>
-      </IPhoneMockup>
+          <ProductCard product={previewProduct} displayMode="full" />
+        </div>
+      </MobileContainer>
     </div>
   );
 }

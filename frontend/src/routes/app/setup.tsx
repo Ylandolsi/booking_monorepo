@@ -2,8 +2,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IPhoneMockup } from 'react-device-mockup';
-
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,12 +12,12 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Store, Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X, Calendar } from 'lucide-react';
+import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, X, Calendar } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
-import { MobileContainer } from '@/components/store';
-import { createStoreSchema, useCreateStore, type createStoreInput } from '@/api/stores';
+import { MobileContainer, StoreHeader } from '@/components/store';
+import { createStoreSchema, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
 
 export const Route = createFileRoute('/app/setup')({
   component: RouteComponent,
@@ -50,6 +48,7 @@ function RouteComponent() {
       slug: '',
       description: '',
       socialLinks: [],
+      picture: undefined,
     },
   });
 
@@ -72,14 +71,6 @@ function RouteComponent() {
       console.error('Failed to create store:', error);
     }
   };
-
-  const socialPlatforms = [
-    { key: 'instagram', label: 'Instagram', icon: Instagram },
-    { key: 'twitter', label: 'Twitter', icon: Twitter },
-    { key: 'facebook', label: 'Facebook', icon: Facebook },
-    { key: 'youtube', label: 'YouTube', icon: Youtube },
-    { key: 'website', label: 'Website', icon: Globe },
-  ];
 
   const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'twitter'].includes(p.key));
 
@@ -229,12 +220,12 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-around gap-8 md:flex-row md:items-start">
+    <div className="flex w-full flex-col items-center justify-around gap-8 pb-5 lg:flex-row lg:items-start">
       {/* Setup Form */}
       <div className="max-w-lg flex-1">
         <div className="mb-8 text-center">
           <div className="from-primary to-scondary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r">
-            <Store className="text-primary-foreground h-8 w-8" />
+            {/* <Store className="text-primary-foreground h-8 w-8" /> */}
           </div>
           <h1 className="from-primary to-scondary bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1>
           <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p>
@@ -572,59 +563,17 @@ function RouteComponent() {
 
       {/* Live Preview - keeping the same */}
       <div className="sticky top-4">
-        <IPhoneMockup screenWidth={320}>
-          <MobileContainer>
-            <div className="from-primary to-scondary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r">
-              {previewImage ? (
-                <img src={previewImage} alt="Profile" className="h-full w-full rounded-full object-cover" onError={() => setPreviewImage('')} />
-              ) : (
-                <User className="text-primary-foreground h-8 w-8" />
-              )}
-            </div>
-
-            <h2 className="text-foreground mb-2 text-xl font-bold">{watchedValues.title || 'Your Store Name'}</h2>
-
-            <p className="text-muted-foreground mb-4 line-clamp-3 text-sm leading-relaxed text-wrap break-words">
-              {watchedValues.description || 'Your store description will appear here...'}
-            </p>
-
-            {watchedValues.socialLinks && watchedValues.socialLinks.length > 0 && (
-              <div className="mb-6 flex justify-center gap-4">
-                {socialPlatforms.map(
-                  ({ key, icon: Icon }) =>
-                    watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url && (
-                      <a
-                        key={key}
-                        href={watchedValues.socialLinks?.find((link: any) => link.platform === key)?.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:text-accent transition-colors"
-                      >
-                        <Icon className="h-5 w-5" />
-                      </a>
-                    ),
-                )}
-              </div>
-            )}
-
-            <div className="space-y-3">
-              <div className="bg-muted border-border rounded-lg border p-4 text-left">
-                <div className="mb-1 flex items-center gap-2">
-                  <Calendar className="text-primary h-3 w-3" />
-                  <span className="text-muted-foreground text-xs">1:1 Coaching Call</span>
-                </div>
-                <div className="text-foreground font-semibold">Book a Call</div>
-                <div className="text-primary font-semibold">$99</div>
-              </div>
-              <div className="bg-muted border-border rounded-lg border p-4 text-left">
-                <div className="text-muted-foreground mb-1 text-xs">Sample Product</div>
-                <div className="text-foreground font-semibold">Digital Guide</div>
-                <div className="text-primary font-semibold">$29</div>
-              </div>
-            </div>
-          </MobileContainer>
-        </IPhoneMockup>
+        <MobileContainer>
+          <StoreHeader store={{ ...watchedValues, picture: { mainLink: croppedImageUrl } } as Store} />
+        </MobileContainer>
       </div>
     </div>
   );
 }
+export const socialPlatforms = [
+  { key: 'instagram', label: 'Instagram', icon: Instagram },
+  { key: 'twitter', label: 'Twitter', icon: Twitter },
+  { key: 'facebook', label: 'Facebook', icon: Facebook },
+  { key: 'youtube', label: 'YouTube', icon: Youtube },
+  { key: 'website', label: 'Website', icon: Globe },
+];

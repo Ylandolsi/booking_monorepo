@@ -1,14 +1,18 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@/lib';
+import { IPhoneMockup } from 'react-device-mockup';
 
 interface MobileContainerProps {
   children: React.ReactNode;
   className?: string;
+  screenWidth?: number;
 }
 
-export function MobileContainer({ children, className }: MobileContainerProps) {
+export function MobileContainer({ screenWidth, children }: MobileContainerProps) {
   return (
-    <div style={{}} className={cn('bg-background flex h-full w-full flex-col overflow-y-auto p-4 text-center', className)}>
-      {children}
-    </div>
+    <IPhoneMockup screenWidth={screenWidth || 400}>
+      <div className={cn('bg-background flex h-full w-full flex-col items-center space-y-4 overflow-y-auto p-4 text-center', children)}>
+        {children}
+      </div>
+    </IPhoneMockup>
   );
 }

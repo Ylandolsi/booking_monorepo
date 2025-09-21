@@ -1,19 +1,19 @@
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
-import type { StoreResponse } from '@/types/catalog-api';
 import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
 import { api } from '@/lib/api/api-client';
 import { storeKeys } from '@/api/stores/stores-keys';
+import type { Store } from '@/api/stores';
 
-export const getMyStore = async (): Promise<StoreResponse> => {
+export const getMyStore = async (): Promise<Store> => {
   try {
-    const response = await api.get<StoreResponse>(CatalogEndpoints.Stores.GetMy);
+    const response = await api.get<Store>(CatalogEndpoints.Stores.GetMy);
     return response;
   } catch (error) {
     console.error('Error fetching my store:', error);
     throw error;
   }
 };
-export function useMyStore(overrides?: Partial<UseQueryOptions<any, Error>>): UseQueryResult<StoreResponse, Error> {
+export function useMyStore(overrides?: Partial<UseQueryOptions<any, Error>>): UseQueryResult<Store, Error> {
   return useQuery(
     queryOptions({
       queryKey: storeKeys.myStore(),
