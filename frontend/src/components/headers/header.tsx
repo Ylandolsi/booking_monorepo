@@ -16,12 +16,12 @@ function BalanceHeader() {
   }
 
   return (
-    <Button className="bg-yellow-50 text-primary pl-5 pr-2 hover:bg-yellow-100/80 hidden md:inline-flex   ">
+    <Button className="bg-accent -primary text-primary hover:bg-primary-100/80 hidden border pr-2 pl-5 md:inline-flex">
       <div className="space-x-1">
         <span className="font-semibold"> Balance </span>
         <span className="font-bold">{`${walletData?.balance}$`}</span>
       </div>
-      <div className="bg-yellow-300 ml-auto p-1 rounded-md ">
+      <div className="bg-primary-300 ml-auto rounded-md p-1">
         <CreditCard className="text-primary" />
       </div>
     </Button>
@@ -36,19 +36,19 @@ export function Header() {
   if (!currentUser || currentUser == undefined) return null;
 
   return (
-    <header className="sticky top-0 z-30 bg-card border-b border-border shadow-sm">
+    <header className="bg-card border-border sticky top-0 z-30 border-b shadow-sm">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left side - Logo and Menu (Mobile only) */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)} className="h-7.5 w-10 p-0 hover:bg-muted ">
-            <Menu className="w-5 h-5" />
+          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)} className="hover:bg-muted h-7.5 w-10 p-0">
+            <Menu className="h-5 w-5" />
           </Button>
           <Logo className="h-8" />
         </div>
 
         {/* Right side - Profile and Notifications */}
         {
-          <div className="flex h-7.5 items-center gap-2 ">
+          <div className="flex h-7.5 items-center gap-2">
             {/* <Button
               variant="ghost"
               size="sm"
@@ -64,9 +64,9 @@ export function Header() {
             </Button> */}
             <BalanceHeader />
 
-            <Button variant="ghost" size="sm" onClick={() => navigate.goToProfile(currentUser.slug)} className="h-10 px-2 hover:bg-muted">
+            <Button variant="ghost" size="sm" onClick={() => navigate.goToProfile(currentUser.slug)} className="hover:bg-muted h-10 px-2">
               <LazyImage
-                className="w-7 h-7 rounded-full ring-2 ring-primary/20 object-cover"
+                className="ring-primary/20 h-7 w-7 rounded-full object-cover ring-2"
                 src={currentUser?.profilePicture.profilePictureLink || FALLBACK_PROFILE_PICTURE}
                 alt="profile-pic"
                 placeholder={currentUser?.profilePicture.thumbnailUrlPictureLink || FALLBACK_PROFILE_PICTURE}

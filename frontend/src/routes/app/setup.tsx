@@ -300,10 +300,7 @@ function RouteComponent() {
       {/* Setup Form */}
       <div className="max-w-lg flex-1">
         <div className="mb-8 text-center">
-          <div className="from-primary to-scondary mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-r">
-            {/* <Store className="text-primary-foreground h-8 w-8" /> */}
-          </div>
-          <h1 className="from-primary to-scondary bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1>
+          <h1 className="from-primary to-chart-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1>
           <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p>
         </div>
 
