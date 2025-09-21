@@ -1,21 +1,33 @@
 import { STORE_QUERY_KEY } from '@/api/stores/stores-keys';
 import { api, toFormData, validateFile } from '@/lib';
 import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-
+import { useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
 export interface CreateStoreResponse {
   slug: string;
 }
 
-export interface CreateStoreInput {
-  title: string;
-  slug: string;
-  description?: string;
-  picture?: File;
-  socialLinks?: Array<{ platform: string; url: string }>;
-}
+export type createStoreInput = z.infer<typeof createStoreSchema>;
 
-export const createStore = async (data: CreateStoreInput): Promise<CreateStoreResponse> => {
+export const createStoreSchema = z.object({
+  title: z.string().min(3, 'Store name must be at least 3 characters'),
+  slug: z
+    .string()
+    .min(3, 'Slug must be at least 3 characters')
+    .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
+  description: z.string().optional(),
+  picture: z.instanceof(File).optional(),
+  socialLinks: z
+    .array(
+      z.object({
+        platform: z.string(),
+        url: z.string().url('Invalid URL'),
+      }),
+    )
+    .optional(),
+});
+
+export const createStore = async (data: createStoreInput): Promise<CreateStoreResponse> => {
   if (data.picture) {
     const validation = validateFile(data.picture, {
       maxSizeInMB: 5,
@@ -49,7 +61,7 @@ export const createStore = async (data: CreateStoreInput): Promise<CreateStoreRe
 
 export const useCreateStore = () => {
   return useMutation({
-    mutationFn: (data: CreateStoreInput) => createStore(data),
+    mutationFn: (data: createStoreInput) => createStore(data),
     meta: {
       invalidatesQuery: [STORE_QUERY_KEY],
     },
