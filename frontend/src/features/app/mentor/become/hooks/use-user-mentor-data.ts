@@ -1,4 +1,4 @@
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 import { useMentorDetails } from '@/features/app/mentor/become/api';
 
 /**
@@ -12,8 +12,7 @@ export function useUserMentorData() {
   });
 
   // Determine combined loading state
-  const isLoading =
-    userQuery.isLoading || (userQuery.data && mentorQuery.isLoading);
+  const isLoading = userQuery.isLoading || (userQuery.data && mentorQuery.isLoading);
 
   // Determine combined error state
   const error = userQuery.error || mentorQuery.error;

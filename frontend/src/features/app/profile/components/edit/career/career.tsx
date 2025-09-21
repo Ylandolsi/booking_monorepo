@@ -2,7 +2,7 @@ import { Expertise } from './expertise/expertise';
 import { Experience } from './experience/experience';
 import { Education } from './education/education';
 import { QueryWrapper } from '@/components';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 
 export function Career() {
   const userQuery = useUser();

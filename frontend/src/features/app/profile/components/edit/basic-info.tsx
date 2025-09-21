@@ -28,7 +28,7 @@ import {
   type BasicInfoType,
   type LanguageType,
 } from '@/features/app/profile';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 import { Spinner } from '@/components/ui';
 import { useEffect, useMemo } from 'react';
 import { AlertTriangle } from 'lucide-react';
@@ -65,8 +65,7 @@ export function BasicInfoForm() {
       firstName: userQuery.data?.firstName ?? '',
       lastName: userQuery.data?.lastName ?? '',
       gender: userQuery.data?.gender ?? '',
-      languages:
-        userQuery.data?.languages?.map((lang) => lang.id.toString()) ?? [],
+      languages: userQuery.data?.languages?.map((lang) => lang.id.toString()) ?? [],
       bio: userQuery.data?.bio ?? '',
     },
   });
@@ -77,8 +76,7 @@ export function BasicInfoForm() {
         firstName: userQuery.data.firstName ?? '',
         lastName: userQuery.data.lastName ?? '',
         gender: userQuery.data.gender ?? '',
-        languages:
-          userQuery.data.languages?.map((lang) => lang.id.toString()) ?? [],
+        languages: userQuery.data.languages?.map((lang) => lang.id.toString()) ?? [],
         bio: userQuery.data.bio ?? '',
       });
     }
@@ -87,15 +85,12 @@ export function BasicInfoForm() {
   const handleSubmit = async (data: BasicInfoFormValues) => {
     try {
       const { languages, ...basicInfoData } = data;
-      const userLanguages =
-        userQuery.data?.languages?.map((lang) => lang.id.toString()) ?? [];
+      const userLanguages = userQuery.data?.languages?.map((lang) => lang.id.toString()) ?? [];
 
       const sortedLanguages = [...languages].sort();
       const sortedUserLanguages = [...userLanguages].sort();
 
-      if (
-        JSON.stringify(sortedLanguages) !== JSON.stringify(sortedUserLanguages)
-      ) {
+      if (JSON.stringify(sortedLanguages) !== JSON.stringify(sortedUserLanguages)) {
         await updateLanguageMutation.mutateAsync({
           languages: languages.map(Number),
         });
@@ -113,9 +108,7 @@ export function BasicInfoForm() {
     return (
       <div className="flex items-center justify-center p-8">
         <Spinner />
-        <span className="ml-2 text-sm text-gray-600">
-          Loading profile data...
-        </span>
+        <span className="ml-2 text-sm text-gray-600">Loading profile data...</span>
       </div>
     );
   }
@@ -124,36 +117,27 @@ export function BasicInfoForm() {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          Failed to load profile data. Please refresh the page and try again.
-        </AlertDescription>
+        <AlertDescription>Failed to load profile data. Please refresh the page and try again.</AlertDescription>
       </Alert>
     );
   }
 
-  const isSubmitting =
-    updateLanguageMutation.isPending || updateBasicInfoMutation.isPending;
+  const isSubmitting = updateLanguageMutation.isPending || updateBasicInfoMutation.isPending;
   const hasChanges = form.formState.isDirty;
 
   return (
     <div className="space-y-4">
       <Form {...form}>
         <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={form.control}
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    First Name *
-                  </FormLabel>
+                  <FormLabel className="text-sm font-medium">First Name *</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter your first name"
-                      disabled={isSubmitting}
-                    />
+                    <Input {...field} placeholder="Enter your first name" disabled={isSubmitting} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -165,15 +149,9 @@ export function BasicInfoForm() {
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Last Name *
-                  </FormLabel>
+                  <FormLabel className="text-sm font-medium">Last Name *</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Enter your last name"
-                      disabled={isSubmitting}
-                    />
+                    <Input {...field} placeholder="Enter your last name" disabled={isSubmitting} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -188,11 +166,7 @@ export function BasicInfoForm() {
               <FormItem>
                 <FormLabel className="text-sm font-medium">Gender</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isSubmitting}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select your gender" />
                     </SelectTrigger>
@@ -215,9 +189,7 @@ export function BasicInfoForm() {
             name="languages"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium">
-                  Languages (up to {MAX_LANGUAGES})
-                </FormLabel>
+                <FormLabel className="text-sm font-medium">Languages (up to {MAX_LANGUAGES})</FormLabel>
                 <FormControl>
                   <MultiSelect
                     options={languageOptions}
@@ -240,12 +212,7 @@ export function BasicInfoForm() {
               <FormItem>
                 <FormLabel className="text-sm font-medium">Bio</FormLabel>
                 <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Tell us about yourself..."
-                    className="min-h-[100px] resize-none"
-                    disabled={isSubmitting}
-                  />
+                  <Textarea {...field} placeholder="Tell us about yourself..." className="min-h-[100px] resize-none" disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -253,20 +220,10 @@ export function BasicInfoForm() {
           />
 
           <div className="flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => form.reset()}
-              disabled={isSubmitting || !hasChanges}
-              className="flex-1"
-            >
+            <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting || !hasChanges} className="flex-1">
               Reset
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !hasChanges}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isSubmitting || !hasChanges} className="flex-1">
               {isSubmitting ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>

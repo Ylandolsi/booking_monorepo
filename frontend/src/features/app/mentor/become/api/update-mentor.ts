@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { Mentor } from '@/features/app/mentor/become/types';
 import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { mentorQueryKeys } from '@/features/app/mentor/become/api';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 
 export const updateMentor = async (mentor: Omit<Mentor, 'createdAt' | 'konnectWalletId'>) => {
   return await api.put<void>(MentorshipEndpoints.Mentors.UpdateProfile, mentor);

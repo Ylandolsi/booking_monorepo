@@ -26,7 +26,7 @@ import { useState } from 'react';
 import { useGetWallet } from '@/features/shared/get-wallet';
 import { formatDate } from '@/utils/format';
 import type { PayoutStatus } from '@/features/app/payout/types/payout';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 import { useAppNavigation } from '@/hooks';
 
 export function PayoutPage() {
@@ -34,11 +34,7 @@ export function PayoutPage() {
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const requestPayoutMutation = useRequestPayout();
   const { data: walletData, error, isLoading } = useGetWallet();
-  const {
-    data: historyPayout,
-    error: errorHistory,
-    isLoading: isLoadingHistory,
-  } = useHistoryPayout();
+  const { data: historyPayout, error: errorHistory, isLoading: isLoadingHistory } = useHistoryPayout();
   const { data: user, isLoading: isUserLoading, error: userError } = useUser();
   const navigate = useAppNavigation();
 
@@ -50,12 +46,7 @@ export function PayoutPage() {
   }
 
   if (userError) {
-    return (
-      <ErrorComponenet
-        message="Failed to load user data"
-        title="Failed to load user"
-      />
-    );
+    return <ErrorComponenet message="Failed to load user data" title="Failed to load user" />;
   }
 
   if (!isKonnectIntegrated) {
@@ -81,21 +72,11 @@ export function PayoutPage() {
   // }
 
   if (error || walletData == null) {
-    return (
-      <ErrorComponenet
-        message="Failed to load wallet"
-        title="Failed to load wallet"
-      />
-    );
+    return <ErrorComponenet message="Failed to load wallet" title="Failed to load wallet" />;
   }
   console.log(historyPayout, errorHistory);
   if (errorHistory) {
-    return (
-      <ErrorComponenet
-        message="Failed to load payout history"
-        title="Failed to load payout history"
-      />
-    );
+    return <ErrorComponenet message="Failed to load payout history" title="Failed to load payout history" />;
   }
   if (isLoading || isLoadingHistory) {
     return <LoadingState type="dots" />;
@@ -119,46 +100,41 @@ export function PayoutPage() {
     }
   };
   return (
-    <div className="mx-auto p-6 space-y-8">
+    <div className="mx-auto space-y-8 p-6">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-light">Payouts</h1>
-        <p className="text-muted-foreground text-lg">
-          Manage your payout methods and view your transaction history
-        </p>
+        <h1 className="tracking-light text-4xl font-bold">Payouts</h1>
+        <p className="text-muted-foreground text-lg">Manage your payout methods and view your transaction history</p>
       </div>
 
       {/* Success Alert */}
       {payoutSuccess && (
-        <Alert className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900">
+        <Alert className="border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/20">
           <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
           <div className="ml-2">
             <p className="text-sm text-green-800 dark:text-green-200">
               <strong>Payout request submitted successfully!</strong>
             </p>
-            <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-              Your payout request is being processed and will be completed
-              within 3-5 business days.
+            <p className="mt-1 text-xs text-green-700 dark:text-green-300">
+              Your payout request is being processed and will be completed within 3-5 business days.
             </p>
           </div>
         </Alert>
       )}
 
       {/* Available Balance Card */}
-      <Card className="bg-gradient-to-r from-white to-indigo-50/40 dark:from-blue-950/50 dark:to-indigo-950/50 border-ring dark:border-ring">
+      <Card className="border-ring dark:border-ring bg-gradient-to-r from-white to-indigo-50/40 dark:from-blue-950/50 dark:to-indigo-950/50">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2text-primary">
+          <CardTitle className="gap-2text-primary flex items-center">
             <DollarSign className="h-5 w-5" />
             Available for Payout
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center justify-between">
+          <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-0">
             <div className="space-y-1">
-              <div className="text-4xl font-bold text-primary">
-                ${availableBalance.toFixed(2)}
-              </div>
-              <div className="text-sm text-muted-foreground flex items-center gap-1">
+              <div className="text-primary text-4xl font-bold">${availableBalance.toFixed(2)}</div>
+              <div className="text-muted-foreground flex items-center gap-1 text-sm">
                 <TrendingUp className="h-4 w-4" />
                 Ready to withdraw
               </div>
@@ -167,11 +143,7 @@ export function PayoutPage() {
               open={isPayoutDialogOpen}
               onOpenChange={setIsPayoutDialogOpen}
               trigger={
-                <Button
-                  size="lg"
-                  className="bg-primary hover:bg-primary/80"
-                  disabled={availableBalance < 20}
-                >
+                <Button size="lg" className="bg-primary hover:bg-primary/80" disabled={availableBalance < 20}>
                   Request Payout
                 </Button>
               }
@@ -191,16 +163,14 @@ export function PayoutPage() {
 
       {/* Low Balance Notice */}
       {availableBalance < 20 && (
-        <Alert className="bg-yellow-50 border-yellow-200 dark:bg-yellow-950/20 dark:border-yellow-900">
+        <Alert className="border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20">
           <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           <div className="ml-2">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>Minimum payout requirement:</strong> You need at least
-              $20.00 to request a payout.
+              <strong>Minimum payout requirement:</strong> You need at least $20.00 to request a payout.
             </p>
-            <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-              Continue earning through mentoring sessions to reach the minimum
-              threshold.
+            <p className="mt-1 text-xs text-yellow-700 dark:text-yellow-300">
+              Continue earning through mentoring sessions to reach the minimum threshold.
             </p>
           </div>
         </Alert>
@@ -209,21 +179,17 @@ export function PayoutPage() {
       {/* Payout History Section */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-muted-foreground" />
+          <Calendar className="text-muted-foreground h-5 w-5" />
           <h2 className="text-2xl font-semibold">Payout History</h2>
         </div>
         <Card>
           <CardHeader>
             <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>
-              Your complete payout transaction history
-            </CardDescription>
+            <CardDescription>Your complete payout transaction history</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableCaption className="text-left">
-                A list of your recent payout transactions.
-              </TableCaption>
+              <TableCaption className="text-left">A list of your recent payout transactions.</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
@@ -235,21 +201,13 @@ export function PayoutPage() {
               <TableBody>
                 {historyPayout?.map((ph) => (
                   <TableRow key={ph.id}>
-                    <TableCell className="font-medium">
-                      {formatDate(ph.createdAt)}
-                    </TableCell>
-                    <TableCell className="font-semibold">
-                      ${ph.amount.toFixed(2)}
-                    </TableCell>
+                    <TableCell className="font-medium">{formatDate(ph.createdAt)}</TableCell>
+                    <TableCell className="font-semibold">${ph.amount.toFixed(2)}</TableCell>
                     <TableCell>
-                      <Badge {...getStatusBadgeProps(ph.status)}>
-                        {ph.status}
-                      </Badge>
+                      <Badge {...getStatusBadgeProps(ph.status)}>{ph.status}</Badge>
                     </TableCell>
-                    <TableCell className="text-right text-muted-foreground font-mono text-sm">
-                      {ph.paymentRef == ''
-                        ? 'not available yet'
-                        : ph.paymentRef}
+                    <TableCell className="text-muted-foreground text-right font-mono text-sm">
+                      {ph.paymentRef == '' ? 'not available yet' : ph.paymentRef}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -261,7 +219,7 @@ export function PayoutPage() {
 
       {/* Quick Stats Cards */}
       {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> */}
-      <div className="grid grid-cols-1  gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {/* <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Earned</CardDescription>
@@ -274,7 +232,7 @@ export function PayoutPage() {
             <CardTitle className="text-2xl">$2,222.00</CardTitle>
           </CardHeader>
         </Card> */}
-        <Card className="bg-gradient-to-r from-yellow-50 to-white border border-yellow-600">
+        <Card className="border border-yellow-600 bg-gradient-to-r from-yellow-50 to-white">
           <CardHeader className="pb-2">
             <CardDescription>Pending</CardDescription>
             <CardTitle className="text-2xl">${pendingBalance}</CardTitle>
@@ -290,21 +248,18 @@ const getStatusBadgeProps = (status: PayoutStatus) => {
     case 'Pending':
       return {
         variant: 'secondary' as const,
-        className:
-          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+        className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
       };
     case 'Approved':
       return {
         variant: 'default' as const,
-        className:
-          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
+        className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
       };
 
     case 'Completed':
       return {
         variant: 'default' as const,
-        className:
-          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+        className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
       };
     case 'Rejected':
       return {

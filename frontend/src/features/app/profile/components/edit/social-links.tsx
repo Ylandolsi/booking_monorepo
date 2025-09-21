@@ -1,22 +1,10 @@
-import {
-  Button,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
-} from '@/components/ui';
+import { Button, Form, FormControl, FormField, FormItem, FormLabel, FormMessage, Input } from '@/components/ui';
 import { QueryStateWrapper } from '@/components/wrappers';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { socialLinksSchema, type SocialLinksFormValues } from '../../schemas';
-import {
-  useUpdateSocialLinks,
-  type SocialLinksType,
-} from '@/features/app/profile';
+import { useUpdateSocialLinks, type SocialLinksType } from '@/features/app/profile';
 import { useMemo, useEffect } from 'react';
 import { ExternalLink } from 'lucide-react';
 
@@ -70,13 +58,7 @@ export function SocialLinksForm() {
   const userQuery = useUser();
 
   return (
-    <QueryStateWrapper
-      query={userQuery}
-      loadingMessage="Loading social links..."
-      loadingType="spinner"
-      containerClassName="p-0"
-      minHeight="200px"
-    >
+    <QueryStateWrapper query={userQuery} loadingMessage="Loading social links..." loadingType="spinner" containerClassName="p-0" minHeight="200px">
       {(userData) => <SocialLinksFormContent userData={userData} />}
     </QueryStateWrapper>
   );
@@ -85,10 +67,7 @@ export function SocialLinksForm() {
 function SocialLinksFormContent({ userData }: { userData: any }) {
   const updateSocialLinksMutation = useUpdateSocialLinks();
 
-  const socialLinks: SocialLinksType = useMemo(
-    () => userData?.socialLinks ?? {},
-    [userData?.socialLinks],
-  );
+  const socialLinks: SocialLinksType = useMemo(() => userData?.socialLinks ?? {}, [userData?.socialLinks]);
 
   const form = useForm<SocialLinksFormValues>({
     resolver: zodResolver(socialLinksSchema),
@@ -177,14 +156,10 @@ function SocialLinksFormContent({ userData }: { userData: any }) {
                   name={key}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium flex items-center gap-2">
+                      <FormLabel className="flex items-center gap-2 text-sm font-medium">
                         {icon && <span>{icon}</span>}
                         {label}
-                        {hasValue && (
-                          <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
-                            Connected
-                          </span>
-                        )}
+                        {hasValue && <span className="rounded bg-green-50 px-2 py-1 text-xs text-green-600">Connected</span>}
                       </FormLabel>
                       <FormControl>
                         <div className="relative">
@@ -193,25 +168,17 @@ function SocialLinksFormContent({ userData }: { userData: any }) {
                             type="url"
                             placeholder={placeholder}
                             disabled={isSubmitting}
-                            className={`pr-10 ${
-                              fieldValue && !isValidUrl(fieldValue)
-                                ? 'border-red-300 focus:border-red-500'
-                                : ''
-                            }`}
+                            className={`pr-10 ${fieldValue && !isValidUrl(fieldValue) ? 'border-red-300 focus:border-red-500' : ''}`}
                           />
                           {fieldValue && isValidUrl(fieldValue) && (
                             <ExternalLink
                               onClick={(e) => {
                                 e.preventDefault();
                                 if (fieldValue && isValidUrl(fieldValue)) {
-                                  window.open(
-                                    fieldValue,
-                                    '_blank',
-                                    'noopener,noreferrer',
-                                  );
+                                  window.open(fieldValue, '_blank', 'noopener,noreferrer');
                                 }
                               }}
-                              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 cursor-pointer"
+                              className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform cursor-pointer text-gray-400"
                             />
                           )}
                         </div>
@@ -225,20 +192,10 @@ function SocialLinksFormContent({ userData }: { userData: any }) {
           </div>
 
           <div className="flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => form.reset()}
-              disabled={isSubmitting || !hasChanges}
-              className="flex-1"
-            >
+            <Button type="button" variant="outline" onClick={() => form.reset()} disabled={isSubmitting || !hasChanges} className="flex-1">
               Reset
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !hasChanges}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isSubmitting || !hasChanges} className="flex-1">
               {isSubmitting ? 'Saving...' : 'Save Social Links'}
             </Button>
           </div>

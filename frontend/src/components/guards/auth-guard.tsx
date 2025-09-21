@@ -1,5 +1,5 @@
 import { useLocation } from '@tanstack/react-router';
-import { useUser } from '@/features/auth';
+import { useUser } from '@/api/auth';
 import { Spinner } from '@/components/ui';
 import { routes } from '@/config/routes';
 import type { ReactNode } from 'react';
