@@ -10,9 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
-import { SetSchedulePage } from '@/features/app/store/products/components/schedule';
+import { FormScheduleComponent } from '@/features/app/store/products/components/form-schedule';
 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<'general' | 'details' | 'integrations'>('general');
@@ -23,10 +22,22 @@ export function AddProductFlow() {
     onUpload: (file) => form.setValue('thumbnail', file),
   });
 
-  const handleComplete = () => {};
+  const handleComplete = async (data: CreateProductInput) => {
+    try {
+      console.log('Form data:', data);
+      // TODO: Implement actual API call to create product
+      // await createProductMutation.mutateAsync(data);
+
+      // Navigate to products list or success page
+      navigate.goTo({ to: '/app/store', replace: true });
+    } catch (error) {
+      console.error('Failed to create product:', error);
+      // Handle error - show toast, etc.
+    }
+  };
   const onCancel = () => {
     setType(undefined);
-    navigate.goTo({ to: routes.to.store.productAdd({}), replace: true });
+    navigate.goTo({ to: '/app/store/product/add', replace: true });
   };
 
   const form = useForm<CreateProductInput>({
@@ -46,12 +57,14 @@ export function AddProductFlow() {
       files: type === 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
       previewImage: undefined,
-      dailySchedule: {},
+      dailySchedule: [],
     },
   });
-
+  {
+    /* Thumbnail Display Mode */
+    // <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />;
+  }
   const watchedValues = form.watch();
-  const dailyScheduleWatched = form.watch('dailySchedule');
 
   // Type selection doesn't need preview
   if (type == null || type == undefined) {
@@ -87,6 +100,7 @@ export function AddProductFlow() {
             ]}
             activeTab={activeTab}
             onTabChange={(tabId) => setActiveTab(tabId as 'general' | 'details')}
+            className=""
           />
         </div>
 
@@ -140,13 +154,15 @@ export function AddProductFlow() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">Price *</FormLabel>
-                    <div className="flex">
-                      <span className="bg-muted text-muted-foreground inline-flex items-center rounded-l-lg border border-r-0 px-3 py-2">$</span>
+                    <div className="flex items-center">
+                      <span className="bg-muted text-muted-foreground w-it inline-flex h-full items-center rounded-l-lg border border-r-0 px-3 py-2">
+                        $
+                      </span>
                       <FormControl>
                         <Input
                           type="number"
                           placeholder="99"
-                          className="rounded-l-none py-3"
+                          className="h-full rounded-l-none py-3"
                           min="0"
                           step="0.01"
                           {...field}
@@ -293,7 +309,9 @@ export function AddProductFlow() {
                       </FormItem>
                     )}
                   />
-                  <SetSchedulePage />
+
+                  {/* Schedule Component */}
+                  <FormScheduleComponent form={form} />
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -359,8 +377,8 @@ export function AddProductFlow() {
         </Form>
 
         {/* Cancel Button */}
-        <div className="mt-6 text-center">
-          <Button variant="ghost" onClick={onCancel} className="text-sm">
+        <div className="mt-6 w-full text-center">
+          <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
             Cancel
           </Button>
         </div>

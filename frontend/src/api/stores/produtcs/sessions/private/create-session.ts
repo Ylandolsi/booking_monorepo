@@ -35,7 +35,7 @@ export const createSessionProductSchema = createProductBaseSchema.extend({
   bufferTime: z.number().min(0, 'Buffer time cannot be negative'),
   meetingInstructions: z.string().optional(),
   timeZoneId: z.string().min(1, 'Time zone is required'),
-  dailySchedule: dailyScheduleSchema,
+  dailySchedule: z.array(dailyScheduleSchema).min(1, 'At least one day schedule is required'),
 });
 
 export type AvailabilityRangeType = z.infer<typeof availabilityRangeTypeSchema>;

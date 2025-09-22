@@ -1,18 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
-
+import { useState, useEffect } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
 import { mapDayToNumber } from '@/utils/enum-days-week';
-import type { AvailabilityRangeType } from '@/features/app/mentor/schedule/types';
 import type { DayOfWeek } from '@/features/app/session/booking/shared';
-import { useSetWeeklySchedule, useWeeklySchedule } from '@/features/app/mentor/schedule';
 import { GenerateIdNumber } from '@/lib';
-import type { DailySchedule } from '@/api/stores/produtcs/sessions';
+import type { DailySchedule, AvailabilityRangeType, CreateProductInput } from '@/api/stores';
 
-export interface UseAvailabilityScheduleReturn {
+export interface UseFormScheduleReturn {
   schedule: DailySchedule[];
-  scheduleQuery: any;
-  hasChanges: boolean;
-  isSaving: boolean;
-  saveSuccess: boolean;
   selectedCopySource: DayOfWeek | null;
   actions: {
     setSelectedCopySource: (day: DayOfWeek | null) => void;
@@ -22,38 +16,39 @@ export interface UseAvailabilityScheduleReturn {
     updateTimeRange: (day: DayOfWeek, rangeId: string, field: 'startTime' | 'endTime', value: string) => void;
     removeTimeRange: (day: DayOfWeek, rangeId: string) => void;
     copyAvailability: (fromDay: DayOfWeek, toDay: DayOfWeek) => void;
-    saveAvailability: () => Promise<void>;
     resetChanges: () => void;
   };
   getScheduleSummary: () => { enabledDays: number; totalSlots: number };
 }
 
-export function useAvailabilitySchedule() {
-  const useWeeklyScheduleMutation = useSetWeeklySchedule();
-  const scheduleQuery = useWeeklySchedule();
-  const { data: apiSchedule } = scheduleQuery;
-  const [schedule, setSchedule] = useState<DailySchedule[]>([]);
+// Default schedule for 7 days of the week
+const createDefaultSchedule = (): DailySchedule[] => {
+  return Array.from({ length: 7 }, (_, i) => ({
+    dayOfWeek: i,
+    isActive: false,
+    availabilityRanges: [],
+  }));
+};
 
+export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFormScheduleReturn {
   const [selectedCopySource, setSelectedCopySource] = useState<DayOfWeek | null>(null);
 
-  const hasChanges = useMemo(() => {
-    if (!apiSchedule) return false;
-    return JSON.stringify(schedule) !== JSON.stringify(apiSchedule);
-  }, [schedule, apiSchedule]);
+  // Watch the dailySchedule field from the form
+  const formSchedule = form.watch('dailySchedule') as DailySchedule[] | undefined;
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-
+  // Initialize schedule if not exists
   useEffect(() => {
-    if (apiSchedule) {
-      setSchedule(apiSchedule);
+    if (!formSchedule || formSchedule.length === 0) {
+      form.setValue('dailySchedule', createDefaultSchedule());
     }
-  }, [apiSchedule]);
+  }, [form, formSchedule]);
+
+  const schedule = formSchedule || createDefaultSchedule();
 
   const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
-    setSchedule((prev) => {
-      return prev.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
-    });
+    const currentSchedule = (form.getValues('dailySchedule') as DailySchedule[]) || createDefaultSchedule();
+    const newSchedule = currentSchedule.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
+    form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
   };
 
   const toggleDay = (day: DayOfWeek) => {
@@ -97,6 +92,7 @@ export function useAvailabilitySchedule() {
   const copyAvailability = (fromDay: DayOfWeek, toDay: DayOfWeek) => {
     const source = schedule.find((s) => s.dayOfWeek === mapDayToNumber(fromDay));
     if (!source) return;
+
     updateSchedule(toDay, (ds) => ({
       ...ds,
       isActive: true,
@@ -108,25 +104,8 @@ export function useAvailabilitySchedule() {
     setSelectedCopySource(null);
   };
 
-  const saveAvailability = async () => {
-    setIsSaving(true);
-    console.log(schedule);
-    try {
-      // apply mutation here of update
-      await useWeeklyScheduleMutation.mutateAsync(schedule);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (error) {
-      console.error('Failed to save availability:', error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   const resetChanges = () => {
-    if (apiSchedule) {
-      setSchedule(apiSchedule);
-    }
+    form.setValue('dailySchedule', createDefaultSchedule());
     setSelectedCopySource(null);
   };
 
@@ -138,10 +117,6 @@ export function useAvailabilitySchedule() {
 
   return {
     schedule,
-    scheduleQuery,
-    hasChanges,
-    isSaving,
-    saveSuccess,
     selectedCopySource,
     actions: {
       setSelectedCopySource,
@@ -151,7 +126,6 @@ export function useAvailabilitySchedule() {
       updateTimeRange,
       removeTimeRange,
       copyAvailability,
-      saveAvailability,
       resetChanges,
     },
     getScheduleSummary,

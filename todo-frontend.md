@@ -223,3 +223,4 @@ tracking-wider" style={{ letterSpacing: '0.0.5em' }}
 ```
 
 const error = new URLSearchParams(location.search).get('error') ?? undefined;
+form.setValue('dailySchedule', newSchedule, { shouldValidate: true });

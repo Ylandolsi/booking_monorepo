@@ -17,7 +17,7 @@ interface TabNavigationProps {
 
 export function TabNavigation({ tabs, activeTab, onTabChange, className }: TabNavigationProps) {
   return (
-    <div className={cn('border-border bg-card border-b', className)}>
+    <div className={cn('bg-card', className)}>
       <div className="flex flex-wrap items-center justify-center gap-2 p-1">
         {tabs.map((tab) => (
           <Button

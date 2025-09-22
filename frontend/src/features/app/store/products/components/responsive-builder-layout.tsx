@@ -14,7 +14,7 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
     <div className={cn(className)}>
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-around lg:flex-row lg:items-start lg:gap-40">
         {/* Form Side */}
-        <div className="bg-card border-border flex-1 rounded-xl border shadow-lg">{children}</div>
+        <div className="bg-card border-border min-w-xl flex-1 rounded-xl border shadow-lg">{children}</div>
 
         {/* Preview Side */}
         <div>
