@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 import { FocusedProductPreview } from './focused-product-preview';
-import type { Product } from '@/types/product';
+import type { Product } from '@/api/stores';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { ProductCard } from './product-card';
-import type { Product } from '@/types/product';
+import type { Product } from '@/api/stores';
 
 type DisplayMode = 'full' | 'compact';
 
@@ -21,89 +21,27 @@ export function DraggableProductList({
   onProductClick,
   onProductEdit,
   onProductDelete,
-  onReorder,
   showActions = false,
   displayMode = 'full',
   className,
 }: DraggableProductListProps) {
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
-  const handleDragStart = (e: React.DragEvent, productId: string) => {
-    setDraggedItem(productId);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', productId);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverIndex(index);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault();
-
-    if (!draggedItem) return;
-
-    const draggedIndex = products.findIndex((p) => p.id === draggedItem);
-    if (draggedIndex === -1 || draggedIndex === dropIndex) {
-      setDraggedItem(null);
-      setDragOverIndex(null);
-      return;
-    }
-
-    const reorderedProducts = [...products];
-    const [draggedProduct] = reorderedProducts.splice(draggedIndex, 1);
-    reorderedProducts.splice(dropIndex, 0, draggedProduct);
-
-    onReorder(reorderedProducts);
-    setDraggedItem(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedItem(null);
-    setDragOverIndex(null);
-  };
-
   return (
     <div className={cn('space-y-4', className)}>
       {products.map((product, index) => (
         <div
-          key={product.id}
-          draggable={showActions}
-          onDragStart={(e) => handleDragStart(e, product.id)}
-          onDragOver={(e) => handleDragOver(e, index)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, index)}
-          onDragEnd={handleDragEnd}
-          className={cn(
-            'relative transition-all duration-200',
-            draggedItem === product.id && 'opacity-50 scale-95',
-            dragOverIndex === index && 'transform translate-y-1',
-            showActions && 'cursor-move',
-          )}
+          key={product.storeSlug + '-' + product.storeSlug}
+          className={cn('relative transition-all duration-200', 'scale-95 opacity-50', 'translate-y-1 transform', 'cursor-move')}
         >
-          {/* Drop indicator */}
-          {dragOverIndex === index && draggedItem && draggedItem !== product.id && (
-            <div className="absolute -top-2 left-0 right-0 h-1 bg-primary rounded-full z-10" />
-          )}
-
           {/* Drag handle (only visible when actions are shown) */}
           {showActions && (
-            <div className="absolute left-2 top-4 z-10 p-2 rounded bg-card border border-border shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="grid grid-cols-2 gap-0.5 w-3 h-3">
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
-                <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
+            <div className="bg-card border-border absolute top-4 left-2 z-10 rounded border p-2 opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+              <div className="grid h-3 w-3 grid-cols-2 gap-0.5">
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
+                <div className="bg-muted-foreground h-1 w-1 rounded-full"></div>
               </div>
             </div>
           )}
@@ -121,21 +59,6 @@ export function DraggableProductList({
           </div>
         </div>
       ))}
-
-      {/* Final drop zone */}
-      {draggedItem && (
-        <div
-          onDragOver={(e) => handleDragOver(e, products.length)}
-          onDragLeave={handleDragLeave}
-          onDrop={(e) => handleDrop(e, products.length)}
-          className={cn(
-            'h-16 border-2 border-dashed border-muted-foreground/30 rounded-lg flex items-center justify-center transition-colors',
-            dragOverIndex === products.length && 'border-primary bg-primary/10',
-          )}
-        >
-          <span className="text-sm text-muted-foreground">Drop here to move to end</span>
-        </div>
-      )}
     </div>
   );
 }

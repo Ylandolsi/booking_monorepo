@@ -1,7 +1,6 @@
+import type { Product } from '@/api/stores';
 import { MobileContainer } from './mobile-container';
 import { ProductCard } from './product-card';
-import type { Product } from '@/types/product';
-import { IPhoneMockup } from 'react-device-mockup';
 
 interface FocusedProductPreviewProps {
   productData: Partial<Product>;
@@ -16,19 +15,18 @@ interface FocusedProductPreviewProps {
 export function FocusedProductPreview({ productData, storeData, className }: FocusedProductPreviewProps) {
   // Create a preview product with defaults
   const previewProduct: Product = {
-    id: 'preview',
+    productSlug: 'preview',
+    storeSlug: 'preview-store',
     title: productData.title || 'Your Product Title',
     subtitle: productData.subtitle || 'Add a compelling subtitle',
-    price: productData.price ? `$${productData.price}` : '$0',
-    coverImage:
-      typeof productData.coverImage === 'string'
-        ? productData.coverImage
-        : productData.coverImage
-          ? URL.createObjectURL(productData.coverImage as File)
-          : '',
-    ctaText: productData.ctaText || (productData.type === 'booking' ? 'Book Now' : 'Buy Now'),
-    type: productData.type || 'digital',
+    price: productData.price ? Number(productData.price) : 0,
+    thumbnail: productData.thumbnail || undefined,
+    clickToPay: productData.clickToPay || 'Buy Now',
+    productType: productData.productType || 'DigitalDownload',
     description: productData.description || 'Add a detailed description...',
+    displayOrder: 1,
+    isPublished: true,
+    createdAt: new Date().toISOString(),
   };
 
   return (

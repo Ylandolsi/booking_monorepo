@@ -1,28 +1,13 @@
 import { useState } from 'react';
 import { MobileContainer } from './mobile-container';
 import { StoreHeader } from './store-header';
-import { ScrollableContent } from './scrollable-content';
 import { DraggableProductList } from './draggable-product-list';
 import { EmptyState } from './empty-state';
 import { AddProductButton } from './add-product-button';
-import { DisplayModeSelector } from './display-mode-selector';
-import type { Product } from '@/types/product';
-import { IPhoneMockup } from 'react-device-mockup';
 import { cn } from '@/lib/cn';
-import { useMyStore } from '@/api/stores';
+import { useMyStore, type Product } from '@/api/stores';
 import { LoadingState } from '@/components/ui';
 import { ErrorComponenet } from '@/components/errors';
-
-interface Store {
-  name: string;
-  description?: string;
-  profilePicture?: string;
-  socialLinks?: {
-    instagram?: string;
-    twitter?: string;
-    website?: string;
-  };
-}
 
 type DisplayMode = 'full' | 'compact';
 
@@ -58,9 +43,8 @@ export function EnhancedStorefrontDashboard({
     return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
   }
 
-  console.log('Store data:', store, isLoading, error);
   return (
-    <MobileContainer screenWidth={500} className={cn('items-center space-y-4', className)}>
+    <MobileContainer screenWidth={340} className={cn('items-center space-y-4', className)}>
       <StoreHeader store={store} />
 
       {/* Controls (only visible to owner) */}
@@ -83,8 +67,6 @@ export function EnhancedStorefrontDashboard({
             showActions={isOwner}
             displayMode={displayMode}
           />
-
-          {isOwner && <AddProductButton onClick={onAddProduct} />}
         </>
       )}
     </MobileContainer>

@@ -8,17 +8,19 @@
     "EMAIL_VERIFICATION": "/auth/email-verification",
     "EMAIL_VERIFICATION_VERIFIED": "/auth/email-verified"
   },
-  "STORE": {
-    "ROOT": "/store",
-    "INDEX": "/store/index",
-    "DASHBOARD": "/store/dashboard",
-    "VIEW": "/store/$storeSlug",
-    "PRODUCT": "/store/$storeSlug/$productSlug"
-  },
   "APP": {
     "INDEX": "/app",
     "LINKI": "/app/linki",
-    "STORE": "/app/store",
+    "STORE": {
+      "INDEX": "/app/store/",
+      "PRODUCT": {
+        "VIEW": "/app/store/product/$productSlug",
+        "EDIT": "/app/store/product/$productSlug/edit",
+        "ADD_PRODUCT": "/app/store/product/add"
+      },
+      "INFO_EDIT": "/app/store/edit",
+      "CREATE_STORE": "/app/store/create"
+    },
     "BOOKING": {
       "SESSION": "/app/booking/session/$mentorSlug"
     },
@@ -27,7 +29,6 @@
       "SET_SCHEDULE": "/app/mentor/set-schedule"
     },
     "PROFILE": {
-      "USER": "/app/profile/$userSlug",
       "INTEGRATIONS": "/app/integration"
     },
     "MEETS": {

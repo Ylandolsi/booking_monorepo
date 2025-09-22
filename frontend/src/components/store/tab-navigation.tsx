@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 interface TabOption {
@@ -16,15 +17,16 @@ interface TabNavigationProps {
 
 export function TabNavigation({ tabs, activeTab, onTabChange, className }: TabNavigationProps) {
   return (
-    <div className={cn('border-b border-border bg-card', className)}>
-      <div className="flex space-x-1 p-1">
+    <div className={cn('border-border bg-card border-b', className)}>
+      <div className="flex flex-wrap items-center justify-center gap-2 p-1">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
+            variant={'outline'}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              'flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-all',
-              'hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+              'group flex-1 rounded-lg px-4 py-7 text-sm font-medium transition-all',
+              'hover:bg-primary/20 hover:text-foreground focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
               activeTab === tab.id ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
             )}
           >
@@ -33,13 +35,18 @@ export function TabNavigation({ tabs, activeTab, onTabChange, className }: TabNa
               <div>
                 <div className="font-semibold">{tab.label}</div>
                 {tab.description && (
-                  <div className={cn('text-xs mt-0.5', activeTab === tab.id ? 'text-primary-foreground/80' : 'text-muted-foreground')}>
+                  <div
+                    className={cn(
+                      'mt-0.5 text-xs',
+                      activeTab === tab.id ? 'text-primary-foreground/80 group-hover:text-foreground' : 'text-muted-foreground',
+                    )}
+                  >
                     {tab.description}
                   </div>
                 )}
               </div>
             </div>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

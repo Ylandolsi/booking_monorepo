@@ -7,13 +7,7 @@ interface LazyImageProps {
   className?: string | null;
   onClick?: () => void;
 }
-export const LazyImage = ({
-  src,
-  placeholder,
-  alt,
-  className = '',
-  onClick,
-}: LazyImageProps) => {
+export const LazyImage = ({ src, placeholder, alt, className = '', onClick }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
@@ -57,11 +51,7 @@ export const LazyImage = ({
       onClick={onClick}
     >
       {/* Pulsing animation overlay */}
-      <div
-        className={`absolute inset-0 bg-white transition-opacity duration-1000 ${
-          isLoaded ? 'opacity-0' : 'opacity-30 animate-pulse'
-        }`}
-      />
+      <div className={`absolute inset-0 bg-white transition-opacity duration-1000 ${isLoaded ? 'opacity-0' : 'animate-pulse opacity-30'}`} />
 
       {/* Main image */}
       {isInView && (
@@ -70,9 +60,9 @@ export const LazyImage = ({
           alt={alt}
           loading="lazy"
           onLoad={handleLoad}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`h-full w-full transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+
+          // className={`h-full w-full object-cover transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
     </div>

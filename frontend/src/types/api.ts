@@ -2,16 +2,6 @@
 // ideally, we want to keep these api related types in sync
 // with the backend instead of manually writing them out
 
-import type {
-  EducationType,
-  ExperienceType,
-  ExpertiseType,
-  LanguageType,
-  ProfilePictureType,
-  SocialLinksType,
-} from '@/features/app/profile';
-import type { ProfileCompletionStatusType } from '@/features/app/profile/types/profile-completetion';
-
 export type BaseEntity = {
   id: string;
   createdAt: number;
@@ -32,21 +22,13 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  profilePicture: ProfilePictureType;
   status: Status;
   gender: 'Male' | 'Female';
-  socialLinks: SocialLinksType;
   bio: string;
-  experiences: ExperienceType[];
-  educations: EducationType[];
-  expertises: ExpertiseType[];
-  languages: LanguageType[];
-  profileCompletionStatus: ProfileCompletionStatusType;
   integratedWithGoogle: boolean;
   googleEmail?: string | null;
   konnectWalletId?: string | null;
   roles: string[];
-  // TODO  : add country !! country: string;
 };
 
 export type Status = {

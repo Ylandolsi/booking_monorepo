@@ -3,6 +3,8 @@
  * This file contains all route paths, param placeholders, and utilities for the application
  */
 
+import type { ProductType } from '@/api/stores';
+
 // Param placeholders
 export const ROUTE_PARAMS = {
   MENTOR_SLUG: '$mentorSlug',
@@ -25,20 +27,25 @@ export const ROUTE_PATHS = {
     EMAIL_VERIFICATION_VERIFIED: '/auth/email-verified',
   },
 
-  // Store routes
-  STORE: {
-    ROOT: '/store',
-    INDEX: '/store/index',
-    DASHBOARD: '/store/dashboard',
-    VIEW: '/store/$storeSlug',
-    PRODUCT: '/store/$storeSlug/$productSlug',
-  },
-
   // App routes
   APP: {
     INDEX: '/app',
     LINKI: '/app/linki',
-    STORE: '/app/store',
+
+    STORE: {
+      INDEX: '/app/store/', // show all products and store preview mobile with add product button
+      PRODUCT: {
+        VIEW: '/app/store/product/$productSlug', // view product details page
+        EDIT: '/app/store/product/$productSlug/edit', // edit product flow
+        ADD_PRODUCT: '/app/store/product/add', // add product flow : select type -> details -> specific fields
+        // type : ?type=booking|digital
+      },
+
+      INFO_EDIT: '/app/store/edit', // store header info edit page
+      CREATE_STORE: '/app/store/create', // create store flow
+
+      //DASHBOARD: '/app/store/dashboard', // manage products, orders, settings
+    },
     BOOKING: {
       SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
     },
@@ -128,6 +135,17 @@ export const routeBuilder = {
   // App routes
   app: {
     root: () => ROUTE_PATHS.APP.INDEX,
+  },
+
+  store: {
+    index: () => ROUTE_PATHS.APP.STORE.INDEX,
+    productView: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.VIEW.replace('$productSlug', productSlug),
+    productEdit: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.EDIT.replace('$productSlug', productSlug),
+    productAdd: ({ type }: { type: ProductType }) => {
+      return type ? `${ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT}?type=${type}` : ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT;
+    },
+    editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,
+    createStore: () => ROUTE_PATHS.APP.STORE.CREATE_STORE,
   },
 
   // Booking routes

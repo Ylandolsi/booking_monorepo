@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
-import { Button } from '../ui';
 import type { Product } from '@/api/stores';
+import { Button } from '@/components/ui/button';
 
 type DisplayMode = 'full' | 'compact';
 

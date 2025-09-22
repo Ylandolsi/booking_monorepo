@@ -5,7 +5,6 @@
 
 import { useNavigate } from '@tanstack/react-router';
 import { routes } from '@/config/routes';
-import type { QueryParams } from '@/config/routes';
 
 // Custom hook for typed navigation
 export function useAppNavigation() {
@@ -26,11 +25,11 @@ export function useAppNavigation() {
       navigate({ to: routes.to.auth.forgotPassword(params) });
     },
 
-    goToResetPassword: (params?: QueryParams) => {
+    goToResetPassword: (params: { redirectTo?: string; email?: string; token?: string }) => {
       navigate({ to: routes.to.auth.resetPassword(params) });
     },
 
-    goToEmailVerification: (params?: QueryParams) => {
+    goToEmailVerification: (params?: { redirectTo?: string; email?: string; token?: string }) => {
       navigate({ to: routes.to.auth.emailVerification(params) });
     },
 
@@ -69,10 +68,6 @@ export function useAppNavigation() {
       navigate({ to: routes.to.mentor.setSchedule() });
     },
 
-    // Profile navigation
-    goToProfile: (userSlug: string) => {
-      navigate({ to: routes.to.profile.user(userSlug) });
-    },
     // my meets
     goToMeets: () => {
       navigate({ to: routes.to.meets.index() });
@@ -104,6 +99,7 @@ export function useAppNavigation() {
     goToHome: () => {
       navigate({ to: routes.to.home() });
     },
+
     goToSupport: () => {
       // TODO : fix this
       navigate({ to: routes.to.home() });
@@ -117,11 +113,7 @@ export function useAppNavigation() {
     },
 
     // Navigate with state
-    navigateWithState: (
-      routePath: string,
-      state: any,
-      options?: { replace?: boolean },
-    ) => {
+    navigateWithState: (routePath: string, state: any, options?: { replace?: boolean }) => {
       navigate({
         to: routePath,
         replace: options?.replace ?? false,
@@ -156,13 +148,9 @@ export const navigationUtils = {
   },
 
   // Get breadcrumb trail for current route
-  getBreadcrumbs: (
-    currentPath: string,
-  ): Array<{ label: string; path: string }> => {
+  getBreadcrumbs: (currentPath: string): Array<{ label: string; path: string }> => {
     const pathSegments = currentPath.split('/').filter(Boolean);
-    const breadcrumbs: Array<{ label: string; path: string }> = [
-      { label: 'Home', path: routes.to.home() },
-    ];
+    const breadcrumbs: Array<{ label: string; path: string }> = [{ label: 'Home', path: routes.to.home() }];
 
     let currentRoute = '';
     pathSegments.forEach((segment) => {
@@ -187,10 +175,7 @@ export const navigationUtils = {
   },
 
   // Extract route parameters from path
-  extractRouteParams: (
-    path: string,
-    routePattern: string,
-  ): Record<string, string> => {
+  extractRouteParams: (path: string, routePattern: string): Record<string, string> => {
     const pathSegments = path.split('/').filter(Boolean);
     const patternSegments = routePattern.split('/').filter(Boolean);
     const params: Record<string, string> = {};

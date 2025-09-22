@@ -5,46 +5,20 @@ import { ThumbnailModeSelector } from './thumbnail-mode-selector';
 import { TabNavigation } from './tab-navigation';
 import { ProductSpecificDetails } from './product-specific-details';
 import { LinksIntegrations } from './links-integrations';
-import type { Product, DigitalProductDetails, BookingDetails, Integration } from '@/types/product';
-
-interface EditProductFlowProps {
-  product: Product;
-  onComplete: (productData: Product) => void;
-  onCancel: () => void;
-  storeData?: {
-    name: string;
-    description?: string;
-    profilePicture?: string;
-  };
-  className?: string;
-}
-
-interface ProductFormData {
-  title: string;
-  subtitle: string;
-  price: string;
-  description: string;
-  coverImage: File | string | null;
-  ctaText: string;
-  type: 'booking' | 'digital';
-  thumbnailMode: 'compact' | 'expanded';
-  digitalDetails: DigitalProductDetails;
-  bookingDetails: BookingDetails;
-  integrations: Integration[];
-}
+import type { Product } from '@/api/stores';
 
 export function EditProductFlow({ product, onComplete, onCancel, storeData = { name: 'Your Store' }, className }: EditProductFlowProps) {
   const [activeTab, setActiveTab] = useState<'general' | 'details' | 'integrations'>('general');
   const [productData, setProductData] = useState<ProductFormData>({
     title: product.title,
     subtitle: product.subtitle || '',
-    price: product.price.replace('$', ''),
+    price: product.price.toString(),
     description: product.description || '',
-    coverImage: product.coverImage,
-    ctaText: product.ctaText,
-    type: product.type,
-    thumbnailMode: product.thumbnailMode || 'expanded',
-    digitalDetails: product.digitalDetails || {
+    coverImage: product.thumbnail?.mainLink || null,
+    ctaText: product.clickToPay || 'Buy Now',
+    type: product.productType === 'Session' ? 'booking' : 'digital',
+    thumbnailMode: 'expanded',
+    digitalDetails: {
       downloadFile: null,
       downloadLink: '',
       previewMedia: null,
@@ -91,14 +65,14 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
     <ResponsiveBuilderLayout
       previewData={{
         ...productData,
-        id: product.id,
-        price: productData.price.startsWith('$') ? productData.price : `$${productData.price}`,
-        coverImage:
+        productSlug: product.productSlug,
+        price: productData.price ? Number(productData.price) : 0,
+        thumbnail:
           typeof productData.coverImage === 'string'
-            ? productData.coverImage
+            ? { mainLink: productData.coverImage, thumbnailLink: productData.coverImage }
             : productData.coverImage
-              ? URL.createObjectURL(productData.coverImage)
-              : '',
+              ? { mainLink: URL.createObjectURL(productData.coverImage), thumbnailLink: URL.createObjectURL(productData.coverImage) }
+              : product.thumbnail,
       }}
       storeData={storeData}
       showPreview={true}
@@ -283,4 +257,31 @@ export function EditProductFlow({ product, onComplete, onCancel, storeData = { n
       </div>
     </ResponsiveBuilderLayout>
   );
+}
+
+// Interfaces
+interface ProductFormData {
+  title: string;
+  subtitle: string;
+  price: string;
+  description: string;
+  coverImage: string | File | null;
+  ctaText: string;
+  type: 'booking' | 'digital';
+  thumbnailMode: 'expanded' | 'compact';
+  digitalDetails: {
+    downloadFile: File | null;
+    downloadLink: string;
+    previewMedia: File | null;
+  };
+  bookingDetails?: any;
+  integrations?: any;
+}
+
+interface EditProductFlowProps {
+  product: Product;
+  onComplete: (product: Product) => void;
+  onCancel: () => void;
+  storeData?: { name: string };
+  className?: string;
 }

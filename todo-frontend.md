@@ -1,3 +1,10 @@
+- update store info similat to create form
+- create / update product
+- drag and drop
+- user overview and book
+- maybe add statistic
+- adjust booking ...
+
 - [ ] Review of toast- especially failures
 - [ ] review keys of tanstack
 - [ ] replace all list ids with generated cyrpto ids
@@ -210,3 +217,9 @@ const WelcomeToTheNextLeague = React.forwardRef<HTMLDivElement, WelcomeProps>(
   ({ message = "Welcome to the Next League", onClick }, ref) => {
     ```
 ````
+
+```spacing :
+tracking-wider" style={{ letterSpacing: '0.0.5em' }}
+```
+
+const error = new URLSearchParams(location.search).get('error') ?? undefined;
