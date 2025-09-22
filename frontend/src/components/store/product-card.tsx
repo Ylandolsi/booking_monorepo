@@ -23,7 +23,7 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
     return (
       <div
         className={cn(
-          'bg-card border-border rounded-xl border p-4 shadow-sm',
+          'bg-card border-border w-full rounded-xl border p-4 shadow-sm',
           'transition-shadow hover:shadow-md',
           onClick && 'cursor-pointer',
           className,
@@ -32,17 +32,19 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
       >
         <div className="flex flex-col gap-4">
           {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
-          <div className="flex w-full items-start gap-3">
-            <div className={cn('bg-muted flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', 'h-12 w-12')}>
-              <img src={product.thumbnail?.mainLink} alt={product.title} className="h-full w-full object-cover" />
+          <div className="flex w-full items-start justify-between">
+            <div className="flex min-w-0 items-start gap-3">
+              <div className={cn('bg-muted flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', 'h-12 w-12')}>
+                <img src={product.thumbnail?.mainLink} alt={product.title} className="h-full w-full object-cover" />
+              </div>
+
+              <div className="min-w-0">
+                <h3 className="text-foreground line-clamp-2 font-semibold break-words">{product.title}</h3>
+                {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm break-words">{product.subtitle}</p>}
+              </div>
             </div>
 
-            <div className="flex-1">
-              <h3 className="text-foreground overflow-hidden font-semibold break-words">{product.title}</h3>
-              {product.subtitle && <p className="text-muted-foreground overflow-hidden text-sm break-words">{product.subtitle}</p>}
-            </div>
-
-            <div className="ml-2 flex-none text-right">
+            <div className="ml-4 flex-none text-right">
               <span className="text-primary text-lg font-bold">${product.price}</span>
             </div>
           </div>
@@ -51,29 +53,6 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
             {product.clickToPay ? product.clickToPay : 'Buy Now'}
           </Button>
         </div>
-
-        {showActions && (
-          <div className="border-border mt-3 flex justify-end space-x-2 border-t pt-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.();
-              }}
-              className="text-muted-foreground hover:text-foreground rounded px-2 py-1 text-xs"
-            >
-              Edit
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete?.();
-              }}
-              className="text-muted-foreground hover:text-destructive rounded px-2 py-1 text-xs"
-            >
-              Delete
-            </button>
-          </div>
-        )}
       </div>
     );
 

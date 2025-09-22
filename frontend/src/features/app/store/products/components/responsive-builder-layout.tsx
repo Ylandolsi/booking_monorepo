@@ -22,11 +22,9 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
             <div className={cn('bg-muted/10 p-4')}>
               <MobileContainer>
                 {/* TODO : add header ?  */}
-                <div className="p-4">
-                  {/* TODO : make display mode dynamic ?  */}
+                {/* TODO : make display mode dynamic ?  */}
 
-                  <ProductCard product={previewData} displayMode="full" />
-                </div>
+                <ProductCard product={previewData} displayMode="full" />
               </MobileContainer>
             </div>
           </div>
