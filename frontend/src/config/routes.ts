@@ -141,7 +141,7 @@ export const routeBuilder = {
     index: () => ROUTE_PATHS.APP.STORE.INDEX,
     productView: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.VIEW.replace('$productSlug', productSlug),
     productEdit: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.EDIT.replace('$productSlug', productSlug),
-    productAdd: ({ type }: { type: ProductType }) => {
+    productAdd: ({ type }: { type?: ProductType | undefined }) => {
       return type ? `${ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT}?type=${type}` : ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT;
     },
     editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,

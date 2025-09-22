@@ -10,17 +10,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { routes } from '@/config';
+import { useAppNavigation } from '@/hooks';
 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<'general' | 'details' | 'integrations'>('general');
+  // TODO : make this follow react tanstack router best practices
   const [type, setType] = useState<ProductType | undefined>((new URLSearchParams(location.search).get('type') as ProductType) || undefined);
-
+  const navigate = useAppNavigation();
   const { croppedImageUrl, fileInputRef, handleFileSelect } = useDialogUploadPicture({
     onUpload: (file) => form.setValue('thumbnail', file),
   });
 
   const handleComplete = () => {};
-  const onCancel = () => {};
+  const onCancel = () => {
+    setType(undefined);
+    navigate.goTo({ to: routes.to.store.productAdd({}), replace: true });
+  };
 
   const form = useForm<CreateProductInput>({
     resolver: zodResolver(createProductSchema),
@@ -279,30 +285,6 @@ export function AddProductFlow() {
                         <FormLabel className="text-foreground">Meeting Instructions</FormLabel>
                         <FormControl>
                           <Textarea placeholder="What should customers know before the meeting?" rows={3} className="resize-none" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Time Zone */}
-                  <FormField
-                    control={form.control}
-                    name="timeZoneId"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Time Zone</FormLabel>
-                        <FormControl>
-                          <select
-                            className="bg-input border-border text-foreground focus:ring-ring w-full rounded-lg border px-3 py-2 focus:ring-2 focus:outline-none"
-                            {...field}
-                          >
-                            <option value="UTC">UTC</option>
-                            <option value="America/New_York">Eastern Time</option>
-                            <option value="America/Chicago">Central Time</option>
-                            <option value="America/Denver">Mountain Time</option>
-                            <option value="America/Los_Angeles">Pacific Time</option>
-                          </select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

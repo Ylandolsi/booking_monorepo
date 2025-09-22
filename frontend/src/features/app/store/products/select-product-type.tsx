@@ -28,12 +28,18 @@ interface SelectProductTypeProps {
 }
 export const SelectProductType = ({ className, setType }: SelectProductTypeProps) => {
   const navigate = useAppNavigation();
+
   const onSelect = (type: ProductType) => {
     setType(type);
+    // TODO : fix this with react tanstack router best practice
+    navigate.goTo({ to: routes.to.store.productAdd({ type }), replace: true });
   };
+
   const onCancel = () => {
-    navigate.goTo({ to: routes.to.store.index(), replace: true });
+    const indexStore = routes.to.store.index().endsWith('/') ? routes.to.store.index().slice(0, -1) : routes.to.store.index();
+    navigate.goTo({ to: indexStore, replace: true });
   };
+
   return (
     <div className="bg-card border-border rounded-xl border p-6 shadow-lg">
       <div className={cn('space-y-4', className)}>
