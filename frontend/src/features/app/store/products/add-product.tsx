@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
+import { SetSchedulePage } from '@/features/app/store/products/components/schedule';
 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<'general' | 'details' | 'integrations'>('general');
@@ -45,10 +46,12 @@ export function AddProductFlow() {
       files: type === 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
       previewImage: undefined,
+      dailySchedule: {},
     },
   });
 
   const watchedValues = form.watch();
+  const dailyScheduleWatched = form.watch('dailySchedule');
 
   // Type selection doesn't need preview
   if (type == null || type == undefined) {
@@ -290,6 +293,7 @@ export function AddProductFlow() {
                       </FormItem>
                     )}
                   />
+                  <SetSchedulePage />
                 </div>
               ) : (
                 <div className="space-y-4">

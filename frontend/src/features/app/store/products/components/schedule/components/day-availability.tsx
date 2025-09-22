@@ -1,9 +1,8 @@
 import { Card, CardHeader, CardTitle, Button, CardContent } from '@/components';
-
 import { formatTimeRange } from '@/utils';
-import { Separator, Switch, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Badge } from '@/components/ui';
+import { Switch, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Badge } from '@/components/ui';
 import { Copy, Clock, X, Plus } from 'lucide-react';
-import { PREDEFINED_TIME_SLOTS, TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
+import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
 import type { AvailabilityRangeType } from '@/features/app/mentor/schedule/types';
 
 interface DayAvailabilityProps {
@@ -23,7 +22,7 @@ interface DayAvailabilityProps {
 
 export function DayAvailability(props: DayAvailabilityProps) {
   return (
-    <Card className={`transition-all ${props.isEnabled ? 'border-blue-200 bg-blue-50/30' : ''}`}>
+    <Card className={`transition-all ${props.isEnabled ? 'border-primary/60 to-primary-foreground from-primary/10 bg-gradient-to-br' : ''}`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -102,15 +101,15 @@ export function DayAvailability(props: DayAvailabilityProps) {
                   </SelectContent>
                 </Select>
 
-                <Badge variant="secondary" className="ml-auto">
+                {/* <Badge variant="secondary" className="ml-auto">
                   {formatTimeRange(range.startTime, range.endTime)}
-                </Badge>
+                </Badge> */}
 
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => props.removeTimeRange(props.keyWeek, range.id?.toString() || '')}
-                  className="text-red-600 hover:bg-red-50 hover:text-red-700"
+                  className="ml-auto text-red-600 hover:bg-red-50 hover:text-red-700"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -120,35 +119,6 @@ export function DayAvailability(props: DayAvailabilityProps) {
 
           {/* Add Time Slot Options */}
           <div className="space-y-3">
-            <Separator />
-
-            {/* Predefined Time Slots */}
-            <div>
-              <h4 className="mb-2 text-sm font-medium text-gray-700">Quick Add:</h4>
-              <div className="flex flex-wrap gap-2">
-                {PREDEFINED_TIME_SLOTS.map((slot) => {
-                  const alreadyExists = props.timeRanges.some((range) => range.startTime <= slot.start && range.endTime >= slot.end);
-                  return (
-                    <Button
-                      key={`${slot.start}-${slot.end}`}
-                      variant="outline"
-                      size="sm"
-                      disabled={alreadyExists}
-                      onClick={() =>
-                        props.addPredefinedTimeSlot(props.keyWeek, {
-                          startTime: slot.start,
-                          endTime: slot.end,
-                        })
-                      }
-                      className="text-xs"
-                    >
-                      {slot.label}
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-
             {/* Custom Time Slot */}
             <Button variant="outline" size="sm" onClick={() => props.addCustomTimeSlot(props.keyWeek)} className="w-full">
               <Plus className="mr-2 h-4 w-4" />

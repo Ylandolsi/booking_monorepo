@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 
 import { mapDayToNumber } from '@/utils/enum-days-week';
-import type { AvailabilityRangeType, DailySchedule } from '@/features/app/mentor/schedule/types';
+import type { AvailabilityRangeType } from '@/features/app/mentor/schedule/types';
 import type { DayOfWeek } from '@/features/app/session/booking/shared';
 import { useSetWeeklySchedule, useWeeklySchedule } from '@/features/app/mentor/schedule';
 import { GenerateIdNumber } from '@/lib';
+import type { DailySchedule } from '@/api/stores/produtcs/sessions';
 
 export interface UseAvailabilityScheduleReturn {
   schedule: DailySchedule[];
@@ -33,14 +34,15 @@ export function useAvailabilitySchedule() {
   const { data: apiSchedule } = scheduleQuery;
   const [schedule, setSchedule] = useState<DailySchedule[]>([]);
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const [selectedCopySource, setSelectedCopySource] = useState<DayOfWeek | null>(null);
 
   const hasChanges = useMemo(() => {
     if (!apiSchedule) return false;
     return JSON.stringify(schedule) !== JSON.stringify(apiSchedule);
   }, [schedule, apiSchedule]);
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     if (apiSchedule) {
