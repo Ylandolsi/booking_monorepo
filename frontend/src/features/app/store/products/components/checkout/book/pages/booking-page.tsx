@@ -92,10 +92,6 @@ function BookingContent() {
     }
   }, [currentUser]);
 
-  if (iamTheMentor) {
-    return <ErrorComponenet title="You can not Book with youself" message="You can not Book with youself"></ErrorComponenet>;
-  }
-
   if (isLoading) {
     return <PageLoading2 title="Loading booking page " description="Fetching mentor details and availability" />;
   }
@@ -137,7 +133,7 @@ function BookingContent() {
   }
 
   return (
-    <div className="mx-auto w-full px-4 py-10">
+    <div className="mx-auto w-full px-2 py-10">
       {/* Header */}
       <div className="flex flex-col items-center justify-center gap-8">
         {/* Calendar and Time Slots */}

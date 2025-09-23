@@ -12,16 +12,17 @@ interface ResponsiveBuilderLayoutProps {
   previewData: ProductFormData;
   className?: string;
 }
-
 export function CheckoutPageProduct({ productData }: { productData: ProductCardType }) {
   return (
     <div className="flex w-full flex-col items-start justify-center gap-5 px-1">
-      <LazyImage
-        src={productData.thumbnail?.mainLink || ''}
-        placeholder={''}
-        alt={productData.title}
-        className={'max-h-60 w-full rounded-lg object-cover'}
-      ></LazyImage>
+      <div className={cn('bg-accent flex h-60 w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', '')}>
+        <LazyImage
+          src={productData.thumbnail?.mainLink || ''}
+          placeholder={productData.thumbnail?.mainLink || ''}
+          alt={productData.title}
+          className={'object-cover'}
+        ></LazyImage>
+      </div>
 
       <h3 className="text-foreground line-clamp-2 max-w-20 min-w-full text-left text-2xl font-bold break-words">{productData.title}</h3>
       <h3 className="text-primary text-4xl font-bold break-words">{productData.price.toFixed(2)}$</h3>
