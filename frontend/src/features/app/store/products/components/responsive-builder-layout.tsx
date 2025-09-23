@@ -17,8 +17,12 @@ export function CheckoutPageProduct({ productData }: { productData: ProductCardT
     <div className="flex w-full flex-col items-start justify-center gap-5 px-1">
       <div className={cn('bg-accent flex h-60 w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', '')}>
         {!productData.thumbnail?.mainLink && (
-          <LazyImage src={calendarImage} placeholder={calendarImage} alt={productData.title} className={'h-full w-full object-cover'}></LazyImage>
-        )}{' '}
+          <>
+            {productData.productType === 'Session' && (
+              <LazyImage src={calendarImage} placeholder={calendarImage} alt={productData.title} className={'h-full w-full object-cover'}></LazyImage>
+            )}
+          </>
+        )}
         {productData.thumbnail?.mainLink && (
           <LazyImage
             src={productData.thumbnail?.mainLink || ''}
@@ -32,15 +36,13 @@ export function CheckoutPageProduct({ productData }: { productData: ProductCardT
       <h3 className="text-foreground line-clamp-2 max-w-20 min-w-full text-left text-2xl font-bold break-words">{productData.title}</h3>
       <h3 className="text-primary text-4xl font-bold break-words">{productData.price.toFixed(2)}$</h3>
       <p className="text-foreground text-md max-w-20 min-w-full text-left font-medium break-words">{productData.description}</p>
-      <BookingPage />
+      {productData.productType == 'Session' && <BookingPage />}
     </div>
   );
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
   const productData = { ...previewData, thumbnail: previewData.ui?.picture } as ProductCardType;
-  console.log('productData in ResponsiveBuilderLayout: ', productData);
-  console.log('before useState in ResponsiveBuilderLayout, previewdata: ', previewData);
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>

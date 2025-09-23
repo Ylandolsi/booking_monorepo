@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createProductSchema, ProductType, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
 import { TabNavigation } from '@/components/store';
@@ -25,7 +25,6 @@ export function AddProductFlow() {
 
   const handleComplete = async (data: CreateProductInput) => {
     try {
-      console.log('Form data:', data);
       // TODO: Implement actual API call to create product
       // await createProductMutation.mutateAsync(data);
 
@@ -40,7 +39,6 @@ export function AddProductFlow() {
     setType(undefined);
     navigate.goTo({ to: '/app/store/product/add', replace: true });
   };
-
   const form = useForm<ProductFormData>({
     resolver: zodResolver(createProductSchema) as Resolver<CreateProductInput>,
     defaultValues: {
@@ -51,17 +49,24 @@ export function AddProductFlow() {
       clickToPay: 'Buy Now',
       productType: type === 'Session' ? 'Session' : 'DigitalDownload',
       thumbnail: undefined,
-      duration: type === 'Session' ? 30 : undefined,
-      bufferTime: type === 'Session' ? 0 : undefined,
+      duration: type == 'Session' ? 30 : undefined,
+      bufferTime: type == 'Session' ? 0 : undefined,
       meetingInstructions: '',
-      timeZoneId: type === 'Session' ? 'UTC' : undefined,
-      files: type === 'DigitalDownload' ? [] : undefined,
+      timeZoneId: type == 'Session' ? 'UTC' : undefined,
+      files: type == 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
       previewImage: undefined,
       dailySchedule: [],
       ui: { picture: undefined },
     },
   });
+
+  useEffect(() => {
+    if (type != form.getValues('productType')) {
+      form.setValue('productType', type === 'Session' ? 'Session' : 'DigitalDownload');
+    }
+  }, [type]);
+
   {
     /* Thumbnail Display Mode */
     // <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />;
