@@ -68,7 +68,7 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
                     onComplete={handleCropComplete}
                     className="overflow-hidden rounded-lg"
                   >
-                    <img ref={imgRef} src={selectedImage} onLoad={handleImageLoad} alt="Profile picture" className="max-h-64 w-full object-contain" />
+                    <img ref={imgRef} src={selectedImage} onLoad={handleImageLoad} alt="picture" className="max-h-64 w-full object-contain" />
                   </ReactCrop>
                 </div>
               </div>

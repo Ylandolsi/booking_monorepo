@@ -12,8 +12,8 @@ type UploadImageState = {
   step: 'select' | 'crop';
 
   // Refs
-  imgRef: React.RefObject<HTMLImageElement>;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  imgRef: React.RefObject<HTMLImageElement>; // image displayed for cropping
+  fileInputRef: React.RefObject<HTMLInputElement>; // file (image) uploaded by the user
 };
 
 type UploadImageActions = {

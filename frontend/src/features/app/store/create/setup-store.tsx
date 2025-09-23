@@ -19,7 +19,6 @@ import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type creat
 import useDebounce from '@/hooks/use-debounce';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
-import { useUploadImageStore } from '@/stores/upload-image-store';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
@@ -41,9 +40,7 @@ export const SetupStore = () => {
     },
   });
 
-  const { handleFileSelect, fileInputRef, imgRef } = useUploadPicture();
-  const { croppedImageUrl } = useUploadImageStore();
-  console.log('Cropped Image URL:', croppedImageUrl);
+  const { handleFileSelect, fileInputRef, croppedImageUrl } = useUploadPicture();
 
   const watchedValues = form.watch();
   const debouncedSlug = useDebounce(watchedValues.slug, 500);
