@@ -17,7 +17,8 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
 import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
 import useDebounce from '@/hooks/use-debounce';
-import { DialogUploadPicture, useUploadPicture } from '@/hooks/use-upload-picture';
+import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
+import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useUploadImageStore } from '@/stores/upload-image-store';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
@@ -40,8 +41,9 @@ export const SetupStore = () => {
     },
   });
 
-  const { handleFileSelect } = useUploadPicture();
-  const { croppedImageUrl, imgRef } = useUploadImageStore();
+  const { handleFileSelect, fileInputRef, imgRef } = useUploadPicture();
+  const { croppedImageUrl } = useUploadImageStore();
+  console.log('Cropped Image URL:', croppedImageUrl);
 
   const watchedValues = form.watch();
   const debouncedSlug = useDebounce(watchedValues.slug, 500);
@@ -172,7 +174,7 @@ export const SetupStore = () => {
                   Profile Picture (Optional)
                 </Label>
                 <div className="flex items-center gap-4">
-                  <input ref={imgRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
+                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
                   <Label
                     htmlFor="profile-picture-input"
                     className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
@@ -348,7 +350,7 @@ export const SetupStore = () => {
 
       {/* Upload Picture Dialog */}
       {/* <DialogComponent /> */}
-      <DialogUploadPicture onUpload={(file) => form.setValue('picture', file)} />
+      <UploadPictureDialog onUpload={(file) => form.setValue('picture', file)} />
 
       {/* Live Preview - keeping the same */}
       <div className="sticky top-4">
