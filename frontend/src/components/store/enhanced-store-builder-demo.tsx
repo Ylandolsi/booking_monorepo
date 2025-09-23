@@ -14,7 +14,7 @@ interface PreviewData {
 }
 
 export function EnhancedStoreBuilderDemo() {
-  const [currentView, setCurrentView] = useState<View>('product-creation');
+  const [currentView, setCurrentView] = useState<View>('product-edit');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [products, setProducts] = useState<Product[]>(initProducts);

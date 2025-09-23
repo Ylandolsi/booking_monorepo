@@ -5,7 +5,7 @@ import { ThumbnailModeSelector } from './thumbnail-mode-selector';
 import { TabNavigation } from './tab-navigation';
 import { ProductSpecificDetails } from './product-specific-details';
 import { LinksIntegrations } from './links-integrations';
-import type { Product } from '@/api/stores';
+import type { Product, Store } from '@/api/stores';
 
 export function EditProductFlow({ product, onComplete, onCancel, storeData = { name: 'Your Store' }, className }: EditProductFlowProps) {
   const [activeTab, setActiveTab] = useState<'general' | 'details' | 'integrations'>('general');
@@ -282,6 +282,6 @@ interface EditProductFlowProps {
   product: Product;
   onComplete: (product: Product) => void;
   onCancel: () => void;
-  storeData?: { name: string };
+  storeData?: Store;
   className?: string;
 }
