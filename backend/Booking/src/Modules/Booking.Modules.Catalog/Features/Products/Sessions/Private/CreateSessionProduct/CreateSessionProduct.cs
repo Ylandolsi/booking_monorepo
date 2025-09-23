@@ -83,6 +83,7 @@ public class CreateSessionProductHandler(
             );
 
             // Create the session product
+            // TODO : handle the image 
             var sessionProduct = SessionProduct.Create(
                 uniqueSlug,
                 store.Id,

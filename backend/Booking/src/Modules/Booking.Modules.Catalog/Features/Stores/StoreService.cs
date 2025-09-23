@@ -34,8 +34,9 @@ public class StoreService(
             return Result.Failure<Picture>(
                 Error.Problem("Image.InvalidType", "Only JPEG, PNG, and WebP images are allowed"));
         }
+        //var fileName = $"profile_{storeSlug}_{DateTime.UtcNow:yyyyMMddHHmmss}";
 
-        var fileName = $"profile_{storeSlug}_{DateTime.UtcNow:yyyyMMddHHmmss}";
+        var fileName = $"store_{storeSlug}_{DateTime.UtcNow:yyyyMMddHHmmss}";
         try
         {
             var imageResult = await imageProcessingService.ProcessImageAsync(file, fileName);
