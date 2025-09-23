@@ -6,7 +6,7 @@ import { Button } from '@/components/ui';
 import { LazyImage } from '@/utils';
 import type { ProductFormData } from '@/features/app/store/products/add-product';
 import { BookingPage } from '@/features/app/store/products/components/checkout/book';
-
+import calendarImage from '@/assets/calendar-image.jpeg';
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
   previewData: ProductFormData;
@@ -16,12 +16,17 @@ export function CheckoutPageProduct({ productData }: { productData: ProductCardT
   return (
     <div className="flex w-full flex-col items-start justify-center gap-5 px-1">
       <div className={cn('bg-accent flex h-60 w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', '')}>
-        <LazyImage
-          src={productData.thumbnail?.mainLink || ''}
-          placeholder={productData.thumbnail?.mainLink || ''}
-          alt={productData.title}
-          className={'object-cover'}
-        ></LazyImage>
+        {!productData.thumbnail?.mainLink && (
+          <LazyImage src={calendarImage} placeholder={calendarImage} alt={productData.title} className={'h-full w-full object-cover'}></LazyImage>
+        )}{' '}
+        {productData.thumbnail?.mainLink && (
+          <LazyImage
+            src={productData.thumbnail?.mainLink || ''}
+            placeholder={productData.thumbnail?.mainLink || ''}
+            alt={productData.title}
+            className={'object-cover'}
+          ></LazyImage>
+        )}
       </div>
 
       <h3 className="text-foreground line-clamp-2 max-w-20 min-w-full text-left text-2xl font-bold break-words">{productData.title}</h3>

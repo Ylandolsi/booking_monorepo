@@ -36,8 +36,9 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
           {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
           <div className="flex w-full items-start justify-between">
             <div className="flex min-w-0 items-start gap-3">
-              <div className={cn('bg-muted flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', 'h-12 w-12')}>
-                <img src={product.thumbnail?.mainLink} alt={product.title} className="h-full w-full object-cover" />
+              <div className={cn('flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg')}>
+                {/* <img src={product.thumbnail?.mainLink} alt={product.title} className="h-full w-full object-cover" /> */}
+                <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
               </div>
 
               <div className="min-w-0">
