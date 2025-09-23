@@ -17,11 +17,12 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
 import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
 import useDebounce from '@/hooks/use-debounce';
-import { useDialogUploadPicture } from '@/hooks/use-upload-picture';
+import { DialogUploadPicture, useUploadPicture } from '@/hooks/use-upload-picture';
+import { useUploadImageStore } from '@/stores/upload-image-store';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const createStoreMutation = useCreateStore();
   const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
@@ -39,12 +40,10 @@ export const SetupStore = () => {
     },
   });
 
-  const { croppedImageUrl, fileInputRef, handleFileSelect, DialogComponent } = useDialogUploadPicture({
-    onUpload: (file) => form.setValue('picture', file),
-  });
+  const { handleFileSelect } = useUploadPicture();
+  const { croppedImageUrl, imgRef } = useUploadImageStore();
 
   const watchedValues = form.watch();
-
   const debouncedSlug = useDebounce(watchedValues.slug, 500);
 
   const { data: slugAvailabilityResponse } = useCheckSlugAvailability(debouncedSlug, debouncedSlug.length >= 3);
@@ -173,7 +172,7 @@ export const SetupStore = () => {
                   Profile Picture (Optional)
                 </Label>
                 <div className="flex items-center gap-4">
-                  <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
+                  <input ref={imgRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" id="profile-picture-input" />
                   <Label
                     htmlFor="profile-picture-input"
                     className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
@@ -348,7 +347,8 @@ export const SetupStore = () => {
       </div>
 
       {/* Upload Picture Dialog */}
-      <DialogComponent />
+      {/* <DialogComponent /> */}
+      <DialogUploadPicture onUpload={(file) => form.setValue('picture', file)} />
 
       {/* Live Preview - keeping the same */}
       <div className="sticky top-4">

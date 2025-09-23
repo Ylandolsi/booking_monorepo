@@ -1,36 +1,49 @@
-import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Check, Camera, X } from 'lucide-react';
 import ReactCrop, { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { useUploadImageStore } from '@/stores/upload-image-store';
 
-export const useDialogUploadPicture = ({ onUpload }: { onUpload: (file: File | undefined) => void }) => {
-  const {
-    setIsUploadDialogOpen,
-    isUploadDialogOpen,
-    selectedImage,
-    croppedImageUrl,
-    setCrop,
-    crop,
-    step,
-    imgRef,
-    handleImageLoad,
-    fileInputRef,
-    handleBackToSelect,
-    handleCropComplete,
-    handleFileSelect,
-    handleCloseDialog,
-    getUploadedFile,
-  } = useUploadPicture();
+export const DialogUploadPicture = ({ onUpload }: { onUpload: (file: File | undefined) => void }) => {
+  const { setIsUploadDialogOpen, setStep, step, crop, fileInputRef, isUploadDialogOpen, selectedImage, croppedImageUrl, imgRef, setCrop } =
+    useUploadImageStore();
 
+  const { handleImageLoad, handleBackToSelect, handleCropComplete, handleFileSelect } = useUploadPicture();
+  const getUploadedFile = async (): Promise<File | undefined> => {
+    if (!croppedImageUrl) {
+      console.error('No cropped image to upload');
+      return;
+    }
+
+    // Convert URL to File
+    const response = await fetch(croppedImageUrl);
+    const blob = await response.blob();
+    const file = new File([blob], 'profile-picture.jpg', { type: blob.type });
+    return file;
+  };
   const handleUpload = async () => {
     const file = await getUploadedFile();
     if (file) {
       onUpload(file);
     }
     handleCloseDialog();
+  };
+
+  const handleCloseDialog = () => {
+    if (selectedImage) URL.revokeObjectURL(selectedImage);
+    if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
+
+    // setSelectedImage(null);
+    // setCroppedImageUrl(null);
+    setCrop(undefined);
+    setStep('select');
+    setIsUploadDialogOpen(false);
+
+    if (imgRef.current) {
+      imgRef.current.value = '';
+    }
   };
 
   const DialogComponent = () => {
@@ -121,58 +134,19 @@ export const useDialogUploadPicture = ({ onUpload }: { onUpload: (file: File | u
     );
   };
 
-  return {
-    setIsUploadDialogOpen,
-    isUploadDialogOpen,
-    selectedImage,
-    croppedImageUrl,
-    setCrop,
-    crop,
-    step,
-    imgRef,
-    handleImageLoad,
-    fileInputRef,
-    handleBackToSelect,
-    handleCropComplete,
-    handleFileSelect,
-    handleCloseDialog,
-    getUploadedFile,
-
-    DialogComponent,
-  };
+  return DialogComponent();
 };
 
 export interface uploadPictureState {
-  setIsUploadDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setCroppedImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
-
-  isUploadDialogOpen: boolean;
-  selectedImage: string | null;
-
-  croppedImageUrl: string | null;
-  step: 'select' | 'crop';
-  imgRef: React.MutableRefObject<HTMLImageElement | null>;
-  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
-
-  setCrop: React.Dispatch<React.SetStateAction<PixelCrop | undefined>>;
-  crop: PixelCrop | undefined;
-
-  handleCloseDialog: () => void;
   handleImageLoad: (e: React.SyntheticEvent<HTMLImageElement>) => void;
-  getUploadedFile: () => Promise<File | undefined>;
   handleBackToSelect: () => void;
   handleCropComplete: (cropData: PixelCrop) => void;
   handleFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const useUploadPicture = (): uploadPictureState => {
-  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [crop, setCrop] = useState<any>();
-  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
-  const [step, setStep] = useState<'select' | 'crop'>('select');
-  const imgRef = useRef<HTMLImageElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export const useUploadPicture = (): uploadPictureState => {
+  const { setIsUploadDialogOpen, setSelectedImage, setCroppedImageUrl, setStep, selectedImage, croppedImageUrl, imgRef, setCrop } =
+    useUploadImageStore();
 
   // Image upload functions
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,7 +221,7 @@ const useUploadPicture = (): uploadPictureState => {
 
   const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    imgRef.current = e.currentTarget;
+    //imgRef.current = e.currentTarget;
     const newCrop = centerAspectCrop(width, height, 1);
     setCrop(newCrop);
   };
@@ -263,21 +237,6 @@ const useUploadPicture = (): uploadPictureState => {
     }
   };
 
-  const handleCloseDialog = () => {
-    if (selectedImage) URL.revokeObjectURL(selectedImage);
-    if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
-
-    // setSelectedImage(null);
-    // setCroppedImageUrl(null);
-    setCrop(undefined);
-    setStep('select');
-    setIsUploadDialogOpen(false);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
   const handleBackToSelect = () => {
     if (selectedImage) URL.revokeObjectURL(selectedImage);
     if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
@@ -288,34 +247,8 @@ const useUploadPicture = (): uploadPictureState => {
     setStep('select');
   };
 
-  const getUploadedFile = async (): Promise<File | undefined> => {
-    if (!croppedImageUrl) {
-      console.error('No cropped image to upload');
-      return;
-    }
-
-    // Convert URL to File
-    const response = await fetch(croppedImageUrl);
-    const blob = await response.blob();
-    const file = new File([blob], 'profile-picture.jpg', { type: blob.type });
-    return file;
-  };
-
   return {
-    setIsUploadDialogOpen,
-    setCroppedImageUrl,
-    isUploadDialogOpen,
-    selectedImage,
-    croppedImageUrl,
-    step,
-    imgRef,
-    fileInputRef,
-    setCrop,
-    crop,
-
-    handleCloseDialog,
     handleImageLoad,
-    getUploadedFile,
     handleBackToSelect,
     handleCropComplete,
     handleFileSelect,

@@ -5,14 +5,14 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-schedule';
 import { mapDayToNumber } from '@/utils/enum-days-week';
-import type { CreateProductInput } from '@/api/stores';
 import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
 import { Clock, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import type { ProductFormData } from '@/features/app/store/products';
 
 const DAYS: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-export function FormScheduleComponent({ form }: { form: UseFormReturn<CreateProductInput> }) {
+export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
   const { schedule, actions } = useFormSchedule(form);
 
   return (

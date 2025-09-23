@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { createProductSchema, ProductType, type CreateProductInput } from '@/api/stores';
+import { createProductSchema, ProductType, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
 import { TabNavigation } from '@/components/store';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,9 @@ import { FormScheduleComponent } from '@/features/app/store/products/components/
 import { FormGeneral } from '@/features/app/store/products/components/form-general';
 
 export type TabsType = 'general' | 'details';
+
+export type ProductFormData = CreateProductInput & { ui?: { picture?: Picture } };
+
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<TabsType>('general');
   // TODO : make this follow react tanstack router best practices
@@ -38,8 +41,8 @@ export function AddProductFlow() {
     navigate.goTo({ to: '/app/store/product/add', replace: true });
   };
 
-  const form = useForm<CreateProductInput>({
-    resolver: zodResolver(createProductSchema),
+  const form = useForm<ProductFormData>({
+    resolver: zodResolver(createProductSchema) as Resolver<CreateProductInput>,
     defaultValues: {
       title: '',
       subtitle: '',
@@ -56,6 +59,7 @@ export function AddProductFlow() {
       deliveryUrl: '',
       previewImage: undefined,
       dailySchedule: [],
+      ui: { picture: undefined },
     },
   });
   {
