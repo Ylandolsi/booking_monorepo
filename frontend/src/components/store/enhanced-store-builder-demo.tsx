@@ -61,7 +61,49 @@ export function EnhancedStoreBuilderDemo() {
   return (
     <div className="bg-muted/30 min-h-screen p-4">
       {/* Content */}
+
       <div className="mx-auto max-w-4xl">
+        <div className="bg-card border-border mb-4 rounded-lg border p-4">
+          <h2 className="text-foreground mb-2 font-semibold">✨ New Features</h2>
+
+          <div className="mb-4 flex flex-wrap gap-2">
+            <button
+              onClick={() => setCurrentView('store-setup')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                currentView === 'store-setup' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
+              }`}
+            >
+              Store Setup
+            </button>
+
+            <button
+              onClick={() => setCurrentView('dashboard')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                currentView === 'dashboard' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
+              }`}
+            >
+              Enhanced Dashboard
+            </button>
+
+            <button
+              onClick={() => setCurrentView('product-creation')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                currentView === 'product-creation' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
+              }`}
+            >
+              Add Product (Responsive)
+            </button>
+
+            <button
+              onClick={() => setCurrentView('preview-demo')}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                currentView === 'preview-demo' ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-accent'
+              }`}
+            >
+              Focused Preview Demo
+            </button>
+          </div>
+        </div>
         {currentView === 'dashboard' && (
           <EnhancedStorefrontDashboard
             products={products}
