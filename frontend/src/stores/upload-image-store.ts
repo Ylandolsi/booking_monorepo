@@ -57,7 +57,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
 
     // Clean up object URLs // TODO review this
     if (selectedImage) URL.revokeObjectURL(selectedImage);
-    if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
+    //  if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl); // TODO revoke it after upload
 
     // Reset to initial state
     set({

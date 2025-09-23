@@ -1,18 +1,40 @@
 import { cn } from '@/lib/cn';
-import type { CreateProductInput, Product } from '@/api/stores';
 import { MobileContainer } from '@/components/store/mobile-container';
-import { ProductCard } from '@/components/store/product-card';
+import { ProductCard, type ProductCardType } from '@/components/store/product-card';
 import { useState } from 'react';
 import { Button } from '@/components/ui';
 import { LazyImage } from '@/utils';
+import type { ProductFormData } from '@/features/app/store/products/add-product';
+import { BookingPage } from '@/features/app/store/products/components/checkout/book';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
-  previewData: CreateProductInput;
+  previewData: ProductFormData;
   className?: string;
 }
 
+export function CheckoutPageProduct({ productData }: { productData: ProductCardType }) {
+  return (
+    <div className="flex w-full flex-col items-start justify-center gap-5 px-1">
+      <LazyImage
+        src={productData.thumbnail?.mainLink || ''}
+        placeholder={''}
+        alt={productData.title}
+        className={'max-h-60 w-full rounded-lg object-cover'}
+      ></LazyImage>
+
+      <h3 className="text-foreground line-clamp-2 max-w-20 min-w-full text-left text-2xl font-bold break-words">{productData.title}</h3>
+      <h3 className="text-primary text-4xl font-bold break-words">{productData.price.toFixed(2)}$</h3>
+      <p className="text-foreground text-md max-w-20 min-w-full text-left font-medium break-words">{productData.description}</p>
+      <BookingPage />
+    </div>
+  );
+}
+
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
+  const productData = { ...previewData, thumbnail: previewData.ui?.picture } as ProductCardType;
+  console.log('productData in ResponsiveBuilderLayout: ', productData);
+  console.log('before useState in ResponsiveBuilderLayout, previewdata: ', previewData);
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>
@@ -27,10 +49,8 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
               <MobileContainer>
                 {/* TODO : add header ?  */}
                 {/* TODO : make display mode dynamic ?  */}
-                {viewType == 'overview' && <ProductCard product={previewData} displayMode="full" />}
-                {/* {viewType == 'checkout' && <div className="flex flex-col">
-                  <LazyImage src={previewData.}></LazyImage>
-                  </div>} */}
+                {viewType == 'overview' && <ProductCard product={productData} displayMode="full" />}
+                {viewType == 'checkout' && <CheckoutPageProduct productData={productData} />}
               </MobileContainer>
               <div className="mt-4 flex w-full items-center justify-center gap-2">
                 <Button
