@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createProductSchema, ProductType, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
-import { TabNavigation } from '@/components/store';
+import { TabNavigation } from '@/components';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

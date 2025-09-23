@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { cn } from '@/lib/cn';
 import { ProductCard } from './product-card';
 import type { Product } from '@/api/stores';

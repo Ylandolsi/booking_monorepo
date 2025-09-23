@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { MobileContainer } from './mobile-container';
 import { StoreHeader } from './store-header';
 import { DraggableProductList } from './draggable-product-list';
-import { EmptyState } from './empty-state';
-import { AddProductButton } from './add-product-button';
 import { cn } from '@/lib/cn';
 import { initialStore, useMyStore, type Product } from '@/api/stores';
 import { LoadingState } from '@/components/ui';
 import { ErrorComponenet } from '@/components/errors';
+import { EmptyState } from '@/components/store/empty-state';
 
 type DisplayMode = 'full' | 'compact';
 
