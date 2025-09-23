@@ -10,13 +10,9 @@ import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/sha
 import { Clock, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 
-interface FormScheduleComponentProps {
-  form: UseFormReturn<CreateProductInput>;
-}
-
 const DAYS: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-export function FormScheduleComponent({ form }: FormScheduleComponentProps) {
+export function FormScheduleComponent({ form }: { form: UseFormReturn<CreateProductInput> }) {
   const { schedule, actions } = useFormSchedule(form);
 
   return (
@@ -31,7 +27,7 @@ export function FormScheduleComponent({ form }: FormScheduleComponentProps) {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <Switch checked={daySchedule.isActive} onCheckedChange={() => actions.toggleDay(day)} />
+                    <Switch className="border-border border" checked={daySchedule.isActive} onCheckedChange={() => actions.toggleDay(day)} />
                     <div>
                       <CardTitle className="text-lg">{day.charAt(0).toUpperCase() + day.slice(1)}</CardTitle>
                       <p className="mt-1 text-sm text-gray-600">

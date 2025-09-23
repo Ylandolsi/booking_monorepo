@@ -16,7 +16,7 @@ interface StoreHeaderProps {
 
 export function StoreHeader({ store, className }: StoreHeaderProps) {
   return (
-    <div className={cn('bg-card text-center', className)}>
+    <div className={cn('text-center', className)}>
       {/* Profile Picture */}
       <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
         {store.picture ? (

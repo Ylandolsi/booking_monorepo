@@ -57,9 +57,9 @@ export function ModifyStore() {
     console.log('Store created:', storeData);
   };
   return (
-    <div className="flex min-h-screen flex-col items-start justify-around gap-10 lg:flex-row">
+    <div className="flex min-h-screen flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
       <div className="flex flex-col gap-5">
-        <div className="bg-card text-card-foreground rounded-xl border px-3 py-3 shadow-sm">
+        <div className="text-card-foreground rounded-xl border px-3 py-3 shadow-sm">
           <div className="flex gap-3">
             {/* // <img src={store?.picture?.mainLink ?? FALLBACK_PROFILE_PICTURE} alt="Store Profile Picture" /> */}
             <LazyImage

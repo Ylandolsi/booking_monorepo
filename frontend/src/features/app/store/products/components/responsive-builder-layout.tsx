@@ -4,6 +4,7 @@ import { MobileContainer } from '@/components/store/mobile-container';
 import { ProductCard } from '@/components/store/product-card';
 import { useState } from 'react';
 import { Button } from '@/components/ui';
+import { LazyImage } from '@/utils';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
@@ -26,8 +27,10 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
               <MobileContainer>
                 {/* TODO : add header ?  */}
                 {/* TODO : make display mode dynamic ?  */}
-
-                <ProductCard product={previewData} displayMode="full" />
+                {viewType == 'overview' && <ProductCard product={previewData} displayMode="full" />}
+                {/* {viewType == 'checkout' && <div className="flex flex-col">
+                  <LazyImage src={previewData.}></LazyImage>
+                  </div>} */}
               </MobileContainer>
               <div className="mt-4 flex w-full items-center justify-center gap-2">
                 <Button
