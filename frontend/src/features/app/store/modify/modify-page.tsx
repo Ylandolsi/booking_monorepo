@@ -1,20 +1,22 @@
 import { initialStore, initProducts, useMyStore, type Product } from '@/api/stores';
-import { Button, Card, ErrorComponenet, LoadingState } from '@/components';
+import { Button, ErrorComponenet, LoadingState } from '@/components';
 import { EnhancedStorefrontDashboard } from '@/components/store';
 import { socialPlatforms } from '@/features/app/store/create';
-import { cn, FALLBACK_PROFILE_PICTURE } from '@/lib';
+import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { LazyImage } from '@/utils';
 import { useState } from 'react';
 
 export function ModifyStore() {
   let { data: store, isLoading, isError } = useMyStore();
   store = initialStore; // for testing
+  isError = false;
+  isLoading = false;
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [products, setProducts] = useState<Product[]>(initProducts);
 
   if (isLoading) return <LoadingState type="spinner" />;
-  if (isError || !store) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+  // TODO : uncomment it if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
