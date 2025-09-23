@@ -15,11 +15,6 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
     },
 
     {
-      name: 'Become Mentor',
-      icon: <GiTeacher size={20} />,
-      click: () => nav.goToMentorBecome(),
-    },
-    {
       name: 'Set Availability',
       icon: <Timer size={20} />,
       click: () => nav.goToMentorSetSchedule(),
