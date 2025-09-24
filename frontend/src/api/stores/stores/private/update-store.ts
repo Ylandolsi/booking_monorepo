@@ -1,40 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
 import { storeKeys, STORE_QUERY_KEY } from '../../stores-keys';
 import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
-import { api } from '@/lib';
-import z from 'zod';
+import { api, validateFile } from '@/lib';
+import { patchPostStoreSchemaToFormData, type PatchPostStoreRequest, type PatchPostStoreResponse } from '@/api/stores/stores/private/store-schema';
 
-export interface UpdateStoreResponse {
-  slug: string;
-}
+export const updateStore = async (data: PatchPostStoreRequest): Promise<PatchPostStoreResponse> => {
+  if (data.file) {
+    const validation = validateFile(data.file);
 
-export const updateStoreSchema = z.object({
-  title: z.string().min(3, 'Store name must be at least 3 characters'),
-  slug: z
-    .string()
-    .min(3, 'Slug must be at least 3 characters')
-    .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
-  description: z.string().optional(),
-  socialLinks: z
-    .array(
-      z.object({
-        platform: z.string(),
-        url: z.string().url('Invalid URL'),
-      }),
-    )
-    .optional(),
-});
+    if (!validation.isValid) {
+      throw new Error(validation.error || 'Invalid file');
+    }
+  }
 
-export type UpdateStoreInput = z.infer<typeof updateStoreSchema>;
+  // Create FormData for the request
+  const formData = patchPostStoreSchemaToFormData(data);
 
-export const updateStore = async (data: UpdateStoreInput): Promise<UpdateStoreResponse> => {
   try {
-    const response = await api.put<UpdateStoreResponse>(CatalogEndpoints.Stores.Update, {
-      title: data.title,
-      slug: data.slug,
-      description: data.description || '',
-      socialLinks: data.socialLinks || [],
-    });
+    const response = await api.put<PatchPostStoreResponse>(CatalogEndpoints.Stores.Update, formData);
 
     return response;
   } catch (error) {
@@ -45,7 +28,7 @@ export const updateStore = async (data: UpdateStoreInput): Promise<UpdateStoreRe
 
 export const useUpdateStore = () => {
   return useMutation({
-    mutationFn: (data: UpdateStoreInput) => updateStore(data),
+    mutationFn: (data: PatchPostStoreRequest) => updateStore(data),
     meta: {
       invalidatesQuery: [[STORE_QUERY_KEY], storeKeys.myStore()],
       successMessage: 'Store updated successfully!',
