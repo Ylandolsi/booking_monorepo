@@ -1,4 +1,4 @@
-import { initialStore, initProducts, useMyStore, type Product } from '@/api/stores';
+import { useMyStore, type Product } from '@/api/stores';
 import { Button, ErrorComponenet, LoadingState } from '@/components';
 import { EnhancedStorefrontDashboard } from '@/components/store';
 import { socialPlatforms } from '@/features/app/store/create';
@@ -25,12 +25,6 @@ export function ModifyStore() {
     setSelectedProduct(product);
   };
 
-  // const handleProductDelete = (product: Product) => {
-  //   if (confirm(`Delete "${product.title}"?`)) {
-  //     setProducts((prev) => prev.filter((p) => p.id !== product.id));
-  //   }
-  // };
-
   const handleProductsReorder = (reorderedProducts: Product[]) => {
     setProducts(reorderedProducts);
   };
@@ -39,22 +33,6 @@ export function ModifyStore() {
     navigate.goTo({ to: '/app/store/product/add' }); // TODO : use route declared in routes
   };
 
-  const handleProductCreated = (productData: any) => {
-    const newProduct: Product = {
-      ...productData,
-      id: `new-${Date.now()}`,
-      price: productData.price.startsWith('$') ? productData.price : `$${productData.price}`,
-    };
-    setProducts((prev) => [newProduct, ...prev]);
-  };
-
-  const handleProductUpdated = (updatedProduct: Product) => {
-    // setProducts((prev: Product[]) => prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
-  };
-
-  const handleStoreSetup = (storeData: any) => {
-    console.log('Store created:', storeData);
-  };
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
       <div className="flex w-full flex-col gap-5">
@@ -141,3 +119,26 @@ export function ModifyStore() {
     </div>
   );
 }
+
+// const handleProductDelete = (product: Product) => {
+//   if (confirm(`Delete "${product.title}"?`)) {
+//     setProducts((prev) => prev.filter((p) => p.id !== product.id));
+//   }
+// };
+
+// const handleProductCreated = (productData: any) => {
+//   const newProduct: Product = {
+//     ...productData,
+//     id: `new-${Date.now()}`,
+//     price: productData.price.startsWith('$') ? productData.price : `$${productData.price}`,
+//   };
+//   setProducts((prev) => [newProduct, ...prev]);
+// };
+
+// const handleProductUpdated = (updatedProduct: Product) => {
+//   // setProducts((prev: Product[]) => prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
+// };
+
+// const handleStoreSetup = (storeData: any) => {
+//   console.log('Store created:', storeData);
+// };
