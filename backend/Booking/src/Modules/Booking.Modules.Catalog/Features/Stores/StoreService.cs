@@ -62,8 +62,7 @@ public class StoreService(
     {
         var
             isAvailable =
-                !await dbContext.Stores.AnyAsync(s => s.Slug == slug && (excludeCurrent == true && s.Id != storeId),
-                    cancellationToken)
+                !await dbContext.Stores.AnyAsync(s => s.Slug == slug, cancellationToken)
             ;
 
         return isAvailable;

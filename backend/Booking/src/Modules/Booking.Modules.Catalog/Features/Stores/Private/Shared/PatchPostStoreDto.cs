@@ -1,6 +1,7 @@
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Shared;
 
@@ -9,9 +10,22 @@ public record PatchPostStoreRequest
     public required string Title { get; init; }
     public required string Slug { get; init; }
     public string Description { get; init; } = "";
-    public IFormFile? File { get; init; } = null; 
-    public Dictionary<string, int>? Orders { get; init; } = null;  //  product slug is a key , order : int 
-    public IReadOnlyList<SocialLink>? SocialLinks { get; init; } = null;
+    public IFormFile? File { get; init; } = null;
+    public Dictionary<string, int>? Orders { get; init; } = null; //  product slug is a key , order : int
+    public string? SocialLinksJson { get; init; } = null;
+
+    // Computed property to deserialize SocialLinks
+    public IList<SocialLink>? SocialLinks => string.IsNullOrWhiteSpace(SocialLinksJson)
+        ? null
+        : JsonSerializer.Deserialize<IList<SocialLink>>(SocialLinksJson, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+    /**
+     * We need to deseralzie the social links because when using formdata
+     * all of them are string => .net core can not bind string into object ( List<() > )
+     */
 }
 
 public record PatchPostStoreCommand : PatchPostStoreRequest, ICommand<PatchPostStoreResponse>

@@ -1,4 +1,3 @@
-import { useNavigate } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +14,7 @@ import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube,
 import { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
-import { createStoreSchema, useCheckSlugAvailability, useCreateStore, type createStoreInput, type Store } from '@/api/stores';
+import { patchPostStoreSchema, useCheckSlugAvailability, useCreateStore, type PatchPostStoreRequest, type Store } from '@/api/stores';
 import useDebounce from '@/hooks/use-debounce';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
@@ -29,14 +28,14 @@ export const SetupStore = () => {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const form = useForm<createStoreInput>({
-    resolver: zodResolver(createStoreSchema),
+  const form = useForm<PatchPostStoreRequest>({
+    resolver: zodResolver(patchPostStoreSchema),
     defaultValues: {
       title: '',
       slug: '',
       description: '',
       socialLinks: [],
-      picture: undefined,
+      file: undefined,
     },
   });
 
@@ -67,7 +66,7 @@ export const SetupStore = () => {
     form.setValue('slug', slug);
   };
 
-  const onSubmit = async (data: createStoreInput) => {
+  const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
       await createStoreMutation.mutateAsync(data);
       navigate({ to: ROUTE_PATHS.APP.STORE });
@@ -347,7 +346,7 @@ export const SetupStore = () => {
 
       {/* Upload Picture Dialog */}
       {/* <DialogComponent /> */}
-      <UploadPictureDialog onUpload={(file) => form.setValue('picture', file)} />
+      <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
 
       {/* Live Preview - keeping the same */}
       <div className="sticky top-4">

@@ -29,7 +29,7 @@ public class UpdateStoreEndpoint : IEndpoint
                     Slug = request.Slug,
                     Title = request.Title,
                     File = request.File,
-                    SocialLinks = request.SocialLinks,
+                    SocialLinksJson = request.SocialLinksJson,
                     Description = request.Description
                 };
 

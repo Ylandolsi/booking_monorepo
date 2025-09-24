@@ -12,8 +12,6 @@ using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
-
-
 public class CreateStoreHandler(
     CatalogDbContext dbContext,
     StoreService storeService,

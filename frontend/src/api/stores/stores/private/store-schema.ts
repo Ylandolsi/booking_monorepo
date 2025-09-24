@@ -31,7 +31,7 @@ export const patchPostStoreSchemaToFormData = (data: PatchPostStoreRequest) => {
     slug: data.slug,
     file: data.file || new File([], ''),
     description: data.description || '',
-    socialLinks: data.socialLinks || [],
+    socialLinksJson: data.socialLinks,
   });
 
   return formData;

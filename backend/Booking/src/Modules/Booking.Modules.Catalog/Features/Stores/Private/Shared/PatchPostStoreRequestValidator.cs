@@ -50,7 +50,7 @@ internal sealed class CreateStoreCommandValidator : AbstractValidator<PatchPostS
             .When(c => c.SocialLinks != null && c.SocialLinks.Any());
     }
 
-    private static bool HaveUniquePlatforms(IReadOnlyList<SocialLink>? socialLinks)
+    private static bool HaveUniquePlatforms(IList<SocialLink>? socialLinks)
     {
         if (socialLinks == null || !socialLinks.Any()) return true;
 

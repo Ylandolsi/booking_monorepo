@@ -23,7 +23,9 @@ export function useCheckSlugAvailability(slug: string, enabled = true) {
     queryKey: storeKeys.slugAvailability(slug),
     queryFn: () => checkSlugAvailability(slug),
     enabled: enabled && !!slug,
-    staleTime: 30000, // 30 seconds
+    staleTime: 0, // Always fetch fresh data
+
+    //    staleTime: 30000, // 30 seconds
     retry: false, // Don't retry slug availability checks
   });
 }
