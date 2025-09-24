@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { AuthGuard } from '@/components/guards';
+import { AuthGuard, StoreGuard } from '@/components/guards';
 import { ROUTE_PATHS } from '@/config/routes';
 // import { AppLayout } from '@/components/layouts/app-layout'
 
@@ -10,9 +10,11 @@ export const Route = createFileRoute(ROUTE_PATHS.APP.INDEX)({
 function AppLayoutComponent() {
   return (
     <AuthGuard requireAuth>
-      {/* <AppLayout> */}
-      <Outlet />
-      {/* </AppLayout> */}
+      <StoreGuard>
+        {/* <AppLayout> */}
+        <Outlet />
+        {/* </AppLayout> */}
+      </StoreGuard>
     </AuthGuard>
   );
 }

@@ -1,4 +1,4 @@
-import { STORE_QUERY_KEY } from '@/api/stores/stores-keys';
+import { STORE_QUERY_KEY, storeKeys } from '@/api/stores/stores-keys';
 import { patchPostStoreSchemaToFormData, type PatchPostStoreRequest, type PatchPostStoreResponse } from '@/api/stores/stores/private/store-schema';
 import { api, validateFile } from '@/lib';
 import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
@@ -30,7 +30,7 @@ export const useCreateStore = () => {
   return useMutation({
     mutationFn: (data: PatchPostStoreRequest) => createStore(data),
     meta: {
-      invalidatesQuery: [STORE_QUERY_KEY],
+      invalidatesQuery: [storeKeys.myStore()],
     },
   });
 };

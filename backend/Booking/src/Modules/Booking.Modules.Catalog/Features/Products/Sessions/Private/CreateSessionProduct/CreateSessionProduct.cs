@@ -218,7 +218,7 @@ public class CreateSessionProductHandler(
                         continue;
                     }
 
-                    // What happens if this was created  :
+                    // TODO : What happens if this was created  : now its prevened from the frontend 
                     //  9-12
                     //  10-14
                     

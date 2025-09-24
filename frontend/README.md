@@ -1,3 +1,14 @@
+# Search params
+
+```ts
+  const routeApi = getRouteApi(ROUTE_PATHS.AUTH.LOGIN);
+  const { redirectTo } = routeApi.useSearch();
+
+  ---
+    const search = useSearch({ strict: false });
+  const redirectTo = (search.redirectTo as string) || './app';
+```
+
 # Patterns
 
 ## Alert
@@ -50,4 +61,47 @@ Use this pattern to show a success alert when a mutation succeeds:
 }
 ```
 
-This approach provides a consistent way to handle success and error states after form submissions.
+## Guards
+
+## AuthGuard
+
+The `AuthGuard` component is a higher-order component that handles authentication and authorization for protected routes.
+
+### Behavior
+
+- Shows a loading spinner while checking authentication status.
+- Redirects authenticated users away from auth pages.
+- Redirects unauthenticated users to login with return path.
+- Renders children only when access conditions are met.
+
+### Usage Example
+
+```tsx
+import { AuthGuard } from '@/components/guards/auth-guard';
+
+<AuthGuard requireAuth>
+  <ProtectedComponent />
+</AuthGuard>;
+```
+
+---
+
+## StoreGuard
+
+The `StoreGuard` component is a higher-order component that enforces users to set up their store before proceeding.
+
+### Behavior
+
+- Shows a loading spinner while checking if the store is set up.
+- Redirects users without a store to the setup page.
+- Renders children only when the store is set up.
+
+### Usage Example
+
+```tsx
+import { StoreGuard } from '@/components/guards/store-guard';
+
+<StoreGuard>
+  <ComponentRequiringStore />
+</StoreGuard>;
+```

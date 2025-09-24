@@ -43,7 +43,7 @@ export const ROUTE_PATHS = {
 
       INFO_EDIT: '/app/store/edit', // store header info edit page
       CREATE_STORE: '/app/store/create', // create store flow
-
+      SETUP_STORE: '/app/store/setup', // initial setup wizard after creating store
       //DASHBOARD: '/app/store/dashboard', // manage products, orders, settings
     },
     BOOKING: {
@@ -146,6 +146,7 @@ export const routeBuilder = {
     },
     editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,
     createStore: () => ROUTE_PATHS.APP.STORE.CREATE_STORE,
+    setupStore: () => ROUTE_PATHS.APP.STORE.SETUP_STORE,
   },
 
   // Booking routes
