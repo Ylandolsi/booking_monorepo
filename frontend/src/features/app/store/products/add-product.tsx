@@ -222,16 +222,12 @@ export function AddProductFlow() {
                   Create Product
                 </Button>
               </div>
+              <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
+                Cancel
+              </Button>
             </div>
           )}
         </Form>
-
-        {/* Cancel Button */}
-        <div className="mt-6 w-full text-center">
-          <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
-            Cancel
-          </Button>
-        </div>
       </div>
     </ResponsiveBuilderLayout>
   );
