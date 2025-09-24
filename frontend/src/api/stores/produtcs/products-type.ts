@@ -1,4 +1,7 @@
 import type { Picture } from '@/api/stores/types';
+import { createDigitalProductSchema } from '@/api/stores/produtcs/digital';
+import { createSessionProductSchema } from '@/api/stores/produtcs/sessions';
+import z from 'zod';
 
 export interface Product {
   productSlug: string;

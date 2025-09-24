@@ -1,4 +1,5 @@
 import { createProductBaseSchema } from '@/api/stores/produtcs/base-schema';
+import { createDigitalProductSchema } from '@/api/stores/produtcs/digital';
 import { ProductType } from '@/api/stores/produtcs/products-type';
 import { toFormData } from '@/lib/api';
 import z from 'zod';
@@ -49,3 +50,7 @@ export const patchPostSessionSchemaToFormData = (data: CreateSessionProductReque
 export interface PatchPostSessionResponse {
   slug: string;
 }
+
+// Global product schema to discriminate between different product types : decalred here to avoid circular dependencies
+export const createProductSchema = z.discriminatedUnion('productType', [createSessionProductSchema, createDigitalProductSchema]);
+export type CreateProductInput = z.infer<typeof createProductSchema>;

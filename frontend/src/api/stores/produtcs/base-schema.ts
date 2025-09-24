@@ -1,5 +1,3 @@
-import { createDigitalProductSchema } from '@/api/stores/produtcs/digital';
-import { createSessionProductSchema } from '@/api/stores/produtcs/sessions';
 import z from 'zod';
 
 export const createProductBaseSchema = z.object({
@@ -10,7 +8,3 @@ export const createProductBaseSchema = z.object({
   clickToPay: z.string().min(1, 'Button text is required'),
   thumbnail: z.instanceof(File).optional(),
 });
-
-export const createProductSchema = z.discriminatedUnion('productType', [createSessionProductSchema, createDigitalProductSchema]);
-
-export type CreateProductInput = z.infer<typeof createProductSchema>;
