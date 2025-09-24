@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,46 +13,32 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessi
 
 public class CreateSessionProductEndpoint : IEndpoint
 {
-    public record CreateSessionProductRequest(
-        string Title,
-        string Subtitle,
-        string Description,
-        IFormFile? PreviewImage,
-        IFormFile? ThumbnailImage,
-        string ClickToPay,
-        decimal Price,
-        int DurationMinutes,
-        int BufferTimeMinutes,
-        string MeetingInstructions,
-        List<DayAvailability> DayAvailabilities,
-        string TimeZoneId = "Africa/Tunis"
-    );
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Products.Sessions.Create, async (
-                [FromForm] CreateSessionProductRequest request,
+                [FromForm] PatchPostSessionProductRequest request,
                 UserContext userContext,
-                ICommandHandler<CreateSessionProductCommand, PatchPostProductResponse> handler,
+                ICommandHandler<PostSessionProductCommand, PatchPostProductResponse> handler,
                 CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
 
-                var command = new CreateSessionProductCommand(
-                    userId,
-                    request.Title,
-                    request.Subtitle,
-                    request.Description,
-                    request.ClickToPay,
-                    request.Price,
-                    request.PreviewImage,
-                    request.ThumbnailImage,
-                    request.DurationMinutes,
-                    request.BufferTimeMinutes,
-                    request.DayAvailabilities,
-                    request.MeetingInstructions,
-                    request.TimeZoneId
-                );
+                var command = new PostSessionProductCommand
+                {
+                    UserId = userId,
+                    Title = request.Title,
+                    Subtitle = request.Subtitle,
+                    Description = request.Description,
+                    PreviewImage = request.PreviewImage,
+                    ThumbnailImage = request.ThumbnailImage,
+                    ClickToPay = request.ClickToPay,
+                    Price = request.Price,
+                    DurationMinutes = request.DurationMinutes,
+                    BufferTimeMinutes = request.BufferTimeMinutes,
+                    DayAvailabilities = request.DayAvailabilities,
+                    MeetingInstructions = request.MeetingInstructions,
+                    //TimeZoneId = request.TimeZoneId,
+                };
 
                 var result = await handler.Handle(command, cancellationToken);
 

@@ -1,10 +1,11 @@
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using FluentValidation;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessionProduct;
 
-internal sealed class UpdateSessionProductCommandValidator : AbstractValidator<UpdateSessionProductCommand>
+internal sealed class PatchSessionProductCommandValidator : AbstractValidator<PatchSessionProductCommand>
 {
-    public UpdateSessionProductCommandValidator()
+    public PatchSessionProductCommandValidator()
     {
         RuleFor(q => q.ProductSlug)
             .NotEmpty()

@@ -2,6 +2,7 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
@@ -10,34 +11,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessionProduct;
 
-public record UpdateSessionProductCommand(
-    int UserId,
-    string ProductSlug,
-    string Title,
-    string Subtitle,
-    string Description,
-    string ClickToPay,
-    decimal Price,
-    //  either keep old URL or upload new file
-    string? PreviewImageUrl,
-    IFormFile? PreviewImage,
-    string? ThumbnailImageUrl,
-    IFormFile? ThumbnailImage,
-    
-    int DurationMinutes,
-    int BufferTimeMinutes,
-    List<DayAvailability> DayAvailabilities,
-    string MeetingInstructions = "",
-    string TimeZoneId = "Africa/Tunis"
-) : ICommand<PatchPostProductResponse>;
-
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
     ILogger<UpdateSessionProductHandler> logger)
-    : ICommandHandler<UpdateSessionProductCommand, PatchPostProductResponse>
+    : ICommandHandler<PatchSessionProductCommand, PatchPostProductResponse>
 {
-    public async Task<Result<PatchPostProductResponse>> Handle(UpdateSessionProductCommand command,
+    public async Task<Result<PatchPostProductResponse>> Handle(PatchSessionProductCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating session product {ProductSlug} for user {UserId}",

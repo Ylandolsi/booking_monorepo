@@ -1,10 +1,11 @@
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using FluentValidation;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct;
 
-internal sealed class CreateSessionProductCommandValidator : AbstractValidator<CreateSessionProductCommand>
+internal sealed class PostSessionProductCommandValidator : AbstractValidator<PostSessionProductCommand>
 {
-    public CreateSessionProductCommandValidator()
+    public PostSessionProductCommandValidator()
     {
         RuleFor(c => c.UserId)
             .GreaterThan(0)

@@ -32,7 +32,6 @@
 
     <ItemGroup>
       <Folder Include="Features\Payout\Admin\GetDetailed\" />
-      <Folder Include="Features\Stores\Private\Update\Ignore\" />
     </ItemGroup>
 
     <ItemGroup>

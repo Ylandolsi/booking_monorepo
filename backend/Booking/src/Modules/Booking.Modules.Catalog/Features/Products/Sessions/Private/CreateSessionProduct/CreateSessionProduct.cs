@@ -4,6 +4,7 @@ using Booking.Common.SlugGenerator;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
@@ -12,30 +13,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct;
 
-public record CreateSessionProductCommand(
-    int UserId,
-    string Title,
-    string Subtitle,
-    string Description,
-    string ClickToPay,
-    decimal Price,
-    IFormFile? PreviewImage,
-    IFormFile? ThumbnailImage,
-    int DurationMinutes,
-    int BufferTimeMinutes,
-    List<DayAvailability> DayAvailabilities,
-    string MeetingInstructions = "",
-    string TimeZoneId = "Africa/Tunis"
-) : ICommand<PatchPostProductResponse>;
-
 public class CreateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
     ILogger<CreateSessionProductHandler> logger)
-    : ICommandHandler<CreateSessionProductCommand, PatchPostProductResponse>
+    : ICommandHandler<PostSessionProductCommand, PatchPostProductResponse>
 {
-    public async Task<Result<PatchPostProductResponse>> Handle(CreateSessionProductCommand command,
+    public async Task<Result<PatchPostProductResponse>> Handle(PostSessionProductCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation(
