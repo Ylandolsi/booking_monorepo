@@ -35,9 +35,7 @@ useEffect(() => {
     if (hasOpenPopover) {
       const target = e.target as HTMLElement;
       const popoverElement = target.closest('[data-state="open"]');
-      const isCommandContent =
-        popoverElement &&
-        popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target);
+      const isCommandContent = popoverElement && popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target);
 
       if (isCommandContent) {
         // Prevent dialog from scrolling when interacting with command list
@@ -132,9 +130,7 @@ React.useEffect(() => {
     if (hasOpenPopover) {
       const target = e.target as HTMLElement;
       const popoverElement = target.closest('[data-state="open"]');
-      const isCommandContent =
-        popoverElement &&
-        popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target);
+      const isCommandContent = popoverElement && popoverElement.querySelector('.max-h-\\[200px\\]')?.contains(target);
 
       if (isCommandContent) {
         e.stopPropagation(); // Let the dropdown handle its own scrolling
@@ -181,9 +177,7 @@ Uses **capture phase** to intercept events before they reach their target, allow
 
 ```tsx
 const popoverElement = target.closest('[data-state="open"]');
-const isCommandContent = popoverElement
-  ?.querySelector('.max-h-\\[200px\\]')
-  ?.contains(target);
+const isCommandContent = popoverElement?.querySelector('.max-h-\\[200px\\]')?.contains(target);
 ```
 
 - `closest()` finds the nearest open popover ancestor
@@ -193,34 +187,12 @@ const isCommandContent = popoverElement
 ### Context Wrapping
 
 ```tsx
-const wrappedChildren = (
-  <PopoverContext.Provider value={{ registerPopover }}>
-    {children}
-  </PopoverContext.Provider>
-);
+const wrappedChildren = <PopoverContext.Provider value={{ registerPopover }}>{children}</PopoverContext.Provider>;
 ```
 
 All children are wrapped in the context provider, making the registration function available to any nested `MultiSelect` components.
 
-```ts
-Item['name'])
-
-
-export type Item = {
-  name:
-    | 'Home'
-    | 'Profile'
-    | 'Bookings'
-    | 'Search'
-    | 'Notifications'
-    | 'Settings'
-    | 'Become Mentor';
-  icon: JSX.Element;
-  click: () => void;
-  badge?: string;
-};
-
-```
+`````
 
 ````tsx
                 <Checkbox
@@ -230,81 +202,16 @@ export type Item = {
                   className="data-[state=checked]:bg-green-600"
                 />
                 ```
-````
-
-<!-- const alertIconMap = {
-default: AlertCircle,
-destructive: XCircle,
-success: CheckCircle,
-warning: AlertTriangle,
-info: Info,
-} as const;
-// {React.createElement(alertIconMap['success'])} -->
-
-after each form this is a better way to handle the success/error
-
-<!-- {becomeMentorMutation.isError && (
-<Alert variant={'destructive'}>
-{React.createElement(alertIconMap['destructive'])}
-<AlertTitle>Error</AlertTitle>
-<AlertDescription>
-Failed to register as a mentor. Please try again.
-</AlertDescription>
-</Alert>
-)}
-
-      {becomeMentorMutation.isSuccess && (
-        <Alert variant={'success'}>
-          {React.createElement(alertIconMap['success'])}
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>
-            Failed to register as a mentor. Please try again.
-          </AlertDescription>
-        </Alert>
-      )} -->
+`````
 
 ctrl + e : search for files
 ctrl + tab : naviagte the open tabs
 ctrl + alt + click : show the file or wher eits called
 ctrl + < + w : to enable multicursor
 ctrl + shift + p : toggle multicursor modfier to return to : ctrl + click open new tab
+`
 
-```ts
-export function useMentorDetails(
-  userSlug?: string | null,
-  overrides?: Partial<UseQueryOptions<any, Error>>,
-): UseQueryResult<Mentor, Error> {
-  return useQuery(
-    queryOptions({
-      queryKey: mentorQueryKeys.mentorProfile(userSlug),
-      queryFn: () => mentorDetails(userSlug),
-      enabled: !!userSlug,
-      ...overrides,
-    }),
-  );
-}
-```
-
-card inside dialog is a good idea
-
-`````
-      {/* Current Status Card */}
-      <Card className="mb-8">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="flex items-center gap-2">
-            <Award className="w-5 h-5 text-blue-600" />
-            Your Mentor Profile
-          </CardTitle>
-
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogTrigger>
-              <Button variant="outline" size="sm">
-                <Edit3 className="w-4 h-4 mr-2" />
-                Edit Profile
-              </Button>
-            </DialogTrigger>
-            ````
-`````
+````
 
 Great question! The reason for using `JSON.stringify` and then `JSON.parse` when setting `originalSchedule` is to create a **deep copy** of the `loadedSchedule` array.
 
@@ -471,21 +378,7 @@ const handlePayoutRequest = async (amount: number) => {
   }
 };
 
- {/* Success Alert */}
-{payoutSuccess && (
-  <Alert className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-900">
-    <AlertCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
-    <div className="ml-2">
-      <p className="text-sm text-green-800 dark:text-green-200">
-        <strong>Payout request submitted successfully!</strong>
-      </p>
-      <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-        Your payout request is being processed and will be completed
-        within 3-5 business days.
-      </p>
-    </div>
-  </Alert>
-)}
+
 ```
 
 SingleFlight
@@ -516,5 +409,4 @@ export default {
 };
 ```
 
-
-  overrides?: Partial<UseQueryOptions<Array<Session>, unknown, Array<Session>>>,
+````
