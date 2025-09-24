@@ -224,3 +224,43 @@ tracking-wider" style={{ letterSpacing: '0.0.5em' }}
 
 const error = new URLSearchParams(location.search).get('error') ?? undefined;
 form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
+
+---
+
+zod alterantive
+
+```ts
+
+export interface BookingHookState {
+  selectedDate: Date | undefined;
+  selectedSlot: SessionSlotType | null;
+  step: BookingStep;
+  notes: string;
+  title: string;
+}
+
+export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; iamTheMentor: boolean }) {
+  const [state, setState] = useState<BookingHookState>({
+    selectedDate: new Date(),
+    selectedSlot: null,
+    step: 'select',
+    notes: '',
+    title: '',
+  });
+
+  // Actions ...
+const setSelectedDate = useCallback((date: Date | undefined) => {
+  setState((prev: BookingHookState) => ({
+    ...prev,
+    selectedDate: date,
+    selectedSlot: null, // Reset slot when date changes
+  }));
+}, []);
+
+const setSelectedSlot = useCallback((slot: SessionSlotType | null) => {
+  setState((prev: BookingHookState) => ({
+    ...prev,
+    selectedSlot: slot,
+  }));
+}, []);
+```
