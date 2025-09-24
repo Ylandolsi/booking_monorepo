@@ -7,6 +7,7 @@ import { LazyImage } from '@/utils';
 import type { ProductFormData } from '@/features/app/store/products/add-product';
 import { BookingPage } from '@/features/app/store/products/components/checkout/book';
 import calendarImage from '@/assets/calendar-image.jpeg';
+import { StoreHeader } from '@/components';
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
   previewData: ProductFormData;
@@ -57,7 +58,12 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
               <MobileContainer>
                 {/* TODO : add header ?  */}
                 {/* TODO : make display mode dynamic ?  */}
-                {viewType == 'overview' && <ProductCard product={productData} displayMode="full" />}
+                {viewType == 'overview' && (
+                  <div className="flex h-full w-full items-center justify-center">
+                    {/* <StoreHeader store={} /> */}
+                    <ProductCard product={productData} displayMode="full" />
+                  </div>
+                )}
                 {viewType == 'checkout' && <CheckoutPageProduct productData={productData} />}
               </MobileContainer>
               <div className="mt-4 flex w-full items-center justify-center gap-2">
