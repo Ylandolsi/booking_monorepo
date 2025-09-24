@@ -8,15 +8,13 @@ import { useState } from 'react';
 
 export function ModifyStore() {
   let { data: store, isLoading, isError } = useMyStore();
-  store = initialStore; // for testing
-  isError = false;
-  isLoading = false;
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const [products, setProducts] = useState<Product[]>(initProducts);
+  const [products, setProducts] = useState<Product[]>([]);
 
   if (isLoading) return <LoadingState type="spinner" />;
-  // TODO : uncomment it if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+
+  if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -58,8 +56,8 @@ export function ModifyStore() {
   };
   return (
     <div className="flex min-h-screen flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
-      <div className="flex flex-col gap-5">
-        <div className="text-card-foreground rounded-xl border px-3 py-3 shadow-sm">
+      <div className="flex w-full flex-col gap-5">
+        <div className="text-card-foreground w-full rounded-xl border px-3 py-3 shadow-sm">
           <div className="flex gap-3">
             {/* // <img src={store?.picture?.mainLink ?? FALLBACK_PROFILE_PICTURE} alt="Store Profile Picture" /> */}
             <LazyImage

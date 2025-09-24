@@ -32,18 +32,11 @@ export function EnhancedStorefrontDashboard({
   className,
 }: EnhancedStorefrontDashboardProps) {
   let { data: store, isLoading, isError } = useMyStore();
-  store = initialStore; // for testing
-  isError = false;
-  isLoading = false;
   const [displayMode, setDisplayMode] = useState<DisplayMode>('full');
 
-  if (isLoading) {
-    return <LoadingState type="spinner" />;
-  }
+  if (isLoading) return <LoadingState type="spinner" />;
 
-  if (isError || !store) {
-    return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
-  }
+  if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   return (
     <MobileContainer screenWidth={340} className={cn('items-center space-y-4', className)}>
@@ -57,7 +50,7 @@ export function EnhancedStorefrontDashboard({
         )} */}
 
       {products.length === 0 ? (
-        <EmptyState onAddProduct={isOwner ? onAddProduct : undefined} />
+        <EmptyState />
       ) : (
         <>
           <DraggableProductList
