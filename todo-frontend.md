@@ -70,36 +70,6 @@ export default {
 
 ### how to use tanstack query efficeyvely
 
-```ts
-// query option : for overrides :
-export function useMentorDetails(
-  userSlug?: string | null,
-  overrides?: Partial<UseQueryOptions<any, Error>>
-): UseQueryResult<Mentor, Error> {
-  return useQuery(
-    queryOptions({
-      queryKey: mentorQueryKeys.mentorProfile(userSlug),
-      queryFn: () => mentorDetails(userSlug),
-      enabled: !!userSlug,
-      ...overrides,
-    })
-  );
-}
------
-
-export const useIntegrateWithKonnect = () => {
-  return useMutation({
-    mutationFn: (walledId: string) => integateWithKonnect(walledId),
-    meta: {
-      invalidatesQuery: [authQueryKeys.currentUser()],
-      successMessage: 'Successfully integrated with Konnect',
-      errorMessage: 'Failed to integrate with Konnect',
-    },
-  });
-};
-
-```
-
 - Codegen from an openapi spec using orval.dev. This generated all the api code as well as mock data. The setting we used was api functions rather than hooks
 
 - Used the query key factory : https://github.com/lukemorales/query-key-factory#fine-grained-declaration-colocated-by-features so we can co locate query keys and api calls by feature. This centralised both query keys and apis calls in one place
@@ -226,41 +196,3 @@ const error = new URLSearchParams(location.search).get('error') ?? undefined;
 form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
 
 ---
-
-zod alterantive
-
-```ts
-
-export interface BookingHookState {
-  selectedDate: Date | undefined;
-  selectedSlot: SessionSlotType | null;
-  step: BookingStep;
-  notes: string;
-  title: string;
-}
-
-export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; iamTheMentor: boolean }) {
-  const [state, setState] = useState<BookingHookState>({
-    selectedDate: new Date(),
-    selectedSlot: null,
-    step: 'select',
-    notes: '',
-    title: '',
-  });
-
-  // Actions ...
-const setSelectedDate = useCallback((date: Date | undefined) => {
-  setState((prev: BookingHookState) => ({
-    ...prev,
-    selectedDate: date,
-    selectedSlot: null, // Reset slot when date changes
-  }));
-}, []);
-
-const setSelectedSlot = useCallback((slot: SessionSlotType | null) => {
-  setState((prev: BookingHookState) => ({
-    ...prev,
-    selectedSlot: slot,
-  }));
-}, []);
-```
