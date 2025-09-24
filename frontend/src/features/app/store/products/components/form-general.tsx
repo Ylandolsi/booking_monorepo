@@ -1,4 +1,4 @@
-import type { ProductType } from '@/api/stores/produtcs/sessions';
+import type { ProductType } from '@/api/stores/produtcs';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
