@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import { mapDayToNumber } from '@/utils/enum-days-week';
+import { mapDayToNumber, mapNumberToDay } from '@/utils/enum-days-week';
 import type { DayOfWeek } from '@/features/app/session/booking/shared';
 import { GenerateIdNumber } from '@/lib';
 import type { DailySchedule, AvailabilityRangeType, CreateProductInput } from '@/api/stores';
 
 export interface UseFormScheduleReturn {
+  error: string;
   schedule: DailySchedule[];
   selectedCopySource: DayOfWeek | null;
   actions: {
@@ -32,7 +33,7 @@ const createDefaultSchedule = (): DailySchedule[] => {
 
 export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFormScheduleReturn {
   const [selectedCopySource, setSelectedCopySource] = useState<DayOfWeek | null>(null);
-
+  const [error, setError] = useState<string>('');
   // Watch the dailySchedule field from the form
   const formSchedule = form.watch('dailySchedule') as DailySchedule[] | undefined;
 
@@ -41,9 +42,49 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
     if (!formSchedule || formSchedule.length === 0) {
       form.setValue('dailySchedule', createDefaultSchedule());
     }
+    const message = verifyScheduleIntegrity();
+    setError(message);
   }, [form, formSchedule]);
 
   const schedule = formSchedule || createDefaultSchedule();
+
+  const verifyScheduleIntegrity = () => {
+    const currentSchedule = form.getValues('dailySchedule') as DailySchedule[];
+    let message: string = '';
+    if (!currentSchedule) return message;
+    for (const daySchedule of currentSchedule) {
+      if (daySchedule.isActive) {
+        // ensure daily schedules :
+        // - availability ranges do not overlap
+        // - startTime is before endTime
+
+        let ranges = daySchedule.availabilityRanges;
+        ranges.sort((a, b) => parseInt(a.startTime.replace(':', ''), 10) - parseInt(b.startTime.replace(':', ''), 10));
+
+        for (let i = 0; i < ranges.length; i++) {
+          const rangeA = ranges[i];
+          const startA = parseInt(rangeA.startTime.replace(':', ''), 10); // base 10 : remove leading zeros : 09:00 -> 900
+          const endA = parseInt(rangeA.endTime.replace(':', ''), 10);
+
+          if (startA >= endA) {
+            message = `Time ranges on day ${mapNumberToDay(daySchedule.dayOfWeek)} overlap or are invalid.`;
+            return message;
+          }
+
+          // Check for overlaps with the next range
+          if (i < ranges.length - 1) {
+            const rangeB = ranges[i + 1];
+            const startB = parseInt(rangeB.startTime.replace(':', ''), 10);
+            if (endA > startB) {
+              message = `Time ranges on day ${mapNumberToDay(daySchedule.dayOfWeek)} overlap or are invalid.`;
+              return message;
+            }
+          }
+        }
+      }
+    }
+    return message;
+  };
 
   const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
     const currentSchedule = (form.getValues('dailySchedule') as DailySchedule[]) || createDefaultSchedule();
@@ -116,6 +157,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
   };
 
   return {
+    error,
     schedule,
     selectedCopySource,
     actions: {

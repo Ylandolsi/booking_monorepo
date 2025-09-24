@@ -218,6 +218,11 @@ public class CreateSessionProductHandler(
                         continue;
                     }
 
+                    // What happens if this was created  :
+                    //  9-12
+                    //  10-14
+                    
+                    
                     var availability = SessionAvailability.Create(
                         sessionProduct.Id,
                         sessionProduct.ProductSlug,
