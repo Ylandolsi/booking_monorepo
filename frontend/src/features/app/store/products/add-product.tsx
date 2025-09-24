@@ -52,7 +52,6 @@ export function AddProductFlow() {
       duration: type == 'Session' ? 30 : undefined,
       bufferTime: type == 'Session' ? 0 : undefined,
       meetingInstructions: '',
-      timeZoneId: type == 'Session' ? 'UTC' : undefined,
       files: type == 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
       previewImage: undefined,
@@ -92,30 +91,32 @@ export function AddProductFlow() {
             <h2 className="text-foreground mb-2 text-xl font-semibold">Edit Product</h2>
             <p className="text-muted-foreground">Update your {type === 'Session' ? 'booking service' : 'digital product'}</p>
           </div>
-
-          {/* Tab Navigation */}
-          <TabNavigation
-            tabs={[
-              { id: 'general', label: 'General Info', description: 'Title, image, pricing', icon: '📝' },
-              {
-                id: 'details',
-                label: 'Details',
-                description: type === 'Session' ? 'Scheduling & meetings' : 'Files & downloads',
-                icon: type === 'Session' ? '📅' : '📁',
-                // TODO : add type link as well
-              },
-            ]}
-            activeTab={activeTab}
-            onTabChange={(tabId) => setActiveTab(tabId as 'general' | 'details')}
-            className=""
-          />
         </div>
 
-        {/* Content */}
-        <Form {...form}>
+        {/* Tab Navigation */}
+        <TabNavigation
+          tabs={[
+            { id: 'general', label: 'General Info', description: 'Title, image, pricing', icon: '📝' },
+            {
+              id: 'details',
+              label: 'Details',
+              description: type === 'Session' ? 'Scheduling & meetings' : 'Files & downloads',
+              icon: type === 'Session' ? '📅' : '📁',
+              // TODO : add type link as well
+            },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(tabId) => setActiveTab(tabId as 'general' | 'details')}
+          className=""
+        />
+      </div>
+
+      {/* Content */}
+      <Form {...form}>
+        <div className="space-y-6 px-6">
           {type && activeTab === 'general' && <FormGeneral form={form} type={type} setActiveTab={setActiveTab} />}
           {type && activeTab === 'details' && (
-            <div className="space-y-6 px-6">
+            <>
               <div className="mb-6 text-center">
                 <h2 className="text-foreground mb-2 text-xl font-semibold">{type === 'Session' ? 'Session Settings' : 'Digital Product Settings'}</h2>
                 <p className="text-muted-foreground">
@@ -222,13 +223,13 @@ export function AddProductFlow() {
                   Create Product
                 </Button>
               </div>
-              <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
-                Cancel
-              </Button>
-            </div>
+            </>
           )}
-        </Form>
-      </div>
+          <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
+            Cancel
+          </Button>
+        </div>
+      </Form>
     </ResponsiveBuilderLayout>
   );
 }

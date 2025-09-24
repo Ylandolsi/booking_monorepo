@@ -38,7 +38,7 @@ export function FormGeneral({
   }, []);
 
   return (
-    <div className="space-y-6 px-6">
+    <>
       <div className="mb-6 text-center">
         <h2 className="text-foreground mb-2 text-xl font-semibold">{type === 'Session' ? 'Session Details' : 'Product Details'}</h2>
         <p className="text-muted-foreground">Fill in the details for your {type === 'Session' ? 'booking service' : 'digital product'}</p>
@@ -157,6 +157,6 @@ export function FormGeneral({
           Next: Details
         </Button>
       </div>
-    </div>
+    </>
   );
 }
