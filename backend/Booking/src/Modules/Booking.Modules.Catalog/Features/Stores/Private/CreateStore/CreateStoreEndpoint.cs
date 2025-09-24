@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Stores.Private.Shared;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,33 +13,25 @@ namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
 public class CreateStoreEndpoint : IEndpoint
 {
-    public record Request
-    {
-        public string Title { get; init; }
-        public string Slug { get; init; }
-        public IFormFile File { get; init; }
-        public string Description { get; init; }
-        public List<SocialLink>? SocialLinks { get; init; }
-    }
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Stores.Create, async (
-                [FromForm] Request request,
+                [FromForm] PatchPostStoreRequest request,
                 UserContext userContext,
-                ICommandHandler<CreateStoreCommand, PatchPostStoreResponse> handler,
+                ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>
             {
                 var userId = userContext.UserId;
 
-                var command = new CreateStoreCommand(
-                    userId,
-                    request.Slug,
-                    request.Title,
-                    request.File,
-                    request.SocialLinks,
-                    request.Description
-                );
+                var command = new PatchPostStoreCommand
+                {
+                    UserId = userId,
+                    Slug = request.Slug,
+                    Title = request.Title,
+                    File = request.File,
+                    SocialLinks = request.SocialLinks,
+                    Description = request.Description
+                };
 
                 var result = await handler.Handle(command, context.RequestAborted);
 
@@ -46,7 +39,7 @@ public class CreateStoreEndpoint : IEndpoint
             })
             .RequireAuthorization()
             .WithTags("Stores")
-            .WithSummary("Createc a new store")
+            .WithSummary("Create  a new store")
             .DisableAntiforgery(); // TODO !!!! 
     }
 }

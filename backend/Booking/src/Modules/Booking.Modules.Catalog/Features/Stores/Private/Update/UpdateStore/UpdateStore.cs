@@ -3,6 +3,7 @@ using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Stores.Private.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,21 +11,14 @@ using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 
-public record UpdateStoreCommand(
-    int UserId,
-    string Title,
-    Dictionary<string , int>? Orders, //  product slug is a key , order : int 
-    string? Description = null,
-    Picture? Picture = null,
-    IReadOnlyList<SocialLink>? SocialLinks = null
-) : ICommand<PatchPostStoreResponse>;
-
 public class UpdateStoreHandler(
     CatalogDbContext context,
+    StoreService storeService,
     IUnitOfWork unitOfWork,
-    ILogger<UpdateStoreHandler> logger) : ICommandHandler<UpdateStoreCommand, PatchPostStoreResponse>
+    ILogger<UpdateStoreHandler> logger) : ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse>
 {
-    public async Task<Result<PatchPostStoreResponse>> Handle(UpdateStoreCommand command, CancellationToken cancellationToken)
+    public async Task<Result<PatchPostStoreResponse>> Handle(PatchPostStoreCommand command,
+        CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating store for user {UserId} with title {Title}",
             command.UserId, command.Title);
@@ -61,22 +55,32 @@ public class UpdateStoreHandler(
             var socialLinksData = command.SocialLinks?.Select(sl => (sl.Platform, sl.Url)).ToList();
             store.UpdateStoreWithLinks(command.Title, command.Description, socialLinksData);
 
-            // Update picture if provided
-            if (command.Picture != null)
-            {
-                store.UpdatePicture(command.Picture);
-            }
 
-            foreach (var product in store.Products)
+            if (command.Orders is not null)
             {
-                if (command.Orders.TryGetValue(product.ProductSlug , out var order))
+                foreach (var product in store.Products)
                 {
-                    if (order != product.DisplayOrder && order != 0)
+                    if (command.Orders.TryGetValue(product.ProductSlug, out var order))
                     {
-                        product.UpdateDisplayOrder(order);
+                        if (order != product.DisplayOrder && order != 0)
+                        {
+                            product.UpdateDisplayOrder(order);
+                        }
                     }
                 }
-                
+            }
+
+            if (command?.File is not null) // only update when provided 
+            {
+                var profilePictureResult = await storeService.UploadPicture(command.File, command.Slug);
+                if (profilePictureResult.IsFailure)
+                {
+                    logger.LogWarning("Failed to upload picture for store {Slug}: {Error}",
+                        command.Slug, profilePictureResult.Error.Description);
+                    // Continue with default picture instead of failing
+                }
+
+                store.UpdatePicture(profilePictureResult.IsSuccess ? profilePictureResult.Value : new Picture());
             }
 
             // Save changes
@@ -84,12 +88,11 @@ public class UpdateStoreHandler(
             await unitOfWork.CommitTransactionAsync(cancellationToken);
 
             logger.LogInformation("Successfully updated store {StoreId} for user {UserId}. " +
-                                "Title changed from '{OriginalTitle}' to '{NewTitle}', " +
-                                "Description changed from '{OriginalDescription}' to '{NewDescription}'",
+                                  "Title changed from '{OriginalTitle}' to '{NewTitle}', " +
+                                  "Description changed from '{OriginalDescription}' to '{NewDescription}'",
                 store.Id, command.UserId, originalTitle, command.Title,
                 originalDescription, command.Description);
 
-            
 
             return Result.Success(new PatchPostStoreResponse(store.Slug));
         }
@@ -102,7 +105,7 @@ public class UpdateStoreHandler(
         }
     }
 
-    private static Result ValidateCommand(UpdateStoreCommand command)
+    private static Result ValidateCommand(PatchPostStoreCommand command)
     {
         if (command.UserId <= 0)
             return Result.Failure(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
@@ -114,7 +117,8 @@ public class UpdateStoreHandler(
             return Result.Failure(Error.Problem("Store.TitleTooLong", "Store title cannot exceed 100 characters"));
 
         if (command.Description?.Length > 1000)
-            return Result.Failure(Error.Problem("Store.DescriptionTooLong", "Store description cannot exceed 1000 characters"));
+            return Result.Failure(Error.Problem("Store.DescriptionTooLong",
+                "Store description cannot exceed 1000 characters"));
 
         return Result.Success();
     }

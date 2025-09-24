@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Update.depricated.UpdateStorePicture;
 
 public class UpdateStorePictureEndpoint : IEndpoint
 {

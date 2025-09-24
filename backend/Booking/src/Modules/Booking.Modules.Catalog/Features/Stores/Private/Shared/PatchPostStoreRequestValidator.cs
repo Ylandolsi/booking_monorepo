@@ -1,9 +1,10 @@
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Shared;
 
-internal sealed class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
+
+internal sealed class CreateStoreCommandValidator : AbstractValidator<PatchPostStoreCommand>
 {
     private static readonly string[] ValidPlatforms = new[]
     {
@@ -24,7 +25,7 @@ internal sealed class CreateStoreCommandValidator : AbstractValidator<CreateStor
             .MinimumLength(3)
             .WithMessage("Store title must be at least 3 characters.");
 
-        RuleFor(c => c.StoreSlug)
+        RuleFor(c => c.Slug)
             .NotEmpty()
             .WithMessage("Store slug is required.")
             .MaximumLength(100)

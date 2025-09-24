@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Update.depricated.UpdateStorePicture;
 
 internal sealed class UpdateStorePictureCommandValidator : AbstractValidator<UpdateStorePictureCommand>
 {

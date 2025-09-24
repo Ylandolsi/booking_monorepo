@@ -7,9 +7,8 @@ using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
-namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStorePicture;
+namespace Booking.Modules.Catalog.Features.Stores.Private.Update.depricated.UpdateStorePicture;
 
 public record UpdateStorePictureCommand(
     int UserId,

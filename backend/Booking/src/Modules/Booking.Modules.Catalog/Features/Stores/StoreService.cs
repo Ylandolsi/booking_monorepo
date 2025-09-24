@@ -13,8 +13,15 @@ public class StoreService(
     S3ImageProcessingService imageProcessingService,
     ILogger<StoreService> logger)
 {
-    public async Task<Result<Picture>> UploadPicture(IFormFile file, string storeSlug)
+    public async Task<Result<Picture>> UploadPicture(IFormFile? file, string storeSlug)
     {
+        if (file == null)
+        {
+            return Result.Failure<Picture>(
+                Error.Problem("Image.Is.Null",
+                    $"Image file should not be null"));
+        }
+
         const long maxFileSizeBytes = 5 * 1024 * 1024; // 5MB
         if (file.Length > maxFileSizeBytes)
         {
