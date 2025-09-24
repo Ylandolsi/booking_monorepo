@@ -87,6 +87,24 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
         // TODO :
         // access data.error for validation errors
         // Example: if (data.error) { ... }
+        //         "errors": [
+        //     {
+        //         "code": "NotEmptyValidator",
+        //         "description": "At least one day availability must be provided.",
+        //         "type": 2
+        //     },
+        //     {
+        //         "code": "PredicateValidator",
+        //         "description": "Invalid availability configuration. Time ranges must be in HH:mm format and end time must be after start time.",
+        //         "type": 2
+        //     }
+        // ],
+        if (data.error) {
+          console.error('Validation errors:', data.error);
+          data.error.forEach((err) => {
+            message += `\n- ${err.description}`;
+          });
+        }
       } catch {
         /* ignore */
       }
