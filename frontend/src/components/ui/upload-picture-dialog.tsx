@@ -26,6 +26,8 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
     handleBackToSelect,
     handleUpload,
     handleCloseDialog,
+    isAspectRatioLocked,
+    aspectRatio,
   } = useUploadPicture();
 
   return (
@@ -63,12 +65,13 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
                 <div className="w-full max-w-sm">
                   <ReactCrop
                     crop={crop}
-                    aspect={1}
-                    onChange={(c) => setCrop(c)}
+                    onChange={setCrop}
                     onComplete={handleCropComplete}
                     className="overflow-hidden rounded-lg"
+                    aspect={isAspectRatioLocked ? aspectRatio : undefined} // Lock the ratio
+                    locked={isAspectRatioLocked} // Prevent manual ratio changes
                   >
-                    <img ref={imgRef} src={selectedImage} onLoad={handleImageLoad} alt="picture" className="max-h-64 w-full object-contain" />
+                    <img ref={imgRef} src={selectedImage} alt="Crop preview" onLoad={handleImageLoad} />
                   </ReactCrop>
                 </div>
               </div>

@@ -10,6 +10,8 @@ type UploadImageState = {
   croppedImageUrl: string | null;
   crop: PixelCrop | undefined;
   step: 'select' | 'crop';
+  aspectRatio: number; // Added aspect ratio to state
+  isAspectRatioLocked: boolean; // Added to control if aspect ratio is locked
 
   // Refs
   imgRef: React.RefObject<HTMLImageElement>; // image displayed for cropping
@@ -26,6 +28,8 @@ type UploadImageActions = {
   setCroppedImageUrl: (url: string | null) => void;
   setCrop: (crop: PixelCrop | undefined) => void;
   setStep: (step: 'select' | 'crop') => void;
+  setAspectRatio: (ratio: number) => void; // Added action to change aspect ratio
+  setAspectRatioLocked: (locked: boolean) => void; // Added action to lock/unlock aspect ratio
 
   // Business logic actions
   selectFile: (file: File) => void;
@@ -33,6 +37,7 @@ type UploadImageActions = {
   resetUpload: () => void;
   getCroppedFile: () => Promise<File | undefined>;
   initializeCrop: (width: number, height: number) => void;
+  updateCropForNewAspectRatio: (width: number, height: number) => void; // New action for aspect ratio changes
 };
 
 type UploadImageStore = UploadImageState & UploadImageActions;
@@ -43,6 +48,8 @@ const initialState: UploadImageState = {
   croppedImageUrl: null,
   crop: undefined,
   step: 'select',
+  aspectRatio: 1, // Default to square (1:1)
+  isAspectRatioLocked: false, // Default to unlocked
   imgRef: { current: null },
   fileInputRef: { current: null },
 };
@@ -53,7 +60,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
   // Dialog actions
   openDialog: () => set({ isUploadDialogOpen: true }),
   closeDialog: () => {
-    const { selectedImage, croppedImageUrl } = get();
+    const { selectedImage, croppedImageUrl, aspectRatio, isAspectRatioLocked } = get();
 
     // Clean up object URLs // TODO review this
     if (selectedImage) URL.revokeObjectURL(selectedImage);
@@ -65,6 +72,8 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
       fileInputRef: get().fileInputRef, // Keep ref
       imgRef: get().imgRef, // Keep ref
       croppedImageUrl,
+      aspectRatio, // Preserve aspect ratio
+      isAspectRatioLocked, // Preserve lock state
     });
   },
 
@@ -73,6 +82,8 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
   setCroppedImageUrl: (url) => set({ croppedImageUrl: url }),
   setCrop: (crop) => set({ crop }),
   setStep: (step) => set({ step }),
+  setAspectRatio: (ratio) => set({ aspectRatio: ratio }),
+  setAspectRatioLocked: (locked) => set({ isAspectRatioLocked: locked }),
 
   // Business logic actions
   selectFile: (file) => {
@@ -102,7 +113,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
   },
 
   resetUpload: () => {
-    const { selectedImage, croppedImageUrl } = get();
+    const { selectedImage, croppedImageUrl, aspectRatio } = get();
 
     if (selectedImage) URL.revokeObjectURL(selectedImage);
     if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
@@ -112,6 +123,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
       croppedImageUrl: null,
       crop: undefined,
       step: 'select',
+      // Don't reset aspectRatio here - preserve user's choice
     });
   },
 
@@ -128,8 +140,23 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
   },
 
   initializeCrop: (width: number, height: number) => {
-    const percentCrop = centerAspectCrop(width, height, 1);
+    const { aspectRatio } = get(); // Use the current aspect ratio from state
+    const percentCrop = centerAspectCrop(width, height, aspectRatio);
     // Convert percent crop to pixel crop
+    const pixelCrop: PixelCrop = {
+      unit: 'px',
+      x: (percentCrop.x / 100) * width,
+      y: (percentCrop.y / 100) * height,
+      width: (percentCrop.width / 100) * width,
+      height: (percentCrop.height / 100) * height,
+    };
+    set({ crop: pixelCrop });
+  },
+
+  // New action to update crop when aspect ratio changes
+  updateCropForNewAspectRatio: (width: number, height: number) => {
+    const { aspectRatio } = get();
+    const percentCrop = centerAspectCrop(width, height, aspectRatio);
     const pixelCrop: PixelCrop = {
       unit: 'px',
       x: (percentCrop.x / 100) * width,

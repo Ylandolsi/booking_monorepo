@@ -39,7 +39,7 @@ export const SetupStore = () => {
     },
   });
 
-  const { handleFileSelect, fileInputRef, croppedImageUrl } = useUploadPicture();
+  const { handleFileSelect, fileInputRef, croppedImageUrl, setAspectRatio } = useUploadPicture();
 
   const watchedValues = form.watch();
   const debouncedSlug = useDebounce(watchedValues.slug, 500);
@@ -56,6 +56,10 @@ export const SetupStore = () => {
       }
     }
   }, [slugAvailable, form]);
+
+  useEffect(() => {
+    setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
+  }, []);
 
   const generateSlug = (title: string) => {
     const slug = title

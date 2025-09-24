@@ -7,7 +7,7 @@ import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-sc
 import { mapDayToNumber } from '@/utils/enum-days-week';
 import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
 import { Clock, X } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products';
 
 const DAYS: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -17,6 +17,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
 
   return (
     <div className="space-y-6">
+      <Label> Availability </Label>
       <div className="space-y-4">
         {DAYS.map((day) => {
           const daySchedule = schedule.find((s) => s.dayOfWeek === mapDayToNumber(day));

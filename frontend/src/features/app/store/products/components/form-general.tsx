@@ -1,4 +1,4 @@
-import type { CreateProductInput, ProductType } from '@/api/stores/produtcs/sessions';
+import type { ProductType } from '@/api/stores/produtcs/sessions';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { LazyImage } from '@/utils';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
+import 'react-image-crop/dist/ReactCrop.css';
 
 export function FormGeneral({
   form,
@@ -20,13 +21,22 @@ export function FormGeneral({
 }) {
   const uiPicture = form.getValues('ui')?.picture;
 
-  const { handleFileSelect, fileInputRef, croppedImageUrl } = useUploadPicture();
+  const { croppedImageUrl, setAspectRatio, openDialog } = useUploadPicture();
 
   useEffect(() => {
     if (croppedImageUrl) {
       form.setValue('ui', { ...form.getValues('ui'), picture: { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' } });
     }
   }, [croppedImageUrl, form]);
+
+  const handleAspectRatioChange = (newRatio: number) => {
+    setAspectRatio(newRatio);
+  };
+
+  useEffect(() => {
+    handleAspectRatioChange(16 / 9);
+  }, []);
+
   return (
     <div className="space-y-6 px-6">
       <div className="mb-6 text-center">
@@ -34,7 +44,6 @@ export function FormGeneral({
         <p className="text-muted-foreground">Fill in the details for your {type === 'Session' ? 'booking service' : 'digital product'}</p>
       </div>
       <UploadPictureDialog onUpload={(file) => form.setValue('thumbnail', file)} />
-
       {/* Title */}
       <FormField
         control={form.control}
@@ -49,7 +58,6 @@ export function FormGeneral({
           </FormItem>
         )}
       />
-
       {/* Subtitle */}
       <FormField
         control={form.control}
@@ -64,7 +72,6 @@ export function FormGeneral({
           </FormItem>
         )}
       />
-
       {/* Price */}
       <FormField
         control={form.control}
@@ -90,7 +97,6 @@ export function FormGeneral({
           </FormItem>
         )}
       />
-
       {/* Thumbnail Image */}
       <div className="space-y-2">
         <FormLabel className="text-foreground">Cover Image</FormLabel>
@@ -109,17 +115,14 @@ export function FormGeneral({
           </div>
           <div className="flex-1">
             <Button
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => openDialog()}
               className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors"
             >
               Choose Image
             </Button>
-            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-            <p className="text-muted-foreground mt-1 text-xs">Recommended: 400×400px or square format</p>
           </div>
         </div>
       </div>
-
       {/* Description */}
       <FormField
         control={form.control}
@@ -134,7 +137,6 @@ export function FormGeneral({
           </FormItem>
         )}
       />
-
       {/* CTA Text */}
       <FormField
         control={form.control}
@@ -149,7 +151,6 @@ export function FormGeneral({
           </FormItem>
         )}
       />
-
       {/* Navigation */}
       <div className="flex space-x-3 pt-4">
         <Button type="button" onClick={() => setActiveTab('details')} className="flex-1 py-3">
