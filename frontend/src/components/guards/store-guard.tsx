@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { useAppNavigation } from '@/hooks';
 import { useMyStore } from '@/api/stores';
 import { LoadingState } from '@/components/ui';
+import { useLocation } from '@tanstack/react-router';
 
 interface StoreGuardProps {
   children: ReactNode;
@@ -10,8 +11,11 @@ interface StoreGuardProps {
 
 export const StoreGuard = ({ children }: StoreGuardProps) => {
   const navigate = useAppNavigation();
+  const location = useLocation();
   const { data: store, isLoading: isStoreLoading, error: storeError } = useMyStore();
   console.log('StoreGuard store:', store);
+
+  const isOnSetupPage = location.pathname.startsWith(routes.to.store.setupStore());
   if (isStoreLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -24,7 +28,7 @@ export const StoreGuard = ({ children }: StoreGuardProps) => {
     navigate.goTo({ to: routes.to.store.setupStore(), replace: true });
   }
 
-  if (store) {
+  if (store && isOnSetupPage) {
     navigate.goTo({ to: routes.to.app.root(), replace: true });
   }
   return <>{children}</>;

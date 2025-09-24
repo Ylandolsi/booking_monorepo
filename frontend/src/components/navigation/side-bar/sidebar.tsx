@@ -13,7 +13,7 @@ import { AdminSection } from '@/components/navigation/side-bar/admin-section';
 export type Item = {
   name:
     | 'Home'
-    | 'Profile'
+    | 'Edit Store'
     | 'Meetings'
     | 'Search'
     | 'Notifications'

@@ -2,8 +2,8 @@ import type { Item } from '@/components/navigation/side-bar';
 import type { User } from '@/types/api';
 import { Button } from '@/components/ui';
 import { useAppNavigation } from '@/hooks';
-import { Badge, Calendar, ChevronRight, Home, Search, Timer, UserIcon } from 'lucide-react';
-import { GiTeacher } from 'react-icons/gi';
+import { Badge, Calendar, ChevronRight, Home, Store } from 'lucide-react';
+import { routes } from '@/config';
 
 export function NavigationSection(props: { handleItemClick: (item: Item) => void; itemActive: string; collapsed: boolean; currentUser: User }) {
   const nav = useAppNavigation();
@@ -13,11 +13,10 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
       icon: <Home size={20} />,
       click: () => nav.goToApp(),
     },
-
     {
-      name: 'Set Availability',
-      icon: <Timer size={20} />,
-      click: () => nav.goToMentorSetSchedule(),
+      name: 'Edit Store',
+      icon: <Store size={20} />,
+      click: () => nav.goTo({ to: routes.to.store.index() + '/' }),
     },
     {
       name: 'Meetings',
