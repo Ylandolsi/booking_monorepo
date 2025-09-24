@@ -7,3 +7,4 @@ export * from './reset-password';
 export * from './user';
 export * from './auth-keys';
 export * from './oauth-api';
+export * from './use-auth';

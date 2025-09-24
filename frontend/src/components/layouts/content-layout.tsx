@@ -2,7 +2,7 @@ import { AuthGuard } from '@/components/guards';
 import Sidebar from '../navigation/side-bar/sidebar';
 import { PageLoading } from '@/components/ui/index';
 import { BottomNav } from '../navigation/bottom-nav';
-import { useAuth } from '@/features/auth/hooks';
+import { useAuth } from '@/api/auth';
 import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/stores';
 import { Header } from '@/components/headers';

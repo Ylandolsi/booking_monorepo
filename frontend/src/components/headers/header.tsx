@@ -1,6 +1,6 @@
 import { Logo } from '@/components/logo';
 import { Button, LoadingState } from '@/components/ui';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/api/auth';
 import { useSideBar } from '@/stores';
 import { CreditCard, Menu } from 'lucide-react';
 import { useGetWallet } from '@/features/shared/get-wallet';

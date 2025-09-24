@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/features/auth/hooks';
+import { useAuth } from '@/api/auth';
 import { useMentor } from '@/hooks/use-mentor';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { Calendar, BookOpen, Video, TrendingUp, Settings, User } from 'lucide-react';
@@ -61,10 +61,10 @@ export function HomePage() {
     <div className="space-y-8">
       {/* Welcome Header */}
       <div className="">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-foreground text-3xl font-bold tracking-tight">
           {getGreeting()}, {currentUser?.firstName}! 👋
         </h1>
-        <p className="mt-2 text-muted-foreground">{isMentor ? 'Welcome back to your mentoring dashboard' : 'Ready to learn something new today?'}</p>
+        <p className="text-muted-foreground mt-2">{isMentor ? 'Welcome back to your mentoring dashboard' : 'Ready to learn something new today?'}</p>
       </div>
 
       {/* Quick Stats */}
@@ -72,11 +72,11 @@ export function HomePage() {
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{sessionsIsLoading ? '...' : (sessionsData?.length ?? 0)}</div>
-            <p className="text-xs text-muted-foreground font-bold">
+            <p className="text-muted-foreground text-xs font-bold">
               {sessionsIsLoading ? 'Loading...' : nextSessionInfo ? `Next session ${nextSessionInfo.timeString}` : 'No upcoming sessions'}
             </p>
           </CardContent>
@@ -86,7 +86,7 @@ export function HomePage() {
       {/* Main Content Grid */}
       <div className="grid gap-6 xl:grid-cols-3">
         {/* Quick Actions */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="space-y-6 xl:col-span-2">
           {/* Actions Card */}
           <Card>
             <CardHeader>
@@ -100,50 +100,50 @@ export function HomePage() {
                 <>
                   <Button
                     variant="outline"
-                    className="h-auto p-4 text-left justify-start flex-col items-start space-y-2"
+                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
                     onClick={() => nav.goToMentorSetSchedule()}
                   >
-                    <div className="flex items-center gap-2 w-full">
-                      <Calendar className="h-5 w-5 text-primary" />
+                    <div className="flex w-full items-center gap-2">
+                      <Calendar className="text-primary h-5 w-5" />
                       <span className="font-medium">Set Availability</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">Update your available time slots</span>
+                    <span className="text-muted-foreground text-sm">Update your available time slots</span>
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-auto p-4 text-left justify-start flex-col items-start space-y-2"
+                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
                     onClick={() => nav.goToMeets()}
                   >
-                    <div className="flex items-center gap-2 w-full">
-                      <Video className="h-5 w-5 text-primary" />
+                    <div className="flex w-full items-center gap-2">
+                      <Video className="text-primary h-5 w-5" />
                       <span className="font-medium">View Sessions</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">Manage your upcoming meetings</span>
+                    <span className="text-muted-foreground text-sm">Manage your upcoming meetings</span>
                   </Button>
                 </>
               ) : (
                 <>
                   <Button
                     variant="outline"
-                    className="h-auto p-4 text-left justify-start flex-col items-start space-y-2"
+                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
                     onClick={() => nav.goToMentorBecome()}
                   >
-                    <div className="flex items-center gap-2 w-full">
-                      <GiTeacher className="h-5 w-5 text-primary" />
+                    <div className="flex w-full items-center gap-2">
+                      <GiTeacher className="text-primary h-5 w-5" />
                       <span className="font-medium">Become a Mentor</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">Share your expertise with others</span>
+                    <span className="text-muted-foreground text-sm">Share your expertise with others</span>
                   </Button>
                   <Button
                     variant="outline"
-                    className="h-auto p-4 text-left justify-start flex-col items-start space-y-2"
+                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
                     onClick={() => nav.goToMeets()}
                   >
-                    <div className="flex items-center gap-2 w-full">
-                      <BookOpen className="h-5 w-5 text-primary" />
+                    <div className="flex w-full items-center gap-2">
+                      <BookOpen className="text-primary h-5 w-5" />
                       <span className="font-medium">Find Mentors</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">Discover experts in your field</span>
+                    <span className="text-muted-foreground text-sm">Discover experts in your field</span>
                   </Button>
                 </>
               )}
@@ -163,14 +163,14 @@ export function HomePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="h-6 w-6 text-primary" />
+                <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
+                  <User className="text-primary h-6 w-6" />
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-medium">
                     {currentUser?.firstName} {currentUser?.lastName}
                   </p>
-                  <p className="text-sm text-muted-foreground truncate">{currentUser?.email}</p>
+                  <p className="text-muted-foreground truncate text-sm">{currentUser?.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export function HomePage() {
                 )}
               </div>
               <Button variant="outline" size="sm" className="w-full" onClick={() => nav.goToProfile(currentUser?.slug || '')}>
-                <Settings className="h-4 w-4 mr-2" />
+                <Settings className="mr-2 h-4 w-4" />
                 Edit Profile
               </Button>
             </CardContent>

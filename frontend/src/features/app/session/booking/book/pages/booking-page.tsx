@@ -18,12 +18,11 @@ import {
 import { useBooking, TimeSlots } from '@/features/app/session/booking/book';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
-import { formatDate } from '@/utils';
 import { ErrorComponenet, IntegrationRequired } from '@/components';
 import { BookingSummary } from '@/features/app/session/booking/book/components';
 import React, { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/api/auth';
 import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
 
@@ -202,11 +201,11 @@ function BookingContent() {
   }
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-7xl">
+    <div className="container mx-auto max-w-7xl px-4 py-10">
       {/* Header */}
-      <div className="text-center space-y-6 mb-8">
+      <div className="mb-8 space-y-6 text-center">
         <div>
-          <h1 className="text-4xl font-bold text- mb-4">
+          <h1 className="text- mb-4 text-4xl font-bold">
             Book a Session with {mentorInfoQuery.data?.firstName} {mentorInfoQuery.data?.lastName}
           </h1>
         </div>
@@ -215,7 +214,7 @@ function BookingContent() {
         <div className="flex items-center justify-center space-x-4">
           <div className="flex items-center space-x-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full ${
                 selectedDate ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
@@ -223,10 +222,10 @@ function BookingContent() {
             </div>
             <span className="text-sm font-medium">Select Date</span>
           </div>
-          <div className="w-8 h-px bg-gray-300" />
+          <div className="h-px w-8 bg-gray-300" />
           <div className="flex items-center space-x-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full ${
                 selectedSlot ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
@@ -234,10 +233,10 @@ function BookingContent() {
             </div>
             <span className="text-sm font-medium">Choose Time</span>
           </div>
-          <div className="w-8 h-px bg-gray-300" />
+          <div className="h-px w-8 bg-gray-300" />
           <div className="flex items-center space-x-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full ${
                 bookingSummary ? 'bg-primary text-white' : 'bg-muted-200 text-black'
               }`}
             >
@@ -253,28 +252,28 @@ function BookingContent() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
+              <User className="h-5 w-5" />
               Mentor Profile
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-start gap-4">
-              <Avatar className="w-16 h-16">
+              <Avatar className="h-16 w-16">
                 <AvatarImage
                   src={mentorInfoQuery.data.profilePicture?.profilePictureLink}
                   alt={`${mentorInfoQuery.data.firstName} ${mentorInfoQuery.data.lastName}`}
                 />
-                <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold text-lg">
+                <AvatarFallback className="bg-blue-100 text-lg font-semibold text-blue-700">
                   {mentorInfoQuery.data.firstName[0]}
                   {mentorInfoQuery.data.lastName[0]}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <h3 className="text-xl font-semibold mb-1">
+                <h3 className="mb-1 text-xl font-semibold">
                   {mentorInfoQuery.data.firstName} {mentorInfoQuery.data.lastName}
                 </h3>
-                <p className="text-gray-600 mb-2">Professional Mentor</p>
-                <div className="flex flex-wrap gap-2 mb-3">
+                <p className="mb-2 text-gray-600">Professional Mentor</p>
+                <div className="mb-3 flex flex-wrap gap-2">
                   {['General Mentoring', 'Career Development'].map((skill, index) => (
                     <Badge key={index} variant="secondary">
                       {skill}
@@ -291,14 +290,14 @@ function BookingContent() {
         </Card>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Calendar and Time Slots */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           {/* Calendar */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
+                <Calendar className="h-5 w-5" />
                 Select Date
               </CardTitle>
             </CardHeader>
@@ -307,7 +306,7 @@ function BookingContent() {
                 <BookingCalendar
                   mode="single"
                   // className="h-full w-full flex"
-                  className="rounded-xl border-0 flex-1 max-h-fit"
+                  className="max-h-fit flex-1 rounded-xl border-0"
                   captionLayout="label"
                   defaultMonth={selectedDate}
                   onSelect={setSelectedDate}

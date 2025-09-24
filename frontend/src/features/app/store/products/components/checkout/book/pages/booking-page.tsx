@@ -14,7 +14,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { ErrorComponenet, IntegrationRequired } from '@/components';
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '@/features/auth';
+import { useAuth } from '@/api/auth';
 import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
 import { useBooking } from '@/features/app/store/products/components/checkout/book/hooks';

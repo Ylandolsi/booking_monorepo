@@ -2,7 +2,7 @@ import { useAppNavigation } from '@/hooks/use-navigation';
 import { X, LogOut, ChevronRight, ChevronLeft } from 'lucide-react';
 import { LazyImage } from '@/utils/lazy-image';
 import { Button, Separator, PageLoading } from '@/components/ui';
-import { useAuth } from '@/features/auth/hooks';
+import { useAuth } from '@/api/auth';
 import { MainErrorFallback } from '@/components/errors';
 import { useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
