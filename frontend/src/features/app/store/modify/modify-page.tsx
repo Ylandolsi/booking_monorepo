@@ -2,6 +2,7 @@ import { initialStore, initProducts, useMyStore, type Product } from '@/api/stor
 import { Button, ErrorComponenet, LoadingState } from '@/components';
 import { EnhancedStorefrontDashboard } from '@/components/store';
 import { socialPlatforms } from '@/features/app/store/create';
+import { useAppNavigation } from '@/hooks';
 import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { LazyImage } from '@/utils';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { useState } from 'react';
 export function ModifyStore() {
   let { data: store, isLoading, isError } = useMyStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  const navigate = useAppNavigation();
   const [products, setProducts] = useState<Product[]>([]);
 
   if (isLoading) return <LoadingState type="spinner" />;
@@ -35,7 +36,7 @@ export function ModifyStore() {
   };
 
   const handleAddProduct = () => {
-    // setCurrentView('product-creation');
+    navigate.goTo({ to: '/app/store/product/add' }); // TODO : use route declared in routes
   };
 
   const handleProductCreated = (productData: any) => {
@@ -55,9 +56,9 @@ export function ModifyStore() {
     console.log('Store created:', storeData);
   };
   return (
-    <div className="flex min-h-screen flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
       <div className="flex w-full flex-col gap-5">
-        <div className="text-card-foreground w-full rounded-xl border px-3 py-3 shadow-sm">
+        <div className="text-card-foreground w-full flex-1 rounded-xl border px-3 py-3 shadow-sm">
           <div className="flex gap-3">
             {/* // <img src={store?.picture?.mainLink ?? FALLBACK_PROFILE_PICTURE} alt="Store Profile Picture" /> */}
             <LazyImage
@@ -126,7 +127,7 @@ export function ModifyStore() {
           <span className="font-medium">Add Product</span>{' '}
         </Button>
       </div>
-      <div className="sticky top-4">
+      <div className="sticky top-4 mx-auto">
         <EnhancedStorefrontDashboard
           products={products}
           onAddProduct={handleAddProduct}
