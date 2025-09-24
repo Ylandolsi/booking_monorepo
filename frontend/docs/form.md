@@ -49,6 +49,34 @@ const onSubmit = async (data: CreateProductInput) => {
 </Form>
 ```
 
+### Select
+
+````ts
+  <FormField
+  control={form.control}
+  name="bufferTime"
+  render={({ field }) => (
+  <FormItem>
+    <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
+    <FormControl>
+      <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+        <FormControl>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select duration" />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent>
+          <SelectItem value="15">15</SelectItem>
+          <SelectItem value="30">30</SelectItem>
+          <SelectItem value="45">45</SelectItem>
+          {/* only 30 minutes available for now */}
+        </SelectContent>
+      </Select>
+    </FormControl>
+    <FormMessage />
+  </FormItem>
+                        ```
+
 ###Reset
 
 ```ts
@@ -60,7 +88,7 @@ const resetForm = (newValues?: Partial<CreateProductInput>) => {
 
 // with default
 form.reset();
-```
+````
 
 ### Watching Values
 

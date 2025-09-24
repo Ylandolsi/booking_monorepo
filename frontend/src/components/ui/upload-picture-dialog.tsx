@@ -34,7 +34,8 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
     <Dialog open={isUploadDialogOpen} onOpenChange={handleCloseDialog}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Update Profile Picture</DialogTitle>
+          <DialogTitle>{step === 'select' ? 'Upload Cover Image' : 'Crop Your Image'}</DialogTitle>
+          {step === 'crop' && <p className="text-sm text-gray-600">Adjust the selection to choose which part of your image to use</p>}
         </DialogHeader>
 
         <div className="space-y-4">
@@ -45,8 +46,11 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
                 className="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
               >
                 <Camera className="mb-4 h-12 w-12 text-gray-400" />
-                <p className="font-medium text-gray-600">Choose a photo</p>
-                <p className="text-sm text-gray-400">PNG, JPG up to 10MB</p>
+                <div className="space-y-1 text-center">
+                  <p className="font-medium text-gray-700">Choose your cover image</p>
+                  <p className="text-sm text-gray-500">Best results with 1600×900 pixels</p>
+                  <p className="text-xs text-gray-400">PNG, JPG up to 5MB</p>
+                </div>
               </Label>
               <input
                 ref={fileInputRef}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createProductSchema, ProductType, useCreateSession, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
-import { TabNavigation } from '@/components';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabNavigation } from '@/components';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -50,7 +50,7 @@ export function AddProductFlow() {
       productType: type === 'Session' ? 'Session' : 'DigitalDownload',
       thumbnail: undefined,
       duration: type == 'Session' ? 30 : undefined,
-      bufferTime: type == 'Session' ? 0 : undefined,
+      bufferTime: type == 'Session' ? 15 : undefined,
       meetingInstructions: '',
       files: type == 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
@@ -138,17 +138,17 @@ export function AddProductFlow() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="30"
-                              className="py-3"
-                              min="15"
-                              step="15"
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
-                            />
-                          </FormControl>
+                          <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                            <FormControl>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select duration" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="30">30</SelectItem>
+                              {/* only 30 minutes available for now */}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -162,14 +162,19 @@ export function AddProductFlow() {
                         <FormItem>
                           <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
                           <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="0"
-                              className="py-3"
-                              min="0"
-                              {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                            />
+                            <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                              <FormControl>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select duration" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="15">15</SelectItem>
+                                <SelectItem value="30">30</SelectItem>
+                                <SelectItem value="45">45</SelectItem>
+                                {/* only 30 minutes available for now */}
+                              </SelectContent>
+                            </Select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
