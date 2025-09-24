@@ -21,7 +21,7 @@ export const createSessionProductSchema = createProductBaseSchema.extend({
   duration: z.number().positive('Duration must be positive'),
   bufferTime: z.number().min(0, 'Buffer time cannot be negative'),
   meetingInstructions: z.string().optional(),
-  timeZoneId: z.string().min(1, 'Time zone is required'),
+  timeZoneId: z.string().optional(),
   dailySchedule: z.array(dailyScheduleSchema).min(1, 'At least one day schedule is required'),
 });
 
@@ -32,6 +32,7 @@ export type CreateSessionProductRequest = z.infer<typeof createSessionProductSch
 export const patchPostSessionSchemaToFormData = (data: CreateSessionProductRequest) => {
   const formData = toFormData({
     title: data.title,
+    subtitle: data.subtitle,
     ThumbnailImage: data.thumbnail || new File([], ''),
     description: data.description || '',
     timeZoneId: data.timeZoneId || 'Africa/Tunis',

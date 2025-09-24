@@ -196,3 +196,7 @@ const error = new URLSearchParams(location.search).get('error') ?? undefined;
 form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
 
 ---
+
+add this to add product validator zod :
+
+[{'$type': 'Error', Code: 'NotEmptyValidator', Description: 'At least one day availability must be provided.', Type: 'Problem'}, {'$type': 'Error', Code: 'PredicateValidator', Description: 'Invalid availability configuration. Time ranges must be in HH:mm format and end time must be after start time.', Type: 'Problem'}]

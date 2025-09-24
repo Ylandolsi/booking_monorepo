@@ -80,6 +80,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
                         </SelectContent>
                       </Select>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => actions.removeTimeRange(day, range.id?.toString() || '')}
@@ -91,7 +92,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
                   ))}
 
                   {/* Add Time Slot Button */}
-                  <Button variant="outline" size="sm" onClick={() => actions.addCustomTimeSlot(day)} className="w-full">
+                  <Button type="button" variant="outline" size="sm" onClick={() => actions.addCustomTimeSlot(day)} className="w-full">
                     + Add Time Slot
                   </Button>
                 </CardContent>

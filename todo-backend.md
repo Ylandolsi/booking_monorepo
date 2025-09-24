@@ -19,6 +19,39 @@
 
 ---
 
+Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+ConnectionId
+0HNFRDHIKEBB3
+CorrelationId
+0HNFRDHIKEBB3:00000013
+EventId.Id
+20504
+EventId.Name
+Microsoft.EntityFrameworkCore.Query.MultipleCollectionIncludeWarning
+RequestId
+0HNFRDHIKEBB3:00000013
+RequestPath
+/api/products/s/create
+SourceContext
+Microsoft.EntityFrameworkCore.Query
+
+another error
+
+```bash
+Npgsql.NpgsqlOperationInProgressException (0x80004005): A command is already in progress: SELECT s.id, s.created_at, s.day_id, s.day_of_week, s.is_active, s.session_product_id, s.session_product_slug, s.time_zone_id, s.updated_at, s.end_time, s.start_time
+FROM catalog.session_availabilities AS s
+   at Npgsql.ThrowHelper.ThrowNpgsqlOperationInProgressException(NpgsqlCommand command)
+   at Npgsql.Internal.NpgsqlConnector.<StartUserAction>g__DoStartUserAction|282_0(ConnectorState newState, NpgsqlCommand command, CancellationToken cancellationToken, Boolean attemptPgCancellation)
+   at Npgsql.Internal.NpgsqlConnector.StartUserAction(ConnectorState newState, NpgsqlCommand command, CancellationToken cancellationToken, Boolean attemptPgCancellation)
+   at Npgsql.Internal.NpgsqlConnector.StartUserAction(CancellationToken cancellationToken, Boolean attemptPgCancellation)
+   at Npgsql.NpgsqlTransaction.Commit(Boolean async, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalTransaction.CommitAsync(CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalTransaction.CommitAsync(CancellationToken cancellationToken)
+   at Booking.Modules.Catalog.Persistence.UnitOfWork.CommitTransactionAsync(CancellationToken cancellationToken)
+   at Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessionProduct.CreateSessionProductHandler.Handle(PostSessionProductCommand command, CancellationToken cancellationToken)
+   could u identify why is this happening ?
+```
+
 ### Later
 
 - [ ] type of middleware / filters : from all endpoints vs specific

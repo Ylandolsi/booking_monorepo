@@ -1,9 +1,13 @@
 import { patchPostSessionSchemaToFormData } from '@/api/stores/produtcs';
-import type { CreateSessionProductRequest, PatchPostSessionResponse } from '@/api/stores/produtcs/sessions/private/schema-session';
+import type {
+  CreateProductInput,
+  CreateSessionProductRequest,
+  PatchPostSessionResponse,
+} from '@/api/stores/produtcs/sessions/private/schema-session';
 import { api, CatalogEndpoints, validateFile } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 
-export const createSession = async (data: CreateSessionProductRequest) => {
+export const createSession = async ({ data }: { data: CreateProductInput }) => {
   if (data.thumbnail) {
     const validation = validateFile(data.thumbnail);
 
@@ -13,7 +17,7 @@ export const createSession = async (data: CreateSessionProductRequest) => {
   }
 
   // Create FormData for the request
-  const formData = patchPostSessionSchemaToFormData(data);
+  const formData = patchPostSessionSchemaToFormData(data as CreateSessionProductRequest);
 
   try {
     const response = await api.post<PatchPostSessionResponse>(CatalogEndpoints.Products.Sessions.Create, formData);
@@ -26,8 +30,8 @@ export const createSession = async (data: CreateSessionProductRequest) => {
 };
 
 export const useCreateSession = () => {
-  return useMutation({
-    mutationFn: (data: CreateSessionProductRequest) => createSession(data),
+  return useMutation<PatchPostSessionResponse, Error, { data: CreateProductInput }>({
+    mutationFn: createSession,
     meta: {
       // invalidatesQuery: [SESSION_QUERY_KEY],
       successMessage: 'Session created successfully!',

@@ -37,7 +37,7 @@ public class UpdateSessionProductEndpoint : IEndpoint
                     Price = request.Price,
                     DurationMinutes = request.DurationMinutes,
                     BufferTimeMinutes = request.BufferTimeMinutes,
-                    DayAvailabilities = request.DayAvailabilities,
+                    DayAvailabilitiesJson = request.DayAvailabilitiesJson,
                     MeetingInstructions = request.MeetingInstructions,
                     ProductSlug = productSlug , 
                 };

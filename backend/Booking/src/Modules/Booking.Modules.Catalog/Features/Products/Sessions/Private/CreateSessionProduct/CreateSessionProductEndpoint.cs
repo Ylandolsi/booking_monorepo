@@ -35,7 +35,7 @@ public class CreateSessionProductEndpoint : IEndpoint
                     Price = request.Price,
                     DurationMinutes = request.DurationMinutes,
                     BufferTimeMinutes = request.BufferTimeMinutes,
-                    DayAvailabilities = request.DayAvailabilities,
+                    DayAvailabilitiesJson = request.DayAvailabilitiesJson,
                     MeetingInstructions = request.MeetingInstructions,
                     //TimeZoneId = request.TimeZoneId,
                 };

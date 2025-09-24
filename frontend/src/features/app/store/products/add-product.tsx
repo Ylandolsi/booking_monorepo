@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createProductSchema, ProductType, type CreateProductInput, type Picture } from '@/api/stores';
+import { createProductSchema, ProductType, useCreateSession, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
 import { TabNavigation } from '@/components';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
@@ -23,13 +23,13 @@ export function AddProductFlow() {
   const [type, setType] = useState<ProductType | undefined>((new URLSearchParams(location.search).get('type') as ProductType) || undefined);
   const navigate = useAppNavigation();
 
-  const handleComplete = async (data: CreateProductInput) => {
-    try {
-      // TODO: Implement actual API call to create product
-      // await createProductMutation.mutateAsync(data);
+  const createProductMutation = useCreateSession();
 
-      // Navigate to products list or success page
-      navigate.goTo({ to: '/app/store', replace: true });
+  const onSubmit = async (data: CreateProductInput) => {
+    try {
+      console.log('submitting', data);
+      await createProductMutation.mutateAsync({ data });
+      //navigate.goTo({ to: '/app/store', replace: true });
     } catch (error) {
       console.error('Failed to create product:', error);
       // Handle error - show toast, etc.
@@ -71,6 +71,8 @@ export function AddProductFlow() {
     // <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />;
   }
   const watchedValues = form.watch();
+  console.log('watchedValues', watchedValues);
+  console.log('errorForm', form.formState.errors);
 
   // Type selection doesn't need preview
   if (type == null || type == undefined) {
@@ -113,122 +115,126 @@ export function AddProductFlow() {
 
       {/* Content */}
       <Form {...form}>
-        <div className="space-y-6 px-6">
-          {type && activeTab === 'general' && <FormGeneral form={form} type={type} setActiveTab={setActiveTab} />}
-          {type && activeTab === 'details' && (
-            <>
-              <div className="mb-6 text-center">
-                <h2 className="text-foreground mb-2 text-xl font-semibold">{type === 'Session' ? 'Session Settings' : 'Digital Product Settings'}</h2>
-                <p className="text-muted-foreground">
-                  Configure specific settings for your {type === 'Session' ? 'booking service' : 'digital product'}
-                </p>
-              </div>
-
-              {type === 'Session' ? (
-                <div className="space-y-4">
-                  {/* Duration */}
-                  <FormField
-                    control={form.control}
-                    name="duration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="30"
-                            className="py-3"
-                            min="15"
-                            step="15"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Buffer Time */}
-                  <FormField
-                    control={form.control}
-                    name="bufferTime"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            className="py-3"
-                            min="0"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Meeting Instructions */}
-                  <FormField
-                    control={form.control}
-                    name="meetingInstructions"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Meeting Instructions</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="What should customers know before the meeting?" rows={3} className="resize-none" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Schedule Component */}
-                  <FormScheduleComponent form={form} />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="max-h-full overflow-y-auto pb-6">
+          <div className="space-y-6 px-6">
+            {type && activeTab === 'general' && <FormGeneral form={form} type={type} setActiveTab={setActiveTab} />}
+            {type && activeTab === 'details' && (
+              <>
+                <div className="mb-6 text-center">
+                  <h2 className="text-foreground mb-2 text-xl font-semibold">
+                    {type === 'Session' ? 'Session Settings' : 'Digital Product Settings'}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Configure specific settings for your {type === 'Session' ? 'booking service' : 'digital product'}
+                  </p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Delivery URL */}
-                  <FormField
-                    control={form.control}
-                    name="deliveryUrl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Delivery URL</FormLabel>
-                        <FormControl>
-                          <Input type="url" placeholder="https://example.com/download" className="py-3" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
-                  {/* Placeholder for file uploads */}
-                  <div className="bg-muted text-muted-foreground rounded-lg p-6 text-center">
-                    <p className="mb-4">File upload functionality coming soon</p>
-                    <p className="text-xs">You'll be able to upload files directly here</p>
+                {type === 'Session' ? (
+                  <div className="space-y-4">
+                    {/* Duration */}
+                    <FormField
+                      control={form.control}
+                      name="duration"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="30"
+                              className="py-3"
+                              min="15"
+                              step="15"
+                              {...field}
+                              onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Buffer Time */}
+                    <FormField
+                      control={form.control}
+                      name="bufferTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              className="py-3"
+                              min="0"
+                              {...field}
+                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Meeting Instructions */}
+                    <FormField
+                      control={form.control}
+                      name="meetingInstructions"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">Meeting Instructions</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="What should customers know before the meeting?" rows={3} className="resize-none" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Schedule Component */}
+                    <FormScheduleComponent form={form} />
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="space-y-4">
+                    {/* Delivery URL */}
+                    <FormField
+                      control={form.control}
+                      name="deliveryUrl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-foreground">Delivery URL</FormLabel>
+                          <FormControl>
+                            <Input type="url" placeholder="https://example.com/download" className="py-3" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              {/* Navigation */}
-              <div className="flex space-x-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setActiveTab('general')} className="flex-1 py-3">
-                  Back
-                </Button>
-                <Button type="button" onClick={form.handleSubmit(handleComplete)} className="flex-1 py-3">
-                  Create Product
-                </Button>
-              </div>
-            </>
-          )}
-          <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
-            Cancel
-          </Button>
-        </div>
+                    {/* Placeholder for file uploads */}
+                    <div className="bg-muted text-muted-foreground rounded-lg p-6 text-center">
+                      <p className="mb-4">File upload functionality coming soon</p>
+                      <p className="text-xs">You'll be able to upload files directly here</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation */}
+                <div className="flex space-x-3 pt-4">
+                  <Button type="button" variant="outline" onClick={() => setActiveTab('general')} className="flex-1 py-3">
+                    Back
+                  </Button>
+                  <Button type="submit" className="flex-1 py-3" disabled={createProductMutation.isPending}>
+                    {createProductMutation.isPending ? 'Creating...' : 'Create Product'}
+                  </Button>
+                </div>
+              </>
+            )}
+            <Button variant="ghost" onClick={onCancel} className="w-full text-sm">
+              Cancel
+            </Button>
+          </div>
+        </form>
       </Form>
     </ResponsiveBuilderLayout>
   );

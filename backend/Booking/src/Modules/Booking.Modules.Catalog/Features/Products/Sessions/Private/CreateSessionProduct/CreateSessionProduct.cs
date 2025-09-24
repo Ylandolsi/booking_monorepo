@@ -109,6 +109,7 @@ public class CreateSessionProductHandler(
                 return Result.Failure<PatchPostProductResponse>(scheduleResult.Error);
             }
 
+            
             // Commit transaction
             await unitOfWork.CommitTransactionAsync(cancellationToken);
 
@@ -226,7 +227,7 @@ public class CreateSessionProductHandler(
                         timeEnd,
                         sessionProduct.TimeZoneId);
 
-                    context.SessionAvailabilities.Add(availability);
+                    await context.SessionAvailabilities.AddAsync(availability , cancellationToken);
                 }
             }
 
