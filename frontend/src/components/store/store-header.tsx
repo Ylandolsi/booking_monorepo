@@ -20,7 +20,9 @@ export function StoreHeader({ store, className }: StoreHeaderProps) {
       {/* Profile Picture */}
       <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
         {store.picture ? (
-          <img src={store.picture.mainLink ?? FALLBACK_PROFILE_PICTURE} alt="Profile" className="h-full w-full rounded-full object-cover" />
+          // TODO : replace with LazyImage
+          // and store.picture
+          <img src={FALLBACK_PROFILE_PICTURE} alt="Profile" className="h-full w-full rounded-full object-cover" />
         ) : (
           <User className="text-primary-foreground h-8 w-8" />
         )}

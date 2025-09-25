@@ -25,7 +25,7 @@ export function DraggableProductList({
   className,
 }: DraggableProductListProps) {
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('w-full space-y-4', className)}>
       {products.map((product, index) => (
         <div
           key={product.storeSlug + '-' + product.storeSlug}
