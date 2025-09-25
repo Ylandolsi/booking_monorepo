@@ -58,12 +58,12 @@ builder.ToTable("sessions", t =>
 ### tests
 ```bash
 dotnet test tests/IntegrationsTests/IntegrationsTests.csproj --filter "CreateStore_ShouldSucceed_WhenValidDataProvided" -v d
-```
 
 
 ## Entity Framework Migrations
 
-Add migrations for the Users module: ```bash
+Add migrations for the Users module:
+```bash
     dotnet ef migrations add FixUpdatedAt \
   --project src/Modules/Booking.Modules.Catalog/Booking.Modules.Catalog.csproj \
   --startup-project src/Api/Booking.Api/Booking.Api.csproj \
@@ -79,7 +79,7 @@ dotnet ef migrations add Initial \
   --context UsersDbContext \
   --configuration Debug \
   --output-dir Persistence/Migrations
-````
+```
 
 Add migrations for the Mentorships module:
 
