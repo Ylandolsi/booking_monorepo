@@ -15,7 +15,7 @@ import { FormGeneral } from '@/features/app/store/products/components/form-gener
 
 export type TabsType = 'general' | 'details';
 
-export type ProductFormData = CreateProductInput & { ui?: { picture?: Picture } };
+export type ProductFormData = CreateProductInput & { thumbnailPicture?: Picture };
 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<TabsType>('general');
@@ -48,7 +48,7 @@ export function AddProductFlow() {
       description: '',
       clickToPay: 'Buy Now',
       productType: type === 'Session' ? 'Session' : 'DigitalDownload',
-      thumbnail: undefined,
+      thumbnailImage: undefined,
       duration: type == 'Session' ? 30 : undefined,
       bufferTime: type == 'Session' ? 15 : undefined,
       meetingInstructions: '',
@@ -56,7 +56,9 @@ export function AddProductFlow() {
       deliveryUrl: '',
       previewImage: undefined,
       dailySchedule: [],
-      ui: { picture: undefined },
+
+      // UI
+      thumbnailPicture: undefined,
     },
   });
 

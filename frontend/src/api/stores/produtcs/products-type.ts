@@ -13,7 +13,7 @@ export interface Product {
   isPublished: boolean;
   createdAt: string;
   updatedAt?: string;
-  thumbnail?: Picture;
+  thumbnailPicture?: Picture;
   preview?: Picture;
 }
 

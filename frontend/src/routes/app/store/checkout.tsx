@@ -27,7 +27,7 @@ function RouteComponent() {
               "This is a detailed description of the product, highlighting its features, benefits, and any other relevant information that would help a customer make a purchase decision. It's designed to be comprehensive yet easy to read. Dive deep into principles of visual hierarchy, color theory, and interaction design.",
             price: 49.0,
 
-            thumbnail: {
+            thumbnailPicture: {
               mainLink:
                 'https://lh3.googleusercontent.com/aida-public/AB6AXuA7k7Y1yTUsoGw4kHQ-au2cb85NtWAxnzb8R4sAvMlM73WrWUrUhuzqa4i7fvFJkbZWWSamtgVPoY-LtYj2gEnfzCm_dM2sMbL8X7I9DyaGB-5lL6f2r-p6sHYczA-ID-kqquaLSMCTtOhr2ykI8_fET6STytxU4CjxNKoOZN_VDA-lcAdOBxwmj8rzTr0mciZU8q_VMQfWb5WYSZO7zwbSrPShrVxxD30-i6ZZsBXgQjO5wAHROE-LgHbSv_-CIKLF4K2o7rbJB-Zs',
               thumbnailLink: '',
@@ -52,7 +52,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
       <main className="pb-28">
         <div className="bg-accent flex h-80 w-full items-center justify-center">
           {/* Change to lazy Image */}
-          <img alt="Product Image" className="h-full w-full object-cover" src={product.thumbnail?.mainLink} />
+          <img alt="Product Image" className="h-full w-full object-cover" src={product.thumbnailPicture?.mainLink} />
         </div>
         <div className="space-y-5 p-6">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{product.title}</h1>

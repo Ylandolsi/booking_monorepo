@@ -33,7 +33,7 @@ export const patchPostSessionSchemaToFormData = (data: CreateSessionProductReque
   const formData = toFormData({
     title: data.title,
     subtitle: data.subtitle,
-    ThumbnailImage: data.thumbnail || new File([], ''),
+    thumbnailImage: data.thumbnailImage || new File([], ''),
     description: data.description || '',
     timeZoneId: data.timeZoneId || 'Africa/Tunis',
     durationMinutes: data.duration,

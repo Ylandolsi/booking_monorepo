@@ -7,7 +7,7 @@ export const mockProducts: Product[] = [
     title: '1-on-1 Strategy Session',
     subtitle: 'Get personalized business advice',
     description: 'A focused 60-minute session to help you overcome business challenges and plan your next steps.',
-    thumbnail: {
+    thumbnailPicture: {
       mainLink: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=400&h=400&fit=crop',
       thumbnailLink: 'https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=200&h=200&fit=crop',
     },
@@ -24,7 +24,7 @@ export const mockProducts: Product[] = [
     title: 'Complete Digital Marketing Course',
     subtitle: 'Master digital marketing in 30 days',
     description: 'A comprehensive course covering SEO, social media, email marketing, and more.',
-    thumbnail: {
+    thumbnailPicture: {
       mainLink: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop',
       thumbnailLink: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=200&h=200&fit=crop',
     },

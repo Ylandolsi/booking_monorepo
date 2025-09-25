@@ -34,7 +34,7 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
           {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
           <div className="flex w-full items-start gap-3">
             <div className={cn('bg-muted flex flex-shrink-0 items-center justify-center overflow-hidden rounded-lg', 'h-12 w-12')}>
-              <img src={product.thumbnail?.mainLink} alt={product.title} className="h-full w-full object-cover" />
+              <img src={product.thumbnailPicture?.mainLink} alt={product.title} className="h-full w-full object-cover" />
             </div>
 
             <div className="flex-1">

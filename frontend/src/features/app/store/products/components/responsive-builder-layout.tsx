@@ -13,7 +13,7 @@ interface ResponsiveBuilderLayoutProps {
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
-  const productData = { ...previewData, thumbnail: previewData.ui?.picture } as ProductFormData;
+  const productData = { ...previewData, thumbnailImage: previewData.ui?.picture } as ProductFormData;
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>

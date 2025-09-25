@@ -10,6 +10,8 @@ import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
 import 'react-image-crop/dist/ReactCrop.css';
 
+// ThumbnailImage : file uploaded
+// ThumbnailPicture : object with mainLink and thumbnailLink
 export function FormGeneral({
   form,
   type,
@@ -19,13 +21,13 @@ export function FormGeneral({
   type?: ProductType;
   setActiveTab: (tab: TabsType) => void;
 }) {
-  const uiPicture = form.getValues('ui')?.picture;
+  const uiPicture = form.getValues('thumbnailPicture');
 
   const { croppedImageUrl, setAspectRatio, openDialog } = useUploadPicture();
 
   useEffect(() => {
     if (croppedImageUrl) {
-      form.setValue('ui', { ...form.getValues('ui'), picture: { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' } });
+      form.setValue('thumbnailPicture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
     }
   }, [croppedImageUrl, form]);
 
@@ -43,7 +45,7 @@ export function FormGeneral({
         <h2 className="text-foreground mb-2 text-xl font-semibold">{type === 'Session' ? 'Session Details' : 'Product Details'}</h2>
         <p className="text-muted-foreground">Fill in the details for your {type === 'Session' ? 'booking service' : 'digital product'}</p>
       </div>
-      <UploadPictureDialog onUpload={(file) => form.setValue('thumbnail', file)} />
+      <UploadPictureDialog onUpload={(file) => form.setValue('thumbnailImage', file)} />
       {/* Title */}
       <FormField
         control={form.control}

@@ -122,10 +122,10 @@ function ProductPreviewCard({ product }: ProductPreviewCardProps) {
   return (
     <div className={cn('rounded-xl border-2 p-4 shadow-sm', getCardStyle(product.productType))}>
       <div className="flex items-start gap-3">
-        {product.thumbnail && (
+        {product.thumbnailPicture && (
           <LazyImage
-            src={product.thumbnail.mainLink}
-            placeholder={product.thumbnail.thumbnailLink ?? product.thumbnail.mainLink}
+            src={product.thumbnailPicture.mainLink}
+            placeholder={product.thumbnailPicture.thumbnailLink ?? product.thumbnailPicture.mainLink}
             alt={product.title}
             className="h-12 w-12 flex-shrink-0 rounded-lg border object-cover"
           />

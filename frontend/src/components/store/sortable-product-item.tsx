@@ -62,8 +62,8 @@ export function SortableProductItem({ product, onEdit, onDelete, onView }: Sorta
 
       {/* Product Image */}
       <LazyImage
-        src={product?.thumbnail?.mainLink ?? FALLBACK_PROFILE_PICTURE}
-        placeholder={product?.thumbnail?.thumbnailLink ?? FALLBACK_PROFILE_PICTURE}
+        src={product?.thumbnailPicture?.mainLink ?? FALLBACK_PROFILE_PICTURE}
+        placeholder={product?.thumbnailPicture?.thumbnailLink ?? FALLBACK_PROFILE_PICTURE}
         alt={product.title}
         className="h-12 w-12 rounded-lg border object-cover"
       />

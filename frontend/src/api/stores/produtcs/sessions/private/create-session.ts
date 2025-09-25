@@ -9,8 +9,8 @@ import { api, CatalogEndpoints, validateFile } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 
 export const createSession = async ({ data }: { data: CreateProductInput }) => {
-  if (data.thumbnail) {
-    const validation = validateFile(data.thumbnail);
+  if (data.thumbnailImage) {
+    const validation = validateFile(data.thumbnailImage);
 
     if (!validation.isValid) {
       throw new Error(validation.error || 'Invalid file');
