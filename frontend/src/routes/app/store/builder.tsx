@@ -179,15 +179,6 @@ function RouteComponent() {
                             </FormItem>
                           )}
                         />
-
-                        {/* <div className="flex-1">
-                          <Button
-                            onClick={() => openDialog()}
-                            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors"
-                          >
-                            Choose Image
-                          </Button>
-                        </div> */}
                         <div className="space-y-2">
                           <Label className="text-foreground flex items-center gap-2">
                             <Upload className="h-4 w-4" />
