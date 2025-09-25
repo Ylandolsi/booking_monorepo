@@ -49,6 +49,13 @@ public sealed class UsersDbContext
         modelBuilder.HasDefaultSchema(Schemas.Users);
         SeedData.Seed(modelBuilder);
     }
+    
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<Enum>()
+            .HaveConversion<string>();
+    }
+
     // protected override void Up(MigrationBuilder migrationBuilder)
     // {
     // benefit : migration depends only on database schemas ( dont get affected when the model get changed (adding new require property wont break the migration ))

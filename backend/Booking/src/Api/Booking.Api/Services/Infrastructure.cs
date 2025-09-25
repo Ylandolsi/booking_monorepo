@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -27,6 +28,7 @@ public static class Infrastructure
         WebApplicationBuilder builder) =>
         services
             .AddCors()
+            .AddEnumToString()
             .AddOptions(configuration)
             .AddServices(configuration)
             .AddCache(configuration)
@@ -67,6 +69,16 @@ public static class Infrastructure
 
 
     }*/
+
+    public static IServiceCollection AddEnumToString(this IServiceCollection services)
+    {
+        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+        return services;
+    }
 
     private static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {

@@ -42,6 +42,13 @@ public sealed class CatalogDbContext : DbContext
         optionsBuilder.ConfigureWarnings(warnings =>
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
+    
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<Enum>()
+            .HaveConversion<string>();
+    }
+
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="Domain\Entities\Products\" />
       <Folder Include="Features\Payout\Admin\GetDetailed\" />
       <Folder Include="Features\Payout\User\" />
       <Folder Include="Features\Products\" />
