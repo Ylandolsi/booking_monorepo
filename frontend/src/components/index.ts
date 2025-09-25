@@ -12,3 +12,4 @@ export * from './guards';
 export * from './scrollable-content';
 export * from './tab-navigation';
 export * from './store';
+export * from './theme-toggle';

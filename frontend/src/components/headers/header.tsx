@@ -4,6 +4,7 @@ import { useAuth } from '@/api/auth';
 import { useSideBar } from '@/stores';
 import { CreditCard, Menu } from 'lucide-react';
 import { useGetWallet } from '@/features/shared/get-wallet';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 function BalanceHeader() {
   const { data: walletData, isLoading } = useGetWallet();
@@ -45,7 +46,7 @@ export function Header() {
         {
           <div className="flex h-7.5 items-center gap-2">
             <BalanceHeader />
-
+            <ThemeToggle />
             {/* // TODO change this with link of store preview */}
           </div>
         }

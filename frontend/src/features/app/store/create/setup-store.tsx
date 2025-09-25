@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera } from 'lucide-react';
+import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, LogOut } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
@@ -19,11 +19,13 @@ import useDebounce from '@/hooks/use-debounce';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
-import { StoreGuard } from '@/components';
+import { StoreGuard, ThemeToggle } from '@/components';
+import { useAuth } from '@/api/auth';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const createStoreMutation = useCreateStore();
   const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
@@ -99,15 +101,25 @@ export const SetupStore = () => {
 
   return (
     // <StoreGuard> // TODO uncomment this
-    <div className="flex min-h-screen w-full items-center justify-center px-4 py-10 lg:px-8">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-10 lg:px-8">
+      <div className="mb-4 flex w-full max-w-7xl justify-start px-4 lg:px-0">
+        <ThemeToggle />
+        {/* Logout Button */}
+        <Button variant="ghost" onClick={() => logout()} className={`text-destructive h-auto justify-start gap-3 px-3 py-2.5`} title="Logout">
+          <div className="flex gap-2">
+            <LogOut size={20} />
+            <span className="font-medium">Logout</span>
+          </div>
+        </Button>
+      </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-8 pb-5 lg:flex-row lg:items-start">
-        <div className="max-w-lg flex-1">
+        <div className="max-w-lg flex-1 p-6 lg:mr-8">
           <div className="mb-8 text-center">
             <h1 className="from-primary to-chart-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1>
             <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p>
           </div>
 
-          <Card className="bg-card/80 animate-in fade-in border-0 p-6 shadow-xl backdrop-blur-sm duration-500">
+          <Card className="bg-card/80 animate-in fade-in p-6 shadow-xl backdrop-blur-sm duration-500">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField

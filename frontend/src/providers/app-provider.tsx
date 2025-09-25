@@ -1,17 +1,13 @@
-import {
-  MutationCache,
-  QueryClient,
-  QueryClientProvider,
-  type QueryKey,
-} from '@tanstack/react-query';
+import { MutationCache, QueryClient, QueryClientProvider, type QueryKey } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
-import { PageLoading } from '@/components';
+import { PageLoading, useThemeStore } from '@/components';
 import type { DefaultOptions } from '@tanstack/react-query';
 import { toast, Toaster } from 'sonner';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from '@/routeTree.gen';
+import { useEffect } from 'react';
 
 type AppProviderProps = {
   children?: React.ReactNode;
@@ -54,9 +50,7 @@ const queryClient = new QueryClient({
       }
 
       if (mutation.meta?.invalidatesQuery) {
-        const keys = Array.isArray(mutation.meta.invalidatesQuery)
-          ? mutation.meta.invalidatesQuery
-          : [mutation.meta.invalidatesQuery];
+        const keys = Array.isArray(mutation.meta.invalidatesQuery) ? mutation.meta.invalidatesQuery : [mutation.meta.invalidatesQuery];
 
         keys.forEach((key) => {
           queryClient.invalidateQueries({ queryKey: key });
@@ -99,6 +93,12 @@ declare module '@tanstack/react-router' {
 }
 
 export const AppProvider = ({ children }: AppProviderProps) => {
+  // Set initial theme on app load
+  useEffect(() => {
+    const { theme } = useThemeStore.getState();
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, []);
+
   return (
     // TODO : add React.ErrorBoundary
     <React.Suspense fallback={<PageLoading />}>
