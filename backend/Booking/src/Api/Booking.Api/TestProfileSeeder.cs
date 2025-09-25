@@ -302,7 +302,7 @@ public class TestProfileSeeder
             var availability = Availability.Create(
                 mentor.Id, // mentor id
                 dday.Id, // dday id
-                (System.DayOfWeek)dday.DayOfWeek, // day of week enum
+                dday.DayOfWeek, // day of week enum
                 startTime,
                 endTime,
                 "Africa/Tunis"

@@ -34,8 +34,3 @@ public class Expertise : Entity
 
 }
 
-//public enum ExpertiseCategory
-//{
-//    Technical,
-//    SoftSkil
-//}
