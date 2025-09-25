@@ -1,13 +1,14 @@
 import { cn } from '@/lib/cn';
 import { Button } from '../ui';
 import type { Product } from '@/api/stores';
+import type { ProductFormData } from '@/features';
 
 type DisplayMode = 'full' | 'compact';
 
 export type ProductCardType = Pick<Product, 'thumbnail' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'>;
 
 interface ProductCardProps {
-  product: ProductCardType;
+  product: ProductCardType | ProductFormData;
   onClick?: () => void;
   showActions?: boolean;
   displayMode?: DisplayMode;

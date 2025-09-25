@@ -13,7 +13,7 @@ interface ResponsiveBuilderLayoutProps {
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
-  const productData = { ...previewData, thumbnail: previewData.ui?.picture } as ProductCardType;
+  const productData = { ...previewData, thumbnail: previewData.ui?.picture } as ProductFormData;
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>
@@ -29,7 +29,7 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
                 {/* TODO : add header ?  */}
                 {/* TODO : make display mode dynamic ?  */}
                 {viewType == 'overview' && (
-                  <div className="flex h-full w-full items-center justify-center">
+                  <div className="flex h-full w-full items-center justify-center p-6">
                     {/* <StoreHeader store={} /> */}
                     <ProductCard product={productData} displayMode="full" />
                   </div>

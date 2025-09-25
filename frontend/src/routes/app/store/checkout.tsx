@@ -37,44 +37,46 @@ function RouteComponent() {
   );
 }
 
-export function ProductCheckout({ product }: { product: Product }) {
+export function ProductCheckout({ product, children }: { product: Product; children?: React.ReactNode }) {
   return (
-    <MobileContainer>
-      <div className="bg-background-light dark:bg-background-dark relative min-h-screen text-slate-800 dark:text-slate-200">
-        <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
-          <Link className="flex items-center gap-2" to={'/app/store/builder'}>
-            <X />
-            <span className="font-bold text-slate-900 dark:text-white">My Store</span>
-          </Link>
-        </header>
-        <main className="pb-28">
-          <div className="bg-accent flex h-80 w-full items-center justify-center">
-            {/* Change to lazy Image */}
-            <img alt="Product Image" className="h-full w-full object-cover" src={product.thumbnail?.mainLink} />
+    // <MobileContainer>
+    <div className="bg-background-light dark:bg-background-dark relative min-h-screen text-slate-800 dark:text-slate-200">
+      <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
+        <Link className="flex items-center gap-2" to={'/app/store/builder'}>
+          <X />
+          <span className="font-bold text-slate-900 dark:text-white">My Store</span>
+        </Link>
+      </header>
+      <main className="pb-28">
+        <div className="bg-accent flex h-80 w-full items-center justify-center">
+          {/* Change to lazy Image */}
+          <img alt="Product Image" className="h-full w-full object-cover" src={product.thumbnail?.mainLink} />
+        </div>
+        <div className="space-y-5 p-6">
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{product.title}</h1>
+          <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{product.subtitle}</p>
+          <div className="mt-4">
+            <span className="text-primary text-4xl font-bold">{product.price.toFixed(2)}</span>
           </div>
-          <div className="space-y-5 p-6">
-            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{product.title}</h1>
-            <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{product.subtitle}</p>
-            <div className="mt-4">
-              <span className="text-primary text-4xl font-bold">{product.price.toFixed(2)}</span>
-            </div>
-            <div className="mt-6 space-y-4 text-slate-700 dark:text-slate-300">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Description</h2>
-              <p>{product.description}</p>
-            </div>
-            {/* <div className="bg-primary/10 dark:bg-primary/20 mt-6 rounded-lg p-4">
+          <div className="mt-6 space-y-4 text-slate-700 dark:text-slate-300">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Description</h2>
+            <p>{product.description}</p>
+          </div>
+          {/* <div className="bg-primary/10 dark:bg-primary/20 mt-6 rounded-lg p-4">
               <h3 className="font-bold text-slate-900 dark:text-white">Fulfillment Note</h3>
               <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">{fulfillmentNote}</p>
             </div> */}
-            <button
-              onClick={() => alert('Purchase completed!')}
-              className="bg-primary shadow-primary/30 hover:bg-opacity-90 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
-            >
-              Buy Now
-            </button>
-          </div>
-        </main>
-      </div>
-    </MobileContainer>
+
+          {children}
+          <button
+            onClick={() => alert('Purchase completed!')}
+            className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
+          >
+            Buy Now
+          </button>
+        </div>
+      </main>
+    </div>
+    // </MobileContainer>
   );
 }
