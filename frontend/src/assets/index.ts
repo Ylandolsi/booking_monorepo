@@ -1,0 +1,3 @@
+import FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL from './fallback-profile-picture.png';
+
+export { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL };
