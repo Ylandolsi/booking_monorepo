@@ -122,11 +122,7 @@ export function EditableStorePanel({
         </div>
 
         {localProducts.length > 0 ? (
-          <DndContext
-            collisionDetection={closestCorners}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
+          <DndContext collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <SortableContext items={localProducts.map((p) => p.productSlug)} strategy={verticalListSortingStrategy}>
               <div className="space-y-2">
                 {localProducts.map((product) => (
@@ -142,14 +138,12 @@ export function EditableStorePanel({
             </SortableContext>
             <DragOverlay>
               {activeProduct ? (
-                <div className="bg-card border shadow-lg rounded-xl p-3 opacity-90 rotate-3">
+                <div className="bg-card rotate-3 rounded-xl border p-3 opacity-90 shadow-lg">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center">
-                      {getProductIcon(activeProduct.productType)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold truncate">{activeProduct.title}</h3>
-                      <span className="text-sm font-medium text-primary">${activeProduct.price}</span>
+                    <div className="flex items-center justify-center">{getProductIcon(activeProduct.productType)}</div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate font-semibold">{activeProduct.title}</h3>
+                      <span className="text-primary text-sm font-medium">${activeProduct.price}</span>
                     </div>
                   </div>
                 </div>

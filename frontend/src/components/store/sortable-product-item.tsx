@@ -51,7 +51,7 @@ export function SortableProductItem({ product, onEdit, onDelete, onView }: Sorta
       <div
         {...listeners}
         {...attributes}
-        className="text-muted-foreground/60 hover:text-muted-foreground flex cursor-grab items-center justify-center p-2 rounded-md hover:bg-accent/50 active:cursor-grabbing transition-colors"
+        className="text-muted-foreground/60 hover:text-muted-foreground hover:bg-accent/50 flex cursor-grab items-center justify-center rounded-md p-2 transition-colors active:cursor-grabbing"
         title="Drag to reorder"
       >
         <GripVertical className="h-4 w-4" />

@@ -20,6 +20,7 @@ import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { socialPlatforms } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
 import { cn } from '@/lib';
+import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 
 export const Route = createFileRoute('/app/store/builder')({
   component: RouteComponent,
@@ -113,6 +114,7 @@ function RouteComponent() {
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
       <style>{`.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }`}</style>
+      <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
       <aside className="border-primary/20 dark:border-primary/30 flex w-[460px] flex-col">
         <div className="flex-1">
           <div className="border-primary/20 dark:border-primary/30 border-b p-6">
@@ -178,31 +180,30 @@ function RouteComponent() {
                           )}
                         />
 
-                        <div className="flex-1">
+                        {/* <div className="flex-1">
                           <Button
                             onClick={() => openDialog()}
                             className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors"
                           >
                             Choose Image
                           </Button>
-                        </div>
-                        {/* <div className="space-y-2">
+                        </div> */}
+                        <div className="space-y-2">
                           <Label className="text-foreground flex items-center gap-2">
                             <Upload className="h-4 w-4" />
                             Profile Picture (Optional)
                           </Label>
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-4" onClick={openDialog}>
                             <Label
                               htmlFor="profile-picture-input"
                               className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
-                              onClick={openDialog}
                             >
                               <Camera className="mr-2 h-6 w-6 text-gray-400" />
                               <span className="font-medium text-gray-600">Choose a photo</span>
                             </Label>
                           </div>
                           <p className="text-muted-foreground text-xs">PNG, JPG up to 10MB</p>
-                        </div> */}
+                        </div>
 
                         {/* Collapsible Social Media Section */}
                         <Accordion type="single" collapsible className="w-full">
@@ -472,7 +473,7 @@ function RouteComponent() {
           <div className={'w-full space-y-4'}>
             {products.map((product, index) => (
               <div
-                key={product.storeSlug + '-' + product.storeSlug}
+                key={product.productSlug}
                 className={cn('relative transition-all duration-200', 'scale-95 opacity-50', 'translate-y-1 transform', 'cursor-move')}
               >
                 <div className={'group'}>
