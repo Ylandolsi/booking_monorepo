@@ -34,14 +34,14 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
   ];
   return (
     <div className="mb-6">
-      {!props.collapsed && <h3 className="text-muted-foreground mb-3 px-2 text-xs font-semibold tracking-wider uppercase">Navigation</h3>}
+      {!props.collapsed && <h3 className="text-accent-foreground mb-3 px-2 text-xs font-semibold tracking-wider uppercase">Navigation</h3>}
       <nav className="space-y-1">
         {navigationItems.map((item) => (
           <Button
             variant={'ghost'}
             key={item.name}
             onClick={() => props.handleItemClick(item)}
-            className={`group relative flex w-full items-center rounded-lg text-left transition-all duration-200 ${props.collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'} ${props.itemActive == item.name ? 'bg-primary text-primary-foreground shadow-md' : 'hover:bg-accent text-muted-foreground hover:text-foreground'} `}
+            className={`group relative flex w-full items-center rounded-lg text-left transition-all duration-200 ${props.collapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'} ${props.itemActive == item.name ? 'bg-primary text-primary-foreground shadow-md' : 'hover:bg-accent text-accent-foreground hover:text-foreground'} `}
             title={props.collapsed ? item.name : undefined}
           >
             <span>{item.icon}</span>
@@ -50,7 +50,7 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
                 <span className="flex-1 font-medium">{item.name}</span>
                 {item.badge && <Badge className="h-5 px-2 text-xs">{item.badge}</Badge>}
                 <ChevronRight
-                  className={`h-4 w-4 transition-transform ${props.itemActive === item.name ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`}
+                  className={`h-4 w-4 transition-transform ${props.itemActive === item.name ? 'text-primary-foreground' : 'text-accent-foreground group-hover:text-foreground'}`}
                 />
               </>
             )}

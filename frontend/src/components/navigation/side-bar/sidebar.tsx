@@ -90,7 +90,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, collapsed = false, setCollapsed 
                   </div>
                   <button
                     onClick={() => nav.goToProfile(currentUser?.slug || '')}
-                    className="text-muted-foreground hover:text-primary text-sm transition-colors"
+                    className="text-accent-foreground hover:text-primary text-sm transition-colors"
                   >
                     View profile
                   </button>

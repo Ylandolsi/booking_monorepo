@@ -91,7 +91,7 @@ export function AddProductFlow() {
         <div className="px-6 pt-6 pb-4">
           <div className="mb-4 text-center">
             <h2 className="text-foreground mb-2 text-xl font-semibold">Edit Product</h2>
-            <p className="text-muted-foreground">Update your {type === 'Session' ? 'booking service' : 'digital product'}</p>
+            <p className="text-accent-foreground">Update your {type === 'Session' ? 'booking service' : 'digital product'}</p>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ export function AddProductFlow() {
                   <h2 className="text-foreground mb-2 text-xl font-semibold">
                     {type === 'Session' ? 'Session Settings' : 'Digital Product Settings'}
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-accent-foreground">
                     Configure specific settings for your {type === 'Session' ? 'booking service' : 'digital product'}
                   </p>
                 </div>
@@ -217,7 +217,7 @@ export function AddProductFlow() {
                     />
 
                     {/* Placeholder for file uploads */}
-                    <div className="bg-muted text-muted-foreground rounded-lg p-6 text-center">
+                    <div className="bg-muted text-accent-foreground rounded-lg p-6 text-center">
                       <p className="mb-4">File upload functionality coming soon</p>
                       <p className="text-xs">You'll be able to upload files directly here</p>
                     </div>

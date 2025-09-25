@@ -45,7 +45,7 @@ export const SelectProductType = ({ className, setType }: SelectProductTypeProps
       <div className={cn('space-y-4', className)}>
         <div className="mb-6 text-center">
           <h2 className="text-foreground mb-2 text-xl font-semibold">What type of product are you creating?</h2>
-          <p className="text-muted-foreground">Choose the type that best fits what you want to sell</p>
+          <p className="text-accent-foreground">Choose the type that best fits what you want to sell</p>
         </div>
 
         <div className="flex flex-col gap-2 md:flex-row">
@@ -59,9 +59,9 @@ export const SelectProductType = ({ className, setType }: SelectProductTypeProps
                 <div className="text-3xl">{type.icon}</div>
                 <div className="flex-1">
                   <h3 className="text-foreground mb-1 font-semibold">{type.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{type.description}</p>
+                  <p className="text-accent-foreground text-sm leading-relaxed">{type.description}</p>
                 </div>
-                <div className="text-muted-foreground">→</div>
+                <div className="text-accent-foreground">→</div>
               </div>
             </button>
           ))}
@@ -69,7 +69,7 @@ export const SelectProductType = ({ className, setType }: SelectProductTypeProps
       </div>
       {/* Cancel Button */}
       <div className="mt-6 text-center">
-        <button onClick={onCancel} className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+        <button onClick={onCancel} className="text-accent-foreground hover:text-foreground text-sm transition-colors">
           Cancel
         </button>
       </div>
