@@ -6,8 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-schedule';
 import { mapDayToNumber } from '@/utils/enum-days-week';
 import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
-import { Clock, X } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui';
+import { Clock, Timer, X } from 'lucide-react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products';
 
 const DAYS: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -16,108 +30,114 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
   const { schedule, actions, error } = useFormSchedule(form);
 
   return (
-    <div className="space-y-6">
-      <Label> Availability </Label>
-      <div className="space-y-4">
-        {error && (
-          <Alert variant={'destructive'} className="">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        {DAYS.map((day) => {
-          const daySchedule = schedule.find((s) => s.dayOfWeek === mapDayToNumber(day));
-          if (!daySchedule) return null;
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="social-links">
+        <AccordionTrigger className="text-foreground hover:text-primary text-md">
+          <div className="flex items-start justify-center gap-3">
+            <Timer />
+            Setup Schedule
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="space-y-4">
+          {error && (
+            <Alert variant={'destructive'} className="">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {DAYS.map((day) => {
+            const daySchedule = schedule.find((s) => s.dayOfWeek === mapDayToNumber(day));
+            if (!daySchedule) return null;
 
-          return (
-            <Card key={day} className={`cursor-pointer hover:bg-gray-50`}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Switch className="border-border border" checked={daySchedule.isActive} onCheckedChange={() => actions.toggleDay(day)} />
-                    <div>
-                      <CardTitle className="text-lg">{day.charAt(0).toUpperCase() + day.slice(1)}</CardTitle>
-                      <p className="mt-1 text-sm text-gray-600">
-                        {daySchedule.isActive
-                          ? `${daySchedule.availabilityRanges.length} time slot${daySchedule.availabilityRanges.length !== 1 ? 's' : ''} configured`
-                          : 'Not available'}
-                      </p>
+            return (
+              <Card key={day} className={`cursor-pointer hover:bg-gray-50`}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <Switch className="border-border border" checked={daySchedule.isActive} onCheckedChange={() => actions.toggleDay(day)} />
+                      <div>
+                        <CardTitle className="text-lg">{day.charAt(0).toUpperCase() + day.slice(1)}</CardTitle>
+                        <p className="mt-1 text-sm text-gray-600">
+                          {daySchedule.isActive
+                            ? `${daySchedule.availabilityRanges.length} time slot${daySchedule.availabilityRanges.length !== 1 ? 's' : ''} configured`
+                            : 'Not available'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
 
-              {daySchedule.isActive && (
-                <CardContent className="space-y-3">
-                  {/* Time Ranges */}
-                  {daySchedule.availabilityRanges.map((range) => (
-                    <div key={range.id} className="flex items-center gap-3 rounded-lg border bg-white p-3">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <Select
-                        value={range.startTime}
-                        onValueChange={(value) => actions.updateTimeRange(day, range.id?.toString() || '0', 'startTime', value)}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <span className="text-gray-500">to</span>
+                {daySchedule.isActive && (
+                  <CardContent className="space-y-3">
+                    {/* Time Ranges */}
+                    {daySchedule.availabilityRanges.map((range) => (
+                      <div key={range.id} className="flex items-center gap-3 rounded-lg border bg-white p-3">
+                        <Clock className="h-4 w-4 text-gray-500" />
+                        <Select
+                          value={range.startTime}
+                          onValueChange={(value) => actions.updateTimeRange(day, range.id?.toString() || '0', 'startTime', value)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {TIME_OPTIONS.map((time) => (
+                              <SelectItem key={time} value={time}>
+                                {time}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <span className="text-gray-500">to</span>
 
-                      <Select
-                        value={range.endTime}
-                        onValueChange={(value) => actions.updateTimeRange(day, range.id?.toString() || '', 'endTime', value)}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_OPTIONS.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => actions.removeTimeRange(day, range.id?.toString() || '')}
-                        className="ml-auto text-red-600 hover:bg-red-50 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
+                        <Select
+                          value={range.endTime}
+                          onValueChange={(value) => actions.updateTimeRange(day, range.id?.toString() || '', 'endTime', value)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {TIME_OPTIONS.map((time) => (
+                              <SelectItem key={time} value={time}>
+                                {time}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => actions.removeTimeRange(day, range.id?.toString() || '')}
+                          className="ml-auto text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
 
-                  {/* Add Time Slot Button */}
-                  <Button type="button" variant="outline" size="sm" onClick={() => actions.addCustomTimeSlot(day)} className="w-full">
-                    + Add Time Slot
-                  </Button>
-                </CardContent>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Form Validation Error */}
-      <FormField
-        control={form.control}
-        name="dailySchedule"
-        render={() => (
-          <FormItem>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
+                    {/* Add Time Slot Button */}
+                    <Button type="button" variant="outline" size="sm" onClick={() => actions.addCustomTimeSlot(day)} className="w-full">
+                      + Add Time Slot
+                    </Button>
+                  </CardContent>
+                )}
+              </Card>
+            );
+          })}
+        </AccordionContent>
+        {/* Form Validation Error */}
+        <FormField
+          control={form.control}
+          name="dailySchedule"
+          render={() => (
+            <FormItem>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </AccordionItem>
+    </Accordion>
   );
 }
