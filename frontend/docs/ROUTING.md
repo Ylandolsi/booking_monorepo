@@ -1,20 +1,3 @@
-
-## Usage Examples
-
-### Basic Navigation
-
-```typescript
-import { useAppNavigation } from '@/hooks/use-navigation';
-
-function MyComponent() {
-  const { navigateToAuth, navigateToBooking } = useAppNavigation();
-
-  const handleLogin = () => navigateToAuth.login();
-  const handleBookSession = (mentorSlug: string) =>
-    navigateToBooking.session(mentorSlug);
-}
-```
-
 ### Route Building
 
 ```typescript
@@ -26,9 +9,6 @@ const loginUrl = routes.to.auth.login(); // '/auth/login'
 // Parameterized routes
 const userProfile = routes.to.profile.user('john-doe'); // '/profile/john-doe'
 const bookingSession = routes.to.booking.session('jane-smith'); // '/booking/session/jane-smith'
-
-// Route checking
-const isAuthRoute = routes.matchesRoute('/auth/login', ROUTE_PATHS.AUTH.LOGIN); // true
 ```
 
 ### Adding New Routes

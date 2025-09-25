@@ -1,6 +1,7 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;

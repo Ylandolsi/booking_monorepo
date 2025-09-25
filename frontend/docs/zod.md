@@ -1,12 +1,30 @@
-## Zod Schemas
+# Zod Validation Patterns and Documentation
 
-### Inferring Types from Schemas
+This document outlines common patterns and best practices for using Zod schema validation in the frontend application, including type inference, schema composition, and validation strategies.
+
+## Table of Contents
+
+- [Basic Schema Patterns](#basic-schema-patterns)
+  - [Type Inference](#type-inference)
+  - [Nested Schemas](#nested-schemas)
+- [Advanced Schema Composition](#advanced-schema-composition)
+  - [Discriminated Unions](#discriminated-unions)
+  - [Conditional Validation](#conditional-validation)
+- [Alternatives to Zod](#alternatives-to-zod)
+
+## Basic Schema Patterns
+
+### Type Inference
+
+Zod schemas can automatically generate TypeScript types using the `z.infer<>` utility:
 
 ```ts
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 ```
 
 ### Nested Schemas
+
+Create complex nested validation structures by composing smaller schemas:
 
 ```ts
 export const availabilityRangeTypeSchema = z.object({
@@ -31,7 +49,11 @@ export const createSessionProductSchema = createProductBaseSchema.extend({
 });
 ```
 
-### Discriminated Unions for Multiple Schemas
+## Advanced Schema Composition
+
+### Discriminated Unions
+
+Use discriminated unions to handle different schema types based on a common discriminator field:
 
 ```ts
 export const createProductBaseSchema = z.object({
@@ -58,33 +80,43 @@ export const createProductSchema = z.discriminatedUnion('productType', [createSe
 export type CreateProductInput = z.infer<typeof createProductSchema>;
 ```
 
-### Conditional Validation and Transforms
+### Conditional Validation
 
-````ts
+Implement validation logic that depends on other field values using the `.refine()` method:
+
+```ts
 // Conditional validation based on other fields
-const paymentSchema = z.object({
-  paymentMethod: z.enum(['credit_card', 'paypal', 'bank_transfer']),
-  creditCardNumber: z.string().optional(),
-  paypalEmail: z.string().email().optional(),
-  bankAccount: z.string().optional(),
-}).refine((data) => {
-  if (data.paymentMethod === 'credit_card') {
-    return data.creditCardNumber && data.creditCardNumber.length >= 16;
-  }
-  if (data.paymentMethod === 'paypal') {
-    return data.paypalEmail && data.paypalEmail.length > 0;
-  }
-  if (data.paymentMethod === 'bank_transfer') {
-    return data.bankAccount && data.bankAccount.length > 0;
-  }
-  return true;
-}, {
-  message: "Payment details are required for the selected method",
-  path: ["paymentMethod"],
-});
+const paymentSchema = z
+  .object({
+    paymentMethod: z.enum(['credit_card', 'paypal', 'bank_transfer']),
+    creditCardNumber: z.string().optional(),
+    paypalEmail: z.string().email().optional(),
+    bankAccount: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.paymentMethod === 'credit_card') {
+        return data.creditCardNumber && data.creditCardNumber.length >= 16;
+      }
+      if (data.paymentMethod === 'paypal') {
+        return data.paypalEmail && data.paypalEmail.length > 0;
+      }
+      if (data.paymentMethod === 'bank_transfer') {
+        return data.bankAccount && data.bankAccount.length > 0;
+      }
+      return true;
+    },
+    {
+      message: 'Payment details are required for the selected method',
+      path: ['paymentMethod'],
+    },
+  );
 ```
 
-### zod alternative
+## Alternatives to Zod
+
+When runtime validation isn't needed, you can use plain TypeScript interfaces with custom hooks for state management:
+
 ```ts
 export interface BookingHookState {
   selectedDate: Date | undefined;
@@ -103,20 +135,24 @@ export function useBooking({ mentorSlug, iamTheMentor }: { mentorSlug?: string; 
     title: '',
   });
 
-  // Actions ...
-const setSelectedDate = useCallback((date: Date | undefined) => {
-  setState((prev: BookingHookState) => ({
-    ...prev,
-    selectedDate: date,
-    selectedSlot: null, // Reset slot when date changes
-  }));
-}, []);
+  // Actions...
+  const setSelectedDate = useCallback((date: Date | undefined) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      selectedDate: date,
+      selectedSlot: null, // Reset slot when date changes
+    }));
+  }, []);
 
-const setSelectedSlot = useCallback((slot: SessionSlotType | null) => {
-  setState((prev: BookingHookState) => ({
-    ...prev,
-    selectedSlot: slot,
-  }));
-}, []);
+  const setSelectedSlot = useCallback((slot: SessionSlotType | null) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      selectedSlot: slot,
+    }));
+  }, []);
+}
 ```
-````
+
+```
+
+```

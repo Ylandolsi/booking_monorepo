@@ -4,6 +4,7 @@ import type {
   CreateSessionProductRequest,
   PatchPostSessionResponse,
 } from '@/api/stores/produtcs/sessions/private/schema-session';
+import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints, validateFile } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 
@@ -33,7 +34,7 @@ export const useCreateSession = () => {
   return useMutation<PatchPostSessionResponse, Error, { data: CreateProductInput }>({
     mutationFn: createSession,
     meta: {
-      // invalidatesQuery: [SESSION_QUERY_KEY],
+      invalidatesQuery: [storeKeys.myStore()],
       successMessage: 'Session created successfully!',
     },
   });

@@ -41,7 +41,7 @@ export function ProductCard({ product, onClick, showActions = false, displayMode
                 <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
               </div>
 
-              <div className="min-w-0">
+              <div className="min-w-0 text-left">
                 <h3 className="text-foreground line-clamp-2 font-semibold break-words">{product.title}</h3>
                 {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm break-words">{product.subtitle}</p>}
               </div>

@@ -1,6 +1,25 @@
-## React Hook Form
+# React Hook Form Patterns and Documentation
 
-### Basic Setup
+This document outlines common patterns and best practices for using React Hook Form with Zod validation in the frontend application.
+
+## Table of Contents
+
+- [Basic Setup](#basic-setup)
+- [Form Fields](#form-fields)
+  - [Select Fields](#select-fields)
+  - [Form Field Examples](#form-field-examples)
+- [Form State Management](#form-state-management)
+  - [Watching Values](#watching-values)
+  - [Setting and Clearing Errors](#setting-and-clearing-errors)
+  - [Resetting Forms](#resetting-forms)
+- [Advanced Patterns](#advanced-patterns)
+  - [Custom Form Components](#custom-form-components)
+  - [Field Wrapper](#field-wrapper)
+  - [External Validation](#external-validation)
+
+## Basic Setup
+
+### Form Initialization with Zod Resolver
 
 ```ts
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -23,7 +42,11 @@ const form = useForm<CreateProductInput>({
   criteriaMode: 'all', // Show all validation errors
   shouldFocusError: true, // Auto-focus on error fields
 });
+```
 
+### Form Submission Handler
+
+```ts
 const onSubmit = async (data: CreateProductInput) => {
   try {
     setIsSubmitting(true);
@@ -37,8 +60,11 @@ const onSubmit = async (data: CreateProductInput) => {
     setIsSubmitting(false);
   }
 };
+```
 
-// Form component
+### Form Component Structure
+
+```tsx
 <Form {...form}>
   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
     {/* Form fields */}
@@ -49,52 +75,72 @@ const onSubmit = async (data: CreateProductInput) => {
 </Form>
 ```
 
-### Select
+## Form Fields
 
-````ts
-  <FormField
+### Select Fields
+
+```tsx
+<FormField
   control={form.control}
   name="bufferTime"
   render={({ field }) => (
-  <FormItem>
-    <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
-    <FormControl>
-      <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
-        <FormControl>
+    <FormItem>
+      <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
+      <FormControl>
+        <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select duration" />
           </SelectTrigger>
-        </FormControl>
-        <SelectContent>
-          <SelectItem value="15">15</SelectItem>
-          <SelectItem value="30">30</SelectItem>
-          <SelectItem value="45">45</SelectItem>
-          {/* only 30 minutes available for now */}
-        </SelectContent>
-      </Select>
-    </FormControl>
-    <FormMessage />
-  </FormItem>
-                        ```
+          <SelectContent>
+            <SelectItem value="15">15</SelectItem>
+            <SelectItem value="30">30</SelectItem>
+            <SelectItem value="45">45</SelectItem>
+            {/* only 30 minutes available for now */}
+          </SelectContent>
+        </Select>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+```
 
-###Reset
+### Form Field Examples
 
-```ts
-// with new values
-// Reset form with new values
-const resetForm = (newValues?: Partial<CreateProductInput>) => {
-  form.reset(newValues);
-};
+```tsx
+<FormField
+  control={form.control}
+  name="title"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel className="text-foreground flex items-center gap-2">
+        <User className="h-4 w-4" />
+        Store Name *
+      </FormLabel>
+      <FormControl>
+        <Input
+          placeholder="Your Amazing Store"
+          className="border-border text-foreground py-3 text-lg"
+          {...field}
+          onChange={(e) => {
+            field.onChange(e);
+            if (!watchedValues.slug) generateSlug(e.target.value);
+          }}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+```
 
-// with default
-form.reset();
-````
+## Form State Management
 
 ### Watching Values
 
 ```ts
 const watchedValues = form.watch(); // watch all
-const watchedSepcificValues = form.watch(['title', 'price']); // watch specific
+const watchedSpecificValues = form.watch(['title', 'price']); // watch specific
 const productType = form.watch('productType');
 ```
 
@@ -109,97 +155,88 @@ const {
 } = form;
 ```
 
-### Form Field Example
+### Resetting Forms
 
 ```ts
-<FormField
-        control={form.control}
-        name="title"
-        render={({ field }) => (
-                <FormItem>
-                        <FormLabel className="text-foreground flex items-center gap-2">
-                                <User className="h-4 w-4" />
-                                Store Name *
-                        </FormLabel>
-                        <FormControl>
-                                <Input
-                                        placeholder="Your Amazing Store"
-                                        className="border-border text-foreground py-3 text-lg"
-                                        {...field}
-                                        onChange={(e) => {
-                                                field.onChange(e);
-                                                if (!watchedValues.slug) generateSlug(e.target.value);
-                                        }}
-                                />
-                        </FormControl>
-                        <FormMessage />
-                </FormItem>
-        )}
-/>
+// Reset form with new values
+const resetForm = (newValues?: Partial<CreateProductInput>) => {
+  form.reset(newValues);
+};
+
+// Reset to default values
+form.reset();
 ```
+
+## Advanced Patterns
 
 ### Custom Form Components
 
 For complex form sections like schedules, use a custom hook to manage state and integrate with react-hook-form. Example based on `useFormSchedule` hook:
 
-```ts
+#### Usage in Component
+
+```tsx
 // In a component like add-product.tsx
 <FormScheduleComponent form={form} />
+```
 
-// FormScheduleComponent implementation
+#### Component Implementation
+
+```tsx
 export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
-        const { schedule, selectedCopySource, actions, getScheduleSummary } = useFormSchedule(form);
+  const { schedule, selectedCopySource, actions, getScheduleSummary } = useFormSchedule(form);
 
-        // Render schedule UI here, using actions to update form state
+  // Render schedule UI here, using actions to update form state
 
-        // Form validation error display
-        <FormField
-                control={form.control}
-                name="dailySchedule"
-                render={() => (
-                        <FormItem>
-                                <FormMessage />
-                        </FormItem>
-                )}
-        />
-}
-
-// useFormSchedule hook (excerpt)
-export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFormScheduleReturn {
-        const formSchedule = form.watch('dailySchedule') as DailySchedule[] | undefined;
-
-        useEffect(() => {
-                if (!formSchedule || formSchedule.length === 0) {
-                        form.setValue('dailySchedule', createDefaultSchedule());
-                }
-        }, [form, formSchedule]);
-
-        const schedule = formSchedule || createDefaultSchedule();
-
-        const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
-                const currentSchedule = (form.getValues('dailySchedule') as DailySchedule[]) || createDefaultSchedule();
-                const newSchedule = currentSchedule.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
-                form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
-        };
-
-        // ... other actions
-
-        return {
-                schedule,
-                selectedCopySource,
-                actions: { /* actions */ },
-                getScheduleSummary,
-        };
+  // Form validation error display
+  <FormField
+    control={form.control}
+    name="dailySchedule"
+    render={() => (
+      <FormItem>
+        <FormMessage />
+      </FormItem>
+    )}
+  />;
 }
 ```
 
-````
+#### Custom Hook Implementation
 
----
+```tsx
+export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFormScheduleReturn {
+  const formSchedule = form.watch('dailySchedule') as DailySchedule[] | undefined;
+
+  useEffect(() => {
+    if (!formSchedule || formSchedule.length === 0) {
+      form.setValue('dailySchedule', createDefaultSchedule());
+    }
+  }, [form, formSchedule]);
+
+  const schedule = formSchedule || createDefaultSchedule();
+
+  const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
+    const currentSchedule = (form.getValues('dailySchedule') as DailySchedule[]) || createDefaultSchedule();
+    const newSchedule = currentSchedule.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
+    form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
+  };
+
+  // ... other actions
+
+  return {
+    schedule,
+    selectedCopySource,
+    actions: {
+      /* actions */
+    },
+    getScheduleSummary,
+  };
+}
+```
 
 ### Field Wrapper
 
-```ts
+```tsx
 interface FormFieldWrapperProps<T extends FieldValues> {
   form: UseFormReturn<T>;
   name: Path<T>;
@@ -209,14 +246,7 @@ interface FormFieldWrapperProps<T extends FieldValues> {
   children: (field: ControllerRenderProps<T, Path<T>>) => React.ReactNode;
 }
 
-export function FormFieldWrapper<T extends FieldValues>({
-  form,
-  name,
-  label,
-  description,
-  required = false,
-  children,
-}: FormFieldWrapperProps<T>) {
+export function FormFieldWrapper<T extends FieldValues>({ form, name, label, description, required = false, children }: FormFieldWrapperProps<T>) {
   return (
     <FormField
       control={form.control}
@@ -227,12 +257,8 @@ export function FormFieldWrapper<T extends FieldValues>({
             {label}
             {required && <span className="text-red-500">*</span>}
           </FormLabel>
-          <FormControl>
-            {children(field)}
-          </FormControl>
-          {description && (
-            <FormDescription>{description}</FormDescription>
-          )}
+          <FormControl>{children(field)}</FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}
@@ -241,12 +267,7 @@ export function FormFieldWrapper<T extends FieldValues>({
 }
 
 // Usage
-<FormFieldWrapper
-  form={form}
-  name="title"
-  label="Product Title"
-  required
->
+<FormFieldWrapper form={form} name="title" label="Product Title" required>
   {(field) => (
     <Input
       placeholder="Enter product title"
@@ -257,13 +278,14 @@ export function FormFieldWrapper<T extends FieldValues>({
       }}
     />
   )}
-</FormFieldWrapper>
+</FormFieldWrapper>;
 ```
 
-### External validation ( like slug ) that requires api calls
+### External Validation
 
-```ts
+For validation that requires API calls (like checking if a slug is available):
 
+```tsx
 // Usage in form field
 function EmailField({ form }: { form: UseFormReturn<any> }) {
   const { validateAsync, validationStatus } = useAsyncValidation();
@@ -284,12 +306,8 @@ function EmailField({ form }: { form: UseFormReturn<any> }) {
                   validateAsync('email', e.target.value);
                 }}
               />
-              {validationStatus.email === 'validating' && (
-                <Loader className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin" />
-              )}
-              {validationStatus.email === 'valid' && (
-                <Check className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
-              )}
+              {validationStatus.email === 'validating' && <Loader className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 animate-spin" />}
+              {validationStatus.email === 'valid' && <Check className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-green-500" />}
             </div>
           </FormControl>
           <FormMessage />
@@ -299,4 +317,7 @@ function EmailField({ form }: { form: UseFormReturn<any> }) {
   );
 }
 ```
-````
+
+```
+
+```

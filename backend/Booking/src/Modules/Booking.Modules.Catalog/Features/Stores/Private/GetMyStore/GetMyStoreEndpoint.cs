@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,7 +15,7 @@ public class GetMyStoreEndpoint : IEndpoint
     {
         app.MapGet(CatalogEndpoints.Stores.GetMy, async (
                 UserContext userContext,
-                IQueryHandler<GetMyStoreQuery, StoreResponse> handler,
+                IQueryHandler<GetMyStoreQuery, GetStoreResponse> handler,
                 CancellationToken cancellationToken) =>
             {
                 var userId = userContext.UserId;

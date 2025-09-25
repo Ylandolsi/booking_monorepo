@@ -11,11 +11,14 @@ export function ModifyStore() {
   let { data: store, isLoading, isError } = useMyStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const navigate = useAppNavigation();
-  const [products, setProducts] = useState<Product[]>([]);
 
   if (isLoading) return <LoadingState type="spinner" />;
 
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+
+  const products = store.products || [];
+
+  console.log(store);
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -26,7 +29,7 @@ export function ModifyStore() {
   };
 
   const handleProductsReorder = (reorderedProducts: Product[]) => {
-    setProducts(reorderedProducts);
+    // setProducts(reorderedProducts);
   };
 
   const handleAddProduct = () => {

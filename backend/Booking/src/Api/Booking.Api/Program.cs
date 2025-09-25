@@ -101,6 +101,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
+    /*
     // Drop databases
     await usersDb.Database.EnsureDeletedAsync();
     await mentorshipsDb.Database.EnsureDeletedAsync();
@@ -121,7 +122,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     await roleService.CreateRoleAsync("User");
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();*/
 }
 
 app.MapHealthChecks("health", new HealthCheckOptions

@@ -31,11 +31,7 @@ function MyComponent() {
   });
 
   return (
-    <QueryStateWrapper
-      query={dataQuery}
-      loadingMessage="Loading your data..."
-      loadingType="spinner"
-    >
+    <QueryStateWrapper query={dataQuery} loadingMessage="Loading your data..." loadingType="spinner">
       {(data) => (
         <div>
           <h1>Data loaded!</h1>
@@ -66,11 +62,7 @@ function MyProfilePage() {
   );
 
   return (
-    <ProfileStateWrapper
-      query={queryState}
-      requiresMentor={true}
-      loadingMessage="Loading your profile..."
-    >
+    <ProfileStateWrapper query={queryState} requiresMentor={true} loadingMessage="Loading your profile...">
       {({ user, mentor }) => (
         <div>
           <h1>Welcome {user?.name}!</h1>
@@ -87,12 +79,7 @@ function MyProfilePage() {
 ### Custom Loading States
 
 ```tsx
-<QueryStateWrapper
-  query={dataQuery}
-  loadingType="dots"
-  loadingMessage="Processing your request..."
-  loadingFallback={<MyCustomLoader />}
->
+<QueryStateWrapper query={dataQuery} loadingType="dots" loadingMessage="Processing your request..." loadingFallback={<MyCustomLoader />}>
   {(data) => <MyComponent data={data} />}
 </QueryStateWrapper>
 ```
@@ -117,12 +104,7 @@ function MyProfilePage() {
 ### Container Customization
 
 ```tsx
-<QueryStateWrapper
-  query={dataQuery}
-  containerClassName="max-w-6xl mx-auto p-8"
-  minHeight="600px"
-  showRetryButton={false}
->
+<QueryStateWrapper query={dataQuery} containerClassName="max-w-6xl mx-auto p-8" minHeight="600px" showRetryButton={false}>
   {(data) => <MyComponent data={data} />}
 </QueryStateWrapper>
 ```
@@ -210,24 +192,54 @@ function MultiQueryComponent() {
 }
 ```
 
-### Conditional Loading
+### **2. Custom Loading Fallback**
 
-```tsx
-function ConditionalComponent({ userId }: { userId?: string }) {
-  const userQuery = useQuery({
-    queryKey: ['user', userId],
-    queryFn: () => fetchUser(userId!),
-    enabled: !!userId,
-  });
+```typescript
+<QueryWrapper
+  query={userQuery}
+  loadingFallback={<CustomLoadingComponent />}
+  errorFallback={(error) => <CustomErrorComponent error={error} />}
+>
+  {(user) => <UserProfile user={user} />}
+</QueryWrapper>
+```
 
-  if (!userId) {
-    return <div>Please select a user</div>;
-  }
+### **3. Skeleton Types**
 
-  return (
-    <QueryStateWrapper query={userQuery} emptyStateMessage="User not found">
-      {(user) => <UserCard user={user} />}
-    </QueryStateWrapper>
-  );
-}
+```typescript
+// Profile skeleton
+<QueryWrapper query={userQuery} skeletonType="profile">
+  {(user) => <UserProfile user={user} />}
+</QueryWrapper>
+
+// List skeleton
+<QueryWrapper query={usersQuery} skeletonType="list" skeletonProps={{ count: 5 }}>
+  {(users) => <UserList users={users} />}
+</QueryWrapper>
+
+// Card skeleton
+<QueryWrapper query={dataQuery} skeletonType="card">
+  {(data) => <DataCard data={data} />}
+</QueryWrapper>
+```
+
+### **4. Specialized Wrappers**
+
+```typescript
+import { ProfileQueryWrapper, ListQueryWrapper, CardQueryWrapper } from '@/components/wrappers/query-wrapper';
+
+// Profile wrapper
+<ProfileQueryWrapper query={userQuery}>
+  {(user) => <UserProfile user={user} />}
+</ProfileQueryWrapper>
+
+// List wrapper
+<ListQueryWrapper query={usersQuery} count={10}>
+  {(users) => <UserList users={users} />}
+</ListQueryWrapper>
+
+// Card wrapper
+<CardQueryWrapper query={dataQuery}>
+  {(data) => <DataCard data={data} />}
+</CardQueryWrapper>
 ```

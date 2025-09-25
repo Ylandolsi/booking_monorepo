@@ -2,37 +2,15 @@ using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.ValueObjects;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Public;
 
 public record GetStoreQuery(string StoreSlug) : IQuery<GetStoreResponse>;
-
-public record ProductPublic
-{
-    public string Slug { get; init; }
-    public string Title { get; init; } = string.Empty;
-    public string ClickToPay { get; init; }
-    public string? Subtitle { get; init; }
-    public string? Description { get; init; }
-    public ProductType ProductType { get; init; }
-    public decimal Price { get; init; }
-    public int DisplayOrder { get; init; }
-    public bool IsPublished { get; init; }
-}
-
-public record GetStoreResponse
-{
-    public string Title { get; init; }
-    public string Slug { get; init; }
-    public string? Description { get; init; }
-    public Picture Picture { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public IReadOnlyList<SocialLink> SocialLinks { get; init; }
-    public List<ProductPublic> Products { get; init; }
-}
 
 public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler> logger)
     : IQueryHandler<GetStoreQuery, GetStoreResponse>
@@ -55,16 +33,19 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
             logger.LogError("Public user trying to retrieve unpublished store with slug : {slug}", command.StoreSlug);
             return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
         }
+        var socialLinks = store.SocialLinks
+            .Select(sl => new SocialLink(sl.Platform, sl.Url))
+            .ToList();
 
 
-        List<ProductPublic> mappedStoreProducts = new List<ProductPublic>();
+        List<ProductResponse> mappedStoreProducts = new List<ProductResponse>();
 
         foreach (var product in store.Products)
         {
             if (product.IsPublished == false)
                 continue;
 
-            var mappedProduct = new ProductPublic
+            var mappedProduct = new ProductResponse
             {
                 Slug = product.ProductSlug,
                 Title = product.Title,
@@ -85,7 +66,7 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
             Title = store.Title,
             Description = store.Description,
             Picture = store.Picture,
-            SocialLinks = store.SocialLinks,
+            SocialLinks = socialLinks,
             Products = mappedStoreProducts,
         };
 

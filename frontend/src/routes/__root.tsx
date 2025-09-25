@@ -10,21 +10,6 @@ export const Route = createRootRoute({
       <TanStackRouterDevtools />
     </>
   ),
-  notFoundComponent: () => <ErrorComponenet />,
-  errorComponent: () => <MainErrorFallback />,
-  // errorComponent: ({ error, reset }) => {
-  //   return (
-  //     <div>
-  //       {error.message}
-  //       <button
-  //         onClick={() => {
-  //           // Reset the router error boundary
-  //           reset();
-  //         }}
-  //       >
-  //         retry
-  //       </button>
-  //     </div>
-  //   );
-  // },
+  notFoundComponent: () => <ErrorComponenet />, // If no route matches, render this
+  errorComponent: () => <MainErrorFallback />, // If there is an uncaught error
 });
