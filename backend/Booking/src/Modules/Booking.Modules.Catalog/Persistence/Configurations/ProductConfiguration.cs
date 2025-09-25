@@ -26,7 +26,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(2000);
 
 
-        builder.OwnsOne(s => s.Preview, picture =>
+        builder.OwnsOne(s => s.PreviewPicture, picture =>
         {
             picture.Property(p => p.MainLink)
                 .HasMaxLength(2048)
@@ -37,7 +37,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
                 .IsRequired();
         });
         
-        builder.OwnsOne(s => s.Thumbnail, picture =>
+        builder.OwnsOne(s => s.ThumbnailPicture, picture =>
         {
             picture.Property(p => p.MainLink)
                 .HasMaxLength(2048)

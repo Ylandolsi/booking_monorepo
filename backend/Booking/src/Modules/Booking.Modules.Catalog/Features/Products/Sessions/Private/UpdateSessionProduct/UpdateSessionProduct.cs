@@ -4,6 +4,7 @@ using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
+using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.UpdateSessi
 public class UpdateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
+    StoreService storeService,
     ILogger<UpdateSessionProductHandler> logger)
     : ICommandHandler<PatchSessionProductCommand, PatchPostProductResponse>
 {
@@ -27,6 +29,7 @@ public class UpdateSessionProductHandler(
 
         try
         {
+            // TODO  : improve this query 
             // Get session product with store
             var sessionProduct = await context.SessionProducts
                 .Include(sp => sp.Store)
@@ -95,6 +98,15 @@ public class UpdateSessionProductHandler(
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
                     return Result.Failure<PatchPostProductResponse>(scheduleResult.Error);
                 }
+            }
+
+
+            // upload the pictures ! 
+            var pictureThumbnailResult = await storeService.UploadPicture(command.ThumbnailImage, sessionProduct.Store.Slug);
+
+            if (pictureThumbnailResult.IsSuccess)
+            {
+                sessionProduct.UpdateThumbnail(pictureThumbnailResult.Value);
             }
 
             // Save changes

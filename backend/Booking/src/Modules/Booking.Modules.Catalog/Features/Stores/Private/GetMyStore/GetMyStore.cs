@@ -67,6 +67,7 @@ public class GetMyStoreHandler(
                     Price = product.Price,
                     DisplayOrder = product.DisplayOrder,
                     IsPublished = product.IsPublished, //  only retrieve published 
+                    ThumbnailPicture = product.ThumbnailPicture,
                 };
                  mappedStoreProducts.Add(mappedProduct);
             }

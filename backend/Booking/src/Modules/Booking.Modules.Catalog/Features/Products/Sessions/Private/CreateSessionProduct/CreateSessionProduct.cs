@@ -6,6 +6,7 @@ using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
+using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.CreateSessi
 public class CreateSessionProductHandler(
     CatalogDbContext context,
     IUnitOfWork unitOfWork,
+    StoreService storeService,
     SlugGenerator slugGenerator,
     ILogger<CreateSessionProductHandler> logger)
     : ICommandHandler<PostSessionProductCommand, PatchPostProductResponse>
@@ -93,8 +95,13 @@ public class CreateSessionProductHandler(
             var sessionCreated = await context.AddAsync(sessionProduct, cancellationToken);
 
             // upload the pictures ! 
+            var pictureThumbnailResult = await storeService.UploadPicture(command.ThumbnailImage, store.Slug);
 
-
+            if (pictureThumbnailResult.IsSuccess)
+            {
+                sessionCreated.Entity.UpdateThumbnail(pictureThumbnailResult.Value);
+            }
+            
             // Save the product first to get the ID
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -109,7 +116,7 @@ public class CreateSessionProductHandler(
                 return Result.Failure<PatchPostProductResponse>(scheduleResult.Error);
             }
 
-            
+
             // Commit transaction
             await unitOfWork.CommitTransactionAsync(cancellationToken);
 
@@ -221,8 +228,8 @@ public class CreateSessionProductHandler(
                     // TODO : What happens if this was created  : now its prevened from the frontend 
                     //  9-12
                     //  10-14
-                    
-                    
+
+
                     var availability = SessionAvailability.Create(
                         sessionProduct.Id,
                         sessionProduct.ProductSlug,
@@ -232,7 +239,7 @@ public class CreateSessionProductHandler(
                         timeEnd,
                         sessionProduct.TimeZoneId);
 
-                    await context.SessionAvailabilities.AddAsync(availability , cancellationToken);
+                    await context.SessionAvailabilities.AddAsync(availability, cancellationToken);
                 }
             }
 

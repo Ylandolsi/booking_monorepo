@@ -18,6 +18,9 @@ public record ProductResponse
     public decimal Price { get; init; }
     public int DisplayOrder { get; init; }
     public bool IsPublished { get; init; }
+    
+    public Picture ThumbnailPicture { get; init; }
+
 }
 
 public record GetStoreResponse

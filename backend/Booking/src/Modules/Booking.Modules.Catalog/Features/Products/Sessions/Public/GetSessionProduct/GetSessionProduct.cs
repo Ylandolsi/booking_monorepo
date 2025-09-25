@@ -98,8 +98,8 @@ public class GetSessionProductHandler(
                 sessionProduct.Title,
                 sessionProduct.Subtitle,
                 sessionProduct.Description,
-                sessionProduct.Preview,
-                sessionProduct.Thumbnail,
+                sessionProduct.PreviewPicture,
+                sessionProduct.ThumbnailPicture,
                 sessionProduct.Price,
                 sessionProduct.Duration?.Minutes ?? 30, // Default to 30 minutes if not set
                 sessionProduct.BufferTime?.Minutes ?? 15, // Default to 15 minutes if not set

@@ -20,8 +20,8 @@ public abstract class Product : Entity
     public string? Description { get; protected set; }
 
     // TODO : change to Picture ? 
-    public Picture? Preview { get; protected set; }
-    public Picture? Thumbnail { get; protected set; }
+    public Picture? PreviewPicture { get; protected set; }
+    public Picture? ThumbnailPicture { get; protected set; }
     public ProductType ProductType { get; protected set; }
 
     public decimal Price { get; protected set; }
@@ -87,12 +87,12 @@ public abstract class Product : Entity
     }
     public void UpdateThumbnail(Picture thumbnail)
     {
-        Thumbnail = thumbnail;
+        ThumbnailPicture = thumbnail;
         UpdatedAt = DateTime.UtcNow;
     }
     public void UpdatePreview(Picture preview)
     {
-        Preview = preview;
+        PreviewPicture = preview;
         UpdatedAt = DateTime.UtcNow;
     }
 
