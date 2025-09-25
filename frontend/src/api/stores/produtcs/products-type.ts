@@ -7,13 +7,14 @@ export interface Product {
   clickToPay: string;
   subtitle?: string;
   description?: string;
-  thumbnail?: Picture;
   productType: ProductType;
   price: number;
   displayOrder: number;
   isPublished: boolean;
   createdAt: string;
   updatedAt?: string;
+  thumbnail?: Picture;
+  preview?: Picture;
 }
 
 export const ProductType = {

@@ -1,147 +1,444 @@
-import { useMyStore, type Product } from '@/api/stores';
-import { Button, ErrorComponenet, LoadingState } from '@/components';
-import { EnhancedStorefrontDashboard } from '@/components/store';
-import { socialPlatforms } from '@/features/app/store/create';
-import { useAppNavigation } from '@/hooks';
-import { FALLBACK_PROFILE_PICTURE } from '@/lib';
-import { LazyImage } from '@/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Upload, User, CheckCircle, Globe, Plus, Check, Camera, Edit2Icon } from 'lucide-react';
+import routes, { ROUTE_PATHS } from '@/config/routes';
+import 'react-image-crop/dist/ReactCrop.css';
+import { patchPostStoreSchema, useCheckSlugAvailability, useCreateStore, useMyStore, type PatchPostStoreRequest } from '@/api/stores';
+import useDebounce from '@/hooks/use-debounce';
+import { useUploadPicture } from '@/hooks/use-upload-picture';
+import { useNavigate } from '@tanstack/react-router';
+import { socialPlatforms } from '@/features/app/store';
+import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
+import { cn } from '@/lib';
+import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 
 export function ModifyStore() {
+  const [open1, setOpen1] = useState(false);
+
+  const navigate = useNavigate();
   let { data: store, isLoading, isError } = useMyStore();
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const navigate = useAppNavigation();
 
   if (isLoading) return <LoadingState type="spinner" />;
 
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   const products = store.products || [];
+  const createStoreMutation = useCreateStore();
+  const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  console.log(store);
+  const form = useForm<PatchPostStoreRequest>({
+    resolver: zodResolver(patchPostStoreSchema),
+    defaultValues: {
+      title: '',
+      slug: '',
+      description: '',
+      socialLinks: [],
+      file: undefined,
+    },
+  });
 
-  const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
+  const { openDialog, setAspectRatio } = useUploadPicture();
+
+  const watchedValues = form.watch();
+  const debouncedSlug = useDebounce(watchedValues.slug, 500);
+
+  const { data: slugAvailabilityResponse } = useCheckSlugAvailability(debouncedSlug, debouncedSlug.length >= 3);
+  const slugAvailable = slugAvailabilityResponse?.isAvailable;
+
+  useEffect(() => {
+    if (slugAvailable === false && debouncedSlug.length >= 3) {
+      form.setError('slug', { type: 'manual', message: 'Slug is already taken' });
+    } else {
+      if (form.formState.errors.slug?.type === 'manual') {
+        form.clearErrors('slug');
+      }
+    }
+  }, [slugAvailable, form]);
+
+  useEffect(() => {
+    setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
+  }, []);
+
+  const generateSlug = (title: string) => {
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+    form.setValue('slug', slug);
   };
 
-  const handleProductEdit = (product: Product) => {
-    setSelectedProduct(product);
+  const onSubmit = async (data: PatchPostStoreRequest) => {
+    try {
+      await createStoreMutation.mutateAsync(data);
+      navigate({ to: ROUTE_PATHS.APP.INDEX });
+    } catch (error) {
+      console.error('Failed to create store:', error);
+    }
   };
 
-  const handleProductsReorder = (reorderedProducts: Product[]) => {
-    // setProducts(reorderedProducts);
+  const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'twitter'].includes(p.key));
+
+  const handleAddPlatforms = () => {
+    setAdditionalPlatforms([...additionalPlatforms, ...selectedPlatforms]);
+    setSelectedPlatforms([]);
+    setIsPopoverOpen(false);
   };
 
-  const handleAddProduct = () => {
-    navigate.goTo({ to: '/app/store/product/add' }); // TODO : use route declared in routes
+  const handleCheckboxChange = (key: string, checked: boolean) => {
+    if (checked) {
+      setSelectedPlatforms([...selectedPlatforms, key]);
+    } else {
+      setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
+    }
   };
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
-      <div className="flex w-full flex-col gap-5">
-        <div className="text-card-foreground w-full flex-1 rounded-xl border px-3 py-3 shadow-sm">
-          <div className="flex gap-3">
-            {/* // <img src={store?.picture?.mainLink ?? FALLBACK_PROFILE_PICTURE} alt="Store Profile Picture" /> */}
-            <LazyImage
-              src={store?.picture?.mainLink ?? FALLBACK_PROFILE_PICTURE}
-              placeholder={store?.picture?.thumbnailLink ?? FALLBACK_PROFILE_PICTURE}
-              alt="Store Profile Picture"
-              className="border-border h-24 w-24 rounded-2xl border object-cover"
-            />
-            <div className="flex flex-1 flex-col items-start justify-center gap-2">
-              <div>
-                <h2 className="text-primary text-xl font-bold tracking-wider" style={{ letterSpacing: '0.0.3em' }}>
-                  {store.title || 'Your Store Name'}
-                </h2>
-                <p className="text-primary/80">@{store.slug}</p>
-              </div>
-              <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed text-wrap break-words">
-                {store.description || 'Your store description will appear here...'}
-              </p>
-              {store.socialLinks && store.socialLinks.length > 0 && (
-                <div className="flex justify-center gap-4">
-                  {socialPlatforms.map(
-                    ({ key, icon: Icon }) =>
-                      store.socialLinks?.find((link: any) => link.platform === key)?.url && (
-                        <a
-                          key={key}
-                          href={store.socialLinks?.find((link: any) => link.platform === key)?.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-foreground transition-colors"
-                        >
-                          <div className="bg-primary/10 flex h-9 w-9 items-center justify-center rounded-xl">
-                            <Icon className="h-5 w-5" />
+      <style>{`.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }`}</style>
+      <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
+      <aside className="flex w-[460px] flex-col">
+        <div className="flex-1">
+          <div className="border-primary/20 dark:border-primary/30 border-b p-6">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="store-details">
+                <AccordionTrigger className="text-foreground hover:text-primary">
+                  <div className="flex items-center gap-2">
+                    {/* TODO change this  */}
+                    <Globe className="h-4 w-4" />
+                    <h2 className="text-xl font-bold">Edit Store Details</h2>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="mt-0 space-y-4">
+                  <div className="max-w-lg flex-1">
+                    <div className="mb-8 text-center">
+                      {/* <h1 className="from-primary to-chart-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1> */}
+                      {/* <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p> */}
+                    </div>
+
+                    <Form {...form}>
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="title"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-foreground flex items-center gap-2">
+                                <User className="h-4 w-4" />
+                                Store Name *
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Your Amazing Store"
+                                  className="border-border text-foreground py-3 text-lg"
+                                  {...field}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    if (!watchedValues.slug) generateSlug(e.target.value);
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-foreground">Store Description</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Tell your customers what you offer..."
+                                  rows={3}
+                                  className="border-border text-foreground"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="space-y-2">
+                          <Label className="text-foreground flex items-center gap-2">
+                            <Upload className="h-4 w-4" />
+                            Profile Picture (Optional)
+                          </Label>
+                          <div className="flex items-center gap-4" onClick={openDialog}>
+                            <Label
+                              htmlFor="profile-picture-input"
+                              className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
+                            >
+                              <Camera className="mr-2 h-6 w-6 text-gray-400" />
+                              <span className="font-medium text-gray-600">Choose a photo</span>
+                            </Label>
                           </div>
-                        </a>
-                      ),
-                  )}
-                </div>
-              )}
-            </div>
+                          <p className="text-muted-foreground text-xs">PNG, JPG up to 10MB</p>
+                        </div>
+
+                        {/* Collapsible Social Media Section */}
+                        <Accordion type="single" collapsible className="w-full">
+                          <AccordionItem value="social-links">
+                            <AccordionTrigger className="text-foreground hover:text-primary">
+                              <div className="flex items-center gap-2">
+                                <Globe className="h-4 w-4" />
+                                Add Social Links (Optional)
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="space-y-4">
+                              {/* Default platforms */}
+                              {socialPlatforms.slice(0, 2).map(({ key, label, icon: Icon }) => (
+                                <FormField
+                                  key={key}
+                                  control={form.control}
+                                  name="socialLinks"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="text-foreground flex items-center gap-2">
+                                        <Icon className="h-4 w-4" />
+                                        {label}
+                                      </FormLabel>
+                                      <FormControl>
+                                        <Input
+                                          placeholder={`https://${key}.com/your-profile`}
+                                          className="border-border text-foreground"
+                                          value={field.value?.find((link: any) => link.platform === key)?.url || ''}
+                                          onChange={(e) => {
+                                            const currentLinks = field.value || [];
+                                            const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
+                                            if (existingIndex >= 0) {
+                                              currentLinks[existingIndex].url = e.target.value;
+                                            } else {
+                                              currentLinks.push({ platform: key, url: e.target.value });
+                                            }
+                                            field.onChange(currentLinks.filter((link: any) => link.url));
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                              ))}
+
+                              {/* Dynamically added platforms */}
+                              {additionalPlatforms.map((key) => {
+                                const platform = socialPlatforms.find((p) => p.key === key);
+                                if (!platform) return null;
+                                const { label, icon: Icon } = platform;
+                                return (
+                                  <FormField
+                                    key={key}
+                                    control={form.control}
+                                    name="socialLinks"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel className="text-foreground flex items-center gap-2">
+                                          <Icon className="h-4 w-4" />
+                                          {label}
+                                        </FormLabel>
+                                        <FormControl>
+                                          <Input
+                                            placeholder={`https://${key}.com/your-profile`}
+                                            className="border-border text-foreground"
+                                            value={field.value?.find((link: any) => link.platform === key)?.url || ''}
+                                            onChange={(e) => {
+                                              const currentLinks = field.value || [];
+                                              const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
+                                              if (existingIndex >= 0) {
+                                                currentLinks[existingIndex].url = e.target.value;
+                                              } else {
+                                                currentLinks.push({ platform: key, url: e.target.value });
+                                              }
+                                              field.onChange(currentLinks.filter((link: any) => link.url));
+                                            }}
+                                          />
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                );
+                              })}
+                              {/* Add more button with popover */}
+                              {availablePlatforms.length > 0 && (
+                                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                                  <PopoverTrigger asChild>
+                                    <div
+                                      className="from-primary to-primary/20 text-background border-border hover:bg-primary flex w-full items-center gap-2 rounded-md bg-gradient-to-br p-3 transition-all duration-200"
+                                      onClick={() => {
+                                        setIsPopoverOpen(true);
+                                      }}
+                                    >
+                                      <Plus className="h-4 w-4" />
+                                      Add Another Platform
+                                    </div>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-64 p-4" side="top" align="center">
+                                    <div className="grid gap-4">
+                                      <div className="space-y-2">
+                                        <h4 className="leading-none font-medium">Select Platforms</h4>
+                                        <p className="text-muted-foreground text-sm">Choose which platforms to add</p>
+                                      </div>
+                                      <div className="grid gap-2">
+                                        {availablePlatforms.map(({ key, label, icon: Icon }) => (
+                                          <div key={key} className="flex items-center space-x-2">
+                                            <Checkbox
+                                              id={key}
+                                              checked={selectedPlatforms.includes(key)}
+                                              onCheckedChange={(checked) => {
+                                                handleCheckboxChange(key, checked as boolean);
+                                              }}
+                                            />
+                                            <label
+                                              htmlFor={key}
+                                              className="flex cursor-pointer items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                              <Icon className="h-4 w-4" />
+                                              {label}
+                                            </label>
+                                          </div>
+                                        ))}
+                                        <Button
+                                          type="button"
+                                          size="sm"
+                                          onClick={handleAddPlatforms}
+                                          disabled={selectedPlatforms.length === 0}
+                                          className="mt-2 w-full"
+                                        >
+                                          <Check className="mr-2 h-4 w-4" />
+                                          Add Selected ({selectedPlatforms.length})
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+
+                        <Button
+                          type="submit"
+                          size="lg"
+                          className="hover:bg-primary hover:accent text-primary-foreground w-full transition-all duration-300"
+                          disabled={createStoreMutation.isPending}
+                        >
+                          {createStoreMutation.isPending ? (
+                            'Creating Store...'
+                          ) : (
+                            <>
+                              <CheckCircle className="mr-2 h-4 w-4" />
+                              Update store details
+                            </>
+                          )}
+                        </Button>
+                      </form>
+                    </Form>
+                  </div>{' '}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
-        </div>
-        <div className="space-y-3">
-          {products.map((product) => {
-            return (
-              <div key={product.productSlug} className="bg-card text-card-foreground flex rounded-xl border px-3 py-3 shadow-sm">
-                <LazyImage
-                  src={product?.thumbnail?.mainLink ?? FALLBACK_PROFILE_PICTURE}
-                  placeholder={product?.thumbnail?.thumbnailLink ?? FALLBACK_PROFILE_PICTURE}
-                  alt="Store Profile Picture"
-                  className="border-border h-15 w-15 rounded-2xl border object-cover"
-                />
-                <div className="ml-4 flex flex-1 flex-col justify-center">
-                  <h3 className="text-foreground text-lg font-stretch-90%">{product.title}</h3>
-                  {product.subtitle && <p className="text-muted-foreground text-sm">{product.subtitle}</p>}
-                  <p className="text-primary mt-2 text-xl font-bold">{product.price}</p>
+          <div className="flex h-16 items-center justify-between px-6">
+            <h2 className="text-xl font-bold">My Products</h2>
+            <Button
+              variant={'ghost'}
+              className="bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 text-primary flex items-center justify-center transition-colors"
+              aria-label="Add new product"
+              onClick={() => navigate({ to: routes.paths.APP.STORE.PRODUCT.ADD_PRODUCT })}
+            >
+              <Plus className="h-5 w-5" />
+            </Button>
+          </div>
+          {products.length !== 0 &&
+            products.map((product) => (
+              <div className="space-y-4 p-6 pt-0">
+                <div className="group border-primary/20 dark:border-primary/30 bg-card-light dark:bg-card-dark hover:border-primary/40 relative rounded-xl border shadow-sm transition-all hover:shadow-lg">
+                  <div className="flex items-center p-4">
+                    <img
+                      className="ml-4 h-16 w-16 flex-shrink-0 rounded-lg bg-cover bg-center"
+                      src={
+                        product.preview?.mainLink ||
+                        'https://lh3.googleusercontent.com/aida-public/AB6AXuCb11m5DhgoWYEkTUpMJEVCL54e_altP1CmZlnIJXk-6LX_RLAlggJKLprrULvn_v9zvOtiAMACHFTYwZZUaoENiAkm3S-toDSBEU0Mc6q8RKoOUAYui6kWDCeU_BfQ1CPtqTNorHgMeWS1ABeanJ8JMe1tloXrygZT9hbBR8fTZjuhUC9l20RAUrQ-4a9gPPTC6m2cEexmZ6CWgHxsbvt4Z7pTRosOhKvxVRa-hOF3OaF8Li-cPV4pTkGBq_PvcI-4qgB5htJDCdwZ'
+                      }
+                    />
+                    <div className="ml-4 flex-1">
+                      <p className="text-lg font-semibold">{product.title}</p>
+                      <p className="text-primary text-sm font-medium">${product.price}</p>
+                    </div>
+                    <button
+                      onClick={() => setOpen1(!open1)}
+                      className="flex size-8 items-center justify-center rounded-full bg-black/10 p-2 text-gray-600 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
+                      aria-label="Edit product"
+                    >
+                      <Edit2Icon />
+                    </button>
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            ))}
         </div>
-        <Button
-          className="bg-primary text-primary-foreground mt-4 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-          onClick={handleAddProduct}
-        >
-          <span className="text-xl">+</span>
-          <span className="font-medium">Add Product</span>{' '}
-        </Button>
-      </div>
-      <div className="sticky top-4 mx-auto">
-        <EnhancedStorefrontDashboard
-          products={products}
-          onAddProduct={handleAddProduct}
-          onProductClick={handleProductClick}
-          onProductEdit={handleProductEdit}
-          // onProductDelete={handleProductDelete}
-          onProductsReorder={handleProductsReorder}
-          isOwner={true}
-        />
-      </div>
+      </aside>
+      <main className="flex flex-1 items-center justify-center">
+        <MobileContainer>
+          <StoreHeader store={store} />
+          {/* <div className="space-y-4 p-4">
+            <div className="bg-background-light dark:bg-background-dark border-primary/20 dark:border-primary/30 flex items-center gap-4 rounded-lg border p-2">
+              <div className="flex-1">
+                <p className="font-bold">Product 1</p>
+                <p className="text-sm text-[#101922]/70 dark:text-[#f6f7f8]/70">$10.00</p>
+              </div>
+              <div
+                className="h-24 w-24 rounded-lg bg-cover bg-center"
+                style={{
+                  backgroundImage:
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCb11m5DhgoWYEkTUpMJEVCL54e_altP1CmZlnIJXk-6LX_RLAlggJKLprrULvn_v9zvOtiAMACHFTYwZZUaoENiAkm3S-toDSBEU0Mc6q8RKoOUAYui6kWDCeU_BfQ1CPtqTNorHgMeWS1ABeanJ8JMe1tloXrygZT9hbBR8fTZjuhUC9l20RAUrQ-4a9gPPTC6m2cEexmZ6CWgHxsbvt4Z7pTRosOhKvxVRa-hOF3OaF8Li-cPV4pTkGBq_PvcI-4qgB5htJDCdwZ')",
+                }}
+              />
+            </div>
+            <div className="bg-background-light dark:bg-background-dark border-primary/20 dark:border-primary/30 flex items-center gap-4 rounded-lg border p-2">
+              <div className="flex-1">
+                <p className="font-bold">Product 2</p>
+                <p className="text-sm text-[#101922]/70 dark:text-[#f6f7f8]/70">$20.00</p>
+              </div>
+              <div
+                className="h-24 w-24 rounded-lg bg-cover bg-center"
+                style={{
+                  backgroundImage:
+                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuANMJj2KiYLdHV-Egcqe05bMkX8SBgQ0bIZ1IwpghFetfGZLdzRSObBpbALo_SrjyO8UVQg6QngCKy9zGhkJBmMwH4Dl3akYGK-aVx9w_48J47E-_6Ph0kNaOoKykfhUQhYUPl6WKQAStuAc39j5RufkaUufjgMwEEEEqsdSpux7qdlOSDFVyqYAC1KwCCYT1ggsxFEDT1JFdpYUzvjGMpmk6hXCWhzIhdJMPoN5hW-hJavjnsTwP7GLt5NpEEjyu95-dDmRXQUb_Jd')",
+                }}
+              />
+            </div>
+          </div> */}
+          <div className={'w-full space-y-4'}>
+            {products.map((product, index) => (
+              <div
+                key={product.productSlug}
+                // for future drag and drop
+                // className={cn('relative transition-all duration-200', 'scale-95 opacity-50', 'translate-y-1 transform', 'cursor-move')}
+              >
+                <div className={'group px-6'}>
+                  <ProductCard product={product} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </MobileContainer>
+      </main>
     </div>
   );
 }
-
-// const handleProductDelete = (product: Product) => {
-//   if (confirm(`Delete "${product.title}"?`)) {
-//     setProducts((prev) => prev.filter((p) => p.id !== product.id));
-//   }
-// };
-
-// const handleProductCreated = (productData: any) => {
-//   const newProduct: Product = {
-//     ...productData,
-//     id: `new-${Date.now()}`,
-//     price: productData.price.startsWith('$') ? productData.price : `$${productData.price}`,
-//   };
-//   setProducts((prev) => [newProduct, ...prev]);
-// };
-
-// const handleProductUpdated = (updatedProduct: Product) => {
-//   // setProducts((prev: Product[]) => prev.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
-// };
-
-// const handleStoreSetup = (storeData: any) => {
-//   console.log('Store created:', storeData);
-// };

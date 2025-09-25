@@ -31,7 +31,6 @@ import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AppStoreIndexRouteImport } from './routes/app/store/index'
 import { Route as AppStoreSetupRouteImport } from './routes/app/store/setup'
 import { Route as AppStoreCheckoutRouteImport } from './routes/app/store/checkout'
-import { Route as AppStoreBuilderRouteImport } from './routes/app/store/builder'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
 import { Route as AppAdminPayoutRequestsRouteImport } from './routes/app/admin/payout-requests'
@@ -151,11 +150,6 @@ const AppStoreCheckoutRoute = AppStoreCheckoutRouteImport.update({
   path: '/store/checkout',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppStoreBuilderRoute = AppStoreBuilderRouteImport.update({
-  id: '/store/builder',
-  path: '/store/builder',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppMentorSetScheduleRoute = AppMentorSetScheduleRouteImport.update({
   id: '/mentor/set-schedule',
   path: '/mentor/set-schedule',
@@ -218,7 +212,6 @@ export interface FileRoutesByFullPath {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/store/builder': typeof AppStoreBuilderRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store': typeof AppStoreIndexRoute
@@ -249,7 +242,6 @@ export interface FileRoutesByTo {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/store/builder': typeof AppStoreBuilderRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store': typeof AppStoreIndexRoute
@@ -282,7 +274,6 @@ export interface FileRoutesById {
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
-  '/app/store/builder': typeof AppStoreBuilderRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store/': typeof AppStoreIndexRoute
@@ -316,7 +307,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/store/builder'
     | '/app/store/checkout'
     | '/app/store/setup'
     | '/app/store'
@@ -347,7 +337,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/store/builder'
     | '/app/store/checkout'
     | '/app/store/setup'
     | '/app/store'
@@ -379,7 +368,6 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests'
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
-    | '/app/store/builder'
     | '/app/store/checkout'
     | '/app/store/setup'
     | '/app/store/'
@@ -557,13 +545,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStoreCheckoutRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/app/store/builder': {
-      id: '/app/store/builder'
-      path: '/store/builder'
-      fullPath: '/app/store/builder'
-      preLoaderRoute: typeof AppStoreBuilderRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/app/mentor/set-schedule': {
       id: '/app/mentor/set-schedule'
       path: '/mentor/set-schedule'
@@ -638,7 +619,6 @@ interface AppRouteRouteChildren {
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
-  AppStoreBuilderRoute: typeof AppStoreBuilderRoute
   AppStoreCheckoutRoute: typeof AppStoreCheckoutRoute
   AppStoreSetupRoute: typeof AppStoreSetupRoute
   AppStoreIndexRoute: typeof AppStoreIndexRoute
@@ -655,7 +635,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
-  AppStoreBuilderRoute: AppStoreBuilderRoute,
   AppStoreCheckoutRoute: AppStoreCheckoutRoute,
   AppStoreSetupRoute: AppStoreSetupRoute,
   AppStoreIndexRoute: AppStoreIndexRoute,
