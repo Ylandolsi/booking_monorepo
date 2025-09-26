@@ -6,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-
 import { User, Link, CheckCircle, LogOut } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -16,7 +15,7 @@ import useDebounce from '@/hooks/use-debounce';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
-import { SocialLinks, ThemeToggle, UploadImage } from '@/components';
+import { ThemeToggle, UploadImage } from '@/components';
 import { useAuth } from '@/api/auth';
 import { SocialLinksForm } from '@/features/app';
 
@@ -60,14 +59,14 @@ export const SetupStore = () => {
     setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
   }, []);
 
-  const generateSlug = (title: string) => {
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-    form.setValue('slug', slug);
-  };
+  // const generateSlug = (title: string) => {
+  //   const slug = title
+  //     .toLowerCase()
+  //     .replace(/[^a-z0-9]/g, '-')
+  //     .replace(/-+/g, '-')
+  //     .replace(/^-|-$/g, '');
+  //   form.setValue('slug', slug);
+  // };
 
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {

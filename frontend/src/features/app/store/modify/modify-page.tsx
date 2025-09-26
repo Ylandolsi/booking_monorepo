@@ -11,14 +11,14 @@ import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
-import { SocialLinksForm, socialPlatforms } from '@/features/app/store';
+import { MobilePreview, SocialLinksForm, socialPlatforms } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useAppNavigation } from '@/hooks';
 
 export function ModifyStore() {
   const navigate = useAppNavigation();
-  let { data: store, isLoading, isError } = useMyStore();
+  const { data: store, isLoading, isError } = useMyStore();
 
   if (isLoading) return <LoadingState type="spinner" />;
 
@@ -186,24 +186,7 @@ export function ModifyStore() {
             ))}
         </div>
       </aside>
-      <main className="flex flex-1 items-center justify-center">
-        <MobileContainer>
-          <StoreHeader store={store} />
-          <div className={'w-full space-y-4'}>
-            {products.map((product, index) => (
-              <div
-                key={product.productSlug}
-                // for future drag and drop
-                // className={cn('relative transition-all duration-200', 'scale-95 opacity-50', 'translate-y-1 transform', 'cursor-move')}
-              >
-                <div className={'group px-6'}>
-                  <ProductCard product={product} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </MobileContainer>
-      </main>
+      <MobilePreview />
     </div>
   );
 }
