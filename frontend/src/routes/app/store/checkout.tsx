@@ -1,4 +1,5 @@
 import type { Product } from '@/api/stores';
+import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { MobileContainer } from '@/components';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { X } from 'lucide-react';
@@ -52,7 +53,11 @@ export function ProductCheckout({ product, children }: { product: Product; child
       <main className="pb-28">
         <div className="bg-accent flex h-80 w-full items-center justify-center">
           {/* Change to lazy Image */}
-          <img alt="Product Image" className="h-full w-full object-cover" src={product.thumbnailPicture?.mainLink} />
+          <img
+            alt="Product Image"
+            className="h-full w-full object-cover"
+            src={product.thumbnailPicture?.mainLink ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL}
+          />
         </div>
         <div className="space-y-5 p-6">
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{product.title}</h1>

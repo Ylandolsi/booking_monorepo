@@ -133,7 +133,7 @@ function BookingContent() {
   }
 
   return (
-    <div className="mx-auto w-full px-2 py-10">
+    <div className="">
       {/* Header */}
       <div className="flex flex-col items-center justify-center gap-8">
         {/* Calendar and Time Slots */}

@@ -16,7 +16,7 @@ export function CheckoutPageProduct({ productData }: { productData: ProductFormD
     productSlug: 'ultimate-guide-design',
   } as Product;
   return (
-    <div className="flex w-full flex-col items-start justify-center gap-5 px-1">
+    <div className="flex w-full flex-col items-start justify-center gap-5">
       <ProductCheckout product={productDataToProduct}>{productData.productType == 'Session' && <BookingPage />}</ProductCheckout>
     </div>
   );

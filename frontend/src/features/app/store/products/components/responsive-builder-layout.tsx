@@ -2,9 +2,11 @@ import { cn } from '@/lib/cn';
 import { MobileContainer } from '@/components/store/mobile-container';
 import { ProductCard, type ProductCardType } from '@/components/store/product-card';
 import { useState } from 'react';
-import { Button } from '@/components/ui';
+import { Button, LoadingState } from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products/add-product';
 import { CheckoutPageProduct } from '@/features/app/store/products';
+import { ErrorComponenet, StoreHeader } from '@/components';
+import { useMyStore } from '@/api/stores';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
@@ -13,6 +15,14 @@ interface ResponsiveBuilderLayoutProps {
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
+  const { data: store, isLoading, isError } = useMyStore();
+  if (isLoading) {
+    return <LoadingState type="spinner" />;
+  }
+  if (isError || !store) {
+    return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+  }
+
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>
@@ -28,10 +38,12 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
                 {/* TODO : add header ?  */}
                 {/* TODO : make display mode dynamic ?  */}
                 {viewType == 'overview' && (
-                  <div className="flex h-full w-full items-center justify-center p-6">
-                    {/* <StoreHeader store={} /> */}
-                    <ProductCard product={previewData} displayMode="full" />
-                  </div>
+                  <>
+                    <StoreHeader store={store} />
+                    <div className="p-6">
+                      <ProductCard product={previewData} displayMode="full" />
+                    </div>
+                  </>
                 )}
                 {viewType == 'checkout' && <CheckoutPageProduct productData={previewData} />}
               </MobileContainer>
