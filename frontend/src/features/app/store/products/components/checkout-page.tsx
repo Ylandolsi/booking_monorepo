@@ -1,7 +1,7 @@
 import { BookingPage } from '@/features/app/store/products/components/checkout/book';
-import { ProductCheckout } from '@/routes/app/store/checkout';
 import type { ProductFormData } from '@/features/app/store/products/add-product';
 import type { Product } from '@/api/stores';
+import { ProductCheckout } from '@/components/store';
 
 export function CheckoutPageProduct({ productData }: { productData: ProductFormData }) {
   const productDataToProduct = {

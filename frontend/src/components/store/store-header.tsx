@@ -1,9 +1,7 @@
 import type { Store } from '@/api/stores';
 import { Link } from '@/components/ui';
 import { socialPlatforms } from '@/features/app/store';
-import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { cn } from '@/lib/cn';
-import { User } from 'lucide-react';
 
 interface StoreHeaderProps {
   store: Store;

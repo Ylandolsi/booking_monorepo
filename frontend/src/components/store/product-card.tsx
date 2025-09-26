@@ -5,7 +5,7 @@ import type { ProductFormData } from '@/features';
 
 type DisplayMode = 'full' | 'compact';
 
-export type ProductCardType = Pick<Product, 'thumbnail' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'>;
+export type ProductCardType = Pick<Product, 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'>;
 
 interface ProductCardProps {
   product: ProductCardType | ProductFormData;

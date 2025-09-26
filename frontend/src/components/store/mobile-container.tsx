@@ -1,6 +1,3 @@
-// import { cn } from '@/lib';
-// import { IPhoneMockup } from 'react-device-mockup';
-
 interface MobileContainerProps {
   children: React.ReactNode;
   className?: string;
@@ -9,13 +6,7 @@ interface MobileContainerProps {
 
 export function MobileContainer({ screenWidth, children }: MobileContainerProps) {
   return (
-    // <IPhoneMockup screenWidth={screenWidth || 400}>
-    //   <div className={cn('bg-background flex h-full w-full flex-col items-center space-y-4 overflow-y-auto p-4 text-center', children)}>
-    //     {children}
-    //   </div>
-    // </IPhoneMockup>
-
-    <div className="border-border h-[812px] w-[375px] overflow-hidden rounded-xl border-2 shadow-2xl">
+    <div className="border-border h-[812px] w-100 overflow-hidden rounded-xl border-2 shadow-2xl">
       <div className="h-full w-full overflow-x-hidden overflow-y-auto">
         {/* <!-- Cover image --> */}
         {/* <div
