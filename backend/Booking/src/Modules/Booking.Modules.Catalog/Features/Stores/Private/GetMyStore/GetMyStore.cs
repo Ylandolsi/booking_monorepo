@@ -31,7 +31,7 @@ public class GetMyStoreHandler(
                 return Result.Failure<GetStoreResponse>(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
             }
 
-            // Get store from database : imrpove this queyr 
+            // Get store from database : improve this query 
             var store = await context.Stores
                 .AsNoTracking()
                 .Include(s => s.Products)

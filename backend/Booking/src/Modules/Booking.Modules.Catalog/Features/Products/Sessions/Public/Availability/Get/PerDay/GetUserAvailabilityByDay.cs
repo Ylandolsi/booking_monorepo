@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability.Get.PerDay;
 
-internal sealed class GetMentorAvailabilityByDay : IEndpoint
+internal sealed class GetUserAvailabilityByDay : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -16,7 +16,7 @@ internal sealed class GetMentorAvailabilityByDay : IEndpoint
                 [FromQuery] string productSlug,
                 [FromQuery] string date,
                 [FromQuery] string? timeZoneId,
-                IQueryHandler<GetMentorAvailabilityByDayQuery, DailyAvailabilityResponse> handler,
+                IQueryHandler<GetUserAvailabilityByDayQuery, DailyAvailabilityResponse> handler,
                 CancellationToken cancellationToken) =>
             {
                 if (!DateOnly.TryParse(date, out var parsedDate))
@@ -24,7 +24,7 @@ internal sealed class GetMentorAvailabilityByDay : IEndpoint
                     return Results.BadRequest("Invalid date format. Use YYYY-MM-DD.");
                 }
 
-                var query = new GetMentorAvailabilityByDayQuery(
+                var query = new GetUserAvailabilityByDayQuery(
                     productSlug,
                     parsedDate,
                     (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability.Get.PerMonth;
 
-internal sealed class GetMentorAvailabilityByMonth : IEndpoint
+internal sealed class GetUserAvailabilityByMonth : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
@@ -18,12 +18,12 @@ internal sealed class GetMentorAvailabilityByMonth : IEndpoint
                 [FromQuery] int year,
                 [FromQuery] int month,
                 [FromQuery] string? timeZoneId,
-                IQueryHandler<GetMentorAvailabilityByMonthQuery, MonthlyAvailabilityResponse> handler,
+                IQueryHandler<GetUserAvailabilityByMonthQuery, MonthlyAvailabilityResponse> handler,
                 CancellationToken cancellationToken,
                 bool includePastDays = true,
                 bool includeBookedSlots = true) =>
             {
-                var query = new GetMentorAvailabilityByMonthQuery(
+                var query = new GetUserAvailabilityByMonthQuery(
                     productSlug,
                     year,
                     month,

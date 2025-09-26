@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability.Get.PerDay;
 
-internal sealed class GetMentorAvailabilityByDayQueryHandler(
+internal sealed class GetUserAvailabilityByDayQueryHandler(
     CatalogDbContext context,
-    ILogger<GetMentorAvailabilityByDayQueryHandler> logger)
-    : IQueryHandler<GetMentorAvailabilityByDayQuery, DailyAvailabilityResponse>
+    ILogger<GetUserAvailabilityByDayQueryHandler> logger)
+    : IQueryHandler<GetUserAvailabilityByDayQuery, DailyAvailabilityResponse>
 {
     public record ScheduledAtWithDuration
     {
@@ -21,7 +21,7 @@ internal sealed class GetMentorAvailabilityByDayQueryHandler(
         public int Minutes;
     }
 
-    public async Task<Result<DailyAvailabilityResponse>> Handle(GetMentorAvailabilityByDayQuery query,
+    public async Task<Result<DailyAvailabilityResponse>> Handle(GetUserAvailabilityByDayQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting daily availability for mentor {ProductSlug} on {Date}",

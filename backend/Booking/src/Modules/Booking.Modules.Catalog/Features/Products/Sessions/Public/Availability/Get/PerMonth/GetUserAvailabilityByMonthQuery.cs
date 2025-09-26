@@ -2,7 +2,7 @@ using Booking.Common.Messaging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability.Get.PerMonth;
 
-public sealed record GetMentorAvailabilityByMonthQuery(
+public sealed record GetUserAvailabilityByMonthQuery(
     string ProductSlug,
     int Year,
     int Month,

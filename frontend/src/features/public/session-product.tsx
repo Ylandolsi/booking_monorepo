@@ -1,7 +1,6 @@
 import { usePublicStore } from '@/api/stores';
-import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
-import { CheckoutPageProduct } from '@/features/app';
-import { GenerateIdCrypto } from '@/lib';
+import { ErrorComponenet, LoadingState, MobileContainer } from '@/components';
+import { CheckoutPageProduct } from '@/features/public/checkout-product-page';
 import { useParams } from '@tanstack/react-router';
 
 const PublicStoreLayout = ({ children }: { children: React.ReactNode }) => {
@@ -25,10 +24,18 @@ export const PublicStoreProductPreview = () => {
     console.log('Product clicked:', product);
   };
 
-  console.log(store.products);
+  const productData = store.products.find((product) => product.productSlug === productSlug);
+
+  if (!productData) {
+    return (
+      <PublicStoreLayout>
+        <ErrorComponenet message="Product not found." title="Product Error" />
+      </PublicStoreLayout>
+    );
+  }
   return (
     <PublicStoreLayout>
-      <CheckoutPageProduct productData={store.products.find((product) => product.productSlug === productSlug)} />
+      <CheckoutPageProduct productData={productData} />
     </PublicStoreLayout>
   );
 };

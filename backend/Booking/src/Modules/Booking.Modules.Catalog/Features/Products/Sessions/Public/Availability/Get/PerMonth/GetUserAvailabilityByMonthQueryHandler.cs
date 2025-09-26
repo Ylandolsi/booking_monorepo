@@ -7,15 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability.Get.PerMonth;
 
-internal sealed class GetMentorAvailabilityByMonthQueryHandler(
+internal sealed class GetUserAvailabilityByMonthQueryHandler(
     CatalogDbContext context,
-    IQueryHandler<GetMentorAvailabilityByDayQuery, DailyAvailabilityResponse> dailyAvailabilityHandler,
-    ILogger<GetMentorAvailabilityByMonthQueryHandler> logger)
-    : IQueryHandler<GetMentorAvailabilityByMonthQuery, MonthlyAvailabilityResponse>
+    IQueryHandler<GetUserAvailabilityByDayQuery, DailyAvailabilityResponse> dailyAvailabilityHandler,
+    ILogger<GetUserAvailabilityByMonthQueryHandler> logger)
+    : IQueryHandler<GetUserAvailabilityByMonthQuery, MonthlyAvailabilityResponse>
 {
     private record BookedSession(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime);
 
-    public async Task<Result<MonthlyAvailabilityResponse>> Handle(GetMentorAvailabilityByMonthQuery query,
+    public async Task<Result<MonthlyAvailabilityResponse>> Handle(GetUserAvailabilityByMonthQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting monthly availability for product {ProductSlug} in {Year}/{Month}",
@@ -52,7 +52,7 @@ internal sealed class GetMentorAvailabilityByMonthQueryHandler(
 
             foreach (var date in daysToProcess)
             {
-                var queryDay = new GetMentorAvailabilityByDayQuery(query.ProductSlug, date, query.TimeZoneId);
+                var queryDay = new GetUserAvailabilityByDayQuery(query.ProductSlug, date, query.TimeZoneId);
                 var responseDay = await dailyAvailabilityHandler.Handle(queryDay, cancellationToken);
                 monthlyAvailability.Add(responseDay.Value);
             }

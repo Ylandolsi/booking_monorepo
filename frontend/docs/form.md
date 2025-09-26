@@ -80,6 +80,8 @@ const onSubmit = async (data: CreateProductInput) => {
 ### Select Fields
 
 ```tsx
+<Form {...form}>
+  <form>
 <FormField
   control={form.control}
   name="bufferTime" // name of field

@@ -25,8 +25,7 @@ export const CatalogEndpoints = {
       // Public endpoints
       Get: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
       Book: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
-      GetDailyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability`,
-      GetMonthlyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability/month`,
+      GetMonthlyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability/month`, // with query params year, month timeZoneId
     },
   },
 

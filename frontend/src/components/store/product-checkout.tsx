@@ -1,7 +1,7 @@
-import type { Product } from '@/api/stores/produtcs';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Link } from '@/components/ui';
 import { routes } from '@/config';
+import type { ProductCheckoutType } from '@/features';
 import { X } from 'lucide-react';
 
 export const COVER_IMAGE = {
@@ -9,7 +9,8 @@ export const COVER_IMAGE = {
   height: 80, // rem
 };
 
-export function ProductCheckout({ product, children }: { product: Product; children?: React.ReactNode }) {
+// export function ProductCheckout({ product, children }: { product: Product; children?: React.ReactNode }) {
+export function ProductCheckout({ product, children }: { product: ProductCheckoutType; children?: React.ReactNode }) {
   return (
     <div className="bg-background-light dark:bg-background-dark relative text-slate-800 dark:text-slate-200">
       <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">

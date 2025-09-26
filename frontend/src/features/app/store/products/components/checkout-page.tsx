@@ -1,23 +1,15 @@
 import { BookingPage } from '@/features/app/store/products/components/checkout/book';
-import type { ProductFormData } from '@/features/app/store/products/add-product';
 import type { Product } from '@/api/stores';
 import { ProductCheckout } from '@/components/store';
 
-export function CheckoutPageProduct({ productData }: { productData: ProductFormData }) {
-  const productDataToProduct = {
-    ...productData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    clickToPay: 'Buy now',
-    isPublished: true,
-    displayOrder: 1,
-    productType: 'Session',
-    storeSlug: 'sophia-carter-store',
-    productSlug: 'ultimate-guide-design',
-  } as Product;
+// TODO : needs to be generic to handle both form / api data
+
+export type ProductCheckoutType = Pick<Product, 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'>;
+
+export function CheckoutPageProduct({ productData }: { productData: ProductCheckoutType }) {
   return (
     <div className="flex w-full flex-col items-start justify-center gap-5">
-      <ProductCheckout product={productDataToProduct}>{productData.productType == 'Session' && <BookingPage />}</ProductCheckout>
+      <ProductCheckout product={productData}>{productData.productType == 'Session' && <BookingPage />}</ProductCheckout>
     </div>
   );
 }

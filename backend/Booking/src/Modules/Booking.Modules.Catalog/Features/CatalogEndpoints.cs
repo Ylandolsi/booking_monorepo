@@ -32,7 +32,7 @@ public static class CatalogEndpoints
 
             public const string
                 GetMonthlyAv =
-                    $"{Base}/products/s/{{productSlug}}/availability/month"; // Query: year, month , timeZoneId
+                    $"{Base}/products/s/{{productSlug}}/availability/month";
         }
     }
 

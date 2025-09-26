@@ -12,24 +12,22 @@ import {
 } from '@/components/ui';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAppNavigation } from '@/hooks/use-navigation';
-import { ErrorComponenet, IntegrationRequired } from '@/components';
-import React, { useEffect, useState } from 'react';
+import { ErrorComponenet } from '@/components';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/api/auth';
 import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
-import { useBooking } from '@/features/app/store/products/components/checkout/book/hooks';
 import { BookingSummary, TimeSlots } from '@/features/app/store/products/components/checkout/book';
+import { useBooking, type Product } from '@/api/stores/produtcs';
+import { useParams } from '@tanstack/react-router';
 
-function BookingContent() {
+export function BookingPage({ product }: { product: Product }) {
   const nav = useAppNavigation();
   const isMobile = useIsMobile();
-  // const { mentorSlug } = useParams({ strict: false }) as {
-  //   mentorSlug?: string;
-  // };
-  const mentorSlug = 'mohsen-3ifa';
   const { currentUser } = useAuth();
 
-  const iamTheMentor = currentUser?.slug == mentorSlug;
+  const { productSlug, storeSlug } = useParams({ strict: false }) as Record<string, string | undefined>;
+
   const {
     // State
     selectedDate,
@@ -38,14 +36,10 @@ function BookingContent() {
     notes,
     title,
     // Computed values
-    isLoading,
-    hasError,
     availableSlots,
     bookingSummary,
 
     // Queries
-    mentorInfoQuery,
-    mentorDetailsQuery,
     monthlyAvailabilityQuery,
     bookSessionMutation,
 
@@ -57,9 +51,7 @@ function BookingContent() {
     setNotes,
     resetBooking,
     handleBookSession,
-  } = useBooking({ mentorSlug, iamTheMentor });
-
-  const [googleRequired, setGoogleRequired] = useState<boolean>(false);
+  } = useBooking({ productSlug, storeSlug, product });
 
   const sessionConfirmedMentee = (data: NotificationSignalR) => {
     toast.success(data.title, {
@@ -92,30 +84,26 @@ function BookingContent() {
     }
   }, [currentUser]);
 
-  if (isLoading) {
-    return <PageLoading2 title="Loading booking page " description="Fetching mentor details and availability" />;
-  }
+  // if (isLoading) {
+  //   return <PageLoading2 title="Loading booking page " description="Fetching mentor details and availability" />;
+  // }
 
-  if (mentorDetailsQuery.error?.message?.includes('not found')) {
-    return <ErrorComponenet title="Mentor not found" message="Mentor not found. Please check the link or select another mentor."></ErrorComponenet>;
-  }
+  // if (mentorDetailsQuery.error?.message?.includes('not found')) {
+  //   return <ErrorComponenet title="Mentor not found" message="Mentor not found. Please check the link or select another mentor."></ErrorComponenet>;
+  // }
 
-  if (hasError) {
-    return (
-      <Alert variant="destructive">
-        {React.createElement(alertIconMap['destructive'])}
-        <AlertDescription>
-          {mentorDetailsQuery.isError
-            ? 'Failed to load mentor details. Please try again later.'
-            : 'Failed to load availability. Please refresh the page.'}
-        </AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (googleRequired) {
-    return <IntegrationRequired message="You need to integrate your account with google calendar before you can book a session" />;
-  }
+  // if (hasError) {
+  //   return (
+  //     <Alert variant="destructive">
+  //       {React.createElement(alertIconMap['destructive'])}
+  //       <AlertDescription>
+  //         {mentorDetailsQuery.isError
+  //           ? 'Failed to load mentor details. Please try again later.'
+  //           : 'Failed to load availability. Please refresh the page.'}
+  //       </AlertDescription>
+  //     </Alert>
+  //   );
+  // }
 
   // Success page
   if (step === 'success') {
@@ -175,7 +163,7 @@ function BookingContent() {
             selectedSlot={selectedSlot}
             onSlotSelect={setSelectedSlot}
             isLoading={monthlyAvailabilityQuery.isLoading}
-            mentorRate={mentorDetailsQuery.data?.hourlyRate}
+            // mentorRate={mentorDetailsQuery.data?.hourlyRate}
           />
         </div>
 
@@ -188,13 +176,7 @@ function BookingContent() {
             onNotesChange={setNotes}
             title={title}
             onTitleChange={setTitle}
-            onBookSession={() => {
-              if (!currentUser?.integratedWithGoogle) {
-                setGoogleRequired(true);
-                return;
-              }
-              if (!googleRequired) handleBookSession();
-            }}
+            onBookSession={handleBookSession}
             isBookingInProgress={bookSessionMutation.isPending || step === 'confirm'}
             isBookingDisabled={!selectedDate || !selectedSlot}
           />
@@ -209,8 +191,4 @@ function BookingContent() {
       </div>
     </div>
   );
-}
-
-export function BookingPage() {
-  return <BookingContent />;
 }

@@ -8,7 +8,7 @@ public static class MentorshipEndpoints
     {
         public const string SetBulk = $"{Base}/availability/bulk";
         public const string GetDaily = $"{Base}/availability"; // Query: mentorSlug, date
-        public const string GetMonthly = $"{Base}/availability/month"; // Query: mentorSlug, year, month , timeZoneId
+        public const string GetMonthly = $"{Base}/availability/month";
         public const string GetSchedule = $"{Base}/availability/schedule";
     }
 
