@@ -2,7 +2,7 @@ import type { ProductType } from '@/api/stores/produtcs';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Input, Textarea } from '@/components';
+import { Input, Textarea, UploadImage } from '@/components';
 import type { ProductFormData, TabsType } from '@/features/app/store/products/add-product';
 import { useEffect } from 'react';
 import { LazyImage } from '@/utils';
@@ -100,7 +100,7 @@ export function FormGeneral({
         )}
       />
       {/* Thumbnail Image */}
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <FormLabel className="text-foreground">Cover Image</FormLabel>
         <div className="flex items-start space-x-4">
           <div className="bg-muted border-border flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border">
@@ -125,7 +125,9 @@ export function FormGeneral({
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
+      <UploadImage description="Thumbnail Image (Optional)" />
+
       {/* Description */}
       <FormField
         control={form.control}

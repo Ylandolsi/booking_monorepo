@@ -48,7 +48,7 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
                 <Camera className="mb-4 h-12 w-12 text-gray-400" />
                 <div className="space-y-1 text-center">
                   <p className="font-medium text-gray-700">Choose your cover image</p>
-                  <p className="text-sm text-gray-500">Best results with 1600×900 pixels</p>
+                  {/* <p className="text-sm text-gray-500">Best results with 1600×900 pixels</p> */}
                   <p className="text-xs text-gray-400">PNG, JPG up to 5MB</p>
                 </div>
               </Label>

@@ -17,7 +17,7 @@ import useDebounce from '@/hooks/use-debounce';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
 import { socialPlatforms } from '@/features/app/store';
-import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
+import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 
 export function ModifyStore() {
@@ -122,7 +122,6 @@ export function ModifyStore() {
                                   {...field}
                                   onChange={(e) => {
                                     field.onChange(e);
-                                    if (!watchedValues.slug) generateSlug(e.target.value);
                                   }}
                                 />
                               </FormControl>
@@ -149,22 +148,7 @@ export function ModifyStore() {
                             </FormItem>
                           )}
                         />
-                        <div className="space-y-2">
-                          <Label className="text-foreground flex items-center gap-2">
-                            <Upload className="h-4 w-4" />
-                            Profile Picture (Optional)
-                          </Label>
-                          <div className="flex items-center gap-4" onClick={openDialog}>
-                            <Label
-                              htmlFor="profile-picture-input"
-                              className="flex h-12 w-full cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:bg-gray-50"
-                            >
-                              <Camera className="mr-2 h-6 w-6 text-gray-400" />
-                              <span className="font-medium text-gray-600">Choose a photo</span>
-                            </Label>
-                          </div>
-                          <p className="text-muted-foreground text-xs">PNG, JPG up to 10MB</p>
-                        </div>
+                        <UploadImage description="Profile Picture (Optional)" />
 
                         {/* Collapsible Social Media Section */}
                         <Accordion type="single" collapsible className="w-full">
