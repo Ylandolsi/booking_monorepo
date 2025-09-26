@@ -21,6 +21,7 @@ import { useAppNavigation } from '@/hooks';
 import { FormScheduleComponent } from '@/features/app/store/products/components/form-schedule';
 import { FormGeneral } from '@/features/app/store/products/components/form-general';
 import { useSearch } from '@tanstack/react-router';
+import { routes } from '@/config';
 
 export type TabsType = 'general' | 'details';
 
@@ -29,29 +30,29 @@ export type ProductFormData = CreateProductInput & { thumbnailPicture?: Picture 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<TabsType>('general');
   const navigate = useAppNavigation();
-  const { type, editSlug } = useSearch({ strict: false });
+  const { type, productSlug } = useSearch({ strict: false });
   const createProductMutation = useCreateSession();
   const updateProductMutation = useUpdateSession();
-  const { data: editProductData, isLoading: isEditLoading } = useMyProductSession(editSlug, { enabled: !!editSlug });
+  const { data: editProductData, isLoading: isEditLoading } = useMyProductSession(productSlug, { enabled: !!productSlug });
 
   const onSubmit = async (data: CreateProductInput) => {
     try {
       console.log('submitting', data);
-      if (editSlug) {
+      if (productSlug) {
         // update
-        await updateProductMutation.mutateAsync({ productSlug: editSlug, data });
+        await updateProductMutation.mutateAsync({ productSlug: productSlug, data });
       } else {
         // create
         await createProductMutation.mutateAsync({ data });
       }
-      //navigate.goTo({ to: '/app/store', replace: true });
+      navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
     } catch (error) {
       console.error('Failed to create product:', error);
       // Handle error - show toast, etc.
     }
   };
   const onCancel = () => {
-    navigate.goTo({ to: '/app/store/product/add', replace: true });
+    navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
   };
   const form = useForm<ProductFormData>({
     resolver: zodResolver(createProductSchema) as Resolver<CreateProductInput>,
@@ -85,16 +86,16 @@ export function AddProductFlow() {
   // Reset form with new values
 
   useEffect(() => {
-    if (editSlug && editProductData) {
+    if (productSlug && editProductData) {
       // init form with product to update
       form.reset(editProductData);
     }
-  }, [editSlug, editProductData]);
+  }, [productSlug, editProductData]);
 
   if (isEditLoading) {
     return <LoadingState type="spinner" />;
   }
-  if (editSlug && !editProductData && !isEditLoading) {
+  if (productSlug && !editProductData && !isEditLoading) {
     return <ErrorComponenet message="Failed to load product for editing. It may not exist." />;
   }
 

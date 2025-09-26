@@ -30,11 +30,11 @@ import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AppStoreIndexRouteImport } from './routes/app/store/index'
 import { Route as AppStoreSetupRouteImport } from './routes/app/store/setup'
+import { Route as AppStoreProductRouteImport } from './routes/app/store/product'
 import { Route as AppStoreCheckoutRouteImport } from './routes/app/store/checkout'
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
 import { Route as AppAdminPayoutRequestsRouteImport } from './routes/app/admin/payout-requests'
-import { Route as AppStoreProductAddRouteImport } from './routes/app/store/product/add'
 import { Route as AppStoreProductProductSlugRouteImport } from './routes/app/store/product/$productSlug'
 import { Route as AppBookingSessionMentorSlugRouteImport } from './routes/app/booking/session.$mentorSlug'
 import { Route as AppAdminPayoutRequestsRequestIdRouteImport } from './routes/app/admin/payout-requests.$requestId'
@@ -145,6 +145,11 @@ const AppStoreSetupRoute = AppStoreSetupRouteImport.update({
   path: '/store/setup',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppStoreProductRoute = AppStoreProductRouteImport.update({
+  id: '/store/product',
+  path: '/store/product',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppStoreCheckoutRoute = AppStoreCheckoutRouteImport.update({
   id: '/store/checkout',
   path: '/store/checkout',
@@ -165,16 +170,11 @@ const AppAdminPayoutRequestsRoute = AppAdminPayoutRequestsRouteImport.update({
   path: '/admin/payout-requests',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppStoreProductAddRoute = AppStoreProductAddRouteImport.update({
-  id: '/store/product/add',
-  path: '/store/product/add',
-  getParentRoute: () => AppRouteRoute,
-} as any)
 const AppStoreProductProductSlugRoute =
   AppStoreProductProductSlugRouteImport.update({
-    id: '/store/product/$productSlug',
-    path: '/store/product/$productSlug',
-    getParentRoute: () => AppRouteRoute,
+    id: '/$productSlug',
+    path: '/$productSlug',
+    getParentRoute: () => AppStoreProductRoute,
   } as any)
 const AppBookingSessionMentorSlugRoute =
   AppBookingSessionMentorSlugRouteImport.update({
@@ -213,12 +213,12 @@ export interface FileRoutesByFullPath {
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
+  '/app/store/product': typeof AppStoreProductRouteWithChildren
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store': typeof AppStoreIndexRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
-  '/app/store/product/add': typeof AppStoreProductAddRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -243,12 +243,12 @@ export interface FileRoutesByTo {
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
+  '/app/store/product': typeof AppStoreProductRouteWithChildren
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store': typeof AppStoreIndexRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
-  '/app/store/product/add': typeof AppStoreProductAddRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -275,12 +275,12 @@ export interface FileRoutesById {
   '/app/mentor/become': typeof AppMentorBecomeRoute
   '/app/mentor/set-schedule': typeof AppMentorSetScheduleRoute
   '/app/store/checkout': typeof AppStoreCheckoutRoute
+  '/app/store/product': typeof AppStoreProductRouteWithChildren
   '/app/store/setup': typeof AppStoreSetupRoute
   '/app/store/': typeof AppStoreIndexRoute
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
-  '/app/store/product/add': typeof AppStoreProductAddRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -308,12 +308,12 @@ export interface FileRouteTypes {
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/store/checkout'
+    | '/app/store/product'
     | '/app/store/setup'
     | '/app/store'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
-    | '/app/store/product/add'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -338,12 +338,12 @@ export interface FileRouteTypes {
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/store/checkout'
+    | '/app/store/product'
     | '/app/store/setup'
     | '/app/store'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
-    | '/app/store/product/add'
   id:
     | '__root__'
     | '/'
@@ -369,12 +369,12 @@ export interface FileRouteTypes {
     | '/app/mentor/become'
     | '/app/mentor/set-schedule'
     | '/app/store/checkout'
+    | '/app/store/product'
     | '/app/store/setup'
     | '/app/store/'
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
-    | '/app/store/product/add'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -538,6 +538,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStoreSetupRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/app/store/product': {
+      id: '/app/store/product'
+      path: '/store/product'
+      fullPath: '/app/store/product'
+      preLoaderRoute: typeof AppStoreProductRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/store/checkout': {
       id: '/app/store/checkout'
       path: '/store/checkout'
@@ -566,19 +573,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminPayoutRequestsRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/app/store/product/add': {
-      id: '/app/store/product/add'
-      path: '/store/product/add'
-      fullPath: '/app/store/product/add'
-      preLoaderRoute: typeof AppStoreProductAddRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
     '/app/store/product/$productSlug': {
       id: '/app/store/product/$productSlug'
-      path: '/store/product/$productSlug'
+      path: '/$productSlug'
       fullPath: '/app/store/product/$productSlug'
       preLoaderRoute: typeof AppStoreProductProductSlugRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppStoreProductRoute
     }
     '/app/booking/session/$mentorSlug': {
       id: '/app/booking/session/$mentorSlug'
@@ -611,6 +611,18 @@ const AppAdminPayoutRequestsRouteWithChildren =
     AppAdminPayoutRequestsRouteChildren,
   )
 
+interface AppStoreProductRouteChildren {
+  AppStoreProductProductSlugRoute: typeof AppStoreProductProductSlugRoute
+}
+
+const AppStoreProductRouteChildren: AppStoreProductRouteChildren = {
+  AppStoreProductProductSlugRoute: AppStoreProductProductSlugRoute,
+}
+
+const AppStoreProductRouteWithChildren = AppStoreProductRoute._addFileChildren(
+  AppStoreProductRouteChildren,
+)
+
 interface AppRouteRouteChildren {
   AppIntegrationRoute: typeof AppIntegrationRoute
   AppMeetsRoute: typeof AppMeetsRoute
@@ -620,11 +632,10 @@ interface AppRouteRouteChildren {
   AppMentorBecomeRoute: typeof AppMentorBecomeRoute
   AppMentorSetScheduleRoute: typeof AppMentorSetScheduleRoute
   AppStoreCheckoutRoute: typeof AppStoreCheckoutRoute
+  AppStoreProductRoute: typeof AppStoreProductRouteWithChildren
   AppStoreSetupRoute: typeof AppStoreSetupRoute
   AppStoreIndexRoute: typeof AppStoreIndexRoute
   AppBookingSessionMentorSlugRoute: typeof AppBookingSessionMentorSlugRoute
-  AppStoreProductProductSlugRoute: typeof AppStoreProductProductSlugRoute
-  AppStoreProductAddRoute: typeof AppStoreProductAddRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -636,11 +647,10 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppMentorBecomeRoute: AppMentorBecomeRoute,
   AppMentorSetScheduleRoute: AppMentorSetScheduleRoute,
   AppStoreCheckoutRoute: AppStoreCheckoutRoute,
+  AppStoreProductRoute: AppStoreProductRouteWithChildren,
   AppStoreSetupRoute: AppStoreSetupRoute,
   AppStoreIndexRoute: AppStoreIndexRoute,
   AppBookingSessionMentorSlugRoute: AppBookingSessionMentorSlugRoute,
-  AppStoreProductProductSlugRoute: AppStoreProductProductSlugRoute,
-  AppStoreProductAddRoute: AppStoreProductAddRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

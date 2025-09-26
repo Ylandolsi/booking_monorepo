@@ -4,6 +4,7 @@
  */
 
 import type { ProductType } from '@/api/stores';
+import { buildUrlWithParams } from '@/lib';
 
 // Param placeholders
 export const ROUTE_PARAMS = {
@@ -36,9 +37,8 @@ export const ROUTE_PATHS = {
       INDEX: '/app/store/', // show all products and store preview mobile with add product button
       PRODUCT: {
         VIEW: '/app/store/product/$productSlug', // view product details page
-        EDIT: '/app/store/product/$productSlug/edit', // edit product flow
-        ADD_PRODUCT: '/app/store/product/add', // add product flow : select type -> details -> specific fields
         // type : ?type=booking|digital
+        INDEX: '/app/store/product', // add product flow : select type -> details -> specific fields
       },
 
       INFO_EDIT: '/app/store/edit', // store header info edit page
@@ -140,9 +140,12 @@ export const routeBuilder = {
   store: {
     index: () => ROUTE_PATHS.APP.STORE.INDEX,
     productView: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.VIEW.replace('$productSlug', productSlug),
-    productEdit: ({ productSlug }: { productSlug: string }) => ROUTE_PATHS.APP.STORE.PRODUCT.EDIT.replace('$productSlug', productSlug),
-    productAdd: ({ type }: { type?: ProductType | undefined }) => {
-      return type ? `${ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT}?type=${type}` : ROUTE_PATHS.APP.STORE.PRODUCT.ADD_PRODUCT;
+
+    productAdd: (params: { type?: ProductType | undefined }) => {
+      return buildUrlWithParams(ROUTE_PATHS.APP.STORE.PRODUCT.INDEX, params);
+    },
+    productEdit: (params: { type?: ProductType; productSlug: string }) => {
+      return buildUrlWithParams(ROUTE_PATHS.APP.STORE.PRODUCT.INDEX, params);
     },
     editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,
     createStore: () => ROUTE_PATHS.APP.STORE.CREATE_STORE,

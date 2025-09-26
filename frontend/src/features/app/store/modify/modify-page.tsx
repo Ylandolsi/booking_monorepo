@@ -11,15 +11,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { User, CheckCircle, Globe, Plus, Check, Edit2Icon } from 'lucide-react';
 import routes, { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest } from '@/api/stores';
+import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
-import { useNavigate } from '@tanstack/react-router';
 import { socialPlatforms } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
+import { useAppNavigation } from '@/hooks';
 
 export function ModifyStore() {
-  const navigate = useNavigate();
+  const navigate = useAppNavigation();
   let { data: store, isLoading, isError } = useMyStore();
 
   if (isLoading) return <LoadingState type="spinner" />;
@@ -53,7 +53,7 @@ export function ModifyStore() {
       console.log('Submitting store data:', data);
       // todo : handle this api
 
-      navigate({ to: ROUTE_PATHS.APP.INDEX });
+      navigate.goTo({ to: routes.to.store.index() + '/' });
     } catch (error) {
       console.error('Failed to update store:', error);
     }
@@ -74,6 +74,10 @@ export function ModifyStore() {
       setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
     }
   };
+
+  function handleProductEdit(product: Product): void {
+    navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
+  }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
@@ -314,7 +318,7 @@ export function ModifyStore() {
               variant={'ghost'}
               className="bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 text-primary flex items-center justify-center transition-colors"
               aria-label="Add new product"
-              onClick={() => navigate({ to: routes.paths.APP.STORE.PRODUCT.ADD_PRODUCT })}
+              onClick={() => navigate.goTo({ to: routes.paths.APP.STORE.PRODUCT.INDEX + '/' })}
             >
               <Plus className="h-5 w-5" />
             </Button>
@@ -324,23 +328,19 @@ export function ModifyStore() {
               <div className="space-y-4 p-6 pt-0">
                 <div className="group border-primary/20 dark:border-primary/30 bg-card-light dark:bg-card-dark hover:border-primary/40 relative rounded-xl border shadow-sm transition-all hover:shadow-lg">
                   <div className="flex items-center p-4">
-                    <img
-                      className="ml-4 h-16 w-16 flex-shrink-0 rounded-lg bg-cover bg-center"
-                      src={
-                        product.preview?.mainLink ||
-                        'https://lh3.googleusercontent.com/aida-public/AB6AXuCb11m5DhgoWYEkTUpMJEVCL54e_altP1CmZlnIJXk-6LX_RLAlggJKLprrULvn_v9zvOtiAMACHFTYwZZUaoENiAkm3S-toDSBEU0Mc6q8RKoOUAYui6kWDCeU_BfQ1CPtqTNorHgMeWS1ABeanJ8JMe1tloXrygZT9hbBR8fTZjuhUC9l20RAUrQ-4a9gPPTC6m2cEexmZ6CWgHxsbvt4Z7pTRosOhKvxVRa-hOF3OaF8Li-cPV4pTkGBq_PvcI-4qgB5htJDCdwZ'
-                      }
-                    />
+                    <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
                     <div className="ml-4 flex-1">
                       <p className="text-lg font-semibold">{product.title}</p>
                       <p className="text-primary text-sm font-medium">${product.price}</p>
                     </div>
-                    <button
+                    <Button
+                      variant={'ghost'}
+                      onClick={() => handleProductEdit(product)}
                       className="flex size-8 items-center justify-center rounded-full bg-black/10 p-2 text-gray-600 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
                       aria-label="Edit product"
                     >
                       <Edit2Icon />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
