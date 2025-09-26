@@ -11,6 +11,7 @@ using Booking.Modules.Mentorships.Options;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Npgsql;
 using OpenTelemetry.Logs;
@@ -72,11 +73,11 @@ public static class Infrastructure
 
     public static IServiceCollection AddEnumToString(this IServiceCollection services)
     {
-        services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });
+        // Map enums to strings 
+        services.Configure<JsonOptions>(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
         return services;
     }
 

@@ -25,22 +25,24 @@ export interface UseFormScheduleReturn {
 // Default schedule for 7 days of the week
 const createDefaultSchedule = (): DailySchedule[] => {
   return Array.from({ length: 7 }, (_, i) => ({
-    dayOfWeek: i,
+    dayOfWeek: mapNumberToDay(i)!,
     isActive: false,
     availabilityRanges: [],
   }));
 };
 
+const DAY_AVAILABILITES_KEY_FORM = 'dayAvailabilities';
+
 export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFormScheduleReturn {
   const [selectedCopySource, setSelectedCopySource] = useState<DayOfWeek | null>(null);
   const [error, setError] = useState<string>('');
-  // Watch the dailySchedule field from the form
-  const formSchedule = form.watch('dailySchedule') as DailySchedule[] | undefined;
+  // Watch the dayAvailabilities field from the form
+  const formSchedule = form.watch(DAY_AVAILABILITES_KEY_FORM) as DailySchedule[] | undefined;
 
   // Initialize schedule if not exists
   useEffect(() => {
     if (!formSchedule || formSchedule.length === 0) {
-      form.setValue('dailySchedule', createDefaultSchedule());
+      form.setValue(DAY_AVAILABILITES_KEY_FORM, createDefaultSchedule());
     }
     const message = verifyScheduleIntegrity();
     setError(message);
@@ -49,7 +51,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
   const schedule = formSchedule || createDefaultSchedule();
 
   const verifyScheduleIntegrity = () => {
-    const currentSchedule = form.getValues('dailySchedule') as DailySchedule[];
+    const currentSchedule = form.getValues(DAY_AVAILABILITES_KEY_FORM) as DailySchedule[];
     let message: string = '';
     if (!currentSchedule) return message;
     for (const daySchedule of currentSchedule) {
@@ -67,7 +69,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
           const endA = parseInt(rangeA.endTime.replace(':', ''), 10);
 
           if (startA >= endA) {
-            message = `Time ranges on day ${mapNumberToDay(daySchedule.dayOfWeek)} overlap or are invalid.`;
+            message = `Time ranges on day ${daySchedule.dayOfWeek} overlap or are invalid.`;
             return message;
           }
 
@@ -76,7 +78,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
             const rangeB = ranges[i + 1];
             const startB = parseInt(rangeB.startTime.replace(':', ''), 10);
             if (endA > startB) {
-              message = `Time ranges on day ${mapNumberToDay(daySchedule.dayOfWeek)} overlap or are invalid.`;
+              message = `Time ranges on day ${daySchedule.dayOfWeek} overlap or are invalid.`;
               return message;
             }
           }
@@ -87,9 +89,9 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
   };
 
   const updateSchedule = (day: DayOfWeek, updater: (ds: DailySchedule) => DailySchedule) => {
-    const currentSchedule = (form.getValues('dailySchedule') as DailySchedule[]) || createDefaultSchedule();
-    const newSchedule = currentSchedule.map((ds) => (ds.dayOfWeek === mapDayToNumber(day) ? updater(ds) : ds));
-    form.setValue('dailySchedule', newSchedule, { shouldValidate: true });
+    const currentSchedule = (form.getValues(DAY_AVAILABILITES_KEY_FORM) as DailySchedule[]) || createDefaultSchedule();
+    const newSchedule = currentSchedule.map((ds) => (ds.dayOfWeek === day ? updater(ds) : ds));
+    form.setValue(DAY_AVAILABILITES_KEY_FORM, newSchedule, { shouldValidate: true });
   };
 
   const toggleDay = (day: DayOfWeek) => {
@@ -131,7 +133,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
   };
 
   const copyAvailability = (fromDay: DayOfWeek, toDay: DayOfWeek) => {
-    const source = schedule.find((s) => s.dayOfWeek === mapDayToNumber(fromDay));
+    const source = schedule.find((s) => s.dayOfWeek === fromDay);
     if (!source) return;
 
     updateSchedule(toDay, (ds) => ({
@@ -146,7 +148,7 @@ export function useFormSchedule(form: UseFormReturn<CreateProductInput>): UseFor
   };
 
   const resetChanges = () => {
-    form.setValue('dailySchedule', createDefaultSchedule());
+    form.setValue(DAY_AVAILABILITES_KEY_FORM, createDefaultSchedule());
     setSelectedCopySource(null);
   };
 

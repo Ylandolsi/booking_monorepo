@@ -4,16 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, User, CheckCircle, Globe, Plus, Check, Camera, Edit2Icon } from 'lucide-react';
+import { User, CheckCircle, Globe, Plus, Check, Edit2Icon } from 'lucide-react';
 import routes, { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useCheckSlugAvailability, useCreateStore, useMyStore, type PatchPostStoreRequest } from '@/api/stores';
-import useDebounce from '@/hooks/use-debounce';
+import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
 import { socialPlatforms } from '@/features/app/store';
@@ -21,8 +19,6 @@ import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeade
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 
 export function ModifyStore() {
-  const [open1, setOpen1] = useState(false);
-
   const navigate = useNavigate();
   let { data: store, isLoading, isError } = useMyStore();
 
@@ -46,9 +42,7 @@ export function ModifyStore() {
     },
   });
 
-  const { openDialog, setAspectRatio } = useUploadPicture();
-
-  const watchedValues = form.watch();
+  const { setAspectRatio } = useUploadPicture();
 
   useEffect(() => {
     setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
@@ -342,7 +336,6 @@ export function ModifyStore() {
                       <p className="text-primary text-sm font-medium">${product.price}</p>
                     </div>
                     <button
-                      onClick={() => setOpen1(!open1)}
                       className="flex size-8 items-center justify-center rounded-full bg-black/10 p-2 text-gray-600 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
                       aria-label="Edit product"
                     >
@@ -357,34 +350,6 @@ export function ModifyStore() {
       <main className="flex flex-1 items-center justify-center">
         <MobileContainer>
           <StoreHeader store={store} />
-          {/* <div className="space-y-4 p-4">
-            <div className="bg-background-light dark:bg-background-dark border-primary/20 dark:border-primary/30 flex items-center gap-4 rounded-lg border p-2">
-              <div className="flex-1">
-                <p className="font-bold">Product 1</p>
-                <p className="text-sm text-[#101922]/70 dark:text-[#f6f7f8]/70">$10.00</p>
-              </div>
-              <div
-                className="h-24 w-24 rounded-lg bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCb11m5DhgoWYEkTUpMJEVCL54e_altP1CmZlnIJXk-6LX_RLAlggJKLprrULvn_v9zvOtiAMACHFTYwZZUaoENiAkm3S-toDSBEU0Mc6q8RKoOUAYui6kWDCeU_BfQ1CPtqTNorHgMeWS1ABeanJ8JMe1tloXrygZT9hbBR8fTZjuhUC9l20RAUrQ-4a9gPPTC6m2cEexmZ6CWgHxsbvt4Z7pTRosOhKvxVRa-hOF3OaF8Li-cPV4pTkGBq_PvcI-4qgB5htJDCdwZ')",
-                }}
-              />
-            </div>
-            <div className="bg-background-light dark:bg-background-dark border-primary/20 dark:border-primary/30 flex items-center gap-4 rounded-lg border p-2">
-              <div className="flex-1">
-                <p className="font-bold">Product 2</p>
-                <p className="text-sm text-[#101922]/70 dark:text-[#f6f7f8]/70">$20.00</p>
-              </div>
-              <div
-                className="h-24 w-24 rounded-lg bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuANMJj2KiYLdHV-Egcqe05bMkX8SBgQ0bIZ1IwpghFetfGZLdzRSObBpbALo_SrjyO8UVQg6QngCKy9zGhkJBmMwH4Dl3akYGK-aVx9w_48J47E-_6Ph0kNaOoKykfhUQhYUPl6WKQAStuAc39j5RufkaUufjgMwEEEEqsdSpux7qdlOSDFVyqYAC1KwCCYT1ggsxFEDT1JFdpYUzvjGMpmk6hXCWhzIhdJMPoN5hW-hJavjnsTwP7GLt5NpEEjyu95-dDmRXQUb_Jd')",
-                }}
-              />
-            </div>
-          </div> */}
           <div className={'w-full space-y-4'}>
             {products.map((product, index) => (
               <div

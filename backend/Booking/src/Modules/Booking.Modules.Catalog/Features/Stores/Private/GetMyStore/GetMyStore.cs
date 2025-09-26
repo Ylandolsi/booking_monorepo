@@ -31,7 +31,7 @@ public class GetMyStoreHandler(
                 return Result.Failure<GetStoreResponse>(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
             }
 
-            // Get store from database
+            // Get store from database : imrpove this queyr 
             var store = await context.Stores
                 .AsNoTracking()
                 .Include(s => s.Products)
@@ -68,6 +68,8 @@ public class GetMyStoreHandler(
                     DisplayOrder = product.DisplayOrder,
                     IsPublished = product.IsPublished, //  only retrieve published 
                     ThumbnailPicture = product.ThumbnailPicture,
+                    UpdatedAt = product.UpdatedAt,
+                    CreatedAt = product.CreatedAt,
                 };
                  mappedStoreProducts.Add(mappedProduct);
             }

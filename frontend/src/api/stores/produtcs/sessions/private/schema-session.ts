@@ -10,8 +10,8 @@ export const availabilityRangeTypeSchema = z.object({
   endTime: z.string(),
 });
 
-export const dailyScheduleSchema = z.object({
-  dayOfWeek: z.number(),
+export const dayAvailabilitiesSchema = z.object({
+  dayOfWeek: z.string(), // Monday ....
   isActive: z.boolean(),
   availabilityRanges: z.array(availabilityRangeTypeSchema),
 });
@@ -22,11 +22,11 @@ export const createSessionProductSchema = createProductBaseSchema.extend({
   bufferTime: z.number().min(0, 'Buffer time cannot be negative'),
   meetingInstructions: z.string().optional(),
   timeZoneId: z.string().optional(),
-  dailySchedule: z.array(dailyScheduleSchema).min(1, 'At least one day schedule is required'),
+  dayAvailabilities: z.array(dayAvailabilitiesSchema).min(1, 'At least one day schedule is required'),
 });
 
 export type AvailabilityRangeType = z.infer<typeof availabilityRangeTypeSchema>;
-export type DailySchedule = z.infer<typeof dailyScheduleSchema>;
+export type DailySchedule = z.infer<typeof dayAvailabilitiesSchema>;
 export type CreateSessionProductRequest = z.infer<typeof createSessionProductSchema>;
 
 export const patchPostSessionSchemaToFormData = (data: CreateSessionProductRequest) => {
@@ -41,7 +41,7 @@ export const patchPostSessionSchemaToFormData = (data: CreateSessionProductReque
     meetingInstructions: data.meetingInstructions || '',
     price: data.price,
     clickToPay: data.clickToPay,
-    dayAvailabilitiesJson: data.dailySchedule,
+    dayAvailabilitiesJson: data.dayAvailabilities,
     productType: data.productType,
   });
 

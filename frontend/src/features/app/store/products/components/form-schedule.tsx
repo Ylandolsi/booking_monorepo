@@ -130,7 +130,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
         {/* Form Validation Error */}
         <FormField
           control={form.control}
-          name="dailySchedule"
+          name="dayAvailabilities"
           render={() => (
             <FormItem>
               <FormMessage />

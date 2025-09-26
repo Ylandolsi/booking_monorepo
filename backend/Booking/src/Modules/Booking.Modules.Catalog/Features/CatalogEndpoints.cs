@@ -21,16 +21,19 @@ public static class CatalogEndpoints
         {
             public const string Create = $"{Base}/products/s/create";
             public const string Update = $"{Base}/products/s/{{productSlug}}";
+            public const string GetMy = $"{Base}/products/s/{{productSlug}}/private";
             public const string GetSessions = $"{Base}/s"; // get booked session for the store owner 
-            
+
+
             // PUBLIC : 
             public const string Get = $"{Base}/products/s/{{productSlug}}";
             public const string Book = $"{Base}/products/s/{{productSlug}}";
             public const string GetDailyAv = $"{Base}/products/s/{{productSlug}}/availability"; // Query: date
-            public const string GetMonthlyAv = $"{Base}/products/s/{{productSlug}}/availability/month"; // Query: year, month , timeZoneId
-     
-        }
 
+            public const string
+                GetMonthlyAv =
+                    $"{Base}/products/s/{{productSlug}}/availability/month"; // Query: year, month , timeZoneId
+        }
     }
 
     public static class Orders
@@ -49,18 +52,18 @@ public static class CatalogEndpoints
             public const string ApprovePayout = $"{Base}/admin/payout/approve"; // body : payoutId
             public const string WebhookPayout = $"{Base}/admin/payout/webhook";
             public const string RejectPayout = $"{Base}/admin/payout/reject"; // body : payoutId 
-            public const string GetAllPayouts = $"{Base}/admin/payout"; // query : status (Pending, Approved, Rejected , Completed) , upToDate , timeZoneId
+
+            public const string
+                GetAllPayouts =
+                    $"{Base}/admin/payout"; // query : status (Pending, Approved, Rejected , Completed) , upToDate , timeZoneId
             // public const string GetDetailled = $"{Base}/admin/payout/{{payoutId}}";
         }
     }
+
     public static class Payment
     {
         public const string Create = $"{Base}/payments";
         public const string GetWallet = $"{Base}/payments/wallet";
         public const string Webhook = $"{Base}/payments/webhook"; //  payment_ref=5f9498735289e405fc7c18ac
     }
-
-
-
-
 }

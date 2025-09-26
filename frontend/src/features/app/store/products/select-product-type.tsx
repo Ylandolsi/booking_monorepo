@@ -2,7 +2,6 @@ import type { ProductType } from '@/api/stores';
 import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
 import { cn } from '@/lib';
-import type React from 'react';
 
 /// TODO : fetch this from the backend
 const productTypes = [
@@ -24,13 +23,11 @@ const productTypes = [
 
 interface SelectProductTypeProps {
   className?: string;
-  setType: React.Dispatch<React.SetStateAction<ProductType | undefined>>;
 }
-export const SelectProductType = ({ className, setType }: SelectProductTypeProps) => {
+export const SelectProductType = ({ className }: SelectProductTypeProps) => {
   const navigate = useAppNavigation();
 
   const onSelect = (type: ProductType) => {
-    setType(type);
     // TODO : fix this with react tanstack router best practice
     navigate.goTo({ to: routes.to.store.productAdd({ type }), replace: true });
   };

@@ -19,6 +19,8 @@ export const CatalogEndpoints = {
     Sessions: {
       Create: `${BASE}/products/s/create`,
       Update: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
+      GetMy: (productSlug: string) => `${BASE}/products/s/${productSlug}/private`,
+
       GetSessions: `${BASE}/s`, // Get booked sessions for store owner
       // Public endpoints
       Get: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
@@ -93,28 +95,3 @@ export const QueryBuilders = {
     },
   },
 } as const;
-
-/**
- * Helper functions for constructing URLs with parameters
- */
-export const EndpointHelpers = {
-  /**
-   * Add query parameters to a URL
-   */
-  withQuery: (url: string, params: Record<string, string | number | boolean | undefined>) => {
-    const filteredParams = Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined));
-
-    if (Object.keys(filteredParams).length === 0) return url;
-
-    const queryString = new URLSearchParams(filteredParams as Record<string, string>).toString();
-
-    return `${url}?${queryString}`;
-  },
-
-  /**
-   * Replace path parameters in URL template
-   */
-  withParams: (template: string, params: Record<string, string | number>) => {
-    return Object.entries(params).reduce((url, [key, value]) => url.replace(`{${key}}`, String(value)), template);
-  },
-};

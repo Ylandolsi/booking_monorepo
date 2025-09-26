@@ -4,17 +4,17 @@ export interface Product {
   productSlug: string;
   storeSlug: string;
   title: string;
-  clickToPay: string;
   subtitle?: string;
   description?: string;
   productType: ProductType;
   price: number;
+  clickToPay: string;
   displayOrder: number;
   isPublished: boolean;
-  createdAt: string;
-  updatedAt?: string;
   thumbnailPicture?: Picture;
   preview?: Picture;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export const ProductType = {

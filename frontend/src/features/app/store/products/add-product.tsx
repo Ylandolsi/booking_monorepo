@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
-import { createProductSchema, ProductType, useCreateSession, type CreateProductInput, type Picture } from '@/api/stores';
+import {
+  createProductSchema,
+  ProductType,
+  useCreateSession,
+  useMyProductSession,
+  useUpdateSession,
+  type CreateProductInput,
+  type Picture,
+} from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabNavigation } from '@/components';
+import { ErrorComponenet, LoadingState, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabNavigation } from '@/components';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { useAppNavigation } from '@/hooks';
 import { FormScheduleComponent } from '@/features/app/store/products/components/form-schedule';
 import { FormGeneral } from '@/features/app/store/products/components/form-general';
+import { useSearch } from '@tanstack/react-router';
 
 export type TabsType = 'general' | 'details';
 
@@ -19,16 +28,22 @@ export type ProductFormData = CreateProductInput & { thumbnailPicture?: Picture 
 
 export function AddProductFlow() {
   const [activeTab, setActiveTab] = useState<TabsType>('general');
-  // TODO : make this follow react tanstack router best practices
-  const [type, setType] = useState<ProductType | undefined>((new URLSearchParams(location.search).get('type') as ProductType) || undefined);
   const navigate = useAppNavigation();
-
+  const { type, editSlug } = useSearch({ strict: false });
   const createProductMutation = useCreateSession();
+  const updateProductMutation = useUpdateSession();
+  const { data: editProductData, isLoading: isEditLoading } = useMyProductSession(editSlug, { enabled: !!editSlug });
 
   const onSubmit = async (data: CreateProductInput) => {
     try {
       console.log('submitting', data);
-      await createProductMutation.mutateAsync({ data });
+      if (editSlug) {
+        // update
+        await updateProductMutation.mutateAsync({ productSlug: editSlug, data });
+      } else {
+        // create
+        await createProductMutation.mutateAsync({ data });
+      }
       //navigate.goTo({ to: '/app/store', replace: true });
     } catch (error) {
       console.error('Failed to create product:', error);
@@ -36,7 +51,6 @@ export function AddProductFlow() {
     }
   };
   const onCancel = () => {
-    setType(undefined);
     navigate.goTo({ to: '/app/store/product/add', replace: true });
   };
   const form = useForm<ProductFormData>({
@@ -55,7 +69,7 @@ export function AddProductFlow() {
       files: type == 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
       previewImage: undefined,
-      dailySchedule: [],
+      dayAvailabilities: [],
 
       // UI
       thumbnailPicture: undefined,
@@ -68,17 +82,34 @@ export function AddProductFlow() {
     }
   }, [type]);
 
+  // Reset form with new values
+
+  useEffect(() => {
+    if (editSlug && editProductData) {
+      // init form with product to update
+      form.reset(editProductData);
+    }
+  }, [editSlug, editProductData]);
+
+  if (isEditLoading) {
+    return <LoadingState type="spinner" />;
+  }
+  if (editSlug && !editProductData && !isEditLoading) {
+    return <ErrorComponenet message="Failed to load product for editing. It may not exist." />;
+  }
+
   {
     /* Thumbnail Display Mode */
     // <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />;
   }
   const watchedValues = form.watch();
-
+  console.log(watchedValues);
+  console.log(form.formState.errors);
   // Type selection doesn't need preview
   if (type == null || type == undefined) {
     return (
       <div className="flex h-full items-center justify-center p-4">
-        <SelectProductType setType={setType} />
+        <SelectProductType />
       </div>
     );
   }

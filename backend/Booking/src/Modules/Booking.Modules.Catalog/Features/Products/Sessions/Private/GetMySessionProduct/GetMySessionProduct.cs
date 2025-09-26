@@ -1,42 +1,32 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.GetSessionProduct;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetMySessionProduct;
 
-public record GetSessionProductQuery(string ProductSlug, string TimeZoneId) : IQuery<SessionProductDetailResponse>;
+public record GetMySessionProductQuery(string ProductSlug ,int UserId ) : IQuery<MySessionProductDetailResponse>;
 
 
-public record SessionProductDetailResponse : ProductResponse
+public record MySessionProductDetailResponse : ProductResponse
 {
     public int DurationMinutes { get; init; }
-
     public int BufferTimeMinutes { get; init; }
 
     public string? MeetingInstructions { get; init; }
 
     public string TimeZoneId { get; init; }
-
-    public List<AvailabilitySlotResponse> AvailabilitySlots { get; init; }
+    public List<DayAvailability> DayAvailabilities { get; init; }
 }
 
-public record AvailabilitySlotResponse(
-    int Id,
-    DayOfWeek DayOfWeek,
-    TimeOnly StartTime,
-    TimeOnly EndTime,
-    bool IsActive
-);
 
 public class GetSessionProductHandler(
     CatalogDbContext context,
-    ILogger<GetSessionProductHandler> logger) : IQueryHandler<GetSessionProductQuery, SessionProductDetailResponse>
+    ILogger<GetSessionProductHandler> logger) : IQueryHandler<GetMySessionProductQuery, MySessionProductDetailResponse>
 {
-    public async Task<Result<SessionProductDetailResponse>> Handle(GetSessionProductQuery query,
+    public async Task<Result<MySessionProductDetailResponse>> Handle(GetMySessionProductQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Getting session product {ProductSlug}", query.ProductSlug);
@@ -46,52 +36,66 @@ public class GetSessionProductHandler(
             if (String.IsNullOrWhiteSpace(query.ProductSlug))
             {
                 logger.LogWarning("Invalid product slug provided: {ProductSlug}", query.ProductSlug);
-                return Result.Failure<SessionProductDetailResponse>(
+                return Result.Failure<MySessionProductDetailResponse>(
                     Error.Problem("SessionProduct.InvalidSlug", "Product slug must be valid"));
+            }
+
+            var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId);
+            if (store == null)
+            {
+                logger.LogWarning("Someone is Trying to acesss another store product details ");
+                return Result.Failure<MySessionProductDetailResponse>(
+                    Error.Unauthorized("UserId.DosentMatch.Store", "You dont have the right permission to access this product"));
             }
 
             // Get session product with all related data
             // TOdo : include only published products ! 
             var sessionProduct = await context.SessionProducts
                 .AsNoTracking()
-                .Include(sp => sp.Availabilities.Where(a => a.IsActive))
                 .Include(sp => sp.Days)
+                .ThenInclude(d => d.Availabilities)
                 .FirstOrDefaultAsync(sp => sp.ProductSlug == query.ProductSlug, cancellationToken);
 
             if (sessionProduct == null)
             {
                 logger.LogInformation("Session product {ProductSlug} not found", query.ProductSlug);
-                return Result.Failure<SessionProductDetailResponse>(
+                return Result.Failure<MySessionProductDetailResponse>(
                     Error.NotFound("SessionProduct.NotFound", "Session product not found"));
             }
 
             logger.LogInformation("Successfully retrieved session product {ProductSlug}", query.ProductSlug);
 
-            // Map availability slots
-            var availabilitySlots = sessionProduct.Availabilities
-                .Select(a =>
+            var dayAvailabilities = new List<DayAvailability>();
+
+            
+
+            foreach (var day  in  sessionProduct.Days)
+            {
+
+                var availabilityRangesDay = new List<AvailabilityRange>();
+
+                foreach (var av in day.Availabilities)
+                {
+                    availabilityRangesDay.Add(new  AvailabilityRange
                     {
-                        var (convertedToUserTimeZoneStart, convertedToUserTimeZoneEnd) =
-                            ConvertAvailability.Convert(
-                                a.TimeRange.StartTime, a.TimeRange.EndTime,
-                                DateOnly.FromDateTime(DateTime.UtcNow), a.TimeZoneId, query?.TimeZoneId);
-
-                        return new AvailabilitySlotResponse(
-                            a.Id,
-                            a.DayOfWeek,
-                            TimeOnly.FromDateTime(convertedToUserTimeZoneStart), // TODO maybe toString ? 
-                            TimeOnly.FromDateTime(convertedToUserTimeZoneEnd),
-                            a.IsActive
-                        );
-                    }
-                )
-                .OrderBy(a => a.DayOfWeek)
-                .ThenBy(a => a.StartTime)
-                .ToList();
-
+                        StartTime = av.TimeRange.StartTime.ToString(),
+                        EndTime = av.TimeRange.EndTime.ToString(),
+                        Id = av.Id,
+                    });
+                    
+                }
+                dayAvailabilities.Add(
+                new DayAvailability{
+                    DayOfWeek = day.DayOfWeek,
+                    IsActive = day.IsActive,
+                    AvailabilityRanges = availabilityRangesDay
+                    
+                });
+                
+            }
 
             // Create response
-            var response = new SessionProductDetailResponse
+            var response = new MySessionProductDetailResponse
             {
                 ProductSlug = sessionProduct.ProductSlug,
                 Title = sessionProduct.Title,
@@ -104,7 +108,7 @@ public class GetSessionProductHandler(
                 MeetingInstructions = sessionProduct.MeetingInstructions,
                 TimeZoneId = sessionProduct.TimeZoneId,
                 IsPublished = sessionProduct.IsPublished,
-                AvailabilitySlots = availabilitySlots,
+                DayAvailabilities = dayAvailabilities,
                 CreatedAt = sessionProduct.CreatedAt,
                 UpdatedAt = sessionProduct.UpdatedAt
             };
@@ -114,7 +118,7 @@ public class GetSessionProductHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error retrieving session product {ProductSlug}", query.ProductSlug);
-            return Result.Failure<SessionProductDetailResponse>(
+            return Result.Failure<MySessionProductDetailResponse>(
                 Error.Problem("SessionProduct.Retrieval.Failed",
                     "An error occurred while retrieving the session product"));
         }

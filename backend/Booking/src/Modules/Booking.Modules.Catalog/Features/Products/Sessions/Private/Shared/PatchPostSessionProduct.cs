@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +38,8 @@ public record PatchPostSessionProductRequest
         ? null
         : JsonSerializer.Deserialize<List<DayAvailability>>(DayAvailabilitiesJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true ,
+            Converters = { new JsonStringEnumConverter() } // convert enum to string and vice versa
+
         });
 }
