@@ -117,6 +117,7 @@ export function FormGeneral({
           </div>
           <div className="flex-1">
             <Button
+              type="button"
               onClick={() => openDialog()}
               className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors"
             >

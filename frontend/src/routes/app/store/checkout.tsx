@@ -58,7 +58,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{product.title}</h1>
           <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">{product.subtitle}</p>
           <div className="mt-4">
-            <span className="text-primary text-4xl font-bold">{product.price.toFixed(2)}</span>
+            <span className="text-primary text-4xl font-bold">{product.price.toFixed(2)}$</span>
           </div>
           <div className="mt-6 space-y-4 text-slate-700 dark:text-slate-300">
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Description</h2>

@@ -18,7 +18,6 @@ import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
 import { socialPlatforms } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
-import { cn } from '@/lib';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 
 export function ModifyStore() {
@@ -41,7 +40,6 @@ export function ModifyStore() {
     resolver: zodResolver(patchPostStoreSchema),
     defaultValues: {
       title: '',
-      slug: '',
       description: '',
       socialLinks: [],
       file: undefined,
@@ -51,40 +49,19 @@ export function ModifyStore() {
   const { openDialog, setAspectRatio } = useUploadPicture();
 
   const watchedValues = form.watch();
-  const debouncedSlug = useDebounce(watchedValues.slug, 500);
-
-  const { data: slugAvailabilityResponse } = useCheckSlugAvailability(debouncedSlug, debouncedSlug.length >= 3);
-  const slugAvailable = slugAvailabilityResponse?.isAvailable;
-
-  useEffect(() => {
-    if (slugAvailable === false && debouncedSlug.length >= 3) {
-      form.setError('slug', { type: 'manual', message: 'Slug is already taken' });
-    } else {
-      if (form.formState.errors.slug?.type === 'manual') {
-        form.clearErrors('slug');
-      }
-    }
-  }, [slugAvailable, form]);
 
   useEffect(() => {
     setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
   }, []);
 
-  const generateSlug = (title: string) => {
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
-    form.setValue('slug', slug);
-  };
-
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
-      await createStoreMutation.mutateAsync(data);
+      console.log('Submitting store data:', data);
+      // todo : handle this api
+
       navigate({ to: ROUTE_PATHS.APP.INDEX });
     } catch (error) {
-      console.error('Failed to create store:', error);
+      console.error('Failed to update store:', error);
     }
   };
 
@@ -120,7 +97,7 @@ export function ModifyStore() {
                     <h2 className="text-xl font-bold">Edit Store Details</h2>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="mt-0 space-y-4">
+                <AccordionContent className="mt-0 space-y-4 p-2">
                   <div className="max-w-lg flex-1">
                     <div className="mb-8 text-center">
                       {/* <h1 className="from-primary to-chart-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1> */}

@@ -410,3 +410,5 @@ export default {
 ```
 
 ````
+
+### Button in form is by default on every click submits the form : so to mmanually disbale that behavior : type="button" explicitly

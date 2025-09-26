@@ -13,7 +13,6 @@ interface ResponsiveBuilderLayoutProps {
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
-  const productData = { ...previewData, thumbnailImage: previewData.ui?.picture } as ProductFormData;
   const [viewType, SetViewType] = useState<'checkout' | 'overview'>('overview');
   return (
     <div className={cn(className)}>
@@ -31,10 +30,10 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
                 {viewType == 'overview' && (
                   <div className="flex h-full w-full items-center justify-center p-6">
                     {/* <StoreHeader store={} /> */}
-                    <ProductCard product={productData} displayMode="full" />
+                    <ProductCard product={previewData} displayMode="full" />
                   </div>
                 )}
-                {viewType == 'checkout' && <CheckoutPageProduct productData={productData} />}
+                {viewType == 'checkout' && <CheckoutPageProduct productData={previewData} />}
               </MobileContainer>
               <div className="mt-4 flex w-full items-center justify-center gap-2">
                 <Button
