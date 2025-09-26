@@ -1,12 +1,13 @@
+import { cn } from '@/lib';
+
 interface MobileContainerProps {
   children: React.ReactNode;
   className?: string;
-  screenWidth?: number;
 }
 
-export function MobileContainer({ screenWidth, children }: MobileContainerProps) {
+export function MobileContainer({ children, className }: MobileContainerProps) {
   return (
-    <div className="border-border h-[812px] w-100 overflow-hidden rounded-xl border-2 shadow-2xl">
+    <div className={cn('border-border h-[812px] w-100 overflow-hidden rounded-xl border-2 shadow-2xl', className)}>
       <div className="h-full w-full overflow-x-hidden overflow-y-auto">
         {/* <!-- Cover image --> */}
         {/* <div

@@ -1,29 +1,58 @@
+import { useState } from 'react';
 import { useMyStore } from '@/api/stores';
-import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
+import { DrawerDialog, ErrorComponenet, LoadingState, MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/components';
 import { GenerateIdCrypto } from '@/lib';
+import { Button } from '@/components/ui/button'; // For close button
+
+// New component for product details modal
+const ProductDetailsModal = ({ product, storeSlug, isOpen, onClose }: { product: any; storeSlug: string; isOpen: boolean; onClose: () => void }) => {
+  if (!product) return null;
+
+  const simulatedUrl = `appname/store/${storeSlug}/${product.productType}/${product.slug}`; // Simulate live URL
+
+  return (
+    <DrawerDialog open={isOpen} onOpenChange={onClose} title={`Simulated URL: ${simulatedUrl}`}>
+      <div className="flex items-center justify-center border border-2 py-10 shadow-2xl">
+        <ProductCheckout product={product} />
+      </div>
+    </DrawerDialog>
+  );
+};
 
 export const MobilePreview = () => {
   const { data: store, isLoading, isError } = useMyStore();
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+
   if (isLoading) return <LoadingState type="spinner" />;
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+
+  const handleProductClick = (product: any) => {
+    setSelectedProduct(product);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
+  };
 
   return (
     <main className="flex flex-1 items-center justify-center">
       <MobileContainer>
         <StoreHeader store={store} />
-        <div className={'w-full space-y-4'}>
+        <div className="w-full space-y-4">
           {store.products.map((product, index) => (
             <div
               key={GenerateIdCrypto()}
-              // for future drag and drop
-              // className={cn('relative transition-all duration-200', 'scale-95 opacity-50', 'translate-y-1 transform', 'cursor-move')}
+              onClick={() => handleProductClick(product)} // Add click handler
+              className="cursor-pointer" // Indicate it's clickable
             >
-              <div className={'group px-6'}>
+              <div className="group px-6">
                 <ProductCard product={product} />
               </div>
             </div>
           ))}
         </div>
+        {/* Modal for product details */}
+        <ProductDetailsModal product={selectedProduct} storeSlug={store.slug} isOpen={!!selectedProduct} onClose={handleCloseModal} />
       </MobileContainer>
     </main>
   );
