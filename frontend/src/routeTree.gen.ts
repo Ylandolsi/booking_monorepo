@@ -35,9 +35,11 @@ import { Route as AppStoreCheckoutRouteImport } from './routes/app/store/checkou
 import { Route as AppMentorSetScheduleRouteImport } from './routes/app/mentor/set-schedule'
 import { Route as AppMentorBecomeRouteImport } from './routes/app/mentor/become'
 import { Route as AppAdminPayoutRequestsRouteImport } from './routes/app/admin/payout-requests'
+import { Route as publicStoreStoreSlugIndexRouteImport } from './routes/(public)/store/$storeSlug/index'
 import { Route as AppStoreProductProductSlugRouteImport } from './routes/app/store/product/$productSlug'
 import { Route as AppBookingSessionMentorSlugRouteImport } from './routes/app/booking/session.$mentorSlug'
 import { Route as AppAdminPayoutRequestsRequestIdRouteImport } from './routes/app/admin/payout-requests.$requestId'
+import { Route as publicStoreStoreSlugSProductSlugRouteImport } from './routes/(public)/store/$storeSlug/s.$productSlug'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
@@ -170,6 +172,12 @@ const AppAdminPayoutRequestsRoute = AppAdminPayoutRequestsRouteImport.update({
   path: '/admin/payout-requests',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const publicStoreStoreSlugIndexRoute =
+  publicStoreStoreSlugIndexRouteImport.update({
+    id: '/(public)/store/$storeSlug/',
+    path: '/store/$storeSlug/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppStoreProductProductSlugRoute =
   AppStoreProductProductSlugRouteImport.update({
     id: '/$productSlug',
@@ -187,6 +195,12 @@ const AppAdminPayoutRequestsRequestIdRoute =
     id: '/$requestId',
     path: '/$requestId',
     getParentRoute: () => AppAdminPayoutRequestsRoute,
+  } as any)
+const publicStoreStoreSlugSProductSlugRoute =
+  publicStoreStoreSlugSProductSlugRouteImport.update({
+    id: '/(public)/store/$storeSlug/s/$productSlug',
+    path: '/store/$storeSlug/s/$productSlug',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -219,6 +233,8 @@ export interface FileRoutesByFullPath {
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
+  '/store/$storeSlug': typeof publicStoreStoreSlugIndexRoute
+  '/store/$storeSlug/s/$productSlug': typeof publicStoreStoreSlugSProductSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -249,6 +265,8 @@ export interface FileRoutesByTo {
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
+  '/store/$storeSlug': typeof publicStoreStoreSlugIndexRoute
+  '/store/$storeSlug/s/$productSlug': typeof publicStoreStoreSlugSProductSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -281,6 +299,8 @@ export interface FileRoutesById {
   '/app/admin/payout-requests/$requestId': typeof AppAdminPayoutRequestsRequestIdRoute
   '/app/booking/session/$mentorSlug': typeof AppBookingSessionMentorSlugRoute
   '/app/store/product/$productSlug': typeof AppStoreProductProductSlugRoute
+  '/(public)/store/$storeSlug/': typeof publicStoreStoreSlugIndexRoute
+  '/(public)/store/$storeSlug/s/$productSlug': typeof publicStoreStoreSlugSProductSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -314,6 +334,8 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
+    | '/store/$storeSlug'
+    | '/store/$storeSlug/s/$productSlug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -344,6 +366,8 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
+    | '/store/$storeSlug'
+    | '/store/$storeSlug/s/$productSlug'
   id:
     | '__root__'
     | '/'
@@ -375,6 +399,8 @@ export interface FileRouteTypes {
     | '/app/admin/payout-requests/$requestId'
     | '/app/booking/session/$mentorSlug'
     | '/app/store/product/$productSlug'
+    | '/(public)/store/$storeSlug/'
+    | '/(public)/store/$storeSlug/s/$productSlug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -387,6 +413,8 @@ export interface RootRouteChildren {
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   TestThumbnailModesRoute: typeof TestThumbnailModesRoute
+  publicStoreStoreSlugIndexRoute: typeof publicStoreStoreSlugIndexRoute
+  publicStoreStoreSlugSProductSlugRoute: typeof publicStoreStoreSlugSProductSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -573,6 +601,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminPayoutRequestsRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/(public)/store/$storeSlug/': {
+      id: '/(public)/store/$storeSlug/'
+      path: '/store/$storeSlug'
+      fullPath: '/store/$storeSlug'
+      preLoaderRoute: typeof publicStoreStoreSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app/store/product/$productSlug': {
       id: '/app/store/product/$productSlug'
       path: '/$productSlug'
@@ -593,6 +628,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/admin/payout-requests/$requestId'
       preLoaderRoute: typeof AppAdminPayoutRequestsRequestIdRouteImport
       parentRoute: typeof AppAdminPayoutRequestsRoute
+    }
+    '/(public)/store/$storeSlug/s/$productSlug': {
+      id: '/(public)/store/$storeSlug/s/$productSlug'
+      path: '/store/$storeSlug/s/$productSlug'
+      fullPath: '/store/$storeSlug/s/$productSlug'
+      preLoaderRoute: typeof publicStoreStoreSlugSProductSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -689,6 +731,8 @@ const rootRouteChildren: RootRouteChildren = {
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   TestThumbnailModesRoute: TestThumbnailModesRoute,
+  publicStoreStoreSlugIndexRoute: publicStoreStoreSlugIndexRoute,
+  publicStoreStoreSlugSProductSlugRoute: publicStoreStoreSlugSProductSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

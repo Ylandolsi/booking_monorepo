@@ -133,7 +133,7 @@ function MyComponent() {
 }
 ```
 
-## Search Params
+## Search Params (Query : ?key=Value)
 
 ### Basic Usage
 
@@ -153,7 +153,16 @@ export const Route = createFileRoute(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION)({
 });
 ```
 
+### Acess Params
+
 ### Accessing Search Params
+
+```ts
+export const StorePreview = () => {
+  const params = useParams({ strict: false }) as Record<string, string | undefined>;
+  return <div>Store Preview Component - Store Slug: {params.storeSlug}</div>;
+};
+```
 
 ```ts
 const search = useSearch({ strict: false });

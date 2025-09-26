@@ -57,7 +57,7 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
                 DisplayOrder = product.DisplayOrder,
                 IsPublished = product.IsPublished, //  only retrieve published 
             };
-            mappedStoreProducts.Append(mappedProduct);
+            mappedStoreProducts.Add(mappedProduct);
         }
 
         var mappedResult = new GetStoreResponse
