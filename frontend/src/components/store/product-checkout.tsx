@@ -18,7 +18,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
         </Link>
       </header>
       <main className="w-full pt-16 pb-28 break-words">
-        <div className="bg-accent flex h-80 w-full items-center justify-center">
+        <div className="bg-accent h-${COVER_IMAGE.height} w-${COVER_IMAGE.width} flex items-center justify-center">
           {/* Change to lazy Image */}
           <img
             alt="Product Image"

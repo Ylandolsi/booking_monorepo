@@ -2,13 +2,15 @@ import type { ProductType } from '@/api/stores/produtcs';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Input, Textarea, UploadImage } from '@/components';
+import { COVER_IMAGE, Input, Textarea, UploadImage } from '@/components';
 import type { ProductFormData, TabsType } from '@/features/app/store/products/add-product';
 import { useEffect } from 'react';
 import { LazyImage } from '@/utils';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
 import 'react-image-crop/dist/ReactCrop.css';
+import { cn } from '@/lib/cn';
+import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 
 // ThumbnailImage : file uploaded
 // ThumbnailPicture : object with mainLink and thumbnailLink
@@ -127,6 +129,11 @@ export function FormGeneral({
         </div>
       </div> */}
       <UploadImage description="Thumbnail Image (Optional)" />
+      <div className="flex items-center justify-center">
+        <div className={cn(`w-${COVER_IMAGE.width} h-${COVER_IMAGE.height}`)}>
+          <img src={croppedImageUrl ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL} alt="Cover preview" className="h-full w-full object-cover" />
+        </div>
+      </div>
 
       {/* Description */}
       <FormField

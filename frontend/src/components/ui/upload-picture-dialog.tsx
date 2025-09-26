@@ -80,14 +80,14 @@ export const UploadPictureDialog = ({ onUpload }: UploadPictureDialogProps) => {
                 </div>
               </div>
 
-              {croppedImageUrl && (
+              {/* {croppedImageUrl && (
                 <div className="text-center">
                   <p className="mb-2 text-sm text-gray-600">Preview:</p>
                   <div className="flex justify-center">
                     <img src={croppedImageUrl} alt="Cropped preview" className="h-20 w-20 rounded-full border-2 border-gray-200 object-cover" />
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </div>
