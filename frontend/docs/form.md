@@ -82,8 +82,10 @@ const onSubmit = async (data: CreateProductInput) => {
 ```tsx
 <FormField
   control={form.control}
-  name="bufferTime"
-  render={({ field }) => (
+  name="bufferTime" // name of field
+  render={(
+    { field }, // properties of filed with name "bufferTime"
+  ) => (
     <FormItem>
       <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
       <FormControl>
@@ -306,8 +308,8 @@ function EmailField({ form }: { form: UseFormReturn<any> }) {
                   validateAsync('email', e.target.value);
                 }}
               />
-              {validationStatus.email === 'validating' && <Loader className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 animate-spin" />}
-              {validationStatus.email === 'valid' && <Check className="absolute top-1/2 right-2 h-4 w-4 -translate-y-1/2 text-green-500" />}
+              {validationStatus.email === 'validating' && <Loader className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin" />}
+              {validationStatus.email === 'valid' && <Check className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-green-500" />}
             </div>
           </FormControl>
           <FormMessage />

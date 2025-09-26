@@ -1,16 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, User, Link, CheckCircle, Instagram, Twitter, Facebook, Youtube, Globe, Plus, Check, Camera, LogOut } from 'lucide-react';
+
+import { User, Link, CheckCircle, LogOut } from 'lucide-react';
 import { ROUTE_PATHS } from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { MobileContainer, StoreHeader } from '@/components/store';
@@ -19,8 +16,9 @@ import useDebounce from '@/hooks/use-debounce';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
-import { StoreGuard, ThemeToggle, UploadImage } from '@/components';
+import { SocialLinks, ThemeToggle, UploadImage } from '@/components';
 import { useAuth } from '@/api/auth';
+import { SocialLinksForm } from '@/features/app';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
@@ -28,9 +26,6 @@ export const SetupStore = () => {
   const { logout } = useAuth();
 
   const createStoreMutation = useCreateStore();
-  const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const form = useForm<PatchPostStoreRequest>({
     resolver: zodResolver(patchPostStoreSchema),
@@ -43,7 +38,7 @@ export const SetupStore = () => {
     },
   });
 
-  const { openDialog, croppedImageUrl, setAspectRatio } = useUploadPicture();
+  const { croppedImageUrl, setAspectRatio } = useUploadPicture();
 
   const watchedValues = form.watch();
   const debouncedSlug = useDebounce(watchedValues.slug, 500);
@@ -80,22 +75,6 @@ export const SetupStore = () => {
       navigate({ to: ROUTE_PATHS.APP.INDEX });
     } catch (error) {
       console.error('Failed to create store:', error);
-    }
-  };
-
-  const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'twitter'].includes(p.key));
-
-  const handleAddPlatforms = () => {
-    setAdditionalPlatforms([...additionalPlatforms, ...selectedPlatforms]);
-    setSelectedPlatforms([]);
-    setIsPopoverOpen(false);
-  };
-
-  const handleCheckboxChange = (key: string, checked: boolean) => {
-    if (checked) {
-      setSelectedPlatforms([...selectedPlatforms, key]);
-    } else {
-      setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
     }
   };
 
@@ -183,149 +162,7 @@ export const SetupStore = () => {
                   )}
                 />
                 <UploadImage description="Profile Picture (Optional)" />
-
-                {/* Collapsible Social Media Section */}
-                <Accordion type="single" collapsible className="w-full">
-                  <AccordionItem value="social-links">
-                    <AccordionTrigger className="text-foreground hover:text-primary">
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4" />
-                        Add Social Links (Optional)
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="space-y-4">
-                      {/* Default platforms */}
-                      {socialPlatforms.slice(0, 2).map(({ key, label, icon: Icon }) => (
-                        <FormField
-                          key={key}
-                          control={form.control}
-                          name="socialLinks"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-foreground flex items-center gap-2">
-                                <Icon className="h-4 w-4" />
-                                {label}
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder={`https://${key}.com/your-profile`}
-                                  className="border-border text-foreground"
-                                  value={field.value?.find((link: any) => link.platform === key)?.url || ''}
-                                  onChange={(e) => {
-                                    const currentLinks = field.value || [];
-                                    const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
-                                    if (existingIndex >= 0) {
-                                      currentLinks[existingIndex].url = e.target.value;
-                                    } else {
-                                      currentLinks.push({ platform: key, url: e.target.value });
-                                    }
-                                    field.onChange(currentLinks.filter((link: any) => link.url));
-                                  }}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      ))}
-
-                      {/* Dynamically added platforms */}
-                      {additionalPlatforms.map((key) => {
-                        const platform = socialPlatforms.find((p) => p.key === key);
-                        if (!platform) return null;
-                        const { label, icon: Icon } = platform;
-                        return (
-                          <FormField
-                            key={key}
-                            control={form.control}
-                            name="socialLinks"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-foreground flex items-center gap-2">
-                                  <Icon className="h-4 w-4" />
-                                  {label}
-                                </FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder={`https://${key}.com/your-profile`}
-                                    className="border-border text-foreground"
-                                    value={field.value?.find((link: any) => link.platform === key)?.url || ''}
-                                    onChange={(e) => {
-                                      const currentLinks = field.value || [];
-                                      const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
-                                      if (existingIndex >= 0) {
-                                        currentLinks[existingIndex].url = e.target.value;
-                                      } else {
-                                        currentLinks.push({ platform: key, url: e.target.value });
-                                      }
-                                      field.onChange(currentLinks.filter((link: any) => link.url));
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        );
-                      })}
-                      {/* Add more button with popover */}
-                      {availablePlatforms.length > 0 && (
-                        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                          <PopoverTrigger asChild>
-                            <div
-                              className="from-primary to-primary/20 text-background border-border hover:bg-primary flex w-full items-center gap-2 rounded-md bg-gradient-to-br p-3 transition-all duration-200"
-                              onClick={() => {
-                                setIsPopoverOpen(true);
-                              }}
-                            >
-                              <Plus className="h-4 w-4" />
-                              Add Another Platform
-                            </div>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-64 p-4" side="top" align="center">
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="leading-none font-medium">Select Platforms</h4>
-                                <p className="text-muted-foreground text-sm">Choose which platforms to add</p>
-                              </div>
-                              <div className="grid gap-2">
-                                {availablePlatforms.map(({ key, label, icon: Icon }) => (
-                                  <div key={key} className="flex items-center space-x-2">
-                                    <Checkbox
-                                      id={key}
-                                      checked={selectedPlatforms.includes(key)}
-                                      onCheckedChange={(checked) => {
-                                        handleCheckboxChange(key, checked as boolean);
-                                      }}
-                                    />
-                                    <label
-                                      htmlFor={key}
-                                      className="flex cursor-pointer items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    >
-                                      <Icon className="h-4 w-4" />
-                                      {label}
-                                    </label>
-                                  </div>
-                                ))}
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  onClick={handleAddPlatforms}
-                                  disabled={selectedPlatforms.length === 0}
-                                  className="mt-2 w-full"
-                                >
-                                  <Check className="mr-2 h-4 w-4" />
-                                  Add Selected ({selectedPlatforms.length})
-                                </Button>
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-
+                <SocialLinksForm form={form} />
                 <Button
                   type="submit"
                   size="lg"
@@ -361,10 +198,3 @@ export const SetupStore = () => {
     // </StoreGuard>
   );
 };
-export const socialPlatforms = [
-  { key: 'instagram', label: 'Instagram', icon: Instagram },
-  { key: 'twitter', label: 'Twitter', icon: Twitter },
-  { key: 'facebook', label: 'Facebook', icon: Facebook },
-  { key: 'youtube', label: 'YouTube', icon: Youtube },
-  { key: 'website', label: 'Website', icon: Globe },
-];

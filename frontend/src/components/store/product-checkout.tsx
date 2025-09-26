@@ -1,6 +1,7 @@
 import type { Product } from '@/api/stores/produtcs';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Link } from '@/components/ui';
+import { routes } from '@/config';
 import { X } from 'lucide-react';
 
 export const COVER_IMAGE = {
@@ -12,7 +13,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
   return (
     <div className="bg-background-light dark:bg-background-dark relative text-slate-800 dark:text-slate-200">
       <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
-        <Link className="flex items-center gap-2" to={'/app/store/builder'}>
+        <Link className="flex items-center gap-2" to={routes.to.store.index() + '/'}>
           <X />
           <span className="font-bold text-slate-900 dark:text-white">My Store</span>
         </Link>
