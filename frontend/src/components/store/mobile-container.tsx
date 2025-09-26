@@ -16,7 +16,7 @@ export function MobileContainer({ screenWidth, children }: MobileContainerProps)
     // </IPhoneMockup>
 
     <div className="border-border h-[812px] w-[375px] overflow-hidden rounded-xl border-2 shadow-2xl">
-      <div className="h-full overflow-x-hidden overflow-y-auto">
+      <div className="h-full w-full overflow-x-hidden overflow-y-auto">
         {/* <!-- Cover image --> */}
         {/* <div
           class="h-48 bg-cover bg-center"
