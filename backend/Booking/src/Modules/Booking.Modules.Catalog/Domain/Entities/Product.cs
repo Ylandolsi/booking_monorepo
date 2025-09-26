@@ -10,25 +10,25 @@ public abstract class Product : Entity
     public int Id { get; protected set; }
 
     public string ProductSlug { get; protected set; }
-    public int StoreId { get; protected set; }
     public string StoreSlug { get; protected set; }
+    public int StoreId { get; protected set; }
 
     public string Title { get; protected set; } = string.Empty;
-    public string ClickToPay { get; protected set; }
     public string? Subtitle { get; protected set; }
-
     public string? Description { get; protected set; }
-
-    // TODO : change to Picture ? 
-    public Picture? PreviewPicture { get; protected set; }
-    public Picture? ThumbnailPicture { get; protected set; }
     public ProductType ProductType { get; protected set; }
-
     public decimal Price { get; protected set; }
+    public string ClickToPay { get; protected set; }
 
     public int DisplayOrder { get; protected set; }
     public bool IsPublished { get; protected set; }
     
+
+    // TODO : change to Picture ? 
+    public Picture? ThumbnailPicture { get; protected set; }
+    public Picture? PreviewPicture { get; protected set; }
+
+
     // Navigation properties
     public Store Store { get; protected set; } = default!;
 

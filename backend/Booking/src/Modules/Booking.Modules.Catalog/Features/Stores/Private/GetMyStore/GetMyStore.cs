@@ -58,7 +58,7 @@ public class GetMyStoreHandler(
 
                 var mappedProduct = new ProductResponse
                 {
-                    Slug = product.ProductSlug,
+                    ProductSlug = product.ProductSlug,
                     Title = product.Title,
                     Subtitle = product.Subtitle,
                     ClickToPay = product.ClickToPay,

@@ -6,21 +6,22 @@ public record SocialLink(string Platform, string Url);
 
 public record PatchPostStoreResponse(string Slug);
 
-
 public record ProductResponse
 {
-    public string Slug { get; init; }
+    public string ProductSlug { get; init; }
     public string Title { get; init; } = string.Empty;
-    public string ClickToPay { get; init; }
     public string? Subtitle { get; init; }
     public string? Description { get; init; }
     public ProductType ProductType { get; init; }
     public decimal Price { get; init; }
+    public string ClickToPay { get; init; }
     public int DisplayOrder { get; init; }
     public bool IsPublished { get; init; }
-    
+
     public Picture ThumbnailPicture { get; init; }
 
+    public DateTime CreatedAt { get; init; }
+    public DateTime? UpdatedAt { get; init; }
 }
 
 public record GetStoreResponse
