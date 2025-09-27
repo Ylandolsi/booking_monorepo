@@ -99,3 +99,6 @@ Additional learning resources and tips.
   - Backpressure
   - load shedding
   - Circuit breakers
+- **Repo for well structured react project** : [Github repo](https://github.com/provectus/kafka-ui/tree/master)
+- **TS 10 TIPS** :[Youtube Video](https://www.youtube.com/watch?v=PHL4YH0HVjI)
+- **Path to senior : sources ...** : [Github repo](https://github.com/jordan-cutler/path-to-senior-engineer-handbook)
