@@ -15,7 +15,7 @@ export const GetPublicStore = async ({ storeSlug }: { storeSlug: string }): Prom
 export function usePublicStore(storeSlug: string, overrides?: Partial<UseQueryOptions<any, Error>>): UseQueryResult<Store, Error> {
   return useQuery(
     queryOptions({
-      queryKey: [],
+      queryKey: ['public-store', storeSlug],
       queryFn: () => GetPublicStore({ storeSlug }),
       ...overrides,
     }),
