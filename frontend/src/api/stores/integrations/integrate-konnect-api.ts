@@ -1,5 +1,5 @@
 import { api } from '@/lib';
-import { IntegrateKonnectWallet } from '@/api/auth/auth-endpoints';
+import { IntegrateKonnectWallet } from '@/api/utils/auth-endpoints';
 import { useMutation } from '@tanstack/react-query';
 import { authQueryKeys } from '@/api/auth';
 

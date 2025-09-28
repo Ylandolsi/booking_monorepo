@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { User } from '@/types/api';
 import { toast } from 'sonner';
 import { api } from '@/lib/api/api-client';
-import * as Endpoints from '@/api/auth/auth-endpoints';
+import * as Endpoints from '@/api/utils/auth-endpoints';
 import { type LoginInput } from '@/features/auth';
 
 export const loginWithEmailAndPassword = async (data: LoginInput): Promise<User> => {

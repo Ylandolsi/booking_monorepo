@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/config/env';
-import { RefreshAccessToken } from '@/api/auth/auth-endpoints';
+import { RefreshAccessToken } from '@/api/utils/auth-endpoints';
 import { toast } from 'sonner';
 
 export type RequestOptions = {

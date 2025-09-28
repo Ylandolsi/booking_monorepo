@@ -1,4 +1,4 @@
-import * as Endpoints from '@/api/auth/auth-endpoints';
+import * as Endpoints from '@/api/utils/auth-endpoints';
 import { env } from '@/config/env';
 import { routeBuilder } from '@/config';
 import { buildUrlWithParams } from '@/lib';
