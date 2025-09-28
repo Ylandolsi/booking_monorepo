@@ -1,5 +1,5 @@
+import { useIntegrateWithKonnect } from '@/api/stores/integrations/integrate-konnect-api';
 import { Button, DrawerDialog, Input, Label } from '@/components';
-import { useIntegrateWithKonnect } from '@/features/app/integrations/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
@@ -57,9 +57,7 @@ export function KonnectIntegrationDialog({
             {...register('walletId')}
             className={errors.walletId ? 'border-red-500' : ''}
           />
-          {errors.walletId && (
-            <p className="text-sm text-red-600">{errors.walletId.message}</p>
-          )}
+          {errors.walletId && <p className="text-sm text-red-600">{errors.walletId.message}</p>}
         </div>
         <Button type="submit" disabled={isSubmitting}>
           {' '}
