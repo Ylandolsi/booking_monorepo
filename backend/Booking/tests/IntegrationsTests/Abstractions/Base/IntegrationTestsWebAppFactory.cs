@@ -66,7 +66,6 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         {
             var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
             await usersDbContext.Database.MigrateAsync();
-            await SeedData.Initialize(usersDbContext);
 
             var catalogDbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
             await catalogDbContext.Database.MigrateAsync();
@@ -177,7 +176,6 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         using (var scope = Services.CreateScope())
         {
             var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-            await SeedData.Initialize(usersDbContext);
         }
     }
 

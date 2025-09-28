@@ -68,11 +68,6 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
             LastName = userData.Name.LastName,
             Email = userData.Email,
             GoogleEmail = userData.GoogleEmail,
-            ProfilePicture = new ProfilePictureDto
-            {
-                ProfilePictureLink = userData.ProfilePictureUrl.ProfilePictureLink,
-                ThumbnailUrlPictureLink = userData.ProfilePictureUrl.ThumbnailUrlPictureLink
-            },
             TimeZoneId = userData.TimeZoneId,
             KonnectWalletId = userData.KonnectWalledId
         };

@@ -1,6 +1,5 @@
 ﻿using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
-using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
 using Microsoft.AspNetCore.Identity;
 
@@ -27,12 +26,7 @@ public sealed class User : IdentityUser<int>, IEntity
 
     public string Slug { get; private set; } = string.Empty;
     public Name Name { get; private set; } = null!;
-    public Status Status { get; private set; } = null!;
-    public ProfilePicture ProfilePictureUrl { get; private set; } = null!;
     public string Gender { get; private set; } = "Male";
-    public SocialLinks SocialLinks { get; private set; } = null!;
-
-    public ProfileCompletionStatus ProfileCompletionStatus { get; } = new();
 
     // TODO : add limited lenght to this 
     public string? GoogleEmail { get; private set; }
@@ -45,22 +39,6 @@ public sealed class User : IdentityUser<int>, IEntity
     //builder.Navigation(o => o.Items)
     // .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-    // ONE TO MANY 
-    public ICollection<Experience> Experiences { get; } = new List<Experience>();
-    public ICollection<Education> Educations { get; private set; } = new List<Education>();
-
-
-    // MANY TO MANY RELATIONSHIP
-
-    public ICollection<MentorMentee> UserMentors { get; private set; } = new List<MentorMentee>();
-
-    public ICollection<MentorMentee> UserMentees { get; private set; } = new List<MentorMentee>();
-
-    // MAX 4
-    public ICollection<UserExpertise> UserExpertises { get; } = new HashSet<UserExpertise>();
-
-    // MAX 4 
-    public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
@@ -83,10 +61,8 @@ public sealed class User : IdentityUser<int>, IEntity
         var user = new User
         {
             Name = new Name(firstName, lastName),
-            Status = new Status(false),
             Email = emailAddress,
             UserName = emailAddress,
-            ProfilePictureUrl = new ProfilePicture(profilePictureSource),
             Slug = slug,
             CreatedAt = DateTime.UtcNow,
             TimeZoneId = timeZoneId
@@ -104,26 +80,7 @@ public sealed class User : IdentityUser<int>, IEntity
         return Result.Success();
     }
 
-    public Result UpdateSocialLinks(SocialLinks links)
-    {
-        if (links == null)
-            return Result.Failure(UserErrors.InvalidSocialLinks);
 
-        SocialLinks = links;
-        return Result.Success();
-    }
-
-    public Result UpdateBio(string bio)
-    {
-        if (bio?.Length > UserConstraints.MaxBioLength)
-            return Result.Failure(UserErrors.BioTooLong);
-
-        var oldBio = Bio;
-        Bio = bio?.Trim() ?? string.Empty;
-
-
-        return Result.Success();
-    }
 
     public Result UpdateGender(string gender)
     {
@@ -151,40 +108,7 @@ public sealed class User : IdentityUser<int>, IEntity
         }
     }
 
-    public void UpdateProfileCompletion()
-    {
-        ProfileCompletionStatus.UpdateCompletionStatus(this);
-    }
-
-    public Result CanBecomeMentor()
-    {
-        var profileCompletion = ProfileCompletionStatus.GetCompletionPercentage();
-
-        if (profileCompletion < 80)
-            return Result.Failure(Error.Problem(
-                "User.InsufficientProfileCompletion",
-                "Profile must be at least 80% complete to become a mentor"));
-
-        if (!Experiences.Any())
-            return Result.Failure(Error.Problem(
-                "User.NoExperience",
-                "User must have at least one experience to become a mentor"));
-
-        if (!UserExpertises.Any())
-            return Result.Failure(Error.Problem(
-                "User.NoExpertise",
-                "User must have at least one expertise to become a mentor"));
-
-        return Result.Success();
-    }
-
-    public Result BecomeMentor()
-    {
-        var isPossible = CanBecomeMentor();
-        if (isPossible.IsFailure) return isPossible;
-
-        return Status.BecomeMentor();
-    }
+    
 
     public void IntegrateWithGoogle(string googleEmail)
     {

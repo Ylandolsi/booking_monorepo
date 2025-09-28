@@ -16,43 +16,12 @@ public static class UserErrors
     public static readonly Error AccountLockedOut = Error.Unauthorized(
         "Users.AccountLockedOut",
         "This account has been locked out due to too many failed login attempts. Please try again later.");
-
-    public static readonly Error ExpertiseLimitExceeded =
-        Error.Problem("User.ExpertiseLimitExceeded",
-            $"User expertises should not exceed {UserConstraints.MaxExpertises}");
-
-    public static readonly Error LanguageLimitExceeded =
-        Error.Problem("User.LanguageLimitExceeded",
-            $"User Languages should not exceed {UserConstraints.MaxLanguages}");
+    
 
     // New validation errors
     public static readonly Error InvalidGender = Error.Problem(
         "User.InvalidGender",
         $"Gender must be one of: {string.Join(", ", Genders.ValidGenders)}");
-
-    public static readonly Error BioTooLong = Error.Problem(
-        "User.BioTooLong",
-        $"Bio cannot exceed {UserConstraints.MaxBioLength} characters");
-
-    public static readonly Error InvalidSocialLinks = Error.Problem(
-        "User.InvalidSocialLinks",
-        "Social links cannot be null");
-
-    public static readonly Error ExpertiseAlreadyExists = Error.Problem(
-        "User.ExpertiseAlreadyExists",
-        "User already has this expertise");
-
-    public static readonly Error ExpertiseNotFound = Error.Problem(
-        "User.ExpertiseNotFound",
-        "User does not have this expertise");
-
-    public static readonly Error LanguageAlreadyExists = Error.Problem(
-        "User.LanguageAlreadyExists",
-        "User already has this language");
-
-    public static readonly Error LanguageNotFound = Error.Problem(
-        "User.LanguageNotFound",
-        "User does not have this language");
 
     public static Error NotFoundById(int userId)
     {

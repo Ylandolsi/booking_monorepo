@@ -1,6 +1,4 @@
 using Booking.Modules.Users.Domain.Entities;
-using Booking.Modules.Users.Domain.JoinTables;
-using Booking.Modules.Users.Domain.ValueObjects;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
@@ -53,75 +51,11 @@ public class TestProfileSeeder
         if (result.Succeeded)
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
-        // Update additional properties
-        user.UpdateBio(
-            "Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
         user.UpdateGender(Genders.Male);
-        user.UpdateSocialLinks(new SocialLinks(
-            "https://github.com/johndoe",
-            "https://linkedin.com/in/johndoe",
-            "https://twitter.com/johndoe"
-        ));
 
-        // Add expertise (4 items max)
-        var expertises = await context.Expertises.Take(4).ToListAsync();
-        foreach (var expertise in expertises)
-            await context.UserExpertises.AddAsync(new UserExpertise
-            {
-                UserId = user.Id,
-                ExpertiseId = expertise.Id
-            });
 
-        // Add languages (4 items max)
-        var languages = await context.Languages.Take(3).ToListAsync();
-        foreach (var language in languages)
-            await context.UserLanguages.AddAsync(new UserLanguage
-            {
-                UserId = user.Id,
-                LanguageId = language.Id
-            });
 
-        // Add experience
-        await context.Experiences.AddRangeAsync(new List<Experience>
-        {
-            new(
-                "Senior Software Engineer",
-                "Leading development of cloud-native applications using microservices architecture.",
-                userId: user.Id,
-                company: "Tech Solutions Inc.",
-                startDate: new DateTime(2018, 5, 15, 0, 0, 0, DateTimeKind.Utc),
-                endDate: null
-            ),
-            new(
-                "Software Developer",
-                "Developed and maintained web applications using React and ASP.NET Core.",
-                userId: user.Id,
-                company: "Digital Innovations",
-                startDate: new DateTime(2015, 3, 1, 0, 0, 0, DateTimeKind.Utc),
-                endDate: new DateTime(2018, 5, 1, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
 
-        // Add education
-        await context.Educations.AddRangeAsync(new List<Education>
-        {
-            new(
-                "Computer Science",
-                "Specialized in Artificial Intelligence and Machine Learning",
-                "University of Technology",
-                user.Id,
-                new DateTime(2013, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2015, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            ),
-            new(
-                "Computer Science",
-                "Focus on Software Engineering",
-                "State University",
-                user.Id,
-                new DateTime(2009, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
 
 
         await context.SaveChangesAsync();
@@ -189,76 +123,13 @@ foreach (var dday in days)
         if (result.Succeeded)
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
-        // Update additional properties
-        user.UpdateBio(
-            "Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
         user.UpdateGender(Genders.Male);
-        user.UpdateSocialLinks(new SocialLinks(
-            "https://github.com/mohsen",
-            "https://linkedin.com/in/mohsen",
-            "https://twitter.com/mohsen"
-        ));
 
-        // Add expertise (4 items max)
-        var expertises = await context.Expertises.Take(4).ToListAsync();
-        foreach (var expertise in expertises)
-            await context.UserExpertises.AddAsync(new UserExpertise
-            {
-                UserId = user.Id,
-                ExpertiseId = expertise.Id
-            });
 
         // Add languages (4 items max)
-        var languages = await context.Languages.Take(3).ToListAsync();
-        foreach (var language in languages)
-            await context.UserLanguages.AddAsync(new UserLanguage
-            {
-                UserId = user.Id,
-                LanguageId = language.Id
-            });
-
         // Add experience
-        await context.Experiences.AddRangeAsync(new List<Experience>
-        {
-            new(
-                "Senior Software Engineer",
-                "Leading development of cloud-native applications using microservices architecture.",
-                userId: user.Id,
-                company: "Tech Solutions Inc.",
-                startDate: new DateTime(2018, 5, 15, 0, 0, 0, DateTimeKind.Utc),
-                endDate: null
-            ),
-            new(
-                "Software Developer",
-                "Developed and maintained web applications using React and ASP.NET Core.",
-                userId: user.Id,
-                company: "Digital Innovations",
-                startDate: new DateTime(2015, 3, 1, 0, 0, 0, DateTimeKind.Utc),
-                endDate: new DateTime(2018, 5, 1, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
 
         // Add education
-        await context.Educations.AddRangeAsync(new List<Education>
-        {
-            new(
-                "Computer Science",
-                "Specialized in Artificial Intelligence and Machine Learning",
-                "University of Technology",
-                user.Id,
-                new DateTime(2013, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2015, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            ),
-            new(
-                "Computer Science",
-                "Focus on Software Engineering",
-                "State University",
-                user.Id,
-                new DateTime(2009, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
-
 
         await context.SaveChangesAsync();
         /* TODO : CHANGE TO CATALOG
@@ -326,75 +197,9 @@ foreach (var dday in days)
             await userManager.ConfirmEmailAsync(user, await userManager.GenerateEmailConfirmationTokenAsync(user));
 
         // Update additional properties
-        user.UpdateBio(
-            "Full-stack developer with 8+ years of experience in web and mobile development. Specialized in React, .NET Core, and cloud architecture.");
-        user.UpdateGender(Genders.Male);
-        user.UpdateSocialLinks(new SocialLinks(
-            "https://github.com/mohsen",
-            "https://linkedin.com/in/mohsen",
-            "https://twitter.com/mohsen"
-        ));
+user.UpdateGender(Genders.Male);
 
-        // Add expertise (4 items max)
-        var expertises = await context.Expertises.Take(4).ToListAsync();
-        foreach (var expertise in expertises)
-            await context.UserExpertises.AddAsync(new UserExpertise
-            {
-                UserId = user.Id,
-                ExpertiseId = expertise.Id
-            });
-
-        // Add languages (4 items max)
-        var languages = await context.Languages.Take(3).ToListAsync();
-        foreach (var language in languages)
-            await context.UserLanguages.AddAsync(new UserLanguage
-            {
-                UserId = user.Id,
-                LanguageId = language.Id
-            });
-
-        // Add experience
-        await context.Experiences.AddRangeAsync(new List<Experience>
-        {
-            new(
-                "Senior Software Engineer",
-                "Leading development of cloud-native applications using microservices architecture.",
-                userId: user.Id,
-                company: "Tech Solutions Inc.",
-                startDate: new DateTime(2018, 5, 15, 0, 0, 0, DateTimeKind.Utc),
-                endDate: null
-            ),
-            new(
-                "Software Developer",
-                "Developed and maintained web applications using React and ASP.NET Core.",
-                userId: user.Id,
-                company: "Digital Innovations",
-                startDate: new DateTime(2015, 3, 1, 0, 0, 0, DateTimeKind.Utc),
-                endDate: new DateTime(2018, 5, 1, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
-
-        // Add education
-        await context.Educations.AddRangeAsync(new List<Education>
-        {
-            new(
-                "Computer Science",
-                "Specialized in Artificial Intelligence and Machine Learning",
-                "University of Technology",
-                user.Id,
-                new DateTime(2013, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2015, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            ),
-            new(
-                "Computer Science",
-                "Focus on Software Engineering",
-                "State University",
-                user.Id,
-                new DateTime(2009, 9, 1, 0, 0, 0, DateTimeKind.Utc),
-                new DateTime(2013, 6, 30, 0, 0, 0, DateTimeKind.Utc)
-            )
-        });
-
+       
 
         await context.SaveChangesAsync();
         await roleService.AssignRoleToUserAsync("Admin", user.Id.ToString());

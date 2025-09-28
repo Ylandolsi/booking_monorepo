@@ -22,27 +22,15 @@ internal sealed class GetUserQueryHandler(
             // else error will happen: 
             // bcz value objects are tracked while the main 
             // entity is not tracked
-            .Where(u => u.Slug == request.UserSlug).Include(u => u.Experiences)
-            .Include(u => u.Educations)
-            .Include(u => u.UserExpertises)
-            .Include(u => u.UserLanguages)
-            .Include(u => u.Experiences)
+            .Where(u => u.Slug == request.UserSlug)
             //.AsSplitQuery()
             .Select(u => new UserResponse
             {
                 Slug = u.Slug,
                 FirstName = u.Name.FirstName,
                 LastName = u.Name.LastName,
-                Status = u.Status,
-                ProfilePicture = u.ProfilePictureUrl,
                 Gender = u.Gender,
-                SocialLinks = u.SocialLinks,
-                Bio = u.Bio,
-                Experiences = u.Experiences.ToList(),
-                Educations = u.Educations.ToList(),
                 TimeZoneId = u.TimeZoneId,
-                Expertises = u.UserExpertises.Select(ue => ue.Expertise).ToList(),
-                Languages = u.UserLanguages.Select(ul => ul.Language).ToList()
             })
             .FirstOrDefaultAsync(cancellationToken);
 

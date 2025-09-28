@@ -70,10 +70,7 @@ public sealed class LoginCommandHandler(
             user.Slug,
             user.Name.FirstName,
             user.Name.LastName,
-            user.Email!,
-            ProfilePictureUrl: user.ProfilePictureUrl.ProfilePictureLink,
-            IsMentor: user.Status.IsMentor,
-            MentorActive: user.Status.IsMentor && user.Status.IsActive
+            user.Email!
         );
 
 

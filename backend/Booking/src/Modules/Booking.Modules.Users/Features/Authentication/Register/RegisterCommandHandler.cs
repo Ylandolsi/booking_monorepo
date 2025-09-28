@@ -1,5 +1,4 @@
-﻿using Booking.Common.Contracts.Mentorships;
-using Booking.Common.Messaging;
+﻿using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
 using Booking.Modules.Users.Domain.Entities;

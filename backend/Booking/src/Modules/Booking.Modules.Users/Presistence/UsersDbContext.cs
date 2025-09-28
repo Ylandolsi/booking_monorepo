@@ -1,6 +1,4 @@
 ﻿using Booking.Modules.Users.Domain.Entities;
-using Booking.Modules.Users.Domain.JoinTables;
-using Booking.Modules.Users.Presistence.Seed.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,20 +15,8 @@ public sealed class UsersDbContext
 
     // Users Modules : 
     public DbSet<User> Users { get; set; }
-    public DbSet<Language> Languages { get; set; }
-    public DbSet<Expertise> Expertises { get; set; }
-    public DbSet<Education> Educations { get; set; }
-    public DbSet<Experience> Experiences { get; set; }
-
     public DbSet<RefreshToken> RefreshTokens { get; set; }
-
-    // join tables 
-    public DbSet<UserLanguage> UserLanguages { get; set; }
-    public DbSet<UserExpertise> UserExpertises { get; set; }
-    public DbSet<MentorMentee> UserMentors { get; set; }
-
-
-    // 
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -46,7 +32,6 @@ public sealed class UsersDbContext
 
 
         modelBuilder.HasDefaultSchema(Schemas.Users);
-        SeedData.Seed(modelBuilder);
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

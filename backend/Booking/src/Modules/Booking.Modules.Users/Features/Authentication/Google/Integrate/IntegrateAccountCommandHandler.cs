@@ -1,5 +1,4 @@
 using Booking.Common.Authentication;
-using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -79,7 +78,6 @@ internal sealed class IntegrateAccountCommandHandler(
 
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
-            user.UpdateProfileCompletion();
 
             await context.SaveChangesAsync(cancellationToken);
         }

@@ -6,6 +6,7 @@ using System.Text.Json;
 using Booking.Modules.Catalog.Features;
 using Booking.Modules.Catalog.Features.Products.Sessions;
 using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Authentication;
 
 namespace IntegrationsTests.Abstractions;
 

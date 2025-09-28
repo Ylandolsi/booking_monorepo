@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
 using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
 using Booking.Modules.Users.Presistence;

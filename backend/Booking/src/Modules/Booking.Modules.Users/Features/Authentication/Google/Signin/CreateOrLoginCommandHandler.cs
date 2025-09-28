@@ -1,5 +1,4 @@
 using Booking.Common.Authentication;
-using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
@@ -96,7 +95,6 @@ internal sealed class CreateOrLoginCommandHandler(
             var addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
-            user.UpdateProfileCompletion();
             await context.SaveChangesAsync(cancellationToken);
 
             if (!addLoginResult.Succeeded)
@@ -125,10 +123,7 @@ internal sealed class CreateOrLoginCommandHandler(
             user.Slug,
             user.Name.FirstName,
             user.Name.LastName,
-            user.Email!,
-            ProfilePictureUrl: user.ProfilePictureUrl.ProfilePictureLink,
-            IsMentor: user.Status.IsMentor,
-            MentorActive: user.Status.IsMentor && user.Status.IsActive
+            user.Email!
         );
 
         return Result.Success(response);

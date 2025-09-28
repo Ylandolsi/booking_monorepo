@@ -49,7 +49,6 @@ builder.Services.AddInfrastructure(builder.Configuration, builder);
 builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
-builder.Services.AddEmailSender(builder.Configuration);
 
 
 //builder.Services.TryAddSingleton(typeof(IUserIdProvider), typeof(SignalRCustomUserIdProvider));

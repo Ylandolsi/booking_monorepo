@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace Booking.Modules.Users.Features.Authentication.Google.Signin;
+namespace Booking.Modules.Users.Features.Authentication.Google;
 
 public static class GoogleClaims
 {

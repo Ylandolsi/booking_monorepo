@@ -2,6 +2,7 @@ using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Users.Features.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -24,6 +25,6 @@ internal sealed class GetUser : IEndpoint
                     return result.Match(Results.Ok,
                         CustomResults.Problem);
                 })
-            .WithTags(Tags.Profile);
+            .WithTags(Tags.Users);
     }
 }

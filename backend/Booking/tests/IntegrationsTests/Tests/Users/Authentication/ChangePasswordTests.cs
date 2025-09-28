@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
+using Booking.Modules.Users.Features.Authentication;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
