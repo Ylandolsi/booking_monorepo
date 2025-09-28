@@ -1,7 +1,6 @@
+import type { MonthAvailabilityType } from '@/api/stores/produtcs';
 import { api, buildUrlWithParams, CatalogEndpoints, QueryBuilders } from '@/lib';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
-import type { MonthAvailabilityType } from '@/features/app/session/booking/availability/types';
-import { availabilityQueryKeys } from '@/features/app/session/booking/availability/api/availability-keys';
 
 export const getMonthlyAvailability = async (productSlug: string, year: number, month: number): Promise<MonthAvailabilityType> => {
   if (!productSlug || !year || !month) {
@@ -27,7 +26,8 @@ export function useMonthlyAvailability(
 ): UseQueryResult<MonthAvailabilityType, Error> {
   return useQuery(
     queryOptions({
-      queryKey: availabilityQueryKeys.monthlyAvailability(productSlug, year, month),
+      // queryKey: availabilityQueryKeys.monthlyAvailability(productSlug, year, month),
+      queryKey: ['monthly-availability', productSlug, year, month],
       queryFn: () => getMonthlyAvailability(productSlug!, year!, month!),
       enabled: !!productSlug && !!year && !!month,
       ...overrides,

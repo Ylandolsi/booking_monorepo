@@ -1,4 +1,4 @@
-import type { SessionSlotType } from '@/features/app/session/booking/shared';
+import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 export type DayAvailabilityType = {
   date: string; // YYYY-MM-DD format

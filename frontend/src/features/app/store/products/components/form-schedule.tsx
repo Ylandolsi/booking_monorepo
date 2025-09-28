@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-schedule';
-import { DAYS, TIME_OPTIONS } from '@/features/app/session/booking/shared';
 import { Clock, Timer, X } from 'lucide-react';
 import {
   Accordion,
@@ -21,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products';
+import { TIME_OPTIONS } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
   const { schedule, actions, error } = useFormSchedule(form);

@@ -7,45 +7,28 @@ import {
   DayAvailability,
   SummaryCard,
 } from '@/features/app/mentor/schedule';
-import { DAYS_OF_WEEK } from '@/features/app/session/booking/shared';
 import { mapDayToNumber } from '@/utils/enum-days-week';
 import { MentorGuard } from '@/components';
+import { DAYS_OF_WEEK } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 function ScheduleContent() {
-  const {
-    schedule,
-    hasChanges,
-    isSaving,
-    saveSuccess,
-    selectedCopySource,
-    actions,
-    getScheduleSummary,
-  } = useAvailabilitySchedule();
+  const { schedule, hasChanges, isSaving, saveSuccess, selectedCopySource, actions, getScheduleSummary } = useAvailabilitySchedule();
 
   const summary = getScheduleSummary();
 
   return (
     <div className="container mx-auto max-w-6xl">
-      <h3 className="text-2xl font-bold text-gray-900 mb-4 text-left">
-        Set Your Availability
-      </h3>
+      <h3 className="mb-4 text-left text-2xl font-bold text-gray-900">Set Your Availability</h3>
 
       <SummaryCard summary={summary} />
 
       <SaveSuccessAlert show={saveSuccess} />
 
-      {selectedCopySource && (
-        <CopyModeAlert
-          selectedCopySource={selectedCopySource}
-          onCancel={() => actions.setSelectedCopySource(null)}
-        />
-      )}
+      {selectedCopySource && <CopyModeAlert selectedCopySource={selectedCopySource} onCancel={() => actions.setSelectedCopySource(null)} />}
 
       <div className="space-y-6">
         {DAYS_OF_WEEK.map(({ key, label }) => {
-          const daySchedule = schedule.find(
-            (s) => s.dayOfWeek === mapDayToNumber(key),
-          );
+          const daySchedule = schedule.find((s) => s.dayOfWeek === mapDayToNumber(key));
           if (!daySchedule) return null;
 
           return (
@@ -68,12 +51,7 @@ function ScheduleContent() {
         })}
       </div>
 
-      <ScheduleActions
-        hasChanges={hasChanges}
-        isSaving={isSaving}
-        onSave={actions.saveAvailability}
-        onReset={actions.resetChanges}
-      />
+      <ScheduleActions hasChanges={hasChanges} isSaving={isSaving} onSave={actions.saveAvailability} onReset={actions.resetChanges} />
     </div>
   );
 }

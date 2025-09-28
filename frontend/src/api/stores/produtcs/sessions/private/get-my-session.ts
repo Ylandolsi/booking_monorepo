@@ -19,7 +19,7 @@ export function useMyProductSession(
   return useQuery(
     queryOptions({
       // TODO : add product slug to the key
-      queryKey: [],
+      queryKey: ['my-product-session', productSlug],
       queryFn: () => getMyProductSession(productSlug!),
       ...overrides,
     }),

@@ -3,8 +3,8 @@ import { Card, CardHeader, CardTitle, Button, CardContent } from '@/components';
 import { formatTimeRange } from '@/utils';
 import { Separator, Switch, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Badge } from '@/components/ui';
 import { Copy, Clock, X, Plus } from 'lucide-react';
-import { PREDEFINED_TIME_SLOTS, TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
 import type { AvailabilityRangeType } from '@/features/app/mentor/schedule/types';
+import { PREDEFINED_TIME_SLOTS, TIME_OPTIONS, type DayOfWeek } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 interface DayAvailabilityProps {
   keyWeek: DayOfWeek;

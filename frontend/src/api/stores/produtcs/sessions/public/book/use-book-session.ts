@@ -33,6 +33,7 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
 
   const bookSessionMutation = useBookSession();
 
+  console.log('data ', monthlyAvailabilityQuery.data);
   // from the monthly data , get the selected day (user selects it from the calendar) data
   const selectedDayData: DayAvailabilityType | undefined =
     state.selectedDate && monthlyAvailabilityQuery.data
