@@ -233,10 +233,86 @@ Environment variables are validated using Zod schemas:
 
 **Auth Hook Usage:**
 
+#### useAuth Hook (`src/api/auth/use-auth.ts`)
+
+A comprehensive authentication hook that combines all auth-related functionality into a single interface:
+
+```typescript
+import { useUser, useLogin, useRegister, useLogout, useForgotPassword, useResetPassword } from '@/api/auth';
+import { useAppNavigation } from '@/hooks';
+
+export const useAuth = () => {
+  const navigate = useAppNavigation();
+  const { data: currentUser, isLoading, error } = useUser();
+  const login = useLogin();
+  const register = useRegister();
+
+  const logout = useLogout({
+    onSuccess: () => {
+      navigate.goToLogin();
+    },
+  });
+  const forgotPassword = useForgotPassword();
+  const resetPassword = useResetPassword();
+
+  return {
+    // State
+    currentUser,
+    isLoading,
+    error,
+    isAuthenticated: !!currentUser,
+
+    // Actions
+    login: login.mutate,
+    register: register.mutate,
+    logout: logout.mutate,
+    forgotPassword: forgotPassword.mutate,
+    resetPassword: resetPassword.mutate,
+
+    // Loading states
+    isLoggingIn: login.isPending,
+    isRegistering: register.isPending,
+    isLoggingOut: logout.isPending,
+    isForgettingPassword: forgotPassword.isPending,
+    isResettingPassword: resetPassword.isPending,
+  };
+};
+```
+
+**Hook Features:**
+
+- **State Management**: Current user data, loading states, and authentication status
+- **Actions**: Login, register, logout, password reset operations
+- **Loading States**: Individual loading states for each auth operation
+- **Navigation**: Automatic redirect to login page on logout
+- **Error Handling**: Comprehensive error states for all operations
+
+**Usage Example:**
+
 ```typescript
 import { useAuth } from '@/api/auth';
 
-const { user, login, logout, isLoading } = useAuth();
+function LoginForm() {
+  const { login, isLoggingIn, error } = useAuth();
+
+  const handleSubmit = (credentials) => {
+    login(credentials, {
+      onSuccess: () => {
+        // Redirect to dashboard
+      },
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Form fields */}
+      {error && <ErrorMessage error={error} />}
+      <button disabled={isLoggingIn}>
+        {isLoggingIn ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
+}
 ```
 
 ### TanStack Query Integration
