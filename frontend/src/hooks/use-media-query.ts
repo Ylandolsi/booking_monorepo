@@ -5,9 +5,7 @@ import { useState, useEffect } from 'react';
 // returns a boolean
 
 function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState<boolean>(
-    () => window.matchMedia(query).matches,
-  );
+  const [matches, setMatches] = useState<boolean>(() => window.matchMedia(query).matches);
 
   useEffect(() => {
     const mediaQueryList = window.matchMedia(query);
@@ -48,7 +46,10 @@ export const useBreakpoint = () => {
     isDesktop: isLg, // lg and above
   };
 };
-export const useIsMobile = () => useMediaQuery('(max-width: 639px)');
-export const useIsTablet = () =>
-  useMediaQuery('(min-width: 640px) and (max-width: 1023px)');
-export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)');
+
+const MOBILE_BREAKPOINT = 768;
+const TABLET_BREAKPOINT = 1024;
+
+export const useIsMobile = () => useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+export const useIsTablet = () => useMediaQuery(`(min-width: ${MOBILE_BREAKPOINT}px) and (max-width: ${TABLET_BREAKPOINT - 1}px)`);
+export const useIsDesktop = () => useMediaQuery(`(min-width: ${TABLET_BREAKPOINT}px)`);

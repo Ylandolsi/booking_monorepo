@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api/api-client';
-import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { AdminPayoutKeys } from './admin-payout-keys';
+import { CatalogEndpoints } from '@/lib';
 
 interface RejectPayoutRequest {
   PayoutId: number;
@@ -10,7 +10,7 @@ interface RejectPayoutRequest {
 export const useRejectPayoutAdmin = () => {
   return useMutation({
     mutationFn: async (payoutId: number): Promise<void> => {
-      await api.post<void>(MentorshipEndpoints.Payouts.Admin.RejectPayout, {
+      await api.post<void>(CatalogEndpoints.Payouts.Admin.RejectPayout, {
         PayoutId: payoutId,
       } satisfies RejectPayoutRequest);
     },

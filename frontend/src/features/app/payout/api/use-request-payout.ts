@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api/api-client';
-import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
-import { WalletKeys } from '@/features/shared';
+import { WalletKeys } from '@/api/stores';
+import { CatalogEndpoints } from '@/lib';
 
 type PayoutRequestData = {
   Amount: number;
@@ -11,7 +11,7 @@ type PayoutRequestData = {
 export const useRequestPayout = () => {
   return useMutation({
     mutationFn: async (amount: number): Promise<void> => {
-      await api.post<void>(MentorshipEndpoints.Payouts.Payout, {
+      await api.post<void>(CatalogEndpoints.Payouts.Payout, {
         Amount: amount,
       } satisfies PayoutRequestData);
     },

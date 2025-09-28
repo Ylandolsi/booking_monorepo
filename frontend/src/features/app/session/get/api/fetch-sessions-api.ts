@@ -1,12 +1,11 @@
-import { api, type RequestOptions } from '@/lib';
+import { api, CatalogEndpoints, type RequestOptions } from '@/lib';
 import type { Session } from '@/features/app/session/get/types';
-import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { sessionQueryKeys } from '@/features/app/session/get/api/sessions-get-keys';
 import { toLocalISOString } from '@/utils';
 
 export const getSessions = async (upToDate?: string, timeZoneId?: string) => {
-  return await api.get<Array<Session>>(MentorshipEndpoints.Sessions.GetSessions, {
+  return await api.get<Array<Session>>(CatalogEndpoints.Products.Sessions.GetSessions, {
     params: { upToDate, timeZoneId },
   } as RequestOptions);
 };

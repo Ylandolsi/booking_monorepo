@@ -1,7 +1,6 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { AdminPayoutKeys } from './admin-payout-keys';
-import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
-import { api } from '@/lib';
+import { api, CatalogEndpoints } from '@/lib';
 import { toLocalISOString } from '@/utils/format';
 
 export interface AdminPayoutResponse {
@@ -17,7 +16,7 @@ export interface AdminPayoutResponse {
 }
 
 const getAllPayoutsAdmin = async (status?: string, upToDate?: string, timeZoneId?: string): Promise<Array<AdminPayoutResponse>> => {
-  return await api.get<Array<AdminPayoutResponse>>(MentorshipEndpoints.Payouts.Admin.GetAllPayouts, {
+  return await api.get<Array<AdminPayoutResponse>>(CatalogEndpoints.Payouts.Admin.GetAllPayouts, {
     params: { status, upToDate, timeZoneId },
   });
 };

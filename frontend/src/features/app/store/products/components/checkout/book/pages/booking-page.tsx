@@ -1,16 +1,5 @@
 import { Calendar } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Alert,
-  AlertDescription,
-  Calendar as BookingCalendar,
-  PageLoading2,
-  alertIconMap,
-} from '@/components/ui';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Card, CardContent, CardHeader, CardTitle, Alert, AlertDescription, Calendar as BookingCalendar, alertIconMap } from '@/components/ui';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { ErrorComponenet } from '@/components';
 import React, { useEffect } from 'react';
@@ -20,6 +9,7 @@ import { toast } from 'sonner';
 import { BookingSummary, TimeSlots } from '@/features/app/store/products/components/checkout/book';
 import { useBooking, type Product } from '@/api/stores/produtcs';
 import { useParams } from '@tanstack/react-router';
+import { useIsMobile } from '@/hooks/use-media-query';
 
 export function BookingPage({ product }: { product: Product }) {
   const nav = useAppNavigation();

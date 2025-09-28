@@ -3,8 +3,8 @@ import { Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/api/auth';
 import { useSideBar } from '@/stores';
 import { CreditCard, Menu } from 'lucide-react';
-import { useGetWallet } from '@/features/shared/get-wallet';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useGetWallet } from '@/api/stores';
 
 function BalanceHeader() {
   const { data: walletData, isLoading } = useGetWallet();

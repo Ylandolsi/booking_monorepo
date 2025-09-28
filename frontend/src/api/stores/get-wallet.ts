@@ -1,9 +1,8 @@
-import { api } from '@/lib';
-import { MentorshipEndpoints } from '@/lib/api/mentor-endpoints';
+import { api, CatalogEndpoints } from '@/lib';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
 async function getWallet(): Promise<Wallet> {
-  const res = await api.get<Wallet>(MentorshipEndpoints.Payment.GetWallet);
+  const res = await api.get<Wallet>(CatalogEndpoints.Payment.GetWallet);
   return res;
 }
 

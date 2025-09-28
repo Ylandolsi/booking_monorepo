@@ -23,11 +23,11 @@ import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 import { PayoutRequestForm } from './components';
 import { useHistoryPayout, useRequestPayout } from './api';
 import { useState } from 'react';
-import { useGetWallet } from '@/features/shared/get-wallet';
 import { formatDate } from '@/utils/format';
 import type { PayoutStatus } from '@/features/app/payout/types/payout';
 import { useUser } from '@/api/auth';
 import { useAppNavigation } from '@/hooks';
+import { useGetWallet } from '@/api/stores';
 
 export function PayoutPage() {
   const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
