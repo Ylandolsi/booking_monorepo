@@ -1,4 +1,4 @@
-import { api } from '@/lib/api/api-client';
+import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
 import type { VerifyEmailInput } from '@/features/auth';
 import { verifyEmailSchema } from '@/features/auth';

@@ -18,7 +18,7 @@ public class GetPayoutHistory : IEndpoint
                     IQueryHandler<GetPayoutHistoryQuery, List<PayoutResponse>> handler,
                     CancellationToken cancellationToken) =>
                 {
-                    int userId = userContext.UserId;
+                    var userId = userContext.UserId;
                     var query = new GetPayoutHistoryQuery(userId);
 
                     var result = await handler.Handle(query, cancellationToken);

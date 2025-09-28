@@ -1,5 +1,4 @@
 ﻿using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Mentorships.Persistence;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +8,9 @@ public static class MigrationExtensions
 {
     public static void ApplyMigrations(this IApplicationBuilder app)
     {
-        using IServiceScope scope = app.ApplicationServices.CreateScope();
+        using var scope = app.ApplicationServices.CreateScope();
 
         ApplyMigration<UsersDbContext>(scope);
-        ApplyMigration<MentorshipsDbContext>(scope);
         ApplyMigration<CatalogDbContext>(scope);
 
         //ApplyMigration<SessionsDbContext>(scope);
@@ -21,7 +19,7 @@ public static class MigrationExtensions
     private static void ApplyMigration<TDbContext>(IServiceScope scope)
         where TDbContext : DbContext
     {
-        using TDbContext context = scope.ServiceProvider.GetRequiredService<TDbContext>();
+        using var context = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
         context.Database.Migrate();
     }

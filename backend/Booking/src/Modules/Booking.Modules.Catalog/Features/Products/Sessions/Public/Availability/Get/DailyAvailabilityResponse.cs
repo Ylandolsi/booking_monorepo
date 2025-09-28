@@ -10,4 +10,4 @@ public sealed record DailySummary(
     int TotalSlots,
     int AvailableSlots,
     int BookedSlots,
-    decimal AvailabilityPercentage); 
+    decimal AvailabilityPercentage);

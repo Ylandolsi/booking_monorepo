@@ -10,20 +10,20 @@ namespace Booking.Modules.Users.Features.Authentication.Login;
 
 internal sealed class Login : IEndpoint
 {
-    public sealed record Request(string Email, string Password);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(UsersEndpoints.Login, async (
-            Request request,
-            ICommandHandler<LoginCommand, LoginResponse> handler,
-            CancellationToken cancellationToken = default) =>
-        {
-            var command = new LoginCommand(request.Email, request.Password);
-            Result<LoginResponse> result = await handler.Handle(command, cancellationToken);
+                Request request,
+                ICommandHandler<LoginCommand, LoginResponse> handler,
+                CancellationToken cancellationToken = default) =>
+            {
+                var command = new LoginCommand(request.Email, request.Password);
+                var result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(Results.Ok, CustomResults.Problem);
-        })
-        .WithTags(Tags.Users);
+                return result.Match(Results.Ok, CustomResults.Problem);
+            })
+            .WithTags(Tags.Users);
     }
+
+    public sealed record Request(string Email, string Password);
 }

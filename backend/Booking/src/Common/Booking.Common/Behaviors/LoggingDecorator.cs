@@ -5,7 +5,7 @@ using Serilog.Context;
 
 namespace Booking.Common.Behaviors;
 
-public  static class LoggingDecorator
+public static class LoggingDecorator
 {
     public sealed class CommandHandler<TCommand, TResponse>(
         ICommandHandler<TCommand, TResponse> innerHandler,
@@ -15,27 +15,25 @@ public  static class LoggingDecorator
     {
         public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            string commandName = typeof(TCommand).Name;
+            var commandName = typeof(TCommand).Name;
 
             logger.LogInformation("Processing command {Command}", commandName);
 
-            Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
+            var result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
-            {
                 logger.LogInformation("Completed command {Command}", commandName);
-            }
             else
-            {
                 // Push the error details into the log context
                 using (LogContext.PushProperty("Error", result.Error, true))
                 {
                     logger.LogError("Completed command {Command} with error", commandName);
                 }
-                /*
+
+            /*
                 {
                         "timestamp": "2024-06-04T10:30:01Z",
-                        "level": "Error", 
+                        "level": "Error",
                         "message": "Completed command LoginUserCommand with error",
                         "properties": {
                             "Command": "LoginUserCommand", // added automatically from {Command}
@@ -47,8 +45,6 @@ public  static class LoggingDecorator
                         }
                 }
                 */
-            }
-
             return result;
         }
     }
@@ -61,23 +57,19 @@ public  static class LoggingDecorator
     {
         public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
         {
-            string commandName = typeof(TCommand).Name;
+            var commandName = typeof(TCommand).Name;
 
             logger.LogInformation("Processing command {Command}", commandName);
 
-            Result result = await innerHandler.Handle(command, cancellationToken);
+            var result = await innerHandler.Handle(command, cancellationToken);
 
             if (result.IsSuccess)
-            {
                 logger.LogInformation("Completed command {Command}", commandName);
-            }
             else
-            {
                 using (LogContext.PushProperty("Error", result.Error, true))
                 {
                     logger.LogError("Completed command {Command} with error", commandName);
                 }
-            }
 
             return result;
         }
@@ -91,23 +83,19 @@ public  static class LoggingDecorator
     {
         public async Task<Result<TResponse>> Handle(TQuery query, CancellationToken cancellationToken)
         {
-            string queryName = typeof(TQuery).Name;
+            var queryName = typeof(TQuery).Name;
 
             logger.LogInformation("Processing query {Query}", queryName);
 
-            Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
+            var result = await innerHandler.Handle(query, cancellationToken);
 
             if (result.IsSuccess)
-            {
                 logger.LogInformation("Completed query {Query}", queryName);
-            }
             else
-            {
                 using (LogContext.PushProperty("Error", result.Error, true))
                 {
                     logger.LogError("Completed query {Query} with error", queryName);
                 }
-            }
 
             return result;
         }

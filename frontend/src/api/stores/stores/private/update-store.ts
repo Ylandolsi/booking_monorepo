@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { storeKeys, STORE_QUERY_KEY } from '../../stores-keys';
-import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
-import { api, validateFile } from '@/lib';
+import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
+import { api, validateFile } from '@/api/utils';
 import { patchPostStoreSchemaToFormData, type PatchPostStoreRequest, type PatchPostStoreResponse } from '@/api/stores/stores/private/store-schema';
 
 export const updateStore = async (data: PatchPostStoreRequest): Promise<PatchPostStoreResponse> => {

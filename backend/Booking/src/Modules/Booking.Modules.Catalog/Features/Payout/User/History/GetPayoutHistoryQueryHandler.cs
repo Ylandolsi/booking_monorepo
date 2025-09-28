@@ -4,7 +4,6 @@ using Booking.Common.Results;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.Extensions.Logging;
 
-
 namespace Booking.Modules.Catalog.Features.Payout.User.History;
 
 public class GetPayoutHistoryQueryHandler(
@@ -24,10 +23,10 @@ public class GetPayoutHistoryQueryHandler(
                 KonnectWalletId = p.KonnectWalletId,
                 PaymentRef = p.PaymentRef,
                 WalletId = p.WalletId,
-                Amount = p.Amount ,
-                UpdatedAt = p.UpdatedAt ,
-                CreatedAt = p.CreatedAt,    
-                Status = p.Status,
+                Amount = p.Amount,
+                UpdatedAt = p.UpdatedAt,
+                CreatedAt = p.CreatedAt,
+                Status = p.Status
             }).ToListAsync(cancellationToken);
 
         return Result.Success(payouts);

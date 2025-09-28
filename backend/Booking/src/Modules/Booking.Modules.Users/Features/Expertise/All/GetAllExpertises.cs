@@ -12,14 +12,14 @@ internal sealed class GetAllExpertises : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GetAllExpertises, async (
-            IQueryHandler<GetAllExpertiseQuery, List<ExpertiseResponse>> handler,
-            CancellationToken cancellationToken) =>
-        {
-            var query = new GetAllExpertiseQuery();
-            Result<List<ExpertiseResponse>> result = await handler.Handle(query, cancellationToken);
+                IQueryHandler<GetAllExpertiseQuery, List<ExpertiseResponse>> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var query = new GetAllExpertiseQuery();
+                var result = await handler.Handle(query, cancellationToken);
 
-            return result.Match((result) => Results.Ok(result), (result) => CustomResults.Problem(result));
-        })
-        .WithTags(Tags.Expertise);
+                return result.Match(result => Results.Ok(result), result => CustomResults.Problem(result));
+            })
+            .WithTags(Tags.Expertise);
     }
 }

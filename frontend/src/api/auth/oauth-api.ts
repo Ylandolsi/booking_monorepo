@@ -1,7 +1,7 @@
 import * as Endpoints from '@/api/utils/auth-endpoints';
 import { env } from '@/config/env';
 import { routeBuilder } from '@/config';
-import { buildUrlWithParams } from '@/lib';
+import { buildUrlWithParams } from '@/api/utils';
 
 export const googleOIDC = async (returnUrl: string = routeBuilder.app.root()) => {
   const url = `${env.API_URL}/${Endpoints.GoogleLogin}`;

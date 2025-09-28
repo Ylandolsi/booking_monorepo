@@ -1,11 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using Booking.Modules.Catalog.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
-using Microsoft.AspNetCore.Http;
-using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Catalog.Stores;
 
@@ -14,7 +11,6 @@ public class PrivateStore : CatalogTestBase
     public PrivateStore(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
-
 
 
     #region Create Store Tests
@@ -27,7 +23,8 @@ public class PrivateStore : CatalogTestBase
         await CreateUserAndLogin("user_create_store@example.com", null, userArrange);
 
         // Act
-        var response = await CatalogTestUtilities.CreateStoreRequest(userAct, "My Awesome Store", "my-awesome-store", "A great store description");
+        var response = await CatalogTestUtilities.CreateStoreRequest(userAct, "My Awesome Store", "my-awesome-store",
+            "A great store description");
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -82,7 +79,6 @@ public class PrivateStore : CatalogTestBase
         Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
         Assert.Equal(HttpStatusCode.Conflict, response2.StatusCode);
     }
-
 
 
     [Fact]
@@ -162,7 +158,9 @@ public class PrivateStore : CatalogTestBase
         await CatalogTestUtilities.CreateStoreForUser(userAct, "Original Store", "original-store");
 
         // Act
-        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var updateRequest =
+            CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title",
+                "Updated store description");
         var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -176,7 +174,9 @@ public class PrivateStore : CatalogTestBase
         await CreateUserAndLogin("user_update_nonexistent@example.com", null, userArrange);
 
         // Act
-        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var updateRequest =
+            CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title",
+                "Updated store description");
         var response = await userAct.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -189,7 +189,9 @@ public class PrivateStore : CatalogTestBase
         var unauthClient = Factory.CreateClient();
 
         // Act
-        var updateRequest = CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title", "Updated store description", null);
+        var updateRequest =
+            CatalogTestUtilities.StoreTestData.CreateStoreUpdateRequest("Updated Store Title",
+                "Updated store description");
         var response = await unauthClient.PutAsJsonAsync(CatalogEndpoints.Stores.Update, updateRequest);
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

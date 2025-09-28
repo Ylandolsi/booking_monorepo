@@ -17,18 +17,15 @@ public sealed class PermissionAuthorizationHandler(IServiceScopeFactory serviceS
             return;
         }
 
-        using IServiceScope scope = serviceScopeFactory.CreateScope();
+        using var scope = serviceScopeFactory.CreateScope();
 
-        PermissionProvider permissionProvider = scope.ServiceProvider.GetRequiredService<PermissionProvider>();
+        var permissionProvider = scope.ServiceProvider.GetRequiredService<PermissionProvider>();
 
         // extension method to get user id from claims  
-        int userId = context.User.GetUserId() ?? throw new Exception("IdUser Claim doesnt exists"  );
+        var userId = context.User.GetUserId() ?? throw new Exception("IdUser Claim doesnt exists");
 
-        HashSet<string> permissions = await permissionProvider.GetForUserIdAsync(userId);
+        var permissions = await permissionProvider.GetForUserIdAsync(userId);
 
-        if (permissions.Contains(requirement.Permission))
-        {
-            context.Succeed(requirement);
-        }
+        if (permissions.Contains(requirement.Permission)) context.Succeed(requirement);
     }
 }

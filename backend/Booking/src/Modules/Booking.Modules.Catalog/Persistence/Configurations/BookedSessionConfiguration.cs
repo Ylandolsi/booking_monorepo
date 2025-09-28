@@ -1,4 +1,3 @@
-using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +24,8 @@ internal class BookedSessionConfiguration : IEntityTypeConfiguration<BookedSessi
                 meetLink => meetLink!.Url,
                 url => new MeetLink(url))
             .HasColumnName("MeetLink");
-        
-        
+
+
         // TODO : add configuration for amount  , sessionStatus ... 
     }
 }

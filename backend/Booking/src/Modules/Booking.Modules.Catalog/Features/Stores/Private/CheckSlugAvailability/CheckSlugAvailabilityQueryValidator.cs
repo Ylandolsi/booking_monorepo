@@ -15,6 +15,5 @@ internal sealed class CheckSlugAvailabilityQueryValidator : AbstractValidator<Ch
             .WithMessage("Slug must be at least 3 characters.")
             .Matches("^[a-z0-9-]+$")
             .WithMessage("Slug can only contain lowercase letters, numbers, and hyphens.");
-
     }
 }

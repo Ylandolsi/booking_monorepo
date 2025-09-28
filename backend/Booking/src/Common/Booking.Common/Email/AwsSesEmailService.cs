@@ -7,14 +7,14 @@ namespace Booking.Common.Email;
 
 public sealed class AwsSesEmailService
 {
-    private readonly IAmazonSimpleEmailService _sesClient;
     private readonly EmailOptions _emailOptions;
     private readonly ILogger<AwsSesEmailService> _logger;
+    private readonly IAmazonSimpleEmailService _sesClient;
 
 
     public AwsSesEmailService(IAmazonSimpleEmailService sesClient,
-                              ILogger<AwsSesEmailService> logger,
-                              IOptions<EmailOptions> emailOptions)
+        ILogger<AwsSesEmailService> logger,
+        IOptions<EmailOptions> emailOptions)
     {
         _sesClient = sesClient;
         _emailOptions = emailOptions.Value;
@@ -22,14 +22,12 @@ public sealed class AwsSesEmailService
     }
 
     public async Task SendEmailAsync(string recipient,
-                                     string subject,
-                                     string body,
-                                     CancellationToken cancellationToken)
+        string subject,
+        string body,
+        CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(recipient))
-        {
             throw new ArgumentException("Recipient email cannot be null or empty.", nameof(recipient));
-        }
         _logger.LogInformation("Sending email to {Recipient} with subject: {Subject}", recipient, subject);
         var request = new SendEmailRequest
         {
@@ -47,9 +45,9 @@ public sealed class AwsSesEmailService
         }
         catch (AmazonSimpleEmailServiceException sesEx)
         {
-            _logger.LogError(sesEx, "Hangfire Job: AWS SES exception occurred while sending verification email to {Email}", recipient);
+            _logger.LogError(sesEx,
+                "Hangfire Job: AWS SES exception occurred while sending verification email to {Email}", recipient);
             throw;
         }
-
     }
 }

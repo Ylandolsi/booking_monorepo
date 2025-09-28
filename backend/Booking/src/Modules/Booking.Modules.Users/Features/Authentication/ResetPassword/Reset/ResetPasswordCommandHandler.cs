@@ -11,13 +11,14 @@ using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.Features.Authentication.ResetPassword.Reset;
 
-internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
-                                                 IOptions<FrontendApplicationOptions> frontendApplicationOptions,
-                                                 IBackgroundJobClient backgroundJobClient,
-                                                 ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<RestPasswordCommand>
+internal sealed class ResetPasswordCommandHandler(
+    UserManager<User> userManager,
+    IOptions<FrontendApplicationOptions> frontendApplicationOptions,
+    IBackgroundJobClient backgroundJobClient,
+    ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<RestPasswordCommand>
 {
-
     private readonly FrontendApplicationOptions frontendApplicationOptions = frontendApplicationOptions.Value;
+
     public async Task<Result> Handle(RestPasswordCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Sending password reset token to {Email}", command.Email);
@@ -25,11 +26,10 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
         var user = await userManager.FindByEmailAsync(command.Email);
         if (user is null)
         {
-            await SimulatePasswordResetWorkAsync(); 
+            await SimulatePasswordResetWorkAsync();
         }
         else
         {
-
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
             var builder = new UriBuilder(frontendApplicationOptions.BaseUrl)
@@ -39,10 +39,9 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
             };
             var resetUrl = builder.ToString();
 
-            backgroundJobClient.Enqueue<SendingPasswordResetToken>(
-                    job => job.SendAsync(command.Email, resetUrl, null));
-
+            backgroundJobClient.Enqueue<SendingPasswordResetToken>(job => job.SendAsync(command.Email, resetUrl, null));
         }
+
         return Result.Success();
         // TODO : front end display 
         // If an account exists with this email, you'll receive a reset link"
@@ -54,4 +53,3 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
         await Task.Delay(delay);
     }
 }
-

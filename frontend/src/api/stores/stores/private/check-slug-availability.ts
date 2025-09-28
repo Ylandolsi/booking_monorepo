@@ -1,6 +1,6 @@
 import { storeKeys } from '@/api/stores/stores-keys';
-import { api } from '@/lib';
-import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
+import { api } from '@/api/utils';
+import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { useQuery } from '@tanstack/react-query';
 
 export interface SlugAvailabilityResponse {

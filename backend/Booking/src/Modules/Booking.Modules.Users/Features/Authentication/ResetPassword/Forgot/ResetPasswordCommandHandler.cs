@@ -6,8 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.ResetPassword.Forgot;
 
-internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
-                                                  ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<ResetPasswordCommand>
+internal sealed class ResetPasswordCommandHandler(
+    UserManager<User> userManager,
+    ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<ResetPasswordCommand>
 {
     public async Task<Result> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
     {
@@ -15,7 +16,7 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
 
 
         logger.LogInformation("Handling VerifyResetPasswordCommand for email: {Email}", command.Email);
-        User? user = await userManager.FindByEmailAsync(command.Email);
+        var user = await userManager.FindByEmailAsync(command.Email);
         if (user is null)
         {
             // dont reveal if user exists or not
@@ -30,7 +31,7 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
                 await userManager.ConfirmEmailAsync(user, emailConfirmToken);
             }
 
-            IdentityResult? resetPasswordResult = await userManager.ResetPasswordAsync(user!, command.Token, command.Password);
+            var resetPasswordResult = await userManager.ResetPasswordAsync(user!, command.Token, command.Password);
             if (!resetPasswordResult.Succeeded)
             {
                 logger.LogWarning("Failed to reset password for user with email {Email}. Errors: {Errors}",
@@ -38,17 +39,15 @@ internal sealed class ResetPasswordCommandHandler(UserManager<User> userManager,
                     string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description)));
                 return Result.Failure(ResetPasswordErrors.GenericError);
             }
-
         }
 
         logger.LogInformation("Password reset successfully for user with email {Email}", command.Email);
         return Result.Success();
-
     }
+
     private static async Task SimulatePasswordResetWorkAsync()
     {
         var delay = Random.Shared.Next(150, 250);
         await Task.Delay(delay);
     }
 }
-

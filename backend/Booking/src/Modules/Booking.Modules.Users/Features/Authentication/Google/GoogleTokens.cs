@@ -1,4 +1,3 @@
-using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,8 +11,8 @@ public record GoogleTokens
     // lifetime in seconds
     // FIX THIS !!!!! 
     public DateTime? ExpiresAt { get; init; }
-
 }
+
 internal sealed class GoogleTokenService(UserManager<User> userManager)
 {
     private UserManager<User> UserManager { get; } = userManager;
@@ -33,7 +32,6 @@ internal sealed class GoogleTokenService(UserManager<User> userManager)
             RefreshToken = refreshToken
         };
     }
-
 
 
     public async Task StoreUserTokensAsyncById(int userId, GoogleTokens googleTokens)
@@ -61,12 +59,10 @@ internal sealed class GoogleTokenService(UserManager<User> userManager)
         );*/
 
         if (googleTokens.RefreshToken is not null)
-        {
             await UserManager.SetAuthenticationTokenAsync(
                 user,
                 "Google",
                 nameof(googleTokens.RefreshToken),
                 googleTokens.RefreshToken);
-        }
     }
 }

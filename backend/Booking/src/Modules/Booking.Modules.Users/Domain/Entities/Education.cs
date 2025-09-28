@@ -6,9 +6,31 @@ namespace Booking.Modules.Users.Domain.Entities;
 
 public class Education : Entity
 {
+    private Education()
+    {
+    }
+
+
+    public Education(string field,
+        string description,
+        string university,
+        int userId,
+        DateTime startDate,
+        DateTime? endDate = null)
+    {
+        Field = field?.Trim() ?? string.Empty;
+        Description = description?.Trim() ?? string.Empty;
+        StartDate = startDate;
+        EndDate = endDate;
+        University = university?.Trim() ?? string.Empty;
+        UserId = userId;
+        ToPresent = !endDate.HasValue;
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
     public int Id { get; set; }
+
     public string Field { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public DateTime StartDate { get; private set; }
@@ -19,31 +41,11 @@ public class Education : Entity
     public int UserId { get; set; }
     public User User { get; set; } = default!;
 
-    private Education() { }
-
-
-    public Education(string field,
-                     string description,
-                     string university,
-                     int userId,
-                     DateTime startDate,
-                     DateTime? endDate = null)
-    {
-
-        Field = field?.Trim() ?? string.Empty;
-        Description = description?.Trim() ?? string.Empty;
-        StartDate = startDate;
-        EndDate = endDate;
-        University = university?.Trim() ?? string.Empty;
-        UserId = userId;
-        ToPresent = !endDate.HasValue;
-    }
-
     public void Update(string field,
-                   string university,
-                   DateTime startDate,
-                   DateTime? endDate,
-                   string? description)
+        string university,
+        DateTime startDate,
+        DateTime? endDate,
+        string? description)
     {
         Field = field.Trim();
         University = university.Trim();
@@ -52,7 +54,6 @@ public class Education : Entity
         Description = description?.Trim() ?? string.Empty;
         ToPresent = !endDate.HasValue;
         CreatedAt = DateTime.UtcNow;
-
     }
 
     public Result Complete(DateTime endDate)
@@ -64,13 +65,12 @@ public class Education : Entity
         ToPresent = false;
         return Result.Success();
     }
-
-
 }
-
 
 public static class EducationErrors
 {
-    public static readonly Error InvalidEndDate = Error.Problem("Education.InvalidEndDate", "End date cannot be before start date");
+    public static readonly Error InvalidEndDate =
+        Error.Problem("Education.InvalidEndDate", "End date cannot be before start date");
+
     public static readonly Error EducationNotFound = Error.NotFound("Education.NotFound", "Education not found");
 }

@@ -161,7 +161,7 @@ public class SessionWebhookTests : MentorshipTestBase
 
         // Session should be confirmed only once
         await VerifySessionStatus(sessionId, SessionStatus.Confirmed);
-        
+
         // Should have only one escrow record
         var escrowCount = await GetEscrowCountForSession(sessionId);
         Assert.Equal(1, escrowCount);
@@ -183,7 +183,7 @@ public class SessionWebhookTests : MentorshipTestBase
         var webhookResponse = await client.PostAsJsonAsync(MentorshipEndpoints.Payment.Webhook, invalidWebhookPayload);
 
         // Assert - Should handle gracefully (might return 404 or 400)
-        Assert.True(webhookResponse.StatusCode == HttpStatusCode.BadRequest || 
+        Assert.True(webhookResponse.StatusCode == HttpStatusCode.BadRequest ||
                    webhookResponse.StatusCode == HttpStatusCode.NotFound);
     }
 
@@ -199,7 +199,7 @@ public class SessionWebhookTests : MentorshipTestBase
         var nextThursday = GetNextWeekday(DayOfWeek.Thursday);
         var sessionStartTime = "15:00";
         var sessionEndTime = "16:00";
-        
+
         var bookingRequest = new
         {
             MentorSlug = await GetMentorSlug(mentorArrange),
@@ -232,17 +232,17 @@ public class SessionWebhookTests : MentorshipTestBase
         // Assert
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var session = await dbContext.Sessions.FindAsync(sessionId);
         Assert.NotNull(session);
         Assert.Equal(SessionStatus.Confirmed, session.Status);
-        
+
         // Verify meeting link is present and has correct format
         Assert.NotNull(session.MeetLink);
         Assert.False(string.IsNullOrEmpty(session.MeetLink.Value));
-        
+
         // Meeting link should be a Google Meet link or placeholder
-        Assert.True(session.MeetLink.Value.Contains("meet.google.com") || 
+        Assert.True(session.MeetLink.Value.Contains("meet.google.com") ||
                    session.MeetLink.Value.Contains("placeholder"));
 
         // Verify session time matches booking request
@@ -318,10 +318,10 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         var response = await client.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
         response.EnsureSuccessStatusCode();
-        
+
         var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
         var sessionsArray = sessions.EnumerateArray().ToList();
-        
+
         var latestSession = sessionsArray.Last();
         return latestSession.GetProperty("id").GetInt32();
     }
@@ -330,7 +330,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var session = await dbContext.Sessions.FindAsync(sessionId);
         Assert.NotNull(session);
         Assert.Equal(expectedStatus, session.Status);
@@ -340,7 +340,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var session = await dbContext.Sessions.FindAsync(sessionId);
         Assert.NotNull(session);
         Assert.False(string.IsNullOrEmpty(session.MeetLink?.Value));
@@ -350,7 +350,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         Assert.NotNull(escrow);
         Assert.True(escrow.Amount > 0);
@@ -360,7 +360,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         Assert.Null(escrow);
     }
@@ -369,7 +369,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         var escrow = await dbContext.Escrows.FirstOrDefaultAsync(e => e.SessionId == sessionId);
         return escrow?.Amount ?? 0;
     }
@@ -378,7 +378,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-        
+
         return await dbContext.Escrows.CountAsync(e => e.SessionId == sessionId);
     }
 
@@ -403,7 +403,7 @@ public class SessionWebhookTests : MentorshipTestBase
     {
         var response = await mentorClient.GetAsync(MentorshipEndpoints.Mentor.GetDetails);
         response.EnsureSuccessStatusCode();
-        
+
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
         return result.GetProperty("slug").GetString()!;
     }
@@ -418,3 +418,4 @@ public class SessionWebhookTests : MentorshipTestBase
 
     #endregion
 }*/
+

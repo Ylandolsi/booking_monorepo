@@ -6,6 +6,5 @@ public record GoogleTokensDto
     public string? RefreshToken { get; init; }
 
     // lifetime in seconds
-    public DateTime ExpiresAt { get; init; } 
+    public DateTime ExpiresAt { get; init; }
 }
-

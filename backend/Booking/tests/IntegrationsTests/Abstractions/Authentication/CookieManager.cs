@@ -4,8 +4,8 @@ using System.Net;
 namespace IntegrationsTests.Abstractions.Authentication;
 
 /// <summary>
-/// Manages cookies for different user contexts in integration tests
-/// Similar to Node.js CookieJar functionality
+///     Manages cookies for different user contexts in integration tests
+///     Similar to Node.js CookieJar functionality
 /// </summary>
 public class CookieManager
 {
@@ -23,31 +23,26 @@ public class CookieManager
         var cookieDict = _cookieStore.GetOrAdd(userId, _ => new Dictionary<string, string>());
 
         foreach (var setCookieHeader in setCookieHeaders)
-        {
             try
             {
                 container.SetCookies(baseUri, setCookieHeader);
-                
+
                 // Also store in our dictionary for easy access
                 var parts = setCookieHeader.Split(';')[0].Split('=', 2);
-                if (parts.Length == 2)
-                {
-                    cookieDict[parts[0].Trim()] = parts[1].Trim();
-                }
+                if (parts.Length == 2) cookieDict[parts[0].Trim()] = parts[1].Trim();
             }
             catch (Exception ex)
             {
                 // Log but don't fail - some cookies might have formatting issues
                 Console.WriteLine($"Failed to set cookie for user {userId}: {ex.Message}");
             }
-        }
     }
 
     public string GetCookieHeader(string userId = "default", Uri? uri = null)
     {
         var container = GetCookieContainer(userId);
         if (uri == null) return string.Empty;
-        
+
         return container.GetCookieHeader(uri);
     }
 

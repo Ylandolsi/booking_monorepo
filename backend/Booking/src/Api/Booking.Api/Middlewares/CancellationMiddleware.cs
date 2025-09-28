@@ -2,8 +2,8 @@ namespace Booking.Api.Middlewares;
 
 public class CancellationMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly ILogger<CancellationMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public CancellationMiddleware(RequestDelegate next, ILogger<CancellationMiddleware> logger)
     {
@@ -30,5 +30,4 @@ public class CancellationMiddleware
             }
         }
     }
-
 }

@@ -1,7 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -28,21 +27,22 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
             return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
         }
 
-        if (store.IsPublished == false)
+        if (!store.IsPublished)
         {
             logger.LogError("Public user trying to retrieve unpublished store with slug : {slug}", command.StoreSlug);
             return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
         }
+
         var socialLinks = store.SocialLinks
             .Select(sl => new SocialLink(sl.Platform, sl.Url))
             .ToList();
 
 
-        List<ProductResponse> mappedStoreProducts = new List<ProductResponse>();
+        var mappedStoreProducts = new List<ProductResponse>();
 
         foreach (var product in store.Products)
         {
-            if (product.IsPublished == false)
+            if (!product.IsPublished)
                 continue;
 
             var mappedProduct = new ProductResponse
@@ -55,7 +55,7 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
                 ProductType = product.ProductType,
                 Price = product.Price,
                 DisplayOrder = product.DisplayOrder,
-                IsPublished = product.IsPublished, //  only retrieve published 
+                IsPublished = product.IsPublished //  only retrieve published 
             };
             mappedStoreProducts.Add(mappedProduct);
         }
@@ -67,7 +67,7 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
             Description = store.Description,
             Picture = store.Picture,
             SocialLinks = socialLinks,
-            Products = mappedStoreProducts,
+            Products = mappedStoreProducts
         };
 
         return Result.Success(mappedResult);

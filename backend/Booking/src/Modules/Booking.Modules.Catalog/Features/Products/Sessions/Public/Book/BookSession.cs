@@ -11,17 +11,6 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Book;
 
 internal sealed class BookSession : IEndpoint
 {
-    public sealed record Request(
-        string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
-        string StartTime, // TIMEONLY  
-        string EndTime,
-        string Title,
-        string Email,
-        string Name,
-        string Phone,
-        string TimeZoneId = "Africa/Tunis",
-        string? Note = "");
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Products.Sessions.Book, async (
@@ -43,7 +32,7 @@ internal sealed class BookSession : IEndpoint
                     request.TimeZoneId,
                     request.Note);
 
-                Result<BookSessionRepsonse> result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
                 // if there is amount to be paid : return link of payment 
                 // else return 'paid' 
 
@@ -55,4 +44,15 @@ internal sealed class BookSession : IEndpoint
             })
             .WithTags(Tags.Sessions);
     }
+
+    public sealed record Request(
+        string Date, // YYYY-MM-DD, // TODO : maybe pass a Date type instead of string ? 
+        string StartTime, // TIMEONLY  
+        string EndTime,
+        string Title,
+        string Email,
+        string Name,
+        string Phone,
+        string TimeZoneId = "Africa/Tunis",
+        string? Note = "");
 }

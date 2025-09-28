@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products';
-import { TIME_OPTIONS } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
+import { DAYS, TIME_OPTIONS } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
   const { schedule, actions, error } = useFormSchedule(form);

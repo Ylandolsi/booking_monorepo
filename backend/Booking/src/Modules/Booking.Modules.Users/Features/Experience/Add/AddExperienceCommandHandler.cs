@@ -1,21 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Booking.Common.Messaging;
+﻿using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
-using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Experience.Add;
 
-internal sealed class AddExperienceCommandHandler(UsersDbContext context,
-                                                  ILogger<AddExperienceCommandHandler> logger) : ICommandHandler<AddExperienceCommand, int>
+internal sealed class AddExperienceCommandHandler(
+    UsersDbContext context,
+    ILogger<AddExperienceCommandHandler> logger) : ICommandHandler<AddExperienceCommand, int>
 {
     public async Task<Result<int>> Handle(AddExperienceCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Adding experience for user {UserId}", command.UserId);
 
-        User? user = await context.Users
+        var user = await context.Users
             .FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
         if (user == null)
         {
@@ -36,7 +36,7 @@ internal sealed class AddExperienceCommandHandler(UsersDbContext context,
         {
             await context.Experiences.AddAsync(experience, cancellationToken);
             user.ProfileCompletionStatus.UpdateCompletionStatus(user);
-            
+
             await context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)

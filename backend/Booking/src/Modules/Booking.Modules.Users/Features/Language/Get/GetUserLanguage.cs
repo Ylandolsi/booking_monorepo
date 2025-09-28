@@ -17,7 +17,7 @@ internal sealed class GetUserLanguage : IEndpoint
                 CancellationToken cancellationToken) =>
             {
                 var query = new GetUserLanguagesQuery(userSlug);
-                Result<List<LanguageResponse>> result = await handler.Handle(query, cancellationToken);
+                var result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(Results.Ok, CustomResults.Problem);
             })

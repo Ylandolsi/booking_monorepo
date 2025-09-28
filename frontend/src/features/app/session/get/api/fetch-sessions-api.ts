@@ -1,4 +1,4 @@
-import { api, CatalogEndpoints, type RequestOptions } from '@/lib';
+import { api, CatalogEndpoints, type RequestOptions } from '@/api/utils';
 import type { Session } from '@/features/app/session/get/types';
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { sessionQueryKeys } from '@/features/app/session/get/api/sessions-get-keys';

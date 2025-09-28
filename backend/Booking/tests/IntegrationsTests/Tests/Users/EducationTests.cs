@@ -1,10 +1,7 @@
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
-using Booking.Modules.Users.Features.Utils;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
-using Snapshooter.Xunit;
 
 namespace IntegrationsTests.Tests.Users;
 
@@ -34,14 +31,12 @@ public class EducationTests : AuthenticationTestBase
         /*
         Snapshot.Match(educations);
         */
-
-
     }
 
     [Fact]
     public async Task GetEducations_ShouldReturnEducations_WhenUserIsAuthenticated()
     {
-        var userData = await  CreateUserAndLogin();
+        var userData = await CreateUserAndLogin();
 
         // Add an education first
         var educationPayload = new
@@ -55,7 +50,8 @@ public class EducationTests : AuthenticationTestBase
         await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
 
         // Act
-        var response = await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
+        var response =
+            await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -67,7 +63,7 @@ public class EducationTests : AuthenticationTestBase
     [Fact]
     public async Task UpdateEducation_ShouldUpdateEducation_WhenUserIsAuthenticated()
     {
-        LoginResponse loginResponse = await CreateUserAndLogin();
+        var loginResponse = await CreateUserAndLogin();
 
         // Add an education first
         var educationPayload = new
@@ -80,7 +76,7 @@ public class EducationTests : AuthenticationTestBase
         };
         var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
         createResponse.EnsureSuccessStatusCode();
-        
+
         var educationId = await createResponse.Content.ReadFromJsonAsync<int>();
 
         // Update the education
@@ -95,7 +91,7 @@ public class EducationTests : AuthenticationTestBase
 
         // Act
         var response = await ActClient.PutAsJsonAsync(
-            UsersEndpoints.UpdateEducation.Replace("{educationId}", educationId.ToString()), 
+            UsersEndpoints.UpdateEducation.Replace("{educationId}", educationId.ToString()),
             updatePayload);
 
         // Assert
@@ -119,7 +115,7 @@ public class EducationTests : AuthenticationTestBase
         var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddEducation, educationPayload);
         createResponse.EnsureSuccessStatusCode();
 
-        var educationId = await createResponse.Content.ReadFromJsonAsync<int>();    
+        var educationId = await createResponse.Content.ReadFromJsonAsync<int>();
 
         // Act
         var response = await ActClient.DeleteAsync(
@@ -129,7 +125,8 @@ public class EducationTests : AuthenticationTestBase
         response.EnsureSuccessStatusCode();
 
         // Verify it's deleted
-        var getResponse = await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
+        var getResponse =
+            await ActClient.GetAsync(UsersEndpoints.GetUserEducations.Replace("{userSlug}", userData.UserSlug));
         getResponse.EnsureSuccessStatusCode();
         var educations = await getResponse.Content.ReadFromJsonAsync<List<object>>();
         Assert.Empty(educations);

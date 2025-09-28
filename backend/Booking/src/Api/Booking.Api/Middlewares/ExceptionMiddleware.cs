@@ -7,9 +7,9 @@ namespace Booking.Api.Middlewares;
 
 public class ExceptionMiddleware
 {
-    private readonly RequestDelegate _next;
-    private readonly ILogger<ExceptionMiddleware> _logger;
     private readonly IHostEnvironment _env;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
     {
@@ -35,7 +35,8 @@ public class ExceptionMiddleware
         var userContext = context.RequestServices.GetRequiredService<UserContext>();
 
         var userId = userContext.UserId.ToString() ?? "anonymous";
-        _logger.LogError(ex, "Unhandled exception occurred. Path: {Path}, Method: {Method}, User: {User}, Query: {Query}, Message: {msg}",
+        _logger.LogError(ex,
+            "Unhandled exception occurred. Path: {Path}, Method: {Method}, User: {User}, Query: {Query}, Message: {msg}",
             context.Request.Path,
             context.Request.Method,
             userId,
@@ -73,4 +74,3 @@ public class ExceptionMiddleware
         await context.Response.WriteAsync(json);
     }
 }
-

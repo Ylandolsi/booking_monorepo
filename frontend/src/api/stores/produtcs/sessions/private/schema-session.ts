@@ -1,7 +1,7 @@
 import { createProductBaseSchema } from '@/api/stores/produtcs/base-schema';
 import { createDigitalProductSchema } from '@/api/stores/produtcs/digital';
 import { ProductType } from '@/api/stores/produtcs/products-type';
-import { toFormData } from '@/lib/api';
+import { toFormData } from '@/api/utils';
 import z from 'zod';
 
 export const availabilityRangeTypeSchema = z.object({

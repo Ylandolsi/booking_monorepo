@@ -5,16 +5,18 @@ namespace Booking.Modules.Users.Domain.ValueObjects;
 
 public class Status : ValueObject
 {
-    public bool IsMentor { get; private set; }
-    public bool IsActive { get; private set; }
-
-    private Status() { }
+    private Status()
+    {
+    }
 
     public Status(bool isMentor)
     {
         IsMentor = isMentor;
         IsActive = isMentor;
     }
+
+    public bool IsMentor { get; private set; }
+    public bool IsActive { get; private set; }
 
     public static Status CreateMentee()
     {
@@ -84,18 +86,18 @@ public class Status : ValueObject
 public static class StatusErrors
 {
     public static readonly Error AlreadyMentor = Error.Problem(
-        "Status.AlreadyMentor", 
+        "Status.AlreadyMentor",
         "User is already a mentor");
-        
+
     public static readonly Error OnlyMentorsCanToggleActivation = Error.Problem(
-        "Status.OnlyMentorsCanToggleActivation", 
+        "Status.OnlyMentorsCanToggleActivation",
         "Only mentors can be activated or deactivated");
-        
+
     public static readonly Error AlreadyActive = Error.Problem(
-        "Status.AlreadyActive", 
+        "Status.AlreadyActive",
         "User is already active");
-        
+
     public static readonly Error AlreadyInactive = Error.Problem(
-        "Status.AlreadyInactive", 
+        "Status.AlreadyInactive",
         "User is already inactive");
 }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Booking.Common;
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
@@ -25,86 +26,6 @@ internal sealed class BookSessionCommandHandler(
     IValidator<BookSessionCommand> validator,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>
 {
-    private async Task<Result<string>> CreateCalendarEventAndGetMeetLink(
-        BookedSession session,
-        BookSessionCommand command,
-        int mentorUserId,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var mentorData = await usersModuleApi.GetUserInfo(mentorUserId, cancellationToken);
-
-            var sessionStartTime = session.ScheduledAt;
-            var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
-
-            var emails = new List<string> { command.Email, mentorData.GoogleEmail, mentorData.Email };
-            var description = string.IsNullOrEmpty(command.Note) ? session.Title : command.Note;
-
-            var meetRequest = new MeetingRequest
-            {
-                Title = $"Meetini Session : {command.Title} ",
-                Description = description,
-                AttendeeEmails = emails,
-                StartTime = sessionStartTime,
-                EndTime = sessionEndTime,
-                Location = "Online"
-            };
-
-            await googleCalendarService.InitializeAsync(mentorUserId);
-            var eventResult = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
-
-            if (eventResult.IsFailure)
-            {
-                logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
-                    session.Id, eventResult.Error.Description);
-                return Result.Success("https://meet.google.com/error-happened-could-you-please-contact-us");
-            }
-
-            return Result.Success(eventResult.Value.HangoutLink);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex,
-                "Exception occurred while creating calendar event for session {SessionId}: {ErrorMessage}",
-                session.Id, ex.Message);
-            return Result.Success("https://meet.google.com/error-happened-could-you-please-contact-us");
-        }
-    }
-
-    private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(
-        BookSessionCommand command)
-    {
-        if (!DateTime.TryParseExact(
-                command.Date,
-                "yyyy-MM-dd",
-                null,
-                System.Globalization.DateTimeStyles.None,
-                out var sessionDate))
-        {
-            logger.LogWarning("Invalid date format: {Date}", command.Date);
-            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
-                Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
-        }
-
-        if (!TimeOnly.TryParse(command.StartTime, out var startTime))
-        {
-            logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
-            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
-                Error.Problem("Session.InvalidStartTime", "Start time must be in HH:mm format"));
-        }
-
-        if (!TimeOnly.TryParse(command.EndTime, out var endTime))
-        {
-            logger.LogWarning("Invalid end time format: {EndTime}", command.EndTime);
-            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
-                Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
-        }
-
-        return Result.Success((sessionDate, startTime, endTime));
-    }
-
-
     public async Task<Result<BookSessionRepsonse>> Handle(BookSessionCommand command,
         CancellationToken cancellationToken)
     {
@@ -117,10 +38,7 @@ internal sealed class BookSessionCommandHandler(
 
 
         var result = ParseTimeInput(command);
-        if (result.IsFailure)
-        {
-            return Result.Failure<BookSessionRepsonse>(result.Error);
-        }
+        if (result.IsFailure) return Result.Failure<BookSessionRepsonse>(result.Error);
 
         var (sessionDate, startTime, endTime) = result.Value;
 
@@ -152,7 +70,7 @@ internal sealed class BookSessionCommandHandler(
                 "Cannot book sessions in the past"));
         }
 
-        SessionProduct? product = await context.SessionProducts
+        var product = await context.SessionProducts
             .FirstOrDefaultAsync(s => s.ProductSlug == command.ProductSlug && s.IsPublished, cancellationToken);
 
         if (product == null)
@@ -173,7 +91,7 @@ internal sealed class BookSessionCommandHandler(
 
 
         // Check if the time slot is available 
-        bool productAvailable = await context.SessionAvailabilities
+        var productAvailable = await context.SessionAvailabilities
             .AnyAsync(a =>
                     a.SessionProductId == product.Id &&
                     a.IsActive &&
@@ -191,7 +109,7 @@ internal sealed class BookSessionCommandHandler(
         }
 
         // Check for conflicting sessions
-        bool hasConflict = await context.BookedSessions
+        var hasConflict = await context.BookedSessions
             .Where(s => s.ProductId == product.Id &&
                         s.Status != SessionStatus.Cancelled &&
                         s.Status != SessionStatus.NoShow &&
@@ -216,10 +134,7 @@ internal sealed class BookSessionCommandHandler(
 
 
         var duration = Duration.Create(durationMinutes);
-        if (duration.IsFailure)
-        {
-            return Result.Failure<BookSessionRepsonse>(duration.Error);
-        }
+        if (duration.IsFailure) return Result.Failure<BookSessionRepsonse>(duration.Error);
 
         // Calculate price based on mentor's hourly rate and duration
         var durationInHours = durationMinutes / 60.0m;
@@ -235,7 +150,7 @@ internal sealed class BookSessionCommandHandler(
                 "Invalid price calculation. Please contact support."));
         }
 
-        string paymentLink = "paid";
+        var paymentLink = "paid";
 
         try
         {
@@ -244,7 +159,7 @@ internal sealed class BookSessionCommandHandler(
 
             var mentorData = await usersModuleApi.GetUserInfo(storeData.UserId, cancellationToken);
 
-            if (String.IsNullOrEmpty(mentorData.GoogleEmail))
+            if (string.IsNullOrEmpty(mentorData.GoogleEmail))
             {
                 logger.LogError(
                     "user tries to book a session with a mentor  {ProductSlug } who is not integrated with google calendar ",
@@ -254,7 +169,7 @@ internal sealed class BookSessionCommandHandler(
             }
 
 
-            var sessionTitle = String.IsNullOrEmpty(command.Title)
+            var sessionTitle = string.IsNullOrEmpty(command.Title)
                 ? $"Session : {mentorData.FirstName} {mentorData.LastName} & {command.Name}"
                 : command.Title;
 
@@ -303,7 +218,7 @@ internal sealed class BookSessionCommandHandler(
                 session.SetWaitingForPayment();
 
                 // Create payment record with pending status
-                var payment = new Domain.Entities.Payment(
+                var payment = new Payment(
                     order.Id,
                     product.StoreId,
                     product.Id,
@@ -380,6 +295,85 @@ internal sealed class BookSessionCommandHandler(
             return Result.Failure<BookSessionRepsonse>(Error.Problem("Session.BookingFailed",
                 "Failed to book session. Please try again or contact support."));
         }
+    }
+
+    private async Task<Result<string>> CreateCalendarEventAndGetMeetLink(
+        BookedSession session,
+        BookSessionCommand command,
+        int mentorUserId,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var mentorData = await usersModuleApi.GetUserInfo(mentorUserId, cancellationToken);
+
+            var sessionStartTime = session.ScheduledAt;
+            var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
+
+            var emails = new List<string> { command.Email, mentorData.GoogleEmail, mentorData.Email };
+            var description = string.IsNullOrEmpty(command.Note) ? session.Title : command.Note;
+
+            var meetRequest = new MeetingRequest
+            {
+                Title = $"Meetini Session : {command.Title} ",
+                Description = description,
+                AttendeeEmails = emails,
+                StartTime = sessionStartTime,
+                EndTime = sessionEndTime,
+                Location = "Online"
+            };
+
+            await googleCalendarService.InitializeAsync(mentorUserId);
+            var eventResult = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+
+            if (eventResult.IsFailure)
+            {
+                logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
+                    session.Id, eventResult.Error.Description);
+                return Result.Success("https://meet.google.com/error-happened-could-you-please-contact-us");
+            }
+
+            return Result.Success(eventResult.Value.HangoutLink);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Exception occurred while creating calendar event for session {SessionId}: {ErrorMessage}",
+                session.Id, ex.Message);
+            return Result.Success("https://meet.google.com/error-happened-could-you-please-contact-us");
+        }
+    }
+
+    private Result<(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime)> ParseTimeInput(
+        BookSessionCommand command)
+    {
+        if (!DateTime.TryParseExact(
+                command.Date,
+                "yyyy-MM-dd",
+                null,
+                DateTimeStyles.None,
+                out var sessionDate))
+        {
+            logger.LogWarning("Invalid date format: {Date}", command.Date);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidDate", "Date must be in YYYY-MM-DD format"));
+        }
+
+        if (!TimeOnly.TryParse(command.StartTime, out var startTime))
+        {
+            logger.LogWarning("Invalid start time format: {StartTime}", command.StartTime);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidStartTime", "Start time must be in HH:mm format"));
+        }
+
+        if (!TimeOnly.TryParse(command.EndTime, out var endTime))
+        {
+            logger.LogWarning("Invalid end time format: {EndTime}", command.EndTime);
+            return Result.Failure<(DateTime, TimeOnly, TimeOnly)>(
+                Error.Problem("Session.InvalidEndTime", "End time must be in HH:mm format"));
+        }
+
+        return Result.Success((sessionDate, startTime, endTime));
     }
 
     /*private async Task SendNotificationsToUsers(Session session, string menteeSlug)

@@ -6,6 +6,6 @@ public sealed record GetUserAvailabilityByMonthQuery(
     string ProductSlug,
     int Year,
     int Month,
-    string TimeZoneId  ="Africa/Tunis",
+    string TimeZoneId = "Africa/Tunis",
     bool IncludePastDays = false,
     bool IncludeBookedSlots = true) : IQuery<MonthlyAvailabilityResponse>;

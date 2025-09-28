@@ -19,7 +19,7 @@ public class CreatePaymentCommandHandler(
             command.MenteeId, command.MentorId, command.UsdAmount);
 
         await unitOfWork.BeginTransactionAsync(cancellationToken);
-        
+
         var payment = new Domain.Entities.Payments.Payment(
             command.MenteeId,
             string.Empty,
@@ -29,3 +29,4 @@ public class CreatePaymentCommandHandler(
             PaymentStatus.Pending);)
     }
 }*/
+

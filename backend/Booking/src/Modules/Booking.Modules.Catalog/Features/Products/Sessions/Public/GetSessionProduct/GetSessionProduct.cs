@@ -1,6 +1,5 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.Logging;
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.GetSessionProduct;
 
 public record GetSessionProductQuery(string ProductSlug, string TimeZoneId) : IQuery<SessionProductDetailResponse>;
-
 
 public record SessionProductDetailResponse : ProductResponse
 {
@@ -43,7 +41,7 @@ public class GetSessionProductHandler(
 
         try
         {
-            if (String.IsNullOrWhiteSpace(query.ProductSlug))
+            if (string.IsNullOrWhiteSpace(query.ProductSlug))
             {
                 logger.LogWarning("Invalid product slug provided: {ProductSlug}", query.ProductSlug);
                 return Result.Failure<SessionProductDetailResponse>(
@@ -108,7 +106,7 @@ public class GetSessionProductHandler(
                 CreatedAt = sessionProduct.CreatedAt,
                 UpdatedAt = sessionProduct.UpdatedAt
             };
-            
+
             return Result.Success(response);
         }
         catch (Exception ex)

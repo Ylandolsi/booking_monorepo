@@ -49,7 +49,8 @@ public class PayoutWebhookCommandHandler(
         {
             logger.LogWarning("Webhook (admin approve payout) received invalid paymentRef: {PaymentRef}",
                 command.PaymentRef);
-            return Result.Failure(Error.NotFound("Payout.NotFound", "Payout not found for the provided payment reference"));
+            return Result.Failure(Error.NotFound("Payout.NotFound",
+                "Payout not found for the provided payment reference"));
         }
 
         if (payout.Status == PayoutStatus.Completed)
@@ -64,7 +65,8 @@ public class PayoutWebhookCommandHandler(
         var paymentDetails = await konnectService.GetPaymentDetails(command.PaymentRef);
         if (paymentDetails.IsFailure)
         {
-            logger.LogError("Failed to retrieve payment details from Konnect for paymentRef: {PaymentRef}. Error: {Error}",
+            logger.LogError(
+                "Failed to retrieve payment details from Konnect for paymentRef: {PaymentRef}. Error: {Error}",
                 command.PaymentRef, paymentDetails.Error.Description);
             return Result.Failure(paymentDetails.Error);
         }

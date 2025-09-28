@@ -13,8 +13,6 @@ internal sealed class GetUserAvailabilityByMonthQueryHandler(
     ILogger<GetUserAvailabilityByMonthQueryHandler> logger)
     : IQueryHandler<GetUserAvailabilityByMonthQuery, MonthlyAvailabilityResponse>
 {
-    private record BookedSession(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime);
-
     public async Task<Result<MonthlyAvailabilityResponse>> Handle(GetUserAvailabilityByMonthQuery query,
         CancellationToken cancellationToken)
     {
@@ -24,19 +22,17 @@ internal sealed class GetUserAvailabilityByMonthQueryHandler(
         try
         {
             var product = await context.SessionProducts
-                .Where(m => m.ProductSlug== query.ProductSlug && m.IsPublished)
+                .Where(m => m.ProductSlug == query.ProductSlug && m.IsPublished)
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (product == null)
-            {
                 return Result.Success(new MonthlyAvailabilityResponse(
                     query.Year,
                     query.Month,
                     new List<DailyAvailabilityResponse>()));
-            }
 
             var mentorAvailabilities = await context.SessionAvailabilities
-                .Where(s => s.SessionProductSlug== query.ProductSlug && s.IsActive)
+                .Where(s => s.SessionProductSlug == query.ProductSlug && s.IsActive)
                 .ToListAsync(cancellationToken);
 
             var allDaysInMonth = Enumerable.Range(1, DateTime.DaysInMonth(query.Year, query.Month))
@@ -75,4 +71,6 @@ internal sealed class GetUserAvailabilityByMonthQueryHandler(
                 "Failed to retrieve monthly availability"));
         }
     }
+
+    private record BookedSession(DateTime SessionDate, TimeOnly StartTime, TimeOnly EndTime);
 }

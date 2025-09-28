@@ -1,7 +1,7 @@
 import { CheckCircle, ArrowLeft, Calendar, Clock, DollarSign } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
-import type { BookingSummaryType } from '../types/booking-types';
-import type { SessionSlotType } from '@/features/app/session';
+import type { BookingSummaryType } from '@/api/stores';
+import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 interface BookingSuccessPageProps {
   bookingSummary: BookingSummaryType | null;

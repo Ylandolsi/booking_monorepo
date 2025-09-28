@@ -1,8 +1,8 @@
 import { Clock } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { formatDate, formatTime } from '@/utils';
-import type { SessionSlotType } from '@/features/app/session/booking/shared';
 import { cn } from '@/lib/cn';
+import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 interface TimeSlotsProps {
   selectedDate: Date | undefined;

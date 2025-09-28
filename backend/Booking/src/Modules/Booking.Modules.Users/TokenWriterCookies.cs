@@ -14,12 +14,18 @@ public class TokenWriterCookies(
 {
     private readonly AccessOptions _jwtOptions = jwtOptions.Value.AccessToken;
 
-    public void ClearRefreshTokenCookie() => httpContextAccessor.HttpContext?.Response.Cookies.Delete("refresh_token",
-        CreateRefreshCookieOptions(_jwtOptions));
+    public void ClearRefreshTokenCookie()
+    {
+        httpContextAccessor.HttpContext?.Response.Cookies.Delete("refresh_token",
+            CreateRefreshCookieOptions(_jwtOptions));
+    }
 
 
-    public void ClearAccessTokenCookie() => httpContextAccessor.HttpContext?.Response.Cookies.Delete("access_token",
-        CreateAccessCookieOptions(_jwtOptions));
+    public void ClearAccessTokenCookie()
+    {
+        httpContextAccessor.HttpContext?.Response.Cookies.Delete("access_token",
+            CreateAccessCookieOptions(_jwtOptions));
+    }
 
     public void WriteRefreshTokenAsHttpOnlyCookie(string token)
     {

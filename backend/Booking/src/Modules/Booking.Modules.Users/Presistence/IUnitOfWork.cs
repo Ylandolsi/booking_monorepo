@@ -1,6 +1,5 @@
 namespace Booking.Modules.Users.Presistence;
 
-
 public interface IUnitOfWork
 {
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

@@ -1,6 +1,6 @@
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
-import { CatalogEndpoints } from '@/lib/api/catalog-endpoints';
-import { api } from '@/lib/api/api-client';
+import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
+import { api } from '@/api/utils';
 import { type CreateSessionProductRequest } from '@/api/stores';
 
 export const getMyProductSession = async (slug: string): Promise<CreateSessionProductRequest> => {

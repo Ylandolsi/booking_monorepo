@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Web;
 using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -22,13 +21,13 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
         var newPassword = "NewPassword123!";
         await RegisterAndVerifyUser(userEmail, DefaultPassword);
 
-        EmailCapturer.Clear();  // delete the confirmation email from the registration process
+        EmailCapturer.Clear(); // delete the confirmation email from the registration process
 
         var resetRequestPayload = new { Email = userEmail };
         var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
-        await Task.Delay(2000);  // wait for the email to be sent
+        await Task.Delay(2000); // wait for the email to be sent
 
 
         var (token, email) = ExtractTokenAndEmailFromEmail(userEmail);
@@ -50,7 +49,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
 
         verifyResponse.EnsureSuccessStatusCode();
 
-        
+
         var loginResponse = await LoginUser(userEmail, newPassword);
         Assert.NotNull(loginResponse);
     }
@@ -61,14 +60,14 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
         EmailCapturer.Clear();
         var userEmail = Fake.Internet.Email();
         var newPassword = "NewPassword123!";
-        await RegisterAndVerifyUser(userEmail, DefaultPassword , false );
+        await RegisterAndVerifyUser(userEmail, DefaultPassword, false);
         EmailCapturer.Clear(); // delete the confirmation email from the registration process
 
         var resetRequestPayload = new { Email = userEmail };
         var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
-        await Task.Delay(2000);  // wait for the email to be sent
+        await Task.Delay(2000); // wait for the email to be sent
 
 
         var (token, email) = ExtractTokenAndEmailFromEmail(userEmail);
@@ -93,9 +92,7 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
 
         var loginResponse = await LoginUser(userEmail, newPassword);
         Assert.NotNull(loginResponse);
-        
     }
-
 
 
     [Fact]
@@ -108,17 +105,16 @@ public class VerifyResetPasswordTests : AuthenticationTestBase
         EmailCapturer.Clear();
 
 
-
         var resetRequestPayload = new { Email = userEmail };
         var resetResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.ForgotPassword, resetRequestPayload);
         resetResponse.EnsureSuccessStatusCode();
 
 
-        await Task.Delay(2000);  // wait for the email to be sent
+        await Task.Delay(2000); // wait for the email to be sent
 
         var (token, email) = ExtractTokenAndEmailFromEmail(userEmail);
         Assert.NotNull(token);
-        Assert.NotNull(email);  
+        Assert.NotNull(email);
 
         var decodedEmail = HttpUtility.UrlDecode(email);
         Assert.Equal(userEmail, decodedEmail);

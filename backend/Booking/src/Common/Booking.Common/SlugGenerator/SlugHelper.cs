@@ -5,7 +5,7 @@ namespace Booking.Common.SlugGenerator;
 
 public static class SlugHelper
 {
-    private static readonly Dictionary<char, string> CharMap = new Dictionary<char, string>
+    private static readonly Dictionary<char, string> CharMap = new()
     {
         // Lowercase mappings (will convert input to lowercase first)
         { 'à', "a" }, { 'á', "a" }, { 'â', "a" }, { 'ã', "a" }, { 'ä', "a" }, { 'å', "a" }, { 'ā', "a" }, { 'ă', "a" },
@@ -58,22 +58,16 @@ public static class SlugHelper
     public static string RemapInternationalCharToAscii(char c)
     {
         // First check if we have a direct mapping
-        if (CharMap.TryGetValue(Char.ToLower(c), out string mapped))
-        {
-            return mapped;
-        }
+        if (CharMap.TryGetValue(char.ToLower(c), out var mapped)) return mapped;
 
         // For characters not in our dictionary, use Unicode normalization
-        string normalized = c.ToString().Normalize(NormalizationForm.FormKD);
+        var normalized = c.ToString().Normalize(NormalizationForm.FormKD);
 
         // Remove any remaining non-ASCII characters and diacritics
-        string asciiOnly = Regex.Replace(normalized, @"[^\u0000-\u007F]", "");
+        var asciiOnly = Regex.Replace(normalized, @"[^\u0000-\u007F]", "");
 
         // If we got something back, return it
-        if (!string.IsNullOrEmpty(asciiOnly))
-        {
-            return asciiOnly;
-        }
+        if (!string.IsNullOrEmpty(asciiOnly)) return asciiOnly;
 
         // For completely unmappable characters, return an empty string
         return "";

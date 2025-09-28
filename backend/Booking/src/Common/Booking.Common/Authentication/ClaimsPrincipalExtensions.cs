@@ -5,40 +5,26 @@ namespace Booking.Common.Authentication;
 
 public static class ClaimsPrincipalExtensions
 {
-
     public static int? GetUserId(this ClaimsPrincipal? principal)
     {
         // Try the standard JWT subject claim first
         // cuz it gets changed internally by jwt provider
-        string? userId = principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
-                        principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = principal?.FindFirstValue(JwtRegisteredClaimNames.Sub) ??
+                     principal?.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
-        if (string.IsNullOrEmpty(userId))
-        {
+        if (string.IsNullOrEmpty(userId)) return null;
 
-            return null;
-        }
-
-        return int.TryParse(userId, out int parsedUserId) ?
-            parsedUserId :
-            null;
+        return int.TryParse(userId, out var parsedUserId) ? parsedUserId : null;
     }
-   
+
     public static string? GetUserSlug(this ClaimsPrincipal? principal)
     {
+        var userSlug = principal?.FindFirstValue(ClaimsIdentifiers.UserSlug);
 
-        string? userSlug = principal?.FindFirstValue(ClaimsIdentifiers.UserSlug); 
 
+        if (string.IsNullOrEmpty("slug")) return null;
 
-        if (string.IsNullOrEmpty("slug"))
-        {
-
-            return null;
-        }
-
-        return userSlug; 
+        return userSlug;
     }
 }
-
-

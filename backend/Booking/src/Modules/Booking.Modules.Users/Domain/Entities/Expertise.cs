@@ -6,14 +6,9 @@ namespace Booking.Modules.Users.Domain.Entities;
 
 public class Expertise : Entity
 {
-    // add default color ? 
-    // bg-orange-100 text-orange-600 || bg-green-100 text-green-600
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; private set; }
-    public string Name { get; private set; } = string.Empty;
-    public string Description { get; private set; } = string.Empty;
-
-    private Expertise() { }
+    private Expertise()
+    {
+    }
 
     public Expertise(string name, string description, int id = 0)
     {
@@ -28,9 +23,15 @@ public class Expertise : Entity
 
         //Category = category;
     }
+
+    // add default color ? 
+    // bg-orange-100 text-orange-600 || bg-green-100 text-green-600
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; private set; }
+
+    public string Name { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
+
     public ICollection<UserExpertise> UserExpertises { get; private set; } = new List<UserExpertise>();
     //public ExpertiseCategory Category { get; private set; }
-
-
 }
-

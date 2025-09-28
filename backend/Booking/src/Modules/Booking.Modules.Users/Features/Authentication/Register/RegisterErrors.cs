@@ -8,7 +8,10 @@ public static class RegisterErrors
         "Users.EmailNotUnique",
         "The provided email is not unique");
 
-    public static Error UserRegistrationFailed(string message) => Error.Failure(
-        "Users.UserRegistrationFailed",
-        message);
+    public static Error UserRegistrationFailed(string message)
+    {
+        return Error.Failure(
+            "Users.UserRegistrationFailed",
+            message);
+    }
 }

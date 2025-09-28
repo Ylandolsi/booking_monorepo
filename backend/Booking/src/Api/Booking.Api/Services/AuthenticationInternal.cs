@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Web;
 using Booking.Common.Authentication;
 using Booking.Common.Options;
 using Booking.Modules.Users;
@@ -87,7 +88,7 @@ public static class AuthenticationExtensions
                 options.Events.OnRedirectToAuthorizationEndpoint = context =>
                 {
                     var uriBuilder = new UriBuilder(context.RedirectUri);
-                    var query = System.Web.HttpUtility.ParseQueryString(uriBuilder.Query);
+                    var query = HttpUtility.ParseQueryString(uriBuilder.Query);
 
                     query["prompt"] = "consent";
                     query["access_type"] = "offline";

@@ -14,13 +14,13 @@ public class VerificationEmailForRegistrationJob
 {
     private readonly AwsSesEmailService _emailService;
     private readonly EmailTemplateProvider _emailTemplateProvider;
-    private readonly ILogger<VerificationEmailForRegistrationJob> _logger;
     private readonly FrontendApplicationOptions _frontendApplicationOptions;
+    private readonly ILogger<VerificationEmailForRegistrationJob> _logger;
 
     public VerificationEmailForRegistrationJob(AwsSesEmailService emailService,
-                                               IOptions<FrontendApplicationOptions> frontendApplicationOptions,
-                                               EmailTemplateProvider emailTemplateProvider ,
-                                               ILogger<VerificationEmailForRegistrationJob> logger)
+        IOptions<FrontendApplicationOptions> frontendApplicationOptions,
+        EmailTemplateProvider emailTemplateProvider,
+        ILogger<VerificationEmailForRegistrationJob> logger)
     {
         _emailService = emailService;
         _emailTemplateProvider = emailTemplateProvider;
@@ -31,9 +31,9 @@ public class VerificationEmailForRegistrationJob
     [DisplayName("Send Verification Email to {0}")]
     [AutomaticRetry(OnAttemptsExceeded = AttemptsExceededAction.Delete)]
     public async Task SendAsync(
-                            string userEmail,
-                            string verificationLink,
-                            PerformContext? context)
+        string userEmail,
+        string verificationLink,
+        PerformContext? context)
     {
         context?.WriteLine($"Attempting to send verification email to: {userEmail}");
         _logger.LogInformation("Hangfire Job: Attempting to send verification email to {Email}", userEmail);
@@ -45,18 +45,18 @@ public class VerificationEmailForRegistrationJob
 
         try
         {
-
             cancellationToken.ThrowIfCancellationRequested();
-            var (subject, body) = await _emailTemplateProvider.GetTemplateAsync(TemplatesNames.VerificationEmailForRegistration, cancellationToken);
+            var (subject, body) =
+                await _emailTemplateProvider.GetTemplateAsync(TemplatesNames.VerificationEmailForRegistration,
+                    cancellationToken);
             body = body.Replace("{{VERIFICATION_LINK}}", verificationLink)
-                        .Replace("{{APP_NAME}}",  _frontendApplicationOptions.AppName)
-                        .Replace("{{SUPPORT_LINK}}", _frontendApplicationOptions.SupportLink)
-                        .Replace("{{SECURITY_LINK}}", _frontendApplicationOptions.SecurityLink);
+                .Replace("{{APP_NAME}}", _frontendApplicationOptions.AppName)
+                .Replace("{{SUPPORT_LINK}}", _frontendApplicationOptions.SupportLink)
+                .Replace("{{SECURITY_LINK}}", _frontendApplicationOptions.SecurityLink);
 
             await _emailService.SendEmailAsync(userEmail, subject, body, cancellationToken);
             context?.WriteLine($"Verification email sent successfully to: {userEmail}");
             _logger.LogInformation("Hangfire Job: Verification email sent successfully to {Email}", userEmail);
-
         }
         catch (OperationCanceledException)
         {
@@ -67,7 +67,8 @@ public class VerificationEmailForRegistrationJob
         {
             context?.SetTextColor(ConsoleTextColor.Red);
             context?.WriteLine($"Unhandled exception while sending verification email to {userEmail}: {ex.Message}");
-            _logger.LogError(ex, "Hangfire Job: Unhandled exception occurred while sending verification email to {Email}", userEmail);
+            _logger.LogError(ex,
+                "Hangfire Job: Unhandled exception occurred while sending verification email to {Email}", userEmail);
             throw;
         }
     }

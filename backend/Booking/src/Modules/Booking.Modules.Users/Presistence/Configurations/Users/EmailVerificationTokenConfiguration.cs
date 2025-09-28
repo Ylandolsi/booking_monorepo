@@ -26,9 +26,7 @@ internal sealed class EmailVerificationTokenConfiguration : IEntityTypeConfigura
             .OnDelete(DeleteBehavior.Cascade);
 
         // Add table-level constraints
-        builder.ToTable("email_verification_token", t =>
-        {
-            t.HasCheckConstraint("CK_EmailVerificationToken_Dates_Valid", "expires_on_utc > created_on_utc");
-        });
+        builder.ToTable("email_verification_token",
+            t => { t.HasCheckConstraint("CK_EmailVerificationToken_Dates_Valid", "expires_on_utc > created_on_utc"); });
     }
 }

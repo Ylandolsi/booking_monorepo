@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+/*using System.Net.Http.Json;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +10,23 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     public EscrowPayoutFlowTests(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
+
+    #region Helper Methods
+
+    private async Task AddBalanceToUser(string userId, decimal amount)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
+
+        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(m => m.UserId.ToString() == userId);
+        if (wallet != null)
+        {
+            wallet.UpdateBalance(amount);
+            await dbContext.SaveChangesAsync();
+        }
+    }
+
+    #endregion
 
     /*
     #region Escrow Flow Tests
@@ -160,7 +177,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
 
 
     #endregion
-    */
+    #1#
 
     #region AdminPayout
 
@@ -168,7 +185,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     public async Task AdminAcceptPayout_ShouldReduceBalanceAndUpdateHistory()
     {
         var (adminArrange, adminAct) = await CreateAdmin("admin");
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m, 15, null);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m);
 
         var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
         var mentorFullInfo = await GetFullUserInfoBySlug(mentorSlug);
@@ -192,7 +209,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payouts.Admin.ApprovePayout,
             new
             {
-                PayoutId = content[0].Id,
+                PayoutId = content[0].Id
             });
 
         var payUrl = await approveRespone.Content.ReadFromJsonAsync<ApprovePayoutAdminResponse>();
@@ -212,7 +229,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     public async Task WhenAdminRejectsUserPayout_Balance_ShouldNotBeReduced_FromUser()
     {
         var (adminArrange, adminAct) = await CreateAdmin("admin");
-        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m, 15, null);
+        var (mentorArrange, mentorAct) = await CreateMentor("mentor", 100m);
 
         var mentorSlug = await MentorshipTestUtilities.GetUserSlug(mentorArrange);
         var mentorFullInfo = await GetFullUserInfoBySlug(mentorSlug);
@@ -237,7 +254,7 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
         var approveRespone = await adminAct.PostAsJsonAsync(MentorshipEndpoints.Payouts.Admin.RejectPayout,
             new
             {
-                PayoutId = content[0].Id,
+                PayoutId = content[0].Id
             });
 
         var walletAfterPayout =
@@ -248,21 +265,4 @@ public class EscrowPayoutFlowTests : MentorshipTestBase
     }
 
     #endregion
-
-    #region Helper Methods
-
-    private async Task AddBalanceToUser(string userId, decimal amount)
-    {
-        using var scope = Factory.Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-
-        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(m => m.UserId.ToString() == userId);
-        if (wallet != null)
-        {
-            wallet.UpdateBalance(amount);
-            await dbContext.SaveChangesAsync();
-        }
-    }
-
-    #endregion
-}
+}*/

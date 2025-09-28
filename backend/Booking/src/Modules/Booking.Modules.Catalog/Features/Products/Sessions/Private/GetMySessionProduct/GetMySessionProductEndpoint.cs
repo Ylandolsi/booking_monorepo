@@ -3,7 +3,6 @@ using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetMySessionProduct;

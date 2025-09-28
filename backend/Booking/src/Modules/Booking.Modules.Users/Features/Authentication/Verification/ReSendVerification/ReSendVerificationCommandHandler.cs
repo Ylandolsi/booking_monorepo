@@ -7,22 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.Verification.ReSendVerification;
 
-
-
-
-
-internal sealed class ReSendVerificationCommandHandler(UserManager<User> userManager,
-                                                       EmailVerificationSender emailVerificationSender,
-                                                       ILogger<ReSendVerificationCommandHandler> logger)
+internal sealed class ReSendVerificationCommandHandler(
+    UserManager<User> userManager,
+    EmailVerificationSender emailVerificationSender,
+    ILogger<ReSendVerificationCommandHandler> logger)
     : ICommandHandler<ReSendVerificationCommand>
 {
-
     public async Task<Result> Handle(ReSendVerificationCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Handling ReSendVerificationEmailCommand for user Email: {Email}", command.Email);
 
 
-        User? user = await userManager.FindByEmailAsync(command.Email);
+        var user = await userManager.FindByEmailAsync(command.Email);
 
         if (user == null)
         {

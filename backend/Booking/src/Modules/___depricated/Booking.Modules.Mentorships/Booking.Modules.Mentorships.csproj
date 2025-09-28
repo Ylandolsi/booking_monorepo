@@ -7,15 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Domain\Entities\Products\" />
-      <Folder Include="Features\Payout\Admin\GetDetailed\" />
-      <Folder Include="Features\Payout\User\" />
-      <Folder Include="Features\Products\" />
-      <Folder Include="Features\Sessions\Ignore\" />
-      <Folder Include="Persistence\Seed\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
       <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
       <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
@@ -36,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\Booking.Common\Booking.Common.csproj" />
       <ProjectReference Include="..\..\Common\Booking.Common\Booking.Common.csproj" />
       <ProjectReference Include="..\Booking.Modules.Users\Booking.Modules.Users.csproj" />
     </ItemGroup>

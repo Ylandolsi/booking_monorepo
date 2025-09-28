@@ -10,13 +10,17 @@ namespace Booking.Common;
 
 public static class PaymentErrors
 {
-    public static Error FailedToCreatePayment(int amount, string firstName, string lastName) =>
-        Error.Failure("Create.Payment.Failed",
+    public static Error FailedToCreatePayment(int amount, string firstName, string lastName)
+    {
+        return Error.Failure("Create.Payment.Failed",
             $"Konnect failed to create payment with amount {amount} for {firstName} {lastName}");
+    }
 
-    public static Error FailedToFetchPaymentDetails(string paymentRef) =>
-        Error.Failure("Fetch.PaymentDetails.Failed",
+    public static Error FailedToFetchPaymentDetails(string paymentRef)
+    {
+        return Error.Failure("Fetch.PaymentDetails.Failed",
             $"Konnect failed to fetch paymentDetails with ref  {paymentRef}");
+    }
 }
 
 public class KonnectService(
@@ -25,41 +29,6 @@ public class KonnectService(
     IOptions<KonnectOptions> options)
 {
     private readonly KonnectOptions KonnectOptions = options.Value;
-
-    public record PaymentResponse(string PaymentRef, string PayUrl);
-
-    public record PaymentInfo
-    {
-        public string Id { get; init; } = null!;
-        public string Status { get; init; } = null!;
-        public int AmountDue { get; init; }
-        public int ReachedAmount { get; init; }
-        public int Amount { get; init; }
-        public string Token { get; init; } = null!;
-        public int ConvertedAmount { get; init; }
-        public int ExchangeRate { get; init; }
-        public string ExpirationDate { get; init; } = null!;
-        public string ShortId { get; init; } = null!;
-        public string Link { get; init; } = null!;
-        public string Webhook { get; init; } = null!;
-        public string SuccessUrl { get; init; } = null!;
-        public string FailUrl { get; init; } = null!;
-        public string OrderId { get; init; } = null!;
-        public string Type { get; init; } = null!;
-        public string Details { get; init; } = null!;
-        public string[] AcceptedPaymentMethods { get; init; } = null!;
-        public WalletInfo ReceiverWallet { get; init; } = null!;
-        public TransactionInfo[] Transactions { get; init; } = null!;
-    }
-
-    public record WalletInfo
-    {
-    }
-
-    public record TransactionInfo
-    {
-        public string Status { get; init; } = null!;
-    }
 
     public async Task<Result<PaymentResponse>> CreatePayment(
         int amount,
@@ -73,29 +42,28 @@ public class KonnectService(
     )
     {
         var httpClient = httpClientFactory.CreateClient("KonnectClient");
-       
+
         receiverWallet ??= KonnectOptions.WalletKey;
         var paymentInfo = new
         {
             receiverWalletId = receiverWallet,
             token = "USD",
-            amount = amount, // 100 amount = 1$ 
+            amount, // 100 amount = 1$ 
             type = "immediate",
             description = "Pay for session ",
-            acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR"  },
+            acceptedPaymentMethods = new[] { "wallet", "bank_card", "e-DINAR" },
             lifespan = KonnectOptions.PaymentLifespan,
             checkoutForm = false,
             addPaymentFeesToAmount = true,
-            firstName = firstName,
-            lastName = lastName,
+            firstName,
+            lastName,
             phoneNumber = phone,
-            email = email,
+            email,
             orderId = paymentId, // 
             webhook = isPayout ? KonnectOptions.PayoutWebhook : KonnectOptions.Webhook,
             silentWebhook = true,
             theme = "light" // theme= req.body.theme ? req.body.theme : "light",
         };
-
 
 
         var response = await httpClient.PostAsJsonAsync(
@@ -107,9 +75,9 @@ public class KonnectService(
 
         if (response.IsSuccessStatusCode)
         {
-            var responseDate= await response.Content.ReadFromJsonAsync<PaymentResponse>(); 
+            var responseDate = await response.Content.ReadFromJsonAsync<PaymentResponse>();
 
-            return Result.Success(responseDate );
+            return Result.Success(responseDate);
         }
 
         return Result.Failure<PaymentResponse>(PaymentErrors.FailedToCreatePayment(amount, firstName, lastName));
@@ -145,7 +113,6 @@ public class KonnectService(
     {
         try
         {
-            
             var httpClient = httpClientFactory.CreateClient("KonnectClient");
             var response = await httpClient.GetAsync($"v2/payments/{paymentRef}");
             switch (response.StatusCode)
@@ -153,30 +120,22 @@ public class KonnectService(
                 case HttpStatusCode.OK:
                     var paymentDetails = await response.Content.ReadFromJsonAsync<PaymentInfo>();
                     if (paymentDetails == null)
-                    {
                         return Result.Failure<PaymentInfo>(PaymentErrors.FailedToFetchPaymentDetails(paymentRef));
-                    }
 
                     if (IsPaymentExpired(paymentDetails))
-                    {
                         return Result.Failure<PaymentInfo>(Error.Failure(
                             "Payment.Expired",
                             $"Payment with ref {paymentRef} has expired (Expiration: {paymentDetails.ExpirationDate})"));
-                    }
 
                     if (paymentDetails.Status != "completed")
-                    {
                         return Result.Failure<PaymentInfo>(Error.Failure(
                             "Payment.NotCompleted",
                             $"Payment with ref {paymentRef} is not completed (Status: {paymentDetails.Status})"));
-                    }
 
                     if (paymentDetails.ReachedAmount < paymentDetails.AmountDue)
-                    {
                         return Result.Failure<PaymentInfo>(Error.Failure(
                             "Payment.Partial",
                             $"Payment with ref {paymentRef} is partially paid (Reached: {paymentDetails.ReachedAmount}, Due: {paymentDetails.AmountDue})"));
-                    }
 
                     return Result.Success(paymentDetails);
 
@@ -216,10 +175,43 @@ public class KonnectService(
     private bool IsPaymentExpired(PaymentInfo paymentDetails)
     {
         if (DateTime.TryParse(paymentDetails.ExpirationDate, out var expirationDate))
-        {
             return expirationDate < DateTime.UtcNow;
-        }
 
         return false; // Assume not expired if date parsing fails
+    }
+
+    public record PaymentResponse(string PaymentRef, string PayUrl);
+
+    public record PaymentInfo
+    {
+        public string Id { get; init; } = null!;
+        public string Status { get; init; } = null!;
+        public int AmountDue { get; init; }
+        public int ReachedAmount { get; init; }
+        public int Amount { get; init; }
+        public string Token { get; init; } = null!;
+        public int ConvertedAmount { get; init; }
+        public int ExchangeRate { get; init; }
+        public string ExpirationDate { get; init; } = null!;
+        public string ShortId { get; init; } = null!;
+        public string Link { get; init; } = null!;
+        public string Webhook { get; init; } = null!;
+        public string SuccessUrl { get; init; } = null!;
+        public string FailUrl { get; init; } = null!;
+        public string OrderId { get; init; } = null!;
+        public string Type { get; init; } = null!;
+        public string Details { get; init; } = null!;
+        public string[] AcceptedPaymentMethods { get; init; } = null!;
+        public WalletInfo ReceiverWallet { get; init; } = null!;
+        public TransactionInfo[] Transactions { get; init; } = null!;
+    }
+
+    public record WalletInfo
+    {
+    }
+
+    public record TransactionInfo
+    {
+        public string Status { get; init; } = null!;
     }
 }

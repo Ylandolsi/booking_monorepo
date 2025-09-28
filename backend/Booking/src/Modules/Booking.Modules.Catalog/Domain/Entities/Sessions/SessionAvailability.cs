@@ -6,6 +6,10 @@ namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
 
 public class SessionAvailability : Entity
 {
+    private SessionAvailability()
+    {
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
@@ -22,10 +26,6 @@ public class SessionAvailability : Entity
 
     // Navigation properties
     public SessionProduct SessionProduct { get; private set; } = default!;
-
-    private SessionAvailability()
-    {
-    }
 
     public static SessionAvailability Create(
         int sessionProductId,
@@ -47,7 +47,7 @@ public class SessionAvailability : Entity
             DayOfWeek = dayOfWeek,
             IsActive = true,
             TimeRange = new TimeRange(startTime, endTime),
-            TimeZoneId = timeZoneId,
+            TimeZoneId = timeZoneId
         };
     }
 

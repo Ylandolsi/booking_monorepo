@@ -1,4 +1,6 @@
-using System.Net;
+/*using System.Net;
+using System.Net.Http.Json;
+using Booking.Modules.Mentorships.refactored.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 
@@ -8,6 +10,14 @@ public class ScheduleTests : MentorshipTestBase
 {
     public ScheduleTests(IntegrationTestsWebAppFactory factory) : base(factory)
     {
+    }
+
+    private DateTime GetNextWeekday(DayOfWeek dayOfWeek)
+    {
+        var today = DateTime.Now.Date;
+        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
+        if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week
+        return today.AddDays(daysUntilTarget);
     }
 
     #region SetSchedule
@@ -208,13 +218,4 @@ public class ScheduleTests : MentorshipTestBase
     }
 
     #endregion
-    
-    private DateTime GetNextWeekday(DayOfWeek dayOfWeek)
-    {
-        var today = DateTime.Now.Date;
-        var daysUntilTarget = ((int)dayOfWeek - (int)today.DayOfWeek + 7) % 7;
-        if (daysUntilTarget == 0) daysUntilTarget = 7; // Next week
-        return today.AddDays(daysUntilTarget);
-    }
-    
-}
+}*/

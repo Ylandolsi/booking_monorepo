@@ -1,4 +1,3 @@
-
 namespace Booking.Common.Domain.Entity;
 
 public interface IEntity

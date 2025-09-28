@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -6,9 +5,9 @@ namespace Booking.Common.Email;
 
 public sealed class EmailTemplateProvider
 {
-    private readonly IMemoryCache _memoryCache;
-    private readonly ILogger<EmailTemplateProvider> _logger;
     private const string TemplateNamespace = "Booking.Common.Email.Templates";
+    private readonly ILogger<EmailTemplateProvider> _logger;
+    private readonly IMemoryCache _memoryCache;
 
     public EmailTemplateProvider(IMemoryCache memoryCache, ILogger<EmailTemplateProvider> logger)
     {
@@ -33,7 +32,7 @@ public sealed class EmailTemplateProvider
         string templateName,
         CancellationToken cancellationToken)
     {
-        var assembly = CommonAssembly.Assembly; 
+        var assembly = CommonAssembly.Assembly;
         var resourcePath = GetResourcePath(templateName);
         // using embeding ressources : ( as an alternative we can use file based approach )
         await using var stream = assembly.GetManifestResourceStream(resourcePath);

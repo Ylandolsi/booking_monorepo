@@ -1,31 +1,23 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Booking.Api;
 using Booking.Api.Extensions;
 using Booking.Api.Services;
 using Booking.Common;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog;
-using Booking.Modules.Mentorships;
-using Booking.Modules.Mentorships.Persistence;
-using Booking.Modules.Mentorships.RecurringJobs;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Presistence;
-using Booking.Modules.Users.Presistence.Seed.Users;
 using Booking.Modules.Users.RecurringJobs;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Scalar.AspNetCore;
 using Serilog;
+using AssemblyReference = Booking.Modules.Catalog.AssemblyReference;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(8080); // Binds to 0.0.0.0:5000 (IPv4) and [::]:5000 (IPv6)
@@ -45,8 +37,8 @@ builder.Services.AddProblemDetails();
 
 Assembly[] moduleApplicationAssemblies =
 [
-    Booking.Modules.Catalog.AssemblyReference.Assembly,
-    Booking.Modules.Mentorships.AssemblyReference.Assembly,
+    AssemblyReference.Assembly,
+    //Booking.Modules.Mentorships.AssemblyReference.Assembly,
     Booking.Modules.Users.AssemblyReference.Assembly
 ];
 
@@ -74,7 +66,6 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddUsersModule(builder.Configuration);
-builder.Services.AddMentorshipsModule(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
@@ -84,7 +75,7 @@ builder.Services.AddHostedService<SeedHostedService>();
 */
 
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 {
@@ -97,7 +88,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-    var mentorshipsDb = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
     var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
@@ -117,7 +107,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         await userManager.DeleteAsync(user);
     }
 
-    await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod 
+    await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod
     await roleService.CreateRoleAsync("User");
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
@@ -151,7 +141,6 @@ app.UseAuthorization();
 app.UseHangfireDashboard();
 
 RecurringJobs.AddRecurringJobs();
-RecurringJobsMentorShipModules.AddRecurringJobs();
 app.MapControllers();
 app.MapEndpoints();
 
@@ -163,5 +152,5 @@ await app.RunAsync();
 // REMARK: Required for functional and integration tests to work.
 namespace Booking.Api
 {
-    public partial class Program;
+    public class Program;
 }

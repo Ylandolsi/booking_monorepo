@@ -22,10 +22,7 @@ public class RoleService(RoleManager<IdentityRole<int>> roleManager, UserManager
         var user = await userManager.FindByIdAsync(userId);
         if (user != null)
         {
-            if (!await userManager.IsInRoleAsync(user, roleName))
-            {
-                await userManager.AddToRoleAsync(user, roleName);
-            }
+            if (!await userManager.IsInRoleAsync(user, roleName)) await userManager.AddToRoleAsync(user, roleName);
 
             return Result.Success();
         }

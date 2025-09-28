@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api/api-client';
+import { api } from '@/api/utils';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
 import { WalletKeys } from '@/api/stores';
-import { CatalogEndpoints } from '@/lib';
+import { CatalogEndpoints } from '@/api/utils';
 
 type PayoutRequestData = {
   Amount: number;

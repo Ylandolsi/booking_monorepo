@@ -1,4 +1,4 @@
-import { api, CatalogEndpoints } from '@/lib';
+import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
 
 // ISO 8601 format ("2025-08-20T15:00:00Z")

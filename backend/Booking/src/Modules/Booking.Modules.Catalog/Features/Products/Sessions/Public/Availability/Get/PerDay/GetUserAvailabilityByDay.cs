@@ -20,16 +20,14 @@ internal sealed class GetUserAvailabilityByDay : IEndpoint
                 CancellationToken cancellationToken) =>
             {
                 if (!DateOnly.TryParse(date, out var parsedDate))
-                {
                     return Results.BadRequest("Invalid date format. Use YYYY-MM-DD.");
-                }
 
                 var query = new GetUserAvailabilityByDayQuery(
                     productSlug,
                     parsedDate,
-                    (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId
+                    timeZoneId == "" || timeZoneId is null ? "Africa/Tunis" : timeZoneId
                 );
-                Result<DailyAvailabilityResponse> result = await handler.Handle(query, cancellationToken);
+                var result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(
                     availability => Results.Ok(availability),

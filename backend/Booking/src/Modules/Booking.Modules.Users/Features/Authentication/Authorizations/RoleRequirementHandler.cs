@@ -1,6 +1,6 @@
+using Booking.Common.Authentication;
 using Booking.Modules.Users.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Booking.Common.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,9 +17,10 @@ public class RoleRequirementHandler(IServiceScopeFactory serviceScopeFactory) : 
             context.Fail();
             return;
         }
+
         // TODO : or we can replace this by checking the claims of user 
         var userManager = serviceScopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
-        int userId = context.User.GetUserId() ??
+        var userId = context.User.GetUserId() ??
                      throw new Exception("IdUser Claim doesnt exists , user is not authenticated");
 
         var user = await userManager.FindByIdAsync(userId.ToString());
@@ -31,10 +32,8 @@ public class RoleRequirementHandler(IServiceScopeFactory serviceScopeFactory) : 
         }
 
         foreach (var role in requirement.RequiredRoles)
-        {
             if (!await userManager.IsInRoleAsync(user, role))
                 context.Fail();
-        }
 
         context.Succeed(requirement);
     }

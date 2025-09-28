@@ -1,3 +1,4 @@
+using System.Globalization;
 using FluentValidation;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Book;
@@ -73,7 +74,7 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
     private bool BeValidDateFormat(string date)
     {
         return DateTime.TryParseExact(date, "yyyy-MM-dd", null,
-            System.Globalization.DateTimeStyles.None, out _);
+            DateTimeStyles.None, out _);
     }
 
     private bool BeValidTimeFormat(string time)
@@ -101,9 +102,7 @@ internal sealed class BookSessionCommandValidator : AbstractValidator<BookSessio
 
         if (TimeOnly.TryParse(command.StartTime, out var startTime) &&
             TimeOnly.TryParse(command.EndTime, out var endTime))
-        {
             return endTime > startTime;
-        }
 
         return true; // Let individual validations handle format issues
     }

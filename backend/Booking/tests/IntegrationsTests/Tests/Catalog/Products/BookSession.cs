@@ -4,7 +4,6 @@ using System.Text.Json;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Features;
 using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Mentorships.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.EntityFrameworkCore;
@@ -36,17 +35,17 @@ public class BookSessionTests : CatalogTestBase
         );
 
         var sessionProductSlug = await CatalogTestUtilities.CreateSessionProductForUser(
-                userAct,
-                "Test Session",
-                100.0m,
-                15,
-                "Test subtitle",
-                "Test description",
-                "Book now",
-                dayAvailabilities);
+            userAct,
+            "Test Session",
+            100.0m,
+            15,
+            "Test subtitle",
+            "Test description",
+            "Book now",
+            dayAvailabilities);
 
 
-        var nextMonday = MentorshipTestUtilities.GetNextWeekday(DayOfWeek.Monday);
+        var nextMonday = CatalogTestUtilities.GetNextWeekday(DayOfWeek.Monday);
 
 
         var bookingRequest = new
@@ -64,16 +63,16 @@ public class BookSessionTests : CatalogTestBase
         };
 
         // Act - Step 1: Book the session
-        var bookingResponse =  await unauthClient.PostAsJsonAsync(
-                CatalogEndpoints.Products.Sessions.Book.Replace("{productSlug}", sessionProductSlug),
-                bookingRequest);
+        var bookingResponse = await unauthClient.PostAsJsonAsync(
+            CatalogEndpoints.Products.Sessions.Book.Replace("{productSlug}", sessionProductSlug),
+            bookingRequest);
 
         // Assert - Booking should succeed and return payment URL
         Assert.Equal(HttpStatusCode.OK, bookingResponse.StatusCode);
         var bookingResult = await bookingResponse.Content.ReadFromJsonAsync<JsonElement>();
         Assert.True(bookingResult.TryGetProperty("payUrl", out var payUrl));
         Assert.False(string.IsNullOrEmpty(payUrl.GetString()));
-        var paymentRef = MentorshipTestUtilities.ExtractPaymentRefFromUrl(payUrl.GetString()!);
+        var paymentRef = CatalogTestUtilities.ExtractPaymentRefFromUrl(payUrl.GetString()!);
         Assert.False(string.IsNullOrEmpty(paymentRef));
 
         // Verify session is created with WaitingForPayment status
@@ -100,7 +99,7 @@ public class BookSessionTests : CatalogTestBase
 
         /// TOOD :
         //var escrow = //
-        //await MentorshipTestUtilities.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
+        //await Catalog.VerifyEscrowCreated(Factory, sessionId, expectedEscrowAmount);
     }
 
     public static async Task<dynamic> CompletePaymentViaMockKonnect(string paymentRef, HttpClient client)

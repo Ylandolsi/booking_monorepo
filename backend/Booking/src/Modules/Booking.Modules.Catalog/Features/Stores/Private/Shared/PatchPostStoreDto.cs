@@ -1,8 +1,8 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Booking.Common.Messaging;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Shared;
 
@@ -20,9 +20,8 @@ public record PatchPostStoreRequest
         ? null
         : JsonSerializer.Deserialize<IList<SocialLink>>(SocialLinksJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true ,
+            PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter() } // convert enum to string and vice vers  a 
-
         });
 
     /**

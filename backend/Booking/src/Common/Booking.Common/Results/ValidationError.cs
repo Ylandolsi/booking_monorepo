@@ -11,22 +11,25 @@ public sealed record ValidationError : Error
         Errors = errors;
     }
 
+    public ValidationError(Error error)
+        : this([error])
+    {
+    }
+
+    public ValidationError(string code, string description)
+        : this([Problem(code, description)])
+    {
+    }
+
     public Error[] Errors { get; }
 
-    public ValidationError ( Error error ) 
-        : this([ error ])
+    public static ValidationError FromResults(IEnumerable<Result> results)
     {
+        return new ValidationError(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
     }
-    public ValidationError(string code, string description ) 
-        : this([ Error.Problem(code, description )  ])
-    {
-    }
-
-    public static ValidationError FromResults(IEnumerable<Result> results) =>
-        new(results.Where(r => r.IsFailure).Select(r => r.Error).ToArray());
 }
 
-/* 
+/*
 
 var errors = new List<ValidationError>();
 
@@ -58,9 +61,9 @@ if (errors.Any())
             "errorMessage": "Email is required"
         },
         {
-            "Code": "Name", 
+            "Code": "Name",
             "errorMessage": "Name is required"
         }
     ]
 }
-*/ 
+*/

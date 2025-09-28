@@ -1,6 +1,6 @@
+using System.Globalization;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Utils;
@@ -15,12 +15,6 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
     ILogger<GetUserAvailabilityByDayQueryHandler> logger)
     : IQueryHandler<GetUserAvailabilityByDayQuery, DailyAvailabilityResponse>
 {
-    public record ScheduledAtWithDuration
-    {
-        public DateTime ScheduledAt;
-        public int Minutes;
-    }
-
     public async Task<Result<DailyAvailabilityResponse>> Handle(GetUserAvailabilityByDayQuery query,
         CancellationToken cancellationToken)
     {
@@ -37,13 +31,11 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (product == null)
-            {
                 return Result.Success(new DailyAvailabilityResponse(
                     query.Date,
                     false,
                     new List<TimeSlotResponse>(),
                     new DailySummary(0, 0, 0, 0)));
-            }
 
             // Get mentor's availability for this day of week
             var dayAvailabilities = await context.SessionAvailabilities
@@ -53,15 +45,13 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
 
 
             if (!dayAvailabilities.Any())
-            {
                 return Result.Success(new DailyAvailabilityResponse(
                     query.Date,
                     false,
                     new List<TimeSlotResponse>(),
                     new DailySummary(0, 0, 0, 0)));
-            }
 
-            List<ScheduledAtWithDuration> bookedSessions = await context.BookedSessions
+            var bookedSessions = await context.BookedSessions
                 .Where(s => s.ProductId == product.Id &&
                             DateOnly.FromDateTime(s.ScheduledAt.Date) == query.Date &&
                             s.Status != SessionStatus.Cancelled)
@@ -104,16 +94,10 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
                 timeSlots.AddRange(availabilitySlots);
 
                 foreach (var slot in availabilitySlots)
-                {
                     if (slot.IsAvailable)
-                    {
                         availableSlots++;
-                    }
                     else
-                    {
                         bookedSlots++;
-                    }
-                }
             }
 
             var totalSlots = availableSlots + bookedSlots;
@@ -160,10 +144,7 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
         while (currentTime <= endTime)
         {
             var slotEndTime = currentTime.Add(TimeSpan.FromMinutes(30));
-            if (slotEndTime > endTime)
-            {
-                break;
-            }
+            if (slotEndTime > endTime) break;
 
             // todo : optimize it to 2 pointers approach 
             var isBooked = bookedSessions.Any(session =>
@@ -179,15 +160,11 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
 
             var isAvailable = !isBooked;
 
-            if (considerTime && currentTime < TimeOnly.FromDateTime(currentTimeAtMentee))
-            {
-                isAvailable = false;
-                // TODO : or maybe dont include it at all ?
-            }
-
+            if (considerTime && currentTime < TimeOnly.FromDateTime(currentTimeAtMentee)) isAvailable = false;
+            // TODO : or maybe dont include it at all ?
             slots.Add(new TimeSlotResponse(
-                currentTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),
-                slotEndTime.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture),
+                currentTime.ToString("HH:mm", CultureInfo.InvariantCulture),
+                slotEndTime.ToString("HH:mm", CultureInfo.InvariantCulture),
                 isBooked,
                 isAvailable));
 
@@ -195,5 +172,11 @@ internal sealed class GetUserAvailabilityByDayQueryHandler(
         }
 
         return slots;
+    }
+
+    public record ScheduledAtWithDuration
+    {
+        public int Minutes;
+        public DateTime ScheduledAt;
     }
 }

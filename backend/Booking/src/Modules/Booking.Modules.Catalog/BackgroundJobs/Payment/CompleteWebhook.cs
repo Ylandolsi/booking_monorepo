@@ -64,7 +64,7 @@ public class CompleteWebhook(
 
 
             // Create escrow for the full session price
-            var priceAfterReducing = session.Price - (session.Price * BusinessConstants.PlatformFeePercentage);
+            var priceAfterReducing = session.Price - session.Price * BusinessConstants.PlatformFeePercentage;
             var escrowCreated = new Escrow(priceAfterReducing, session.Id);
             await dbContext.AddAsync(escrowCreated, cancellationToken);
 
@@ -75,8 +75,6 @@ public class CompleteWebhook(
             logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
                 order.Id);
         }
-
-        return ; 
     }
 
 
@@ -116,10 +114,8 @@ public class CompleteWebhook(
 
             var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
             if (resEventMentor.IsFailure)
-            {
                 logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
                     session.Id, resEventMentor.Error.Description);
-            }
 
             var meetLink = resEventMentor.IsSuccess
                 ? resEventMentor.Value.HangoutLink

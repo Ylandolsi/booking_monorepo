@@ -10,8 +10,6 @@ namespace Booking.Modules.Catalog.Features.Payout.Admin.Approve;
 
 public class ApprovePayoutAdmin : IEndpoint
 {
-    public record Request(int PayoutId);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Payouts.Admin.ApprovePayout,
@@ -27,6 +25,8 @@ public class ApprovePayoutAdmin : IEndpoint
                 })
             .RequireAuthorization()
             .RequireAuthorization("Admin")
-            .WithTags(Tags.Admin ,Tags.Payout);
+            .WithTags(Tags.Admin, Tags.Payout);
     }
+
+    public record Request(int PayoutId);
 }

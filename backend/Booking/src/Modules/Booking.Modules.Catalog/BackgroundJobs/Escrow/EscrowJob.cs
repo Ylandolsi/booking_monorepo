@@ -37,10 +37,10 @@ public class EscrowJob
 
         foreach (var escrow in escrows)
         {
-            // TODO , use release  AT 
+            // TODO , use release  AT
             if (DateTime.UtcNow >= escrow.Session.ScheduledAt.ToUniversalTime().AddDays(1))
             {
-                // handle the escrow 
+                // handle the escrow
                 var mentorWallet = await _context.Wallets.Where(w => w.UserId == escrow.Session.MentorId)
                     .FirstOrDefaultAsync(cancellationToken);
                 mentorWallet?.UpdateBalance(escrow.Price);
@@ -52,3 +52,4 @@ public class EscrowJob
         _logger.LogInformation("Hangfire Job: Escrow payment job finished.");
     }
 }*/
+

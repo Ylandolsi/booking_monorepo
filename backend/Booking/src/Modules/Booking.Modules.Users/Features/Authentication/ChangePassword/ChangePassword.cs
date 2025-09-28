@@ -11,11 +11,6 @@ namespace Booking.Modules.Users.Features.Authentication.ChangePassword;
 
 internal sealed class ChangePassword : IEndpoint
 {
-    public sealed record Request(
-        string OldPassword,
-        string NewPassword,
-        string ConfirmNewPassword);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut(UsersEndpoints.ChangePassword, async (
@@ -44,7 +39,7 @@ internal sealed class ChangePassword : IEndpoint
                     request.NewPassword,
                     request.ConfirmNewPassword);
 
-                Result result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
                     () => Results.NoContent(),
@@ -53,4 +48,9 @@ internal sealed class ChangePassword : IEndpoint
             .RequireAuthorization()
             .WithTags(Tags.Users);
     }
+
+    public sealed record Request(
+        string OldPassword,
+        string NewPassword,
+        string ConfirmNewPassword);
 }

@@ -6,7 +6,6 @@ using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -102,12 +101,10 @@ public class UpdateSessionProductHandler(
 
 
             // upload the pictures ! 
-            var pictureThumbnailResult = await storeService.UploadPicture(command.ThumbnailImage, sessionProduct.Store.Slug);
+            var pictureThumbnailResult =
+                await storeService.UploadPicture(command.ThumbnailImage, sessionProduct.Store.Slug);
 
-            if (pictureThumbnailResult.IsSuccess)
-            {
-                sessionProduct.UpdateThumbnail(pictureThumbnailResult.Value);
-            }
+            if (pictureThumbnailResult.IsSuccess) sessionProduct.UpdateThumbnail(pictureThumbnailResult.Value);
 
             // Save changes
             await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -147,15 +144,10 @@ public class UpdateSessionProductHandler(
                 .FirstOrDefaultAsync(sp => sp.Id == sessionProductId, cancellationToken);
 
             if (sessionProduct == null)
-            {
                 return Result.Failure(Error.NotFound("SessionProduct.NotFound", "Session product not found"));
-            }
 
             // Update timezone if provided
-            if (!string.IsNullOrEmpty(timeZoneId))
-            {
-                sessionProduct.UpdateTimeZone(timeZoneId);
-            }
+            if (!string.IsNullOrEmpty(timeZoneId)) sessionProduct.UpdateTimeZone(timeZoneId);
 
             foreach (var dayRequest in dayAvailabilities)
             {

@@ -1,10 +1,9 @@
-using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
-using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Expertise.Update;
@@ -20,7 +19,7 @@ internal sealed class UpdateUserExpertiseCommandHandler(
 
         try
         {
-            User? user = await context.Users
+            var user = await context.Users
                 .FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
 
             if (user == null)
@@ -36,12 +35,7 @@ internal sealed class UpdateUserExpertiseCommandHandler(
             await unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
-
-
-                if (existingExpertise.Any())
-                {
-                    context.UserExpertises.RemoveRange(existingExpertise);
-                }
+                if (existingExpertise.Any()) context.UserExpertises.RemoveRange(existingExpertise);
 
                 // Validate and add new expertise
                 if (command.ExpertiseIds?.Count > 0)
@@ -53,9 +47,7 @@ internal sealed class UpdateUserExpertiseCommandHandler(
                         .ToListAsync(cancellationToken);
 
                     if (validExpertiseIds?.Count > UserConstraints.MaxExpertises)
-                    {
                         return Result.Failure(UserErrors.ExpertiseLimitExceeded);
-                    }
 
                     if (validExpertiseIds?.Count != command.ExpertiseIds.Count)
                     {
@@ -78,9 +70,8 @@ internal sealed class UpdateUserExpertiseCommandHandler(
                 await context.SaveChangesAsync(cancellationToken);
                 await unitOfWork.CommitTransactionAsync(cancellationToken);
                 logger.LogInformation("Successfully updated {Count} expertise for user {UserId}",
-                      command.ExpertiseIds?.Count ?? 0,
-                      command.UserId);
-
+                    command.ExpertiseIds?.Count ?? 0,
+                    command.UserId);
             }
             catch (Exception ex)
             {

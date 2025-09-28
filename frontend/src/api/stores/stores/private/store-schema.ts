@@ -1,4 +1,4 @@
-import { toFormData } from '@/lib/api';
+import { toFormData } from '@/api/utils';
 import z from 'zod';
 
 export const patchPostStoreSchema = z.object({

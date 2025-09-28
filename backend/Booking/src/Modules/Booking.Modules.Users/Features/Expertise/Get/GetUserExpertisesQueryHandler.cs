@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Expertise.Get;

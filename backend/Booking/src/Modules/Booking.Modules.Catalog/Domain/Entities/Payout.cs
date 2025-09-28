@@ -5,15 +5,6 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Payout : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; private set; }
-    public int UserId { get; private set; }
-    public string KonnectWalletId { get; private set; }
-    public int WalletId { get; private set; }
-    public decimal Amount { get; private set; }
-
-    public string PaymentRef { get; private set; } = ""; // from Konnect
-    public PayoutStatus Status { get; private set; }
     public Payout(int userId, string konnectWalletId, int walletId, decimal amount)
     {
         UserId = userId;
@@ -24,6 +15,17 @@ public class Payout : Entity
         CreatedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; private set; }
+
+    public int UserId { get; private set; }
+    public string KonnectWalletId { get; private set; }
+    public int WalletId { get; private set; }
+    public decimal Amount { get; private set; }
+
+    public string PaymentRef { get; private set; } = ""; // from Konnect
+    public PayoutStatus Status { get; private set; }
 
     public void Complete()
     {
@@ -56,5 +58,5 @@ public enum PayoutStatus
     Pending,
     Approved,
     Rejected,
-    Completed,
+    Completed
 }

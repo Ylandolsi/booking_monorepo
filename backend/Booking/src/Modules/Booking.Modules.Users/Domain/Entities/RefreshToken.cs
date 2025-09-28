@@ -5,30 +5,15 @@ namespace Booking.Modules.Users.Domain.Entities;
 
 public class RefreshToken : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-    public int Id { get; set; }
-    public Guid ExternalId { get; set; } = Guid.NewGuid();
-    public string Token { get; private set; }
-    public int UserId { get; private set; }
-    public User User { get; private set; } = null!;
-    public DateTime ExpiresOnUtc { get; private set; }
-    public DateTime CreatedOnUtc { get; private set; }
-    public DateTime? RevokedOnUtc { get; private set; }
-    public bool IsExpired => DateTime.UtcNow >= ExpiresOnUtc;
-    public bool IsRevoked => RevokedOnUtc.HasValue;
-    public bool IsActive => !IsRevoked && !IsExpired;
-
-    public string CreatedByIp { get; private set; }
-    public string UserAgent { get; private set; }
-
-    private RefreshToken() { }
+    private RefreshToken()
+    {
+    }
 
     public RefreshToken(string token,
-                        int userId,
-                        DateTime expiresOnUtc,
-                        string createdByIp,
-                        string userAgent)
+        int userId,
+        DateTime expiresOnUtc,
+        string createdByIp,
+        string userAgent)
     {
         Token = token ?? throw new ArgumentNullException(nameof(token));
         UserId = userId;
@@ -41,14 +26,27 @@ public class RefreshToken : Entity
         UserAgent = userAgent ?? string.Empty; //  ?? throw new ArgumentNullException(nameof(userAgent));
     }
 
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+    public int Id { get; set; }
+
+    public Guid ExternalId { get; set; } = Guid.NewGuid();
+    public string Token { get; private set; }
+    public int UserId { get; private set; }
+    public User User { get; private set; } = null!;
+    public DateTime ExpiresOnUtc { get; }
+    public DateTime CreatedOnUtc { get; private set; }
+    public DateTime? RevokedOnUtc { get; private set; }
+    public bool IsExpired => DateTime.UtcNow >= ExpiresOnUtc;
+    public bool IsRevoked => RevokedOnUtc.HasValue;
+    public bool IsActive => !IsRevoked && !IsExpired;
+
+    public string CreatedByIp { get; private set; }
+    public string UserAgent { get; private set; }
+
     public void Revoke()
     {
-        if (!IsActive)
-        {
-            return;
-        }
+        if (!IsActive) return;
         RevokedOnUtc = DateTime.UtcNow;
     }
-
-
 }

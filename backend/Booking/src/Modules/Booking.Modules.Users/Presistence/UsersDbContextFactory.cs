@@ -10,28 +10,24 @@ public class UsersDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
     {
         // Build configuration - look for appsettings.json in the API project
         var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Api", "Booking.Api");
-        
+
         var configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile("appsettings.Development.json", true)
             .AddEnvironmentVariables()
             .Build();
 
         // Get connection string
         var connectionString = configuration.GetConnectionString("Database");
-        
+
         if (string.IsNullOrEmpty(connectionString))
-        {
             throw new InvalidOperationException("Database connection string not found in configuration.");
-        }
 
         // Configure DbContextOptions
         var optionsBuilder = new DbContextOptionsBuilder<UsersDbContext>();
-        optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
-            {
-                npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", Schemas.Users);
-            })
+        optionsBuilder.UseNpgsql(connectionString,
+                npgsqlOptions => { npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", Schemas.Users); })
             .UseSnakeCaseNamingConvention();
 
         return new UsersDbContext(optionsBuilder.Options);

@@ -4,7 +4,7 @@ import type {
   CreateSessionProductRequest,
   PatchPostSessionResponse,
 } from '@/api/stores/produtcs/sessions/private/schema-session';
-import { api, CatalogEndpoints, validateFile } from '@/lib/api';
+import { api, CatalogEndpoints, validateFile } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
 
 export const updateSession = async ({ data, productSlug }: { data: CreateProductInput; productSlug: string }): Promise<PatchPostSessionResponse> => {

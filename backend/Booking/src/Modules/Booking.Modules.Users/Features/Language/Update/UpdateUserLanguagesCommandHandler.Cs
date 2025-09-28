@@ -1,10 +1,9 @@
-using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
-using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Language.Update;
@@ -20,7 +19,7 @@ internal sealed class UpdateUserLanguagesCommandHandler(
 
         try
         {
-            User? user = await context.Users
+            var user = await context.Users
                 .FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
 
             if (user == null)
@@ -53,9 +52,7 @@ internal sealed class UpdateUserLanguagesCommandHandler(
 
 
                     if (validLanguageIds?.Count > UserConstraints.MaxExpertises)
-                    {
                         return Result.Failure(UserErrors.LanguageLimitExceeded);
-                    }
 
 
                     if (validLanguageIds?.Count != command.LanguageIds.Count)

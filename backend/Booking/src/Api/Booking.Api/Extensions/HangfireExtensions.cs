@@ -1,9 +1,7 @@
 using Booking.Api.Middlewares;
-using Booking.Modules.Users.Domain.Entities;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.PostgreSql;
-using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Api.Extensions;
 
@@ -36,10 +34,9 @@ public static class HangfireExtensions
 
     public static IApplicationBuilder UseHangfireDashboard(this IApplicationBuilder app)
     {
-
         var options = new DashboardOptions
         {
-            AsyncAuthorization = [new HangfireDashboardAuthorizationFilter(app)],
+            AsyncAuthorization = [new HangfireDashboardAuthorizationFilter(app)]
         };
         app.UseHangfireDashboard("/hangfire", options);
 

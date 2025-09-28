@@ -18,7 +18,7 @@ public class CheckSlugAvailabilityEndpoint : IEndpoint
                 IQueryHandler<CheckSlugAvailabilityQuery, SlugAvailabilityResponse> handler,
                 CancellationToken cancellationToken) =>
             {
-                int userId = userContext.UserId;
+                var userId = userContext.UserId;
 
                 var query = new CheckSlugAvailabilityQuery(userId, slug, false);
                 var result = await handler.Handle(query, cancellationToken);

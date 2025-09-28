@@ -1,5 +1,4 @@
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -92,8 +91,8 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired(false);
 
         builder.Property(o => o.CreatedAt)
-            .HasColumnName("created_at"); 
-        
+            .HasColumnName("created_at");
+
         builder.Property(o => o.UpdatedAt)
             .HasColumnName("updated_at");
 

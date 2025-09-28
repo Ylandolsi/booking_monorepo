@@ -1,30 +1,26 @@
+/*using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Booking.Modules.Mentorships.Features;
+using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Users.Features;
-using Booking.Modules.Mentorships.Domain.Enums;
-using Booking.Modules.Mentorships.Domain.Entities;
-using Booking.Modules.Mentorships.Persistence;
-using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
 using Booking.Modules.Users.Presistence;
-using IntegrationsTests.Abstractions.Base;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Hangfire;
-using Xunit;
+using IntegrationsTests.Abstractions.Base;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationsTests.Abstractions;
 
 /// <summary>
-/// Shared utilities for mentorship-related integration tests.
-/// Provides common helper methods to reduce code duplication across test files.
+///     Shared utilities for mentorship-related integration tests.
+///     Provides common helper methods to reduce code duplication across test files.
 /// </summary>
 public static class MentorshipTestUtilities
 {
     #region Date and Time Utilities
 
     /// <summary>
-    /// Gets the next occurrence of a specific weekday from today
+    ///     Gets the next occurrence of a specific weekday from today
     /// </summary>
     /// <param name="dayOfWeek">The target day of the week</param>
     /// <returns>The next occurrence of the specified day</returns>
@@ -37,7 +33,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Gets the next Monday from today
+    ///     Gets the next Monday from today
     /// </summary>
     public static DateTime GetNextMonday()
     {
@@ -45,7 +41,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Gets the next Sunday from today
+    ///     Gets the next Sunday from today
     /// </summary>
     public static DateTime GetNextSunday()
     {
@@ -53,7 +49,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Gets the next occurrence of a specific weekday with a specific time
+    ///     Gets the next occurrence of a specific weekday with a specific time
     /// </summary>
     /// <param name="dayOfWeek">The target day of the week</param>
     /// <param name="time">The specific time for that day</param>
@@ -69,7 +65,7 @@ public static class MentorshipTestUtilities
     #region Mentor and User Utilities
 
     /// <summary>
-    /// Retrieves the slug for the current authenticated user
+    ///     Retrieves the slug for the current authenticated user
     /// </summary>
     /// <param name="userClient">The authenticated user's HTTP client</param>
     /// <returns>The user's slug</returns>
@@ -83,7 +79,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Retrieves the current user information for an authenticated client
+    ///     Retrieves the current user information for an authenticated client
     /// </summary>
     /// <param name="userClient">The authenticated user's HTTP client</param>
     /// <returns>The user information as JsonElement</returns>
@@ -100,7 +96,7 @@ public static class MentorshipTestUtilities
     #region Availability Management
 
     /// <summary>
-    /// Sets up mentor availability for a specific day of the week
+    ///     Sets up mentor availability for a specific day of the week
     /// </summary>
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     /// <param name="dayOfWeek">The day to set availability for</param>
@@ -131,7 +127,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Sets up mentor availability for multiple days with the same time range
+    ///     Sets up mentor availability for multiple days with the same time range
     /// </summary>
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     /// <param name="daysOfWeek">The days to set availability for</param>
@@ -161,7 +157,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Generates test data for availability with mixed active/inactive days
+    ///     Generates test data for availability with mixed active/inactive days
     /// </summary>
     /// <returns>An object representing bulk availability data</returns>
     public static object CreateMixedAvailabilityData()
@@ -195,7 +191,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Sets up default weekday availability (Monday-Friday, 9 AM - 5 PM)
+    ///     Sets up default weekday availability (Monday-Friday, 9 AM - 5 PM)
     /// </summary>
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     public static async Task SetupDefaultWeekdayAvailability(HttpClient mentorClient)
@@ -206,7 +202,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Sets up mentor availability with custom ranges for a specific day
+    ///     Sets up mentor availability with custom ranges for a specific day
     /// </summary>
     /// <param name="mentorClient">The authenticated mentor's HTTP client</param>
     /// <param name="dayOfWeek">The day to set availability for</param>
@@ -243,7 +239,7 @@ public static class MentorshipTestUtilities
     #region Session Booking Utilities
 
     /// <summary>
-    /// Books a session and returns the session ID
+    ///     Books a session and returns the session ID
     /// </summary>
     /// <param name="mentorClient">The mentor's HTTP client (to get mentor slug)</param>
     /// <param name="menteeClient">The mentee's HTTP client (to book the session)</param>
@@ -287,9 +283,7 @@ public static class MentorshipTestUtilities
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
         // Verify we got a payUrl (indicating successful booking)
         if (!result.TryGetProperty("payUrl", out var payUrl) || string.IsNullOrEmpty(payUrl.GetString()))
-        {
             throw new InvalidOperationException("Session booking did not return a valid payUrl");
-        }
 
         // Get the newly created session by finding the session that wasn't there before
         var newSessionsResponse = await menteeClient.GetAsync(MentorshipEndpoints.Sessions.GetSessions);
@@ -299,10 +293,8 @@ public static class MentorshipTestUtilities
 
         // Should have one more session now
         if (newSessionsArray.Count != initialCount + 1)
-        {
             throw new InvalidOperationException(
                 $"Expected {initialCount + 1} sessions after booking, but found {newSessionsArray.Count}");
-        }
 
         // Find the newest session (should be the one with the highest ID)
         var newSession = newSessionsArray
@@ -310,15 +302,13 @@ public static class MentorshipTestUtilities
             .FirstOrDefault();
 
         if (newSession.ValueKind == JsonValueKind.Undefined)
-        {
             throw new InvalidOperationException("Could not find the newly created session");
-        }
 
         return newSession.GetProperty("id").GetInt32();
     }
 
     /// <summary>
-    /// Creates a basic booking request object
+    ///     Creates a basic booking request object
     /// </summary>
     /// <param name="mentorSlug">The mentor's slug</param>
     /// <param name="date">The date for the session</param>
@@ -327,7 +317,6 @@ public static class MentorshipTestUtilities
     /// <param name="timeZoneId">Timezone for the session</param>
     /// <param name="note">Optional note for the session</param>
     /// <returns>An anonymous object representing the booking request</returns>
-    /// 
     public static object CreateBookingRequest(
         string mentorSlug,
         string date,
@@ -347,7 +336,6 @@ public static class MentorshipTestUtilities
 
         // If note is provided, create an object that includes it
         if (!string.IsNullOrEmpty(note))
-        {
             return new
             {
                 MentorSlug = mentorSlug,
@@ -357,7 +345,6 @@ public static class MentorshipTestUtilities
                 TimeZoneId = timeZoneId,
                 Note = note
             };
-        }
 
         return request;
     }
@@ -414,34 +401,28 @@ public static class MentorshipTestUtilities
     #endregion
 
 
-
-
     #region Assertion Helpers
 
     /// <summary>
-    /// Verifies that a response contains a valid session booking result
+    ///     Verifies that a response contains a valid session booking result
     /// </summary>
     /// <param name="response">The HTTP response from booking</param>
     /// <returns>The parsed JSON element</returns>
     public static async Task<JsonElement> VerifySuccessfulBooking(HttpResponseMessage response)
     {
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        {
+        if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Expected OK response but got {response.StatusCode}");
-        }
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         if (!result.TryGetProperty("payUrl", out var payUrl) || string.IsNullOrEmpty(payUrl.GetString()))
-        {
             throw new InvalidOperationException("Successful booking should contain a payUrl");
-        }
 
         return result;
     }
 
     /// <summary>
-    /// Verifies that a sessions list response contains expected data
+    ///     Verifies that a sessions list response contains expected data
     /// </summary>
     /// <param name="response">The HTTP response</param>
     /// <param name="expectedMinCount">Minimum expected number of sessions</param>
@@ -449,25 +430,19 @@ public static class MentorshipTestUtilities
     public static async Task<List<JsonElement>> VerifySessionsList(HttpResponseMessage response,
         int expectedMinCount = 0)
     {
-        if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        {
+        if (response.StatusCode != HttpStatusCode.OK)
             throw new InvalidOperationException($"Expected OK response but got {response.StatusCode}");
-        }
 
         var sessions = await response.Content.ReadFromJsonAsync<JsonElement>();
 
         if (sessions.ValueKind != JsonValueKind.Array)
-        {
             throw new InvalidOperationException("Sessions response should be an array");
-        }
 
         var sessionsList = sessions.EnumerateArray().ToList();
 
         if (sessionsList.Count < expectedMinCount)
-        {
             throw new InvalidOperationException(
                 $"Expected at least {expectedMinCount} sessions but got {sessionsList.Count}");
-        }
 
         return sessionsList;
     }
@@ -477,12 +452,12 @@ public static class MentorshipTestUtilities
     #region Constants
 
     /// <summary>
-    /// Default timezone used in tests
+    ///     Default timezone used in tests
     /// </summary>
     public const string DefaultTimeZone = "Africa/Tunis";
 
     /// <summary>
-    /// Common timezone IDs for testing
+    ///     Common timezone IDs for testing
     /// </summary>
     public static class TimeZones
     {
@@ -495,7 +470,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Common time formats used in tests
+    ///     Common time formats used in tests
     /// </summary>
     public static class TimeFormats
     {
@@ -573,7 +548,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Extracts payment reference from payment URL
+    ///     Extracts payment reference from payment URL
     /// </summary>
     /// <param name="payUrl">The payment URL</param>
     /// <returns>Payment reference string</returns>
@@ -589,7 +564,7 @@ public static class MentorshipTestUtilities
     #region Escrow and Payout Utilities
 
     /// <summary>
-    /// Creates an admin authentication client
+    ///     Creates an admin authentication client
     /// </summary>
     /// <param name="factory">The test factory</param>
     /// <returns>Authenticated admin HTTP client</returns>
@@ -611,12 +586,12 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Gets the user ID from the HTTP client
+    ///     Gets the user ID from the HTTP client
     /// </summary>
     /// <param name="userClinet">The user 's HTTP client</param>
     /// <returns>Mentor ID</returns>
     /// <summary>
-    /// Gets the mentor ID from the HTTP client
+    ///     Gets the mentor ID from the HTTP client
     /// </summary>
     /// <param name="mentorClient">The mentor's HTTP client</param>
     /// <returns>Mentor ID</returns>
@@ -630,7 +605,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Creates a payout request for a mentor
+    ///     Creates a payout request for a mentor
     /// </summary>
     /// <param name="mentorClient">Mentor's HTTP client</param>
     /// <param name="amount">Amount to request payout for</param>
@@ -641,7 +616,7 @@ public static class MentorshipTestUtilities
 
         await mentorClient.PostAsJsonAsync(UsersEndpoints.InegrateKonnect, new
         {
-            KonnectWalletId = "connect-with-konnect",
+            KonnectWalletId = "connect-with-konnect"
         });
 
 
@@ -653,13 +628,12 @@ public static class MentorshipTestUtilities
         return await mentorClient.PostAsJsonAsync(MentorshipEndpoints.Payouts.Payout, payoutRequest);
     }
 
-
     #endregion
 
     #region Database Verification Utilities
 
     /// <summary>
-    /// Verifies that an escrow record is created for a session
+    ///     Verifies that an escrow record is created for a session
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
     /// <param name="sessionId">Session ID</param>
@@ -687,7 +661,7 @@ public static class MentorshipTestUtilities
 
 
     /// <summary>
-    /// Verifies that an escrow is released after session completion
+    ///     Verifies that an escrow is released after session completion
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
     /// <param name="sessionId">Session ID</param>
@@ -702,7 +676,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Verifies that a payout request is created
+    ///     Verifies that a payout request is created
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
     /// <param name="mentorId">Mentor ID</param>
@@ -724,7 +698,7 @@ public static class MentorshipTestUtilities
 
 
     /// <summary>
-    /// Gets yser balance from database
+    ///     Gets yser balance from database
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
     /// <param name="userId">User ID</param>
@@ -768,7 +742,7 @@ public static class MentorshipTestUtilities
     #region Background Job Utilities
 
     /// <summary>
-    /// Triggers the escrow processing background job
+    ///     Triggers the escrow processing background job
     /// </summary>
     /// <param name="factory">Test factory for background job access</param>
     public static async Task TriggerEscrowJob(IntegrationTestsWebAppFactory factory)
@@ -784,7 +758,7 @@ public static class MentorshipTestUtilities
     }
 
     /// <summary>
-    /// Simulates time passage for escrow release (24-hour rule)
+    ///     Simulates time passage for escrow release (24-hour rule)
     /// </summary>
     /// <param name="factory">Test factory for database access</param>
     /// <param name="sessionId">Session ID</param>
@@ -795,13 +769,11 @@ public static class MentorshipTestUtilities
 
         var session = await dbContext.Sessions.FindAsync(sessionId);
         if (session != null)
-        {
             // Note: CompletedAt property and MarkAsCompleted method might not exist yet
             // This is a placeholder for when session completion tracking is implemented
             // session.MarkAsCompleted();
             await dbContext.SaveChangesAsync();
-        }
     }
 
     #endregion
-}
+}*/

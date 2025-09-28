@@ -1,8 +1,8 @@
+using System.Text.Json;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Text.Json;
 
 namespace Booking.Modules.Catalog.Persistence.Configurations;
 

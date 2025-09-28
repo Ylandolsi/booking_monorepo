@@ -11,8 +11,10 @@ public record PayoutResponse
     public int WalletId { get; init; }
     public decimal Amount { get; init; }
     public string PaymentRef { get; init; }
+
     [JsonConverter(typeof(JsonStringEnumConverter))] // convert enum to string
     public PayoutStatus Status { get; init; }
+
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; init; }
 }

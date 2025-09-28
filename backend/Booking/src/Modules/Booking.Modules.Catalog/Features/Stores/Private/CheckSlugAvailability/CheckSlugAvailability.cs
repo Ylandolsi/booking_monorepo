@@ -1,7 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.CheckSlugAvailability;
 
@@ -27,7 +26,7 @@ public class CheckSlugAvailabilityHandler(CatalogDbContext dbContext, StoreServi
         var isAvailable = await storeService.CheckSlugAvailability(request.StoreSlug, null, false, cancellationToken);
 
         var message = isAvailable ? "Slug is available" : "Slug is already taken";
-        
+
         var response = new SlugAvailabilityResponse(
             request.StoreSlug,
             isAvailable,

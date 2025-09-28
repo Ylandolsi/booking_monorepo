@@ -1,4 +1,5 @@
-﻿using Amazon.SimpleEmail;
+﻿using Amazon.Runtime;
+using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Moq;
 
@@ -16,9 +17,9 @@ public static class CaptureAmazonSESServiceMock
             .ReturnsAsync(new SendEmailResponse
             {
                 MessageId = Guid.NewGuid().ToString(),
-                ResponseMetadata = new Amazon.Runtime.ResponseMetadata
+                ResponseMetadata = new ResponseMetadata
                 {
-                    ChecksumValidationStatus = Amazon.Runtime.ChecksumValidationStatus.SUCCESSFUL
+                    ChecksumValidationStatus = ChecksumValidationStatus.SUCCESSFUL
                 }
             });
 

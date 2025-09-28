@@ -51,11 +51,11 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
                 Issuer = _jwtOptions.Issuer,
                 Audience = _jwtOptions.Audience,
                 NotBefore = DateTime.UtcNow,
-                IssuedAt = DateTime.UtcNow,
+                IssuedAt = DateTime.UtcNow
             };
 
             var handler = new JsonWebTokenHandler();
-            string token = handler.CreateToken(tokenDescriptor);
+            var token = handler.CreateToken(tokenDescriptor);
             return token;
         }
         catch (Exception e)
@@ -63,7 +63,7 @@ public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
             Console.WriteLine($"Error generating JWT token: {e.Message}");
         }
 
-        return String.Empty;
+        return string.Empty;
     }
 
     public string GenerateRefreshToken()

@@ -4,15 +4,6 @@ namespace Booking.Modules.Users.Domain.ValueObjects;
 
 public class SocialLinks : ValueObject
 {
-    public string? LinkedIn { get; private set; }
-    public string? Twitter { get; private set; }
-    public string? Github { get; private set; }
-
-    public string? Youtube { get; private set; }
-    public string? Facebook { get; private set; }
-    public string? Instagram { get; private set; }
-    public string? Portfolio { get; private set; }
-
     public SocialLinks(string? linkedIn = null,
         string? twitter = null,
         string? github = null,
@@ -29,6 +20,15 @@ public class SocialLinks : ValueObject
         Instagram = instagram;
         Portfolio = portfolio;
     }
+
+    public string? LinkedIn { get; }
+    public string? Twitter { get; }
+    public string? Github { get; }
+
+    public string? Youtube { get; }
+    public string? Facebook { get; }
+    public string? Instagram { get; }
+    public string? Portfolio { get; }
 
     public bool HasAnyLinks()
     {

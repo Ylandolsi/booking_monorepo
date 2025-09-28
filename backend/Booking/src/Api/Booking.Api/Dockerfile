@@ -7,11 +7,11 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+# TODO : review this 
 COPY ["Api/Booking.Api/Booking.Api.csproj", "Api/Booking.Api/"]
 COPY ["Common/Booking.Common/Booking.Common.csproj", "Common/Booking.Common"]
 COPY ["Modules/Booking.Modules.Users/Booking.Modules.Users.csproj" , "Modules/Booking.Modules.Users"]
-COPY ["Modules/Booking.Modules.Mentorships/Booking.Modules.Mentorships.csproj" , "Modules/Booking.Modules.Mentorships"]
-COPY ["Modules/Booking.Modules.Sessions/Booking.Modules.Sessions.csproj" , "Modules/Booking.Modules.Sessions"]
+COPY ["Modules/Booking.Modules.Catalog/Booking.Modules.Catalog.csproj" , "Modules/Booking.Modules.Catalog"]
 
 
 RUN dotnet restore "Booking.Api/Booking.Api.csproj"

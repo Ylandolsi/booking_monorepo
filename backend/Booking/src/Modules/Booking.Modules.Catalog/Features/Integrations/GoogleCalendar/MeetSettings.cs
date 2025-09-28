@@ -6,8 +6,9 @@ public class MeetSettings
     public bool GuestsCanModify { get; set; } = false;
     public bool GuestsCanInviteOthers { get; set; } = true;
     public bool UseDefaultReminders { get; set; } = true;
-    public List<ReminderInfo> CustomReminders { get; set; } = new  List<ReminderInfo>();
+    public List<ReminderInfo> CustomReminders { get; set; } = new();
 }
+
 public class ReminderInfo
 {
     public string Method { get; set; } = "email"; // "email" or "popup"

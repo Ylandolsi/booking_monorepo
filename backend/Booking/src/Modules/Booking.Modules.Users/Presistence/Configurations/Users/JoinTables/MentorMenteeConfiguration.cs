@@ -19,7 +19,5 @@ internal sealed class MentorMenteeConfiguration : IEntityTypeConfiguration<Mento
             .WithMany(u => u.UserMentors)
             .HasForeignKey(mm => mm.MenteeId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-
     }
 }

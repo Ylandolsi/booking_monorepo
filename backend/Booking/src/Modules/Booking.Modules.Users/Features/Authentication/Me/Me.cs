@@ -10,22 +10,20 @@ namespace Booking.Modules.Users.Features.Authentication.Me;
 
 internal sealed class Me : IEndpoint
 {
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GetCurrentUser, async (
-            UserContext userContext,
-            IQueryHandler<MeQuery, MeData> handler,
-            CancellationToken cancellationToken = default) =>
-        {
-            int userId = userContext.UserId;
+                UserContext userContext,
+                IQueryHandler<MeQuery, MeData> handler,
+                CancellationToken cancellationToken = default) =>
+            {
+                var userId = userContext.UserId;
 
-            var query = new MeQuery(userId);
-            var result = await handler.Handle(query, cancellationToken);
-            return result.Match((result) => Results.Ok(result), (result) => CustomResults.Problem(result));
-        })
-
-        .RequireAuthorization()
-        .WithTags(Tags.Users);
+                var query = new MeQuery(userId);
+                var result = await handler.Handle(query, cancellationToken);
+                return result.Match(result => Results.Ok(result), result => CustomResults.Problem(result));
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Users);
     }
 }

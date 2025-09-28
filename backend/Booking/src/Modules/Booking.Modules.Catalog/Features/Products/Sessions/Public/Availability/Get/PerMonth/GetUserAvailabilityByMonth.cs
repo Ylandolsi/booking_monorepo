@@ -1,7 +1,6 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,11 +26,11 @@ internal sealed class GetUserAvailabilityByMonth : IEndpoint
                     productSlug,
                     year,
                     month,
-                    (timeZoneId == "" || timeZoneId is null) ? "Africa/Tunis" : timeZoneId,
+                    timeZoneId == "" || timeZoneId is null ? "Africa/Tunis" : timeZoneId,
                     includePastDays,
                     includeBookedSlots);
 
-                Result<MonthlyAvailabilityResponse> result = await handler.Handle(query, cancellationToken);
+                var result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(
                     availability => Results.Ok(availability),

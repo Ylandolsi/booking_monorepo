@@ -10,10 +10,8 @@ using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
 
-
 public class SendingPasswordResetToken
 {
-
     private readonly AwsSesEmailService _emailService;
     private readonly EmailTemplateProvider _emailTemplateProvider;
     private readonly FrontendApplicationOptions _frontendApplicationOptions;
@@ -21,9 +19,9 @@ public class SendingPasswordResetToken
 
 
     public SendingPasswordResetToken(AwsSesEmailService emailService,
-        EmailTemplateProvider emailTemplateProvider, 
-                           IOptions<FrontendApplicationOptions> frontendApplicationOptions,
-                           ILogger<SendingPasswordResetToken> logger )
+        EmailTemplateProvider emailTemplateProvider,
+        IOptions<FrontendApplicationOptions> frontendApplicationOptions,
+        ILogger<SendingPasswordResetToken> logger)
     {
         _emailService = emailService;
         _emailTemplateProvider = emailTemplateProvider;
@@ -35,11 +33,10 @@ public class SendingPasswordResetToken
     [DisplayName("Send password reset token to {0}")]
     [AutomaticRetry(OnAttemptsExceeded = AttemptsExceededAction.Delete)]
     public async Task SendAsync(
-                            string userEmail,
-                            string resetUrl,
-                            PerformContext? context  )
+        string userEmail,
+        string resetUrl,
+        PerformContext? context)
     {
-
         context?.WriteLine($"Attempting to send password reset token to email : {userEmail}");
         _logger.LogInformation("Hangfire Job: Attempting to send password reset token to email : {Email}", userEmail);
 
@@ -49,18 +46,17 @@ public class SendingPasswordResetToken
 
         try
         {
-
             cancellationToken.ThrowIfCancellationRequested();
-            var (subject, body) = await _emailTemplateProvider.GetTemplateAsync(TemplatesNames.PasswordResetEmail, cancellationToken);
+            var (subject, body) =
+                await _emailTemplateProvider.GetTemplateAsync(TemplatesNames.PasswordResetEmail, cancellationToken);
             body = body.Replace("{{RESET_LINK}}", resetUrl)
-                        .Replace("{{APP_NAME}}", _frontendApplicationOptions.AppName)
-                        .Replace("{{SUPPORT_LINK}}", _frontendApplicationOptions.SupportLink)
-                        .Replace("{{SECURITY_LINK}}", _frontendApplicationOptions.SecurityLink); 
+                .Replace("{{APP_NAME}}", _frontendApplicationOptions.AppName)
+                .Replace("{{SUPPORT_LINK}}", _frontendApplicationOptions.SupportLink)
+                .Replace("{{SECURITY_LINK}}", _frontendApplicationOptions.SecurityLink);
 
             await _emailService.SendEmailAsync(userEmail, subject, body, cancellationToken);
             context?.WriteLine($"token is sent successfully to : {userEmail}");
             _logger.LogInformation("Hangfire Job: token is sent successfully to ", userEmail);
-
         }
         catch (OperationCanceledException)
         {
@@ -74,6 +70,5 @@ public class SendingPasswordResetToken
             _logger.LogError(ex, "Hangfire Job: exception while sending Reset token to email {Email}", userEmail);
             throw;
         }
-
     }
 }

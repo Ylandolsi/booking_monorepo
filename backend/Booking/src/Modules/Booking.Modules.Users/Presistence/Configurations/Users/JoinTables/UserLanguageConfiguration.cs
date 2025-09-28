@@ -19,6 +19,5 @@ internal sealed class UserLanguageConfiguration : IEntityTypeConfiguration<UserL
             .WithMany(l => l.UserLanguages)
             .HasForeignKey(ul => ul.LanguageId)
             .OnDelete(DeleteBehavior.Cascade);
-
     }
 }

@@ -21,7 +21,7 @@ public class CreateSessionProductEndpoint : IEndpoint
                 ICommandHandler<PostSessionProductCommand, PatchPostProductResponse> handler,
                 CancellationToken cancellationToken) =>
             {
-                int userId = userContext.UserId;
+                var userId = userContext.UserId;
 
                 var command = new PostSessionProductCommand
                 {
@@ -36,7 +36,7 @@ public class CreateSessionProductEndpoint : IEndpoint
                     DurationMinutes = request.DurationMinutes,
                     BufferTimeMinutes = request.BufferTimeMinutes,
                     DayAvailabilitiesJson = request.DayAvailabilitiesJson,
-                    MeetingInstructions = request.MeetingInstructions,
+                    MeetingInstructions = request.MeetingInstructions
                     //TimeZoneId = request.TimeZoneId,
                 };
 

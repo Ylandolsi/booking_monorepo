@@ -14,8 +14,8 @@ public class ProfileCompletionStatus : ValueObject
     public bool HasLanguages { get; private set; }
     public bool HasExpertise { get; private set; }
     public bool HasConnectedWithGoogle { get; private set; }
-    public int CompletionStatus { get; private set; } = 0;
-    public int TotalFields { get; private set; } = 8;
+    public int CompletionStatus { get; private set; }
+    public int TotalFields { get; } = 8;
 
     public void UpdateCompletionStatus(User user)
     {
@@ -36,7 +36,7 @@ public class ProfileCompletionStatus : ValueObject
 
     public int GetCompletion()
     {
-        int completedFields = 0;
+        var completedFields = 0;
 
         if (HasProfilePicture) completedFields++;
         if (HasBio) completedFields++;

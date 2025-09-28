@@ -7,9 +7,17 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Store : Entity
 {
+    // Store social links as JSON
+    private readonly List<SocialLink> _socialLinks = new();
+
+    private Store()
+    {
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
     public int Id { get; private set; }
+
     public int UserId { get; private set; } // FK to User // TODO
 
     public string Title { get; private set; } = string.Empty;
@@ -21,15 +29,10 @@ public class Store : Entity
 
     // STEP 1 : name/slug : STEP 2 profile picture , bio 
     public int Step { get; private set; }
-
-    // Store social links as JSON
-    private readonly List<SocialLink> _socialLinks = new();
     public IReadOnlyList<SocialLink> SocialLinks => _socialLinks.AsReadOnly();
 
     // Navigation properties
     public ICollection<Product> Products { get; private set; } = new List<Product>();
-
-    private Store() { }
 
     public static Store Create(int ownerId, string title, string slug, string? description = null)
     {
@@ -55,34 +58,27 @@ public class Store : Entity
         return store;
     }
 
-    public static Store CreateWithLinks(int ownerId, string title, string slug, string? description = null, IEnumerable<(string platform, string url)>? socialLinks = null)
+    public static Store CreateWithLinks(int ownerId, string title, string slug, string? description = null,
+        IEnumerable<(string platform, string url)>? socialLinks = null)
     {
         var store = Create(ownerId, title, slug, description);
 
         if (socialLinks != null)
-        {
             foreach (var (platform, url) in socialLinks)
-            {
                 store.AddSocialLink(platform, url);
-            }
-        }
 
         return store;
     }
 
-    public Store UpdateStoreWithLinks(string title,  string? description = null,
+    public Store UpdateStoreWithLinks(string title, string? description = null,
         IEnumerable<(string platform, string url)>? socialLinks = null)
     {
         Title = title;
         Description = description;
         if (socialLinks != null)
-        {
             foreach (var (platform, url) in socialLinks)
-            {
                 AddSocialLink(platform, url);
-            }
-        }
-        
+
 
         return this;
     }
@@ -139,28 +135,19 @@ public class Store : Entity
     {
         UpdateBasicInfo(title, slug, description);
 
-        if (picture != null)
-        {
-            UpdatePicture(picture);
-        }
+        if (picture != null) UpdatePicture(picture);
 
         if (socialLinks != null)
         {
             ClearSocialLinks();
-            foreach (var (platform, url) in socialLinks)
-            {
-                AddSocialLink(platform, url);
-            }
+            foreach (var (platform, url) in socialLinks) AddSocialLink(platform, url);
         }
     }
 
     public void UpdateSocialLinks(IEnumerable<(string platform, string url)> socialLinks)
     {
         ClearSocialLinks();
-        foreach (var (platform, url) in socialLinks)
-        {
-            AddSocialLink(platform, url);
-        }
+        foreach (var (platform, url) in socialLinks) AddSocialLink(platform, url);
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -177,15 +164,16 @@ public class Store : Entity
     }
 }
 
-
 public static class StoreErros
 {
-
     public static readonly Error NotFound = Error.NotFound(
         "Store.NotFound",
         "Store not found");
-    
-    public static Error NotFoundById(int id) => Error.NotFound(
-        "Store.NotFoundById",
-        $"Store with ID {id} not found");
+
+    public static Error NotFoundById(int id)
+    {
+        return Error.NotFound(
+            "Store.NotFoundById",
+            $"Store with ID {id} not found");
+    }
 }

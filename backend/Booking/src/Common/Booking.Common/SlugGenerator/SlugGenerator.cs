@@ -6,21 +6,21 @@ namespace Booking.Common.SlugGenerator;
 public class SlugGenerator
 {
     /// <summary>
-    /// Produces optional, URL-friendly version of a title, "like-this-one". 
-    /// hand-tuned for speed, reflects performance refactoring contributed
-    /// by John Gietzen (user otac0n) 
+    ///     Produces optional, URL-friendly version of a title, "like-this-one".
+    ///     hand-tuned for speed, reflects performance refactoring contributed
+    ///     by John Gietzen (user otac0n)
     /// </summary>
     public string URLFriendly(string title)
     {
         if (title == null) return "";
 
         const int maxlen = 80;
-        int len = title.Length;
-        bool prevdash = false;
+        var len = title.Length;
+        var prevdash = false;
         var sb = new StringBuilder(len);
         char c;
 
-        for (int i = 0; i < len; i++)
+        for (var i = 0; i < len; i++)
         {
             c = title[i];
             if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
@@ -35,7 +35,7 @@ public class SlugGenerator
                 prevdash = false;
             }
             else if (c == ' ' || c == ',' || c == '.' || c == '/' ||
-                c == '\\' || c == '-' || c == '_' || c == '=')
+                     c == '\\' || c == '-' || c == '_' || c == '=')
             {
                 if (!prevdash && sb.Length > 0)
                 {
@@ -43,26 +43,23 @@ public class SlugGenerator
                     prevdash = true;
                 }
             }
-            else if ((int)c >= 128)
+            else if (c >= 128)
             {
-                int prevlen = sb.Length;
+                var prevlen = sb.Length;
                 sb.Append(SlugHelper.RemapInternationalCharToAscii(c));
-                if (prevlen != sb.Length)
-                {
-                    prevdash = false;
-                }
+                if (prevlen != sb.Length) prevdash = false;
             }
+
             if (i == maxlen) break;
         }
 
         if (prevdash)
             return sb.ToString().Substring(0, sb.Length - 1);
-        else
-            return sb.ToString();
+        return sb.ToString();
     }
 
     /// <summary>
-    /// Generates a URL-friendly slug from multiple parameters of any type
+    ///     Generates a URL-friendly slug from multiple parameters of any type
     /// </summary>
     /// <param name="separator">Character to separate different parameters (default: '-')</param>
     /// <param name="parameters">Variable number of parameters of any type</param>
@@ -78,14 +75,11 @@ public class SlugGenerator
         {
             if (param == null) continue;
 
-            string stringValue = ConvertToString(param);
+            var stringValue = ConvertToString(param);
             if (!string.IsNullOrWhiteSpace(stringValue))
             {
-                string slugPart = URLFriendly(stringValue);
-                if (!string.IsNullOrEmpty(slugPart))
-                {
-                    parts.Add(slugPart);
-                }
+                var slugPart = URLFriendly(stringValue);
+                if (!string.IsNullOrEmpty(slugPart)) parts.Add(slugPart);
             }
         }
 
@@ -93,7 +87,7 @@ public class SlugGenerator
     }
 
     /// <summary>
-    /// Generates a URL-friendly slug from multiple string parameters
+    ///     Generates a URL-friendly slug from multiple string parameters
     /// </summary>
     /// <param name="separator">Character to separate different parameters (default: '-')</param>
     /// <param name="parameters">Variable number of string parameters</param>
@@ -106,22 +100,17 @@ public class SlugGenerator
         var parts = new List<string>();
 
         foreach (var param in parameters)
-        {
             if (!string.IsNullOrWhiteSpace(param))
             {
-                string slugPart = URLFriendly(param);
-                if (!string.IsNullOrEmpty(slugPart))
-                {
-                    parts.Add(slugPart);
-                }
+                var slugPart = URLFriendly(param);
+                if (!string.IsNullOrEmpty(slugPart)) parts.Add(slugPart);
             }
-        }
 
         return string.Join('-', parts);
     }
 
     /// <summary>
-    /// Generates a unique slug with multiple parameters and database existence check
+    ///     Generates a unique slug with multiple parameters and database existence check
     /// </summary>
     /// <param name="existsInDatabase">Function to check if slug exists in database</param>
     /// <param name="separator">Character to separate different parameters (default: '-')</param>
@@ -129,13 +118,13 @@ public class SlugGenerator
     /// <returns>Unique URL-friendly slug</returns>
     public async Task<string> GenerateUniqueSlug(Func<string, Task<bool>> existsInDatabase, params object[] parameters)
     {
-        string baseSlug = URLFriendly(parameters);
+        var baseSlug = URLFriendly(parameters);
 
         if (string.IsNullOrEmpty(baseSlug))
             baseSlug = "item"; // fallback if no valid parameters
 
-        string slug = baseSlug;
-        int counter = 1;
+        var slug = baseSlug;
+        var counter = 1;
 
         while (await existsInDatabase(slug))
         {
@@ -148,21 +137,22 @@ public class SlugGenerator
 
 
     /// <summary>
-    /// Generates a unique slug with multiple string parameters and database existence check
+    ///     Generates a unique slug with multiple string parameters and database existence check
     /// </summary>
     /// <param name="existsInDatabase">Function to check if slug exists in database</param>
     /// <param name="separator">Character to separate different parameters (default: '-')</param>
     /// <param name="parameters">Variable number of string parameters</param>
     /// <returns>Unique URL-friendly slug</returns>
-    public async Task<string> GenerateUniqueSlug(Func<string, Task<bool>> existsInDatabase, char separator = '-', params string[] parameters)
+    public async Task<string> GenerateUniqueSlug(Func<string, Task<bool>> existsInDatabase, char separator = '-',
+        params string[] parameters)
     {
-        string baseSlug = URLFriendly(separator, parameters);
+        var baseSlug = URLFriendly(separator, parameters);
 
         if (string.IsNullOrEmpty(baseSlug))
             baseSlug = "item"; // fallback if no valid parameters
 
-        string slug = baseSlug;
-        int counter = 1;
+        var slug = baseSlug;
+        var counter = 1;
 
         while (await existsInDatabase(slug))
         {
@@ -174,7 +164,7 @@ public class SlugGenerator
     }
 
     /// <summary>
-    /// Converts various types to string representation suitable for slug generation
+    ///     Converts various types to string representation suitable for slug generation
     /// </summary>
     private string ConvertToString(object value)
     {

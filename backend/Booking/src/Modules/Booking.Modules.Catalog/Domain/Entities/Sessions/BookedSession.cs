@@ -7,6 +7,10 @@ namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
 
 public class BookedSession : Entity
 {
+    private BookedSession()
+    {
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
@@ -36,11 +40,6 @@ public class BookedSession : Entity
 
     public DateTime? CompletedAt { get; private set; }
 
-
-    private BookedSession()
-    {
-    }
-
     public static BookedSession Create(
         int productId,
         string productSlug,
@@ -65,7 +64,7 @@ public class BookedSession : Entity
             Status = SessionStatus.Booked,
             CreatedAt = DateTime.UtcNow,
             ScheduledAt = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Utc),
-            Title = title,
+            Title = title
         };
 
         return session;
@@ -98,7 +97,7 @@ public class BookedSession : Entity
             CreatedAt = DateTime.UtcNow,
             ScheduledAt = scheduledAt,
             EndsAt = scheduledAt.AddMinutes(duration.Minutes),
-            Title = title,
+            Title = title
         };
 
         return session;
@@ -115,14 +114,9 @@ public class BookedSession : Entity
     public Result Confirm(string googleMeetUrl)
     {
         if (Status != SessionStatus.Booked && Status != SessionStatus.WaitingForPayment)
-        {
             return Result.Failure(SessionErrors.CannotConfirmSession);
-        }
 
-        if (ConfirmedAt.HasValue)
-        {
-            return Result.Failure(SessionErrors.AlreadyConfirmed);
-        }
+        if (ConfirmedAt.HasValue) return Result.Failure(SessionErrors.AlreadyConfirmed);
 
         Status = SessionStatus.Confirmed;
         ConfirmedAt = DateTime.UtcNow;
@@ -133,15 +127,9 @@ public class BookedSession : Entity
 
     public Result Complete()
     {
-        if (Status != SessionStatus.Confirmed)
-        {
-            return Result.Failure(SessionErrors.CannotCompleteSession);
-        }
+        if (Status != SessionStatus.Confirmed) return Result.Failure(SessionErrors.CannotCompleteSession);
 
-        if (DateTime.UtcNow < ScheduledAt)
-        {
-            return Result.Failure(SessionErrors.SessionNotStarted);
-        }
+        if (DateTime.UtcNow < ScheduledAt) return Result.Failure(SessionErrors.SessionNotStarted);
 
         Status = SessionStatus.Completed;
         CompletedAt = DateTime.UtcNow;
@@ -152,9 +140,7 @@ public class BookedSession : Entity
     public Result UpdateNote(string note)
     {
         if (Status == SessionStatus.Completed || Status == SessionStatus.Cancelled)
-        {
             return Result.Failure(SessionErrors.CannotUpdateCompletedSession);
-        }
 
         Note = note?.Trim() ?? string.Empty;
         return Result.Success();
@@ -222,7 +208,10 @@ public static class SessionErrors
         "Session.NotFound",
         "Session not found");
 
-    public static Error NotFoundById(int id) => Error.NotFound(
-        "Session.NotFoundById",
-        $"Session with ID {id} not found");
+    public static Error NotFoundById(int id)
+    {
+        return Error.NotFound(
+            "Session.NotFoundById",
+            $"Session with ID {id} not found");
+    }
 }

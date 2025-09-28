@@ -1,8 +1,6 @@
 using System.Net.Http.Json;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features;
-using Booking.Modules.Users.Features.Utils;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -17,7 +15,7 @@ public class ExperienceTests : AuthenticationTestBase
     [Fact]
     public async Task AddExperience_ShouldCreateExperience_WhenUserIsAuthenticated()
     {
-        LoginResponse loginResponse = await CreateUserAndLogin();
+        var loginResponse = await CreateUserAndLogin();
 
         var experiencePayload = new
         {
@@ -31,13 +29,12 @@ public class ExperienceTests : AuthenticationTestBase
         var response = await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
 
         response.EnsureSuccessStatusCode();
-
     }
 
     [Fact]
     public async Task GetExperiences_ShouldReturnExperiences()
     {
-        LoginResponse loginResponse = await CreateUserAndLogin();
+        var loginResponse = await CreateUserAndLogin();
 
         // Add an experience first
         var experiencePayload = new
@@ -53,12 +50,13 @@ public class ExperienceTests : AuthenticationTestBase
         var otherUserData = await CreateUserAndLogin();
 
         // Act
-        var response = await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
+        var response =
+            await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
 
         // Assert
         response.EnsureSuccessStatusCode();
-        List<Experience>? experiences = await response.Content.ReadFromJsonAsync<List<Experience>>();
-        
+        var experiences = await response.Content.ReadFromJsonAsync<List<Experience>>();
+
         Console.WriteLine(experiences);
         Assert.NotNull(experiences);
         Assert.NotEmpty(experiences);
@@ -67,7 +65,7 @@ public class ExperienceTests : AuthenticationTestBase
     [Fact]
     public async Task UpdateExperience_ShouldUpdateExperience_WhenUserIsAuthenticated()
     {
-        LoginResponse loginResponse = await CreateUserAndLogin();
+        var loginResponse = await CreateUserAndLogin();
 
         var experiencePayload = new
         {
@@ -105,8 +103,8 @@ public class ExperienceTests : AuthenticationTestBase
     [Fact]
     public async Task DeleteExperience_ShouldRemoveExperience_WhenUserIsAuthenticated()
     {
-        LoginResponse loginResponse = await CreateUserAndLogin();
-        
+        var loginResponse = await CreateUserAndLogin();
+
         // Add an experience first
         var experiencePayload = new
         {
@@ -116,7 +114,7 @@ public class ExperienceTests : AuthenticationTestBase
             EndDate = DateTime.UtcNow.AddMonths(-3),
             Description = "Developed web applications using .NET Core"
         };
-        
+
         var createResponse = await ActClient.PostAsJsonAsync(UsersEndpoints.AddExperience, experiencePayload);
         createResponse.EnsureSuccessStatusCode();
 
@@ -131,7 +129,8 @@ public class ExperienceTests : AuthenticationTestBase
         response.EnsureSuccessStatusCode();
 
         // Verify it's deleted
-        var getResponse = await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
+        var getResponse =
+            await ActClient.GetAsync(UsersEndpoints.GetUserExperiences.Replace("{userSlug}", loginResponse.UserSlug));
         getResponse.EnsureSuccessStatusCode();
         var experiences = await getResponse.Content.ReadFromJsonAsync<List<object>>();
         Assert.Empty(experiences);

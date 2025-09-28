@@ -17,13 +17,13 @@ public static class ApplicationConfiguration
             // Register handlers
             services.Scan(scan => scan
                 .FromAssemblies(moduleAssembly)
-                .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
+                .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
-                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)), publicOnly: false)
+                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<>)), false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
-                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
+                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), false)
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
 

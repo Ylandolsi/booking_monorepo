@@ -1,20 +1,24 @@
 using System.Text.Json.Serialization;
-using Booking.Common.Domain.Entity;
 
 namespace Booking.Modules.Catalog.Domain.ValueObjects;
 
 public class SocialLink
 {
-    public string Platform { get; private set; } // either : portfolio / github / linkedin / fb / instagram / tiktok / twitter 
-    public string Url { get; private set; }
+    public SocialLink()
+    {
+    }
 
-    public SocialLink() { }
     [JsonConstructor] //  social links are saved as json in the store table so we need to deserialize it with this constructor 
     private SocialLink(string platform, string url)
     {
         Platform = platform;
         Url = url;
     }
+
+    public string
+        Platform { get; private set; } // either : portfolio / github / linkedin / fb / instagram / tiktok / twitter 
+
+    public string Url { get; private set; }
 
     public static SocialLink Create(string platform, string url)
     {

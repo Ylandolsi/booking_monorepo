@@ -9,9 +9,6 @@ namespace Booking.Modules.Users.Features.Authentication.Verification.ReSendVerif
 
 internal sealed class ReSendVerificationEmail : IEndpoint
 {
-    public sealed record Request(string Email);
-
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(UsersEndpoints.ResendVerificationEmail, async (
@@ -20,12 +17,14 @@ internal sealed class ReSendVerificationEmail : IEndpoint
                 CancellationToken cancellationToken = default) =>
             {
                 var command = new ReSendVerificationCommand(request.Email);
-                Result result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
                 return result.Match(
                     () => Results.Created(),
-                    (_) => CustomResults.Problem(result)
+                    _ => CustomResults.Problem(result)
                 );
             })
             .WithTags(Tags.Users);
     }
+
+    public sealed record Request(string Email);
 }

@@ -6,6 +6,14 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Order : Entity
 {
+    // Private constructor for EF Core
+    private Order()
+    {
+        CustomerEmail = string.Empty;
+        CustomerName = string.Empty;
+        StoreSlug = string.Empty;
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
@@ -20,7 +28,7 @@ public class Order : Entity
     public ProductType ProductType { get; private set; }
 
     public decimal Amount { get; private set; }
-    public decimal AmountPaid { get; private set; } = 0;
+    public decimal AmountPaid { get; private set; }
     public OrderStatus Status { get; private set; }
 
     public string? PaymentRef { get; private set; } // From your payment provider
@@ -38,14 +46,6 @@ public class Order : Entity
     // Navigation properties
     public Store Store { get; private set; } = null!;
     public Product Product { get; private set; } = null!;
-
-    // Private constructor for EF Core
-    private Order()
-    {
-        CustomerEmail = string.Empty;
-        CustomerName = string.Empty;
-        StoreSlug = string.Empty;
-    }
 
     // Static factory method for registered users
     public static Order Create(

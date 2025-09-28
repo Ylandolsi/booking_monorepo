@@ -1,5 +1,5 @@
 import type { MonthAvailabilityType } from '@/api/stores/produtcs';
-import { api, buildUrlWithParams, CatalogEndpoints, QueryBuilders } from '@/lib';
+import { api, buildUrlWithParams, CatalogEndpoints, QueryBuilders } from '@/api/utils';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
 export const getMonthlyAvailability = async (productSlug: string, year: number, month: number): Promise<MonthAvailabilityType> => {

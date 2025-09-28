@@ -1,13 +1,12 @@
 ﻿using Booking.Common.Contracts.Mentorships;
-using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
-using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.Register;
@@ -44,13 +43,13 @@ internal sealed class RegisterCommandHandler(
 
         logger.LogInformation("Registering user with email: {Email}", command.Email);
 
-        string uniqueSlug = await slugGenerator.GenerateUniqueSlug(
-            async (slug) => await context.Users.AsNoTracking().AnyAsync(u => u.Slug == slug, cancellationToken),
+        var uniqueSlug = await slugGenerator.GenerateUniqueSlug(
+            async slug => await context.Users.AsNoTracking().AnyAsync(u => u.Slug == slug, cancellationToken),
             command.FirstName,
             command.LastName
         );
 
-        User user = User.Create(
+        var user = User.Create(
             uniqueSlug,
             command.FirstName,
             command.LastName,
@@ -60,7 +59,7 @@ internal sealed class RegisterCommandHandler(
 
         try
         {
-            IdentityResult result = await userManager.CreateAsync(user, command.Password);
+            var result = await userManager.CreateAsync(user, command.Password);
 
             if (!result.Succeeded)
             {
@@ -74,12 +73,12 @@ internal sealed class RegisterCommandHandler(
             logger.LogInformation("User registered successfully with email: {Email}", command.Email);
 
             user = (await context.Users.FirstOrDefaultAsync(u => u.Email == command.Email, cancellationToken))!;
-            
-            await mentorshipsModuleApi.CreateWalletForUserId(user.Id  ,cancellationToken);
-            
-            
+
+            await mentorshipsModuleApi.CreateWalletForUserId(user.Id, cancellationToken);
+
+
             await emailVerificationSender.SendVerificationEmailAsync(user);
-            
+
             logger.LogInformation("email verification background job triggered for user with ID: {UserId}", user.Id);
 
             await unitOfWork.SaveChangesAsync(cancellationToken);

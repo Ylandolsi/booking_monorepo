@@ -1,21 +1,16 @@
-using System.Net.Http.Json;
-using System.Text.Json;
-using Booking.Modules.Mentorships.Features;
-using Booking.Modules.Users.Domain.Entities;
+/*using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
-using Booking.Modules.Users.Features.Utils;
 using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
-using Microsoft.AspNet.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationsTests.Abstractions;
 
 /// <summary>
-/// Enhanced mentorship test base using the new multi-client system
-/// Provides easy creation of mentor and mentee clients with proper cookie management
+///     Enhanced mentorship test base using the new multi-client system
+///     Provides easy creation of mentor and mentee clients with proper cookie management
 /// </summary>
 public abstract class MentorshipTestBase : AuthenticationTestBase
 {
@@ -24,9 +19,9 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     }
 
     /// <summary>
-    /// Creates an authenticated mentor with a unique userId
-    /// Usage: var mentor = await CreateMentor("mentor1", 50.0m, "Expert in .NET");
-    /// Then: await mentor.act.PostAsync(...);
+    ///     Creates an authenticated mentor with a unique userId
+    ///     Usage: var mentor = await CreateMentor("mentor1", 50.0m, "Expert in .NET");
+    ///     Then: await mentor.act.PostAsync(...);
     /// </summary>
     public async Task<(HttpClient arrange, HttpClient act)> CreateMentor(
         string userId = "mentor1",
@@ -43,7 +38,7 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
         var becomeMentorPayload = new
         {
             HourlyRate = hourlyRate,
-            BufferTimeMinutes = bufferTimeMinutes,
+            BufferTimeMinutes = bufferTimeMinutes
         };
 
         var response = await arrange.PostAsJsonAsync(MentorshipEndpoints.Mentors.Become, becomeMentorPayload);
@@ -53,7 +48,7 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     }
 
     /// <summary>
-    /// Creates an authenticated mentee with a unique userId
+    ///     Creates an authenticated mentee with a unique userId
     /// </summary>
     public async Task<(HttpClient arrange, HttpClient act)> CreateMentee(string userId, string? email = null)
     {
@@ -110,4 +105,4 @@ public abstract class MentorshipTestBase : AuthenticationTestBase
     }
 
     #endregion
-}
+}*/

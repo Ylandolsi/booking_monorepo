@@ -10,12 +10,6 @@ namespace Booking.Modules.Users.Features.Profile.BasicInfo;
 
 internal sealed class UpdateBasicInfo : IEndpoint
 {
-    public sealed record Request(
-        string FirstName,
-        string LastName,
-        string Gender,
-        string? Bio);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("users/profile/basic-info", async (
@@ -24,7 +18,7 @@ internal sealed class UpdateBasicInfo : IEndpoint
                 ICommandHandler<UpdateBasicInfoCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                int userId = userContext.UserId;
+                var userId = userContext.UserId;
 
 
                 var command = new UpdateBasicInfoCommand(
@@ -34,11 +28,17 @@ internal sealed class UpdateBasicInfo : IEndpoint
                     request.Gender,
                     request.Bio);
 
-                Result result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(Results.NoContent, CustomResults.Problem);
             })
             .RequireAuthorization()
             .WithTags(Tags.Profile);
     }
+
+    public sealed record Request(
+        string FirstName,
+        string LastName,
+        string Gender,
+        string? Bio);
 }

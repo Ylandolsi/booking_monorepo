@@ -1,48 +1,48 @@
-﻿using Amazon.S3;
+﻿using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Booking.Common.Uploads;
 
 public class S3ImageProcessingService
 {
-    private readonly IAmazonS3 _s3Client;
-    private readonly ILogger<S3ImageProcessingService> _logger;
     private readonly string _bucketName;
-    private readonly string? _cloudFrontUrl;
     private readonly string? _cloudFrontKeyPairId;
     private readonly string? _cloudFrontPrivateKey;
+    private readonly string? _cloudFrontUrl;
+    private readonly ILogger<S3ImageProcessingService> _logger;
+    private readonly IAmazonS3 _s3Client;
     private readonly bool _useCloudFront;
 
     public S3ImageProcessingService(IAmazonS3 s3Client, ILogger<S3ImageProcessingService> logger, IConfiguration config)
     {
         _s3Client = s3Client;
         _logger = logger;
-        _bucketName = config["AWS:S3:BucketName"] ?? throw new ArgumentNullException("AWS:S3:BucketName configuration is missing");
+        _bucketName = config["AWS:S3:BucketName"] ??
+                      throw new ArgumentNullException("AWS:S3:BucketName configuration is missing");
 
         // CloudFront configuration
         _cloudFrontUrl = config["AWS:CloudFront:Url"];
         _cloudFrontKeyPairId = config["AWS:CloudFront:KeyPairId"];
         _cloudFrontPrivateKey = config["AWS:CloudFront:PrivateKey"];
         _useCloudFront = !string.IsNullOrEmpty(_cloudFrontUrl) &&
-                        !string.IsNullOrEmpty(_cloudFrontKeyPairId) &&
-                        !string.IsNullOrEmpty(_cloudFrontPrivateKey);
+                         !string.IsNullOrEmpty(_cloudFrontKeyPairId) &&
+                         !string.IsNullOrEmpty(_cloudFrontPrivateKey);
 
         if (_useCloudFront)
-        {
             _logger.LogInformation("CloudFront integration enabled for domain: {CloudFrontUrl}", _cloudFrontUrl);
-        }
         else
-        {
             _logger.LogInformation("Using direct S3 presigned URLs (CloudFront not configured)");
-        }
     }
 
     public async Task<ImageProcessingResult> ProcessImageAsync(IFormFile file, string fileName)
@@ -60,7 +60,8 @@ public class S3ImageProcessingService
             var result = new ImageProcessingResult
             {
                 OriginalUrl = await UploadImageToS3Async(image, fileName, "original", 75),
-                ThumbnailUrl = await UploadThumbnailToS3Async(image, fileName, 50, 60) // Increased quality for CDN caching
+                ThumbnailUrl =
+                    await UploadThumbnailToS3Async(image, fileName, 50, 60) // Increased quality for CDN caching
             };
 
             return result;
@@ -117,7 +118,7 @@ public class S3ImageProcessingService
 
     private async Task<string> UploadThumbnailToS3Async(Image image, string fileName, int size, int quality)
     {
-        using var clone = image.CloneAs<SixLabors.ImageSharp.PixelFormats.Rgba32>();
+        using var clone = image.CloneAs<Rgba32>();
 
         clone.Mutate(x => x
             .Resize(new ResizeOptions
@@ -164,20 +165,17 @@ public class S3ImageProcessingService
     }
 
     /// <summary>
-    /// Gets the optimized URL - CloudFront signed URL if available, otherwise S3 presigned URL
+    ///     Gets the optimized URL - CloudFront signed URL if available, otherwise S3 presigned URL
     /// </summary>
     private string GetOptimizedUrl(string key)
     {
-        if (_useCloudFront)
-        {
-            return GetCloudFrontSignedUrl(key);
-        }
+        if (_useCloudFront) return GetCloudFrontSignedUrl(key);
 
         return GetS3SignedUrl(key);
     }
 
     /// <summary>
-    /// Generate CloudFront signed URL for authenticated access with caching benefits
+    ///     Generate CloudFront signed URL for authenticated access with caching benefits
     /// </summary>
     private string GetCloudFrontSignedUrl(string key)
     {
@@ -191,9 +189,9 @@ public class S3ImageProcessingService
             var signature = SignCloudFrontPolicy(policy);
 
             var signedUrl = $"{resourceUrl}?" +
-                           $"Expires={expiration.ToUnixTimeSeconds()}&" +
-                           $"Signature={signature}&" +
-                           $"Key-Pair-Id={_cloudFrontKeyPairId}";
+                            $"Expires={expiration.ToUnixTimeSeconds()}&" +
+                            $"Signature={signature}&" +
+                            $"Key-Pair-Id={_cloudFrontKeyPairId}";
 
             _logger.LogDebug("Generated CloudFront signed URL for key: {Key}", key);
             return signedUrl;
@@ -206,7 +204,7 @@ public class S3ImageProcessingService
     }
 
     /// <summary>
-    /// Fallback to S3 presigned URL
+    ///     Fallback to S3 presigned URL
     /// </summary>
     private string GetS3SignedUrl(string key)
     {
@@ -222,7 +220,7 @@ public class S3ImageProcessingService
     }
 
     /// <summary>
-    /// Create CloudFront policy JSON for signed URLs
+    ///     Create CloudFront policy JSON for signed URLs
     /// </summary>
     private string CreateCloudFrontPolicy(string resourceUrl, DateTimeOffset expiration)
     {
@@ -244,14 +242,14 @@ public class S3ImageProcessingService
             }
         };
 
-        return System.Text.Json.JsonSerializer.Serialize(policy, new System.Text.Json.JsonSerializerOptions
+        return JsonSerializer.Serialize(policy, new JsonSerializerOptions
         {
             PropertyNamingPolicy = null // Keep exact property names
         });
     }
 
     /// <summary>
-    /// Sign the CloudFront policy using RSA-SHA1
+    ///     Sign the CloudFront policy using RSA-SHA1
     /// </summary>
     private string SignCloudFrontPolicy(string policy)
     {
@@ -288,19 +286,12 @@ public class S3ImageProcessingService
             var response = await _s3Client.DeleteObjectsAsync(deleteRequest);
 
             if (response.DeleteErrors?.Count > 0)
-            {
                 foreach (var error in response.DeleteErrors)
-                {
                     _logger.LogWarning("Failed to delete object {Key}: {Code} - {Message}",
                         error.Key, error.Code, error.Message);
-                }
-            }
 
             // Invalidate CloudFront cache for deleted images
-            if (_useCloudFront)
-            {
-                await InvalidateCloudFrontCache(keys);
-            }
+            if (_useCloudFront) await InvalidateCloudFrontCache(keys);
 
             return true;
         }
@@ -312,7 +303,7 @@ public class S3ImageProcessingService
     }
 
     /// <summary>
-    /// Invalidate CloudFront cache for specific paths
+    ///     Invalidate CloudFront cache for specific paths
     /// </summary>
     private async Task InvalidateCloudFrontCache(string[] keys)
     {
@@ -357,7 +348,7 @@ public class S3ImageProcessingService
             await _s3Client.GetObjectMetadataAsync(request);
             return true;
         }
-        catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (AmazonS3Exception ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
             return false;
         }

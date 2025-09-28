@@ -15,7 +15,7 @@ internal sealed class UpdateSocialLinksCommandHandler(
     {
         logger.LogInformation("Updating social links for user {UserId}", command.UserId);
 
-        User? user = await userManager.FindByIdAsync(command.UserId.ToString());
+        var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user == null)
         {
             logger.LogWarning("User with ID {UserId} not found", command.UserId);

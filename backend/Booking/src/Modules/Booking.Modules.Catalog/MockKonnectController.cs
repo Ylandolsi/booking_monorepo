@@ -11,14 +11,14 @@ public class MockKonnectController : ControllerBase
 {
     private static readonly ConcurrentDictionary<string, MockPayment> _payments = new();
     private static readonly ConcurrentDictionary<string, MockWallet> _wallets = new();
-    private readonly ILogger<MockKonnectController> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<MockKonnectController> _logger;
 
     public MockKonnectController(ILogger<MockKonnectController> logger, IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        
+
         // Initialize some test wallets
         _wallets.TryAdd("test-wallet-1", new MockWallet { Id = "test-wallet-1", Balance = 50000 }); // $500
         _wallets.TryAdd("test-wallet-2", new MockWallet { Id = "test-wallet-2", Balance = 10000 }); // $100
@@ -72,16 +72,11 @@ public class MockKonnectController : ControllerBase
     {
         _logger.LogInformation("Mock Konnect: Getting payment details for {PaymentRef}", paymentRef);
 
-        if (!_payments.TryGetValue(paymentRef, out var payment))
-        {
-            return NotFound(new { error = "Payment not found" });
-        }
+        if (!_payments.TryGetValue(paymentRef, out var payment)) return NotFound(new { error = "Payment not found" });
 
         // Check if payment is expired
         if (DateTime.TryParse(payment.ExpirationDate, out var expirationDate) && expirationDate < DateTime.UtcNow)
-        {
             payment.Status = "expired";
-        }
 
         var response = new
         {
@@ -113,15 +108,9 @@ public class MockKonnectController : ControllerBase
     [HttpGet("pay/{paymentRef}")]
     public IActionResult PaymentPage(string paymentRef)
     {
-        if (!_payments.TryGetValue(paymentRef, out var payment))
-        {
-            return NotFound("Payment not found");
-        }
+        if (!_payments.TryGetValue(paymentRef, out var payment)) return NotFound("Payment not found");
 
-        if (payment.Status != "pending")
-        {
-            return BadRequest($"Payment is {payment.Status}");
-        }
+        if (payment.Status != "pending") return BadRequest($"Payment is {payment.Status}");
 
         var html = $@"
 <!DOCTYPE html>
@@ -225,17 +214,14 @@ public class MockKonnectController : ControllerBase
     [HttpPost("process-payment/{paymentRef}")]
     public async Task<IActionResult> ProcessPayment(string paymentRef, [FromBody] ProcessPaymentRequest request)
     {
-        _logger.LogInformation("Mock Konnect: Processing payment {PaymentRef} with method {Method}", paymentRef, request.PaymentMethod);
+        _logger.LogInformation("Mock Konnect: Processing payment {PaymentRef} with method {Method}", paymentRef,
+            request.PaymentMethod);
 
         if (!_payments.TryGetValue(paymentRef, out var payment))
-        {
             return NotFound(new { success = false, error = "Payment not found" });
-        }
 
         if (payment.Status != "pending")
-        {
             return BadRequest(new { success = false, error = $"Payment is {payment.Status}" });
-        }
 
         // Check expiration
         if (DateTime.TryParse(payment.ExpirationDate, out var expirationDate) && expirationDate < DateTime.UtcNow)
@@ -256,11 +242,10 @@ public class MockKonnectController : ControllerBase
                         await CompletePayment(payment);
                         return Ok(new { success = true, redirectUrl = payment.SuccessUrl });
                     }
-                    else
-                    {
-                        return BadRequest(new { success = false, error = "Insufficient wallet balance" });
-                    }
+
+                    return BadRequest(new { success = false, error = "Insufficient wallet balance" });
                 }
+
                 return BadRequest(new { success = false, error = "Invalid wallet" });
 
             case "card":
@@ -280,7 +265,8 @@ public class MockKonnectController : ControllerBase
     [HttpPost("wallets/{walletId}/charge")]
     public IActionResult ChargeWallet(string walletId, [FromBody] ChargeWalletRequest request)
     {
-        _logger.LogInformation("Mock Konnect: Charging wallet {WalletId} with amount {Amount}", walletId, request.Amount);
+        _logger.LogInformation("Mock Konnect: Charging wallet {WalletId} with amount {Amount}", walletId,
+            request.Amount);
 
         if (!_wallets.TryGetValue(walletId, out var wallet))
         {
@@ -291,11 +277,12 @@ public class MockKonnectController : ControllerBase
 
         wallet.Balance += request.Amount;
 
-        return Ok(new { 
-            success = true, 
-            walletId = walletId, 
+        return Ok(new
+        {
+            success = true,
+            walletId,
             newBalance = wallet.Balance,
-            amountAdded = request.Amount 
+            amountAdded = request.Amount
         });
     }
 
@@ -306,7 +293,7 @@ public class MockKonnectController : ControllerBase
 
         // Simulate wallet verification - always return true for testing
         // In real Konnect, this would validate the wallet exists and is accessible
-        return Ok(new { valid = true, walletId = walletId });
+        return Ok(new { valid = true, walletId });
     }
 
     private async Task CompletePayment(MockPayment payment)
@@ -325,22 +312,21 @@ public class MockKonnectController : ControllerBase
             _logger.LogWarning("No webhook URL configured for payment {PaymentRef}", payment.Reference);
             return;
         }
+
         try
         {
             var httpClient = _httpClientFactory.CreateClient("KonnectClient");
 
-            _logger.LogInformation("Triggering webhook for payment {PaymentRef} to {WebhookUrl}", payment.Reference, payment.Webhook);
+            _logger.LogInformation("Triggering webhook for payment {PaymentRef} to {WebhookUrl}", payment.Reference,
+                payment.Webhook);
 
             var response = await httpClient.GetAsync($"{payment.Webhook}?payment_ref={payment.Reference}");
-            
+
             if (response.IsSuccessStatusCode)
-            {
                 _logger.LogInformation("Webhook triggered successfully for payment {PaymentRef}", payment.Reference);
-            }
             else
-            {
-                _logger.LogError("Webhook failed for payment {PaymentRef}. Status: {StatusCode}", payment.Reference, response.StatusCode);
-            }
+                _logger.LogError("Webhook failed for payment {PaymentRef}. Status: {StatusCode}", payment.Reference,
+                    response.StatusCode);
         }
         catch (Exception ex)
         {
@@ -351,59 +337,42 @@ public class MockKonnectController : ControllerBase
 
 public class InitPaymentRequest
 {
-    [JsonPropertyName("receiverWalletId")]
-    public string ReceiverWalletId { get; set; } = string.Empty;
+    [JsonPropertyName("receiverWalletId")] public string ReceiverWalletId { get; set; } = string.Empty;
 
-    [JsonPropertyName("token")]
-    public string Token { get; set; } = "USD";
+    [JsonPropertyName("token")] public string Token { get; set; } = "USD";
 
-    [JsonPropertyName("amount")]
-    public int Amount { get; set; }
+    [JsonPropertyName("amount")] public int Amount { get; set; }
 
-    [JsonPropertyName("type")]
-    public string Type { get; set; } = "immediate";
+    [JsonPropertyName("type")] public string Type { get; set; } = "immediate";
 
-    [JsonPropertyName("description")]
-    public string Description { get; set; } = string.Empty;
+    [JsonPropertyName("description")] public string Description { get; set; } = string.Empty;
 
-    [JsonPropertyName("lifespan")]
-    public int Lifespan { get; set; } = 10;
+    [JsonPropertyName("lifespan")] public int Lifespan { get; set; } = 10;
 
-    [JsonPropertyName("checkoutForm")]
-    public bool CheckoutForm { get; set; } = false;
+    [JsonPropertyName("checkoutForm")] public bool CheckoutForm { get; set; } = false;
 
     [JsonPropertyName("addPaymentFeesToAmount")]
     public bool AddPaymentFeesToAmount { get; set; } = true;
 
-    [JsonPropertyName("firstName")]
-    public string FirstName { get; set; } = string.Empty;
+    [JsonPropertyName("firstName")] public string FirstName { get; set; } = string.Empty;
 
-    [JsonPropertyName("lastName")]
-    public string LastName { get; set; } = string.Empty;
+    [JsonPropertyName("lastName")] public string LastName { get; set; } = string.Empty;
 
-    [JsonPropertyName("phoneNumber")]
-    public string PhoneNumber { get; set; } = string.Empty;
+    [JsonPropertyName("phoneNumber")] public string PhoneNumber { get; set; } = string.Empty;
 
-    [JsonPropertyName("email")]
-    public string Email { get; set; } = string.Empty;
+    [JsonPropertyName("email")] public string Email { get; set; } = string.Empty;
 
-    [JsonPropertyName("orderId")]
-    public int OrderId { get; set; }
+    [JsonPropertyName("orderId")] public int OrderId { get; set; }
 
-    [JsonPropertyName("webhook")]
-    public string Webhook { get; set; } = string.Empty;
+    [JsonPropertyName("webhook")] public string Webhook { get; set; } = string.Empty;
 
-    [JsonPropertyName("successUrl")]
-    public string SuccessUrl { get; set; } = string.Empty;
+    [JsonPropertyName("successUrl")] public string SuccessUrl { get; set; } = string.Empty;
 
-    [JsonPropertyName("failUrl")]
-    public string FailUrl { get; set; } = string.Empty;
+    [JsonPropertyName("failUrl")] public string FailUrl { get; set; } = string.Empty;
 
-    [JsonPropertyName("silentWebhook")]
-    public bool SilentWebhook { get; set; } = true;
+    [JsonPropertyName("silentWebhook")] public bool SilentWebhook { get; set; } = true;
 
-    [JsonPropertyName("theme")]
-    public string Theme { get; set; } = "light";
+    [JsonPropertyName("theme")] public string Theme { get; set; } = "light";
 }
 
 public class ProcessPaymentRequest

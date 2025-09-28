@@ -8,7 +8,6 @@ using Booking.Modules.Catalog.Features.Products.Sessions.Private.Shared;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -63,8 +62,8 @@ public class CreateSessionProductHandler(
             }
 
             // Generate unique slug
-            string uniqueSlug = await slugGenerator.GenerateUniqueSlug(
-                async (slug) => await context.SessionProducts.AsNoTracking()
+            var uniqueSlug = await slugGenerator.GenerateUniqueSlug(
+                async slug => await context.SessionProducts.AsNoTracking()
                     .AnyAsync(u => u.ProductSlug == slug, cancellationToken),
                 command.Title
             );
@@ -97,11 +96,8 @@ public class CreateSessionProductHandler(
             // upload the pictures ! 
             var pictureThumbnailResult = await storeService.UploadPicture(command.ThumbnailImage, store.Slug);
 
-            if (pictureThumbnailResult.IsSuccess)
-            {
-                sessionCreated.Entity.UpdateThumbnail(pictureThumbnailResult.Value);
-            }
-            
+            if (pictureThumbnailResult.IsSuccess) sessionCreated.Entity.UpdateThumbnail(pictureThumbnailResult.Value);
+
             // Save the product first to get the ID
             await unitOfWork.SaveChangesAsync(cancellationToken);
 

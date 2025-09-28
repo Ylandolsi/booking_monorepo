@@ -2,8 +2,6 @@
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
-using Booking.Common.Results;
-using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Features.Authentication.Google.Integrate;
 using Booking.Modules.Users.Features.Authentication.Google.Signin;
 using Booking.Modules.Users.Features.Utils;
@@ -34,14 +32,15 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 // exchange the code with tokens 
                 // result.principal => claims
                 // and result.ticket includes tokens and other stuff 
-                AuthenticateResult result = httpContextAccessor.HttpContext != null
+                var result = httpContextAccessor.HttpContext != null
                     ? await httpContextAccessor.HttpContext.AuthenticateAsync("Google")
                     : AuthenticateResult.Fail("");
 
 
                 if (!result.Succeeded)
                 {
-                    var errorQuery = $"?error={HttpUtility.UrlEncode("Authentication with Google was not successful. Please try again.")}";
+                    var errorQuery =
+                        $"?error={HttpUtility.UrlEncode("Authentication with Google was not successful. Please try again.")}";
                     return Results.Redirect($"{returnUrl}{errorQuery}");
                     /*Results.Problem(
                         statusCode: StatusCodes.Status401Unauthorized,
@@ -51,18 +50,18 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 }
 
                 var propeties = result.Properties.Items;
-                GoogleTokens googleTokens = new GoogleTokens
+                var googleTokens = new GoogleTokens
                 {
                     RefreshToken = propeties[".Token.refresh_token"],
                     AccessToken = propeties.ContainsKey(".Token.access_token")
                         ? propeties[".Token.access_token"]
                         : null,
-                    ExpiresAt = DateTimeOffset  // 2025-08-21T11:52:55.9919390+00:00
+                    ExpiresAt = DateTimeOffset // 2025-08-21T11:52:55.9919390+00:00
                         .Parse(propeties[".Token.expires_at"])
-                        .UtcDateTime, // 2025-08-21 11:52:55 (UTC)
+                        .UtcDateTime // 2025-08-21 11:52:55 (UTC)
                 };
 
-                int userId = 0;
+                var userId = 0;
                 try
                 {
                     userId = userContext.UserId;
@@ -76,12 +75,13 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 if (userId != 0)
                 {
                     var integrateCommand = new IntegrateAccountCommand(result.Principal!, googleTokens, userId!);
-                    Result integrateResponse =
+                    var integrateResponse =
                         await integrateAccountCommandHandler.Handle(integrateCommand, default);
 
                     if (integrateResponse.IsFailure)
                     {
-                        var errorQuery = $"?error={HttpUtility.UrlEncode(integrateResponse.Error.Description ?? "Failed to integrate Google account.")}";
+                        var errorQuery =
+                            $"?error={HttpUtility.UrlEncode(integrateResponse.Error.Description ?? "Failed to integrate Google account.")}";
                         return Results.Redirect($"{returnUrl}{errorQuery}");
                         //return CustomResults.Problem(integrateResponse);
                     }
@@ -90,11 +90,12 @@ internal sealed class LoginGoogleCallback : IEndpoint
                 }
 
                 var command = new CreateOrLoginCommand(result.Principal!, googleTokens);
-                Result<LoginResponse> loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
+                var loginResponseResult = await createOrLoginCommandHandler.Handle(command, default);
 
                 if (!loginResponseResult.IsSuccess)
                 {
-                    var errorQuery = $"?error={HttpUtility.UrlEncode(loginResponseResult.Error?.Description ?? "Authentication with Google was not successful. Please try again.")}";
+                    var errorQuery =
+                        $"?error={HttpUtility.UrlEncode(loginResponseResult.Error?.Description ?? "Authentication with Google was not successful. Please try again.")}";
                     return Results.Redirect($"{returnUrl}{errorQuery}");
                     /*Results.Problem(
                         statusCode: StatusCodes.Status401Unauthorized,

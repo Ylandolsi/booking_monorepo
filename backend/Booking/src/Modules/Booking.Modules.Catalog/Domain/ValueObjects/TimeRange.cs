@@ -5,9 +5,6 @@ namespace Booking.Modules.Catalog.Domain.ValueObjects;
 
 public class TimeRange : ValueObject
 {
-    public TimeOnly StartTime { set; get; }
-    public TimeOnly EndTime { set; get; }
-
     private TimeRange()
     {
     }
@@ -17,6 +14,12 @@ public class TimeRange : ValueObject
         StartTime = startTime;
         EndTime = endTime;
     }
+
+    public TimeOnly StartTime { set; get; }
+    public TimeOnly EndTime { set; get; }
+
+
+    public TimeSpan DurationInHours => EndTime - StartTime;
 
     public Result Update(TimeOnly startTime, TimeOnly endTime)
     {
@@ -31,17 +34,14 @@ public class TimeRange : ValueObject
 
     public bool OverlapsWith(TimeRange other)
     {
-        int startTotal = StartTime.Hour * 60 + StartTime.Minute;
-        int endTotal = EndTime.Hour * 60 + EndTime.Minute;
+        var startTotal = StartTime.Hour * 60 + StartTime.Minute;
+        var endTotal = EndTime.Hour * 60 + EndTime.Minute;
 
-        int otherStartTotal = other.StartTime.Hour * 60 + other.StartTime.Minute;
-        int otherEndTotal = other.EndTime.Hour * 60 + other.EndTime.Minute;
+        var otherStartTotal = other.StartTime.Hour * 60 + other.StartTime.Minute;
+        var otherEndTotal = other.EndTime.Hour * 60 + other.EndTime.Minute;
 
         return startTotal < otherEndTotal && endTotal > otherStartTotal;
     }
-
-
-    public TimeSpan DurationInHours => EndTime - StartTime;
 
     protected override IEnumerable<object> GetEqualityComponents()
     {
@@ -49,7 +49,10 @@ public class TimeRange : ValueObject
         yield return EndTime;
     }
 
-    public string ToString() => $"{StartTime.Hour:D2}:{StartTime.Minute:D2}-{EndTime.Hour:D2}:{EndTime.Minute:D2}";
+    public string ToString()
+    {
+        return $"{StartTime.Hour:D2}:{StartTime.Minute:D2}-{EndTime.Hour:D2}:{EndTime.Minute:D2}";
+    }
 
     /*public static TimeRange FromString(string timeRangeStr)
     {

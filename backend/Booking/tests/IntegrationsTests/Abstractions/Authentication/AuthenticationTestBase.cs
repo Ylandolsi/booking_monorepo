@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Json;
 using System.Text.RegularExpressions;
-using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
@@ -14,12 +13,12 @@ namespace IntegrationsTests.Abstractions.Authentication;
 
 public abstract class AuthenticationTestBase : BaseIntegrationTest
 {
-    protected string DefaultPassword => "TestPassword123!";
-    protected string DefaultEmail => "test@gmail.com";
-
     protected AuthenticationTestBase(IntegrationTestsWebAppFactory factory) : base(factory)
     {
     }
+
+    protected string DefaultPassword => "TestPassword123!";
+    protected string DefaultEmail => "test@gmail.com";
 
     protected async Task<MeData> GetCurrenUserInfo(HttpClient? arrangeClient = null)
     {
@@ -29,11 +28,35 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
                throw new InvalidOperationException("Failed to deserialize user info response");
     }
 
+    protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
+    {
+        var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
+        if (sentEmail is null) return (null, null);
+
+        var match = Regex.Match(
+            sentEmail.Message.Body.Html.Data,
+            @"href=['""](?<url>https?://[^'""]+\?token=[^&]+&email=[^'""]+)['""]",
+            RegexOptions.IgnoreCase);
+
+        if (!match.Success) return (null, null);
+
+        var url = match.Groups["url"].Value;
+        var uri = new Uri(url);
+
+        // Use QueryHelpers to parse and decode the query string
+        var queryParams = QueryHelpers.ParseQuery(uri.Query);
+
+        queryParams.TryGetValue("token", out var token);
+        queryParams.TryGetValue("email", out var email);
+
+        return (token.ToString(), email.ToString());
+    }
+
     #region Authentication Helper Methods
 
     /// <summary>
-    /// Registers and verifies a user, then logs them in
-    /// Returns the login response and sets up cookies for the specified userId
+    ///     Registers and verifies a user, then logs them in
+    ///     Returns the login response and sets up cookies for the specified userId
     /// </summary>
     protected async Task<LoginResponse> CreateUserAndLogin(string? email = null, string? password = null,
         HttpClient? arrangeClient = null)
@@ -58,7 +81,7 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Registers and verifies a user using the specified client
+    ///     Registers and verifies a user using the specified client
     /// </summary>
     protected async Task RegisterAndVerifyUser(string email, string password, bool verify = true,
         HttpClient? arrangeClient = null)
@@ -89,7 +112,7 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
     }
 
     /// <summary>
-    /// Logs in a user using the specified client
+    ///     Logs in a user using the specified client
     /// </summary>
     protected async Task<LoginResponse> LoginUser(string email, string password, HttpClient? arrangeClient = null)
     {
@@ -109,28 +132,4 @@ public abstract class AuthenticationTestBase : BaseIntegrationTest
     }
 
     #endregion
-
-    protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
-    {
-        var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
-        if (sentEmail is null) return (null, null);
-
-        var match = Regex.Match(
-            sentEmail.Message.Body.Html.Data,
-            @"href=['""](?<url>https?://[^'""]+\?token=[^&]+&email=[^'""]+)['""]",
-            RegexOptions.IgnoreCase);
-
-        if (!match.Success) return (null, null);
-
-        var url = match.Groups["url"].Value;
-        var uri = new Uri(url);
-
-        // Use QueryHelpers to parse and decode the query string
-        var queryParams = QueryHelpers.ParseQuery(uri.Query);
-
-        queryParams.TryGetValue("token", out var token);
-        queryParams.TryGetValue("email", out var email);
-
-        return (token.ToString(), email.ToString());
-    }
 }

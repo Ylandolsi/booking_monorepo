@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import { api } from '@/lib/api/api-client';
+import { api } from '@/api/utils';
 import { AdminPayoutKeys } from './admin-payout-keys';
-import { CatalogEndpoints } from '@/lib';
+import { CatalogEndpoints } from '@/api/utils';
 
 type ApprovePayoutRequest = {
   PayoutId: number;

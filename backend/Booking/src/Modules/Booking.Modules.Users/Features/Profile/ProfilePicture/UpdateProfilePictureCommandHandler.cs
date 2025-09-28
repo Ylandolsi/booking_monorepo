@@ -40,7 +40,7 @@ internal sealed class UpdateProfilePictureCommandHandler(
                 Error.Problem("Image.InvalidType", "Only JPEG, PNG, and WebP images are allowed"));
         }
 
-        User? user = await userManager.FindByIdAsync(command.UserId.ToString());
+        var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user == null)
         {
             logger.LogWarning("User with ID {UserId} not found", command.UserId);

@@ -7,8 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetMySessionProduct;
 
-public record GetMySessionProductQuery(string ProductSlug ,int UserId ) : IQuery<MySessionProductDetailResponse>;
-
+public record GetMySessionProductQuery(string ProductSlug, int UserId) : IQuery<MySessionProductDetailResponse>;
 
 public record MySessionProductDetailResponse : ProductResponse
 {
@@ -21,7 +20,6 @@ public record MySessionProductDetailResponse : ProductResponse
     public List<DayAvailability> DayAvailabilities { get; init; }
 }
 
-
 public class GetSessionProductHandler(
     CatalogDbContext context,
     ILogger<GetSessionProductHandler> logger) : IQueryHandler<GetMySessionProductQuery, MySessionProductDetailResponse>
@@ -33,7 +31,7 @@ public class GetSessionProductHandler(
 
         try
         {
-            if (String.IsNullOrWhiteSpace(query.ProductSlug))
+            if (string.IsNullOrWhiteSpace(query.ProductSlug))
             {
                 logger.LogWarning("Invalid product slug provided: {ProductSlug}", query.ProductSlug);
                 return Result.Failure<MySessionProductDetailResponse>(
@@ -45,7 +43,8 @@ public class GetSessionProductHandler(
             {
                 logger.LogWarning("Someone is Trying to acesss another store product details ");
                 return Result.Failure<MySessionProductDetailResponse>(
-                    Error.Unauthorized("UserId.DosentMatch.Store", "You dont have the right permission to access this product"));
+                    Error.Unauthorized("UserId.DosentMatch.Store",
+                        "You dont have the right permission to access this product"));
             }
 
             // Get session product with all related data
@@ -67,31 +66,25 @@ public class GetSessionProductHandler(
 
             var dayAvailabilities = new List<DayAvailability>();
 
-            
 
-            foreach (var day  in  sessionProduct.Days)
+            foreach (var day in sessionProduct.Days)
             {
-
                 var availabilityRangesDay = new List<AvailabilityRange>();
 
                 foreach (var av in day.Availabilities)
-                {
-                    availabilityRangesDay.Add(new  AvailabilityRange
+                    availabilityRangesDay.Add(new AvailabilityRange
                     {
                         StartTime = av.TimeRange.StartTime.ToString(),
                         EndTime = av.TimeRange.EndTime.ToString(),
-                        Id = av.Id,
+                        Id = av.Id
                     });
-                    
-                }
                 dayAvailabilities.Add(
-                new DayAvailability{
-                    DayOfWeek = day.DayOfWeek,
-                    IsActive = day.IsActive,
-                    AvailabilityRanges = availabilityRangesDay
-                    
-                });
-                
+                    new DayAvailability
+                    {
+                        DayOfWeek = day.DayOfWeek,
+                        IsActive = day.IsActive,
+                        AvailabilityRanges = availabilityRangesDay
+                    });
             }
 
             // Create response
@@ -112,7 +105,7 @@ public class GetSessionProductHandler(
                 CreatedAt = sessionProduct.CreatedAt,
                 UpdatedAt = sessionProduct.UpdatedAt
             };
-            
+
             return Result.Success(response);
         }
         catch (Exception ex)

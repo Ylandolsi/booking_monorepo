@@ -13,13 +13,13 @@ internal static class SeedData
             if (!await context.Languages.AnyAsync())
             {
                 await context.Languages.AddRangeAsync(LanguageExpertiseSeeder.Languages());
-                Console.WriteLine($"Added languages");
+                Console.WriteLine("Added languages");
             }
 
             if (!await context.Expertises.AnyAsync())
             {
                 await context.Expertises.AddRangeAsync(LanguageExpertiseSeeder.Expertises());
-                Console.WriteLine($"Added expertises");
+                Console.WriteLine("Added expertises");
             }
 
             await context.SaveChangesAsync();

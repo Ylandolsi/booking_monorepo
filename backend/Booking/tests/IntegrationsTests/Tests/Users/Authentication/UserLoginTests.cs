@@ -2,7 +2,6 @@
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Utils;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -30,8 +29,8 @@ public class UserLoginTests : AuthenticationTestBase
         loginResponse.EnsureSuccessStatusCode();
         var loginResult = await loginResponse.Content.ReadFromJsonAsync<LoginResponse>();
         Assert.NotNull(loginResult);
-       
     }
+
     [Fact]
     public async Task GetCurrentUser_ShouldReturnValidAnswer_WhenTheUserIsAuthenticated()
     {
@@ -43,7 +42,7 @@ public class UserLoginTests : AuthenticationTestBase
         Assert.Equal(userData.Email, userData.Email);
     }
 
-        [Fact]
+    [Fact]
     public async Task Login_ShouldReturnBadRequest_WhenPasswordIsIncorrect()
     {
         // Arrange
@@ -58,13 +57,14 @@ public class UserLoginTests : AuthenticationTestBase
         // Assert
         Assert.NotEqual(HttpStatusCode.OK, loginResponse.StatusCode);
     }
+
     [Fact]
     public async Task Login_ShouldReturnBadRequest_WhenEmailIsNotVerified()
     {
         // Arrange
         var userEmail = Fake.Internet.Email();
         var userPassword = "Password123!";
-        await RegisterAndVerifyUser(userEmail, userPassword, verify: false);
+        await RegisterAndVerifyUser(userEmail, userPassword, false);
 
         // Act
         var loginPayload = new { Email = userEmail, Password = userPassword };
@@ -72,6 +72,5 @@ public class UserLoginTests : AuthenticationTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, loginResponse.StatusCode);
-
     }
 }

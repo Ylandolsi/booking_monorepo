@@ -1,21 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Booking.Common.Authentication;
+﻿using Booking.Common.Authentication;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.Logout;
 
-internal sealed class LogoutCommandHandler(UsersDbContext context,
-                                         UserContext userContext,
-                                         TokenWriterCookies tokenWriterCookies,
-                                         ILogger<LogoutCommandHandler> logger) : ICommandHandler<LogoutCommand, bool>
+internal sealed class LogoutCommandHandler(
+    UsersDbContext context,
+    UserContext userContext,
+    TokenWriterCookies tokenWriterCookies,
+    ILogger<LogoutCommandHandler> logger) : ICommandHandler<LogoutCommand, bool>
 {
-
     public async Task<Result<bool>> Handle(LogoutCommand query, CancellationToken cancellationToken)
     {
-        string? currentRefreshToken = userContext.RefreshToken;
+        var currentRefreshToken = userContext.RefreshToken;
         if (string.IsNullOrEmpty(currentRefreshToken))
         {
             logger.LogWarning("No refresh token found for user ID: {UserId}", query.UserId);
@@ -44,6 +44,5 @@ internal sealed class LogoutCommandHandler(UsersDbContext context,
         context.RefreshTokens.Update(refreshToken);
 
         return true;
-
     }
 }

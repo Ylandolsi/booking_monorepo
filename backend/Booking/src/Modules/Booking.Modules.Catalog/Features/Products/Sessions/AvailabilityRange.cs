@@ -2,7 +2,7 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions;
 
 public sealed record AvailabilityRange
 {
-    public long ? Id { get; init; } = null; 
+    public long? Id { get; init; } = null;
     public string StartTime { get; init; }
     public string EndTime { get; init; }
 }

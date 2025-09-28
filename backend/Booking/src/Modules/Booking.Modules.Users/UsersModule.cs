@@ -3,7 +3,6 @@ using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
-using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.BackgroundJobs.Cleanup;
 using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
 using Booking.Modules.Users.BackgroundJobs.SendingVerificationEmail;
@@ -16,9 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using Polly.CircuitBreaker;
-using Polly.Retry;
 
 namespace Booking.Modules.Users;
 
@@ -26,8 +22,9 @@ public static class UsersModule
 {
     public static IServiceCollection AddUsersModule(
         this IServiceCollection services,
-        IConfiguration configuration) =>
-        services
+        IConfiguration configuration)
+    {
+        return services
             .AddServices()
             .ExposeApiForModules()
             // .AddAWS(configuration)
@@ -35,6 +32,7 @@ public static class UsersModule
             .AddBackgroundJobs()
             .AddResielenecPipelines(configuration)
             .AddEndpoints(AssemblyReference.Assembly);
+    }
 
     private static IServiceCollection ExposeApiForModules(this IServiceCollection service)
     {
@@ -65,7 +63,7 @@ public static class UsersModule
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        string? connectionString = configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
 
         services.AddDbContext<UsersDbContext>((sp, options) => options
             .UseNpgsql(connectionString,
@@ -81,9 +79,6 @@ public static class UsersModule
     }
 
 
-
-
-
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
         services.AddScoped<VerificationEmailForRegistrationJob>();
@@ -96,8 +91,6 @@ public static class UsersModule
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,
         IConfiguration configuration)
     {
-
-
         return services;
     }
 }

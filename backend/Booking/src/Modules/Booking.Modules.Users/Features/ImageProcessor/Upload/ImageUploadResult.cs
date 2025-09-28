@@ -2,7 +2,7 @@
 
 namespace Booking.Modules.Users.Features.ImageProcessor.Upload;
 
-public class ImageUploadResult 
+public class ImageUploadResult
 {
     public required string Id { get; set; }
     public ImageProcessingResult Urls { get; set; }

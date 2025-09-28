@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Profile.BasicInfo;
 
-
 internal sealed class UpdateBasicInfoCommandHandler(
     UserManager<User> userManager,
     ILogger<UpdateBasicInfoCommandHandler> logger) : ICommandHandler<UpdateBasicInfoCommand>
@@ -16,7 +15,7 @@ internal sealed class UpdateBasicInfoCommandHandler(
     {
         logger.LogInformation("Updating basic info for user {UserId}", command.UserId);
 
-        User? user = await userManager.FindByIdAsync(command.UserId.ToString());
+        var user = await userManager.FindByIdAsync(command.UserId.ToString());
         if (user == null)
         {
             logger.LogWarning("User with ID {UserId} not found", command.UserId);

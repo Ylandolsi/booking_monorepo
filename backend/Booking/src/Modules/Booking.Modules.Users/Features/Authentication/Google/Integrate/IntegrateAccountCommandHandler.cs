@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Booking.Common.Authentication;
 using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Messaging;
@@ -28,17 +27,15 @@ internal sealed class IntegrateAccountCommandHandler(
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)
     {
-        GoogleClaims.ClaimsGoogle? claims = GoogleClaims.ExtractClaims(command.Principal);
+        var claims = GoogleClaims.ExtractClaims(command.Principal);
 
         if (claims is null)
-        {
             return Result.Failure<LoginResponse>(
                 GoogleErrors.UserRegistrationFailed("Invalid claims from external provider."));
-        }
 
         var loginInfo = new UserLoginInfo("Google", claims.Id, "Google");
 
-        User? user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
+        var user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
 
         if (user is not null)
         {
@@ -52,7 +49,7 @@ internal sealed class IntegrateAccountCommandHandler(
 
         if (user is not null && !user.IntegratedWithGoogle)
         {
-            IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
+            var addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             if (!addLoginResult.Succeeded)
             {
                 logger.LogWarning("Failed to integrate Google to user with email: {Email}. Errors: {Errors}",
@@ -72,22 +69,20 @@ internal sealed class IntegrateAccountCommandHandler(
             }
             else
             {
-                // fallback to tunisia 
+                // fallback to tunisia
                 user.UpdateTimezone("Africa/Tunis");
             }
 
             user.IntegrateWithGoogle();
-            
+
             await context.SaveChangesAsync(cancellationToken);*/
-            
-            
+
+
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
             user.UpdateProfileCompletion();
-            
+
             await context.SaveChangesAsync(cancellationToken);
-
-
         }
 
         logger.LogInformation("User {Email} integrated  successfully with google calendar !", claims.Email);

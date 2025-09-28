@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import type { User } from '@/types/api';
 import { toast } from 'sonner';
-import { api } from '@/lib/api/api-client';
+import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
 import { type LoginInput } from '@/features/auth';
 

@@ -5,8 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.ImageProcessor.Upload;
 
-internal sealed class UploadCommandHandler(S3ImageProcessingService s3ImageProcessingService,
-                                            ILogger<UploadCommandHandler> logger) : ICommandHandler<UploadCommand, ImageUploadResult>
+internal sealed class UploadCommandHandler(
+    S3ImageProcessingService s3ImageProcessingService,
+    ILogger<UploadCommandHandler> logger) : ICommandHandler<UploadCommand, ImageUploadResult>
 {
     public async Task<Result<ImageUploadResult>> Handle(UploadCommand request, CancellationToken cancellationToken)
     {
@@ -46,13 +47,14 @@ internal sealed class UploadCommandHandler(S3ImageProcessingService s3ImageProce
         try
         {
             result = await s3ImageProcessingService.ProcessImageAsync(request.File, uniqueFileName);
-
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An error occurred while processing the image upload for file: {FileName}", request.File.FileName);
+            logger.LogError(ex, "An error occurred while processing the image upload for file: {FileName}",
+                request.File.FileName);
             return Result.Failure<ImageUploadResult>(UploadErrors.ImageProcessingError);
         }
+
         var returnResult = new ImageUploadResult
         {
             Id = uniqueFileName,
@@ -60,6 +62,5 @@ internal sealed class UploadCommandHandler(S3ImageProcessingService s3ImageProce
         };
 
         return Result.Success(returnResult);
-
     }
 }

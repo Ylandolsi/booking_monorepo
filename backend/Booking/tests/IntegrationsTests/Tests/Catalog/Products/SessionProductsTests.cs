@@ -1,9 +1,6 @@
 using System.Net;
-using System.Net.Http.Json;
-using Booking.Modules.Catalog.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
-using Snapshooter.Xunit;
 using Xunit.Abstractions;
 
 namespace IntegrationsTests.Tests.Catalog.Products;
@@ -51,8 +48,7 @@ public class SessionProductsTests : CatalogTestBase
         await CreateUserAndLogin("user_no_store_session_product@example.com", null, userArrange);
 
         // Act
-        var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 50.0m, 15,
-            "Test subtitle", "Test description",
+        var response = await CatalogTestUtilities.CreateSessionProductRequest(userAct, "Test Session", 50.0m,
             dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -66,9 +62,8 @@ public class SessionProductsTests : CatalogTestBase
 
         // Act
         var response = await CatalogTestUtilities.CreateSessionProductRequest(unauthClient, "Test Session", 50.0m, 100,
-            "Test subtitle", "Test description",
             dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
-        
+
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
@@ -87,7 +82,7 @@ public class SessionProductsTests : CatalogTestBase
 
         // Act
         var response = await CatalogTestUtilities.CreateSessionProductRequest(
-            userAct, title, price, bufferTime, "Test subtitle", "Test description",
+            userAct, title, price, bufferTime,
             dayAvailabilities: CatalogTestUtilities.SessionProductTestData.CreateDefaultDayAvailabilities());
 
         // Assert

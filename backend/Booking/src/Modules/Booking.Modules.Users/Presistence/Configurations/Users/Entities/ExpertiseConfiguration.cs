@@ -31,6 +31,4 @@ internal sealed class ExpertiseConfiguration : IEntityTypeConfiguration<Expertis
         //        v => Enum.Parse<ExpertiseCategory>(v)
         //    );
     }
-
-
 }

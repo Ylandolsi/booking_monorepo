@@ -43,7 +43,8 @@ internal class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken
         {
             t.HasCheckConstraint("CK_RefreshToken_Token_Length", "LENGTH(token) >= 32 AND LENGTH(token) <= 512");
             t.HasCheckConstraint("CK_RefreshToken_Dates_Valid", "expires_on_utc > created_on_utc");
-            t.HasCheckConstraint("CK_RefreshToken_Revoked_Valid", "revoked_on_utc IS NULL OR revoked_on_utc >= created_on_utc");
+            t.HasCheckConstraint("CK_RefreshToken_Revoked_Valid",
+                "revoked_on_utc IS NULL OR revoked_on_utc >= created_on_utc");
         });
     }
 }

@@ -13,8 +13,8 @@ public class CatalogDbContextFactory : IDesignTimeDbContextFactory<CatalogDbCont
 
         var configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile("appsettings.Development.json", true)
             .AddEnvironmentVariables()
             .Build();
 
@@ -22,9 +22,7 @@ public class CatalogDbContextFactory : IDesignTimeDbContextFactory<CatalogDbCont
         var connectionString = configuration.GetConnectionString("Database");
 
         if (string.IsNullOrEmpty(connectionString))
-        {
             throw new InvalidOperationException("Database connection string not found in configuration.");
-        }
 
         // Configure DbContextOptions
         var optionsBuilder = new DbContextOptionsBuilder<CatalogDbContext>();

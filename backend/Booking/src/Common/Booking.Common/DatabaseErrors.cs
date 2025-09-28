@@ -1,9 +1,11 @@
 ﻿using Booking.Common.Results;
 
-namespace Booking.Common
+namespace Booking.Common;
+
+public static class DatabaseErrors
 {
-    public static class DatabaseErrors
+    public static Error SaveChangeError(string details)
     {
-        public static Error SaveChangeError( string details ) => Error.Failure("Database.SaveChanges", details);
+        return Error.Failure("Database.SaveChanges", details);
     }
 }

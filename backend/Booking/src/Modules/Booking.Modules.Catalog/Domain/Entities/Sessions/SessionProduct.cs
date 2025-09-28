@@ -4,20 +4,7 @@ namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
 
 public class SessionProduct : Product
 {
-    public Duration Duration { get; private set; } = null!; // 30 minutes !
-    public Duration BufferTime { get; private set; } = null!;
-    public string? MeetingInstructions { get; private set; }
-
-    public string TimeZoneId { get; private set; } = "Africa/Tunis";
-
-    // todo:notImportant custom ( for more flexibility )  Availability rules stored 
-    //public string? AvailabilityRules { get; private set; }
-
-    // Navigation properties for availability (can be expanded later)
-    public ICollection<SessionAvailability> Availabilities { get; private set; } = new List<SessionAvailability>();
-    public ICollection<Day> Days { get; private set; } = new List<Day>();
-
-    public SessionProduct() : base()
+    public SessionProduct()
     {
     }
 
@@ -42,6 +29,19 @@ public class SessionProduct : Product
         Duration = durationTime ?? Duration.ThirtyMinutes;
         TimeZoneId = timeZoneId;
     }
+
+    public Duration Duration { get; private set; } = null!; // 30 minutes !
+    public Duration BufferTime { get; private set; } = null!;
+    public string? MeetingInstructions { get; private set; }
+
+    public string TimeZoneId { get; private set; } = "Africa/Tunis";
+
+    // todo:notImportant custom ( for more flexibility )  Availability rules stored 
+    //public string? AvailabilityRules { get; private set; }
+
+    // Navigation properties for availability (can be expanded later)
+    public ICollection<SessionAvailability> Availabilities { get; private set; } = new List<SessionAvailability>();
+    public ICollection<Day> Days { get; } = new List<Day>();
 
 
     public static SessionProduct Create(
@@ -83,7 +83,7 @@ public class SessionProduct : Product
 
         foreach (var dayOfWeek in allDaysOfWeek)
         {
-            var day = Day.Create(Id, ProductSlug, dayOfWeek, isActive: false);
+            var day = Day.Create(Id, ProductSlug, dayOfWeek, false);
             Days.Add(day);
         }
     }
@@ -98,20 +98,14 @@ public class SessionProduct : Product
         BufferTime = bufferTime ?? throw new ArgumentNullException(nameof(bufferTime));
         MeetingInstructions = meetingInstructions?.Trim();
 
-        if (!string.IsNullOrWhiteSpace(timeZoneId))
-        {
-            TimeZoneId = timeZoneId;
-        }
+        if (!string.IsNullOrWhiteSpace(timeZoneId)) TimeZoneId = timeZoneId;
 
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void UpdateTimeZone(string timeZoneId)
     {
-        if (String.IsNullOrWhiteSpace(timeZoneId))
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(timeZoneId)) return;
 
         TimeZoneId = timeZoneId;
         UpdatedAt = DateTime.UtcNow;

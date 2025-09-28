@@ -18,10 +18,10 @@ internal sealed class DeleteEducation : IEndpoint
                 ICommandHandler<DeleteEducationCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                int userId = userContext.UserId;
+                var userId = userContext.UserId;
 
                 var command = new DeleteEducationCommand(educationId, userId);
-                Result result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(Results.NoContent,
                     CustomResults.Problem);

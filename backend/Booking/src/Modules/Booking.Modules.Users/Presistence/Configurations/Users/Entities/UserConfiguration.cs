@@ -75,10 +75,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("AspNetUsers", t =>
         {
             t.HasCheckConstraint("CK_User_Bio_Length", "LENGTH(bio) <= 500");
-            t.HasCheckConstraint("CK_User_Gender_Valid", "gender IS NULL OR gender IN ('Male', 'Female', 'Other', 'Prefer not to say')");
+            t.HasCheckConstraint("CK_User_Gender_Valid",
+                "gender IS NULL OR gender IN ('Male', 'Female', 'Other', 'Prefer not to say')");
         });
-
-
 
 
         // List of mentors that the user is dealt with 
@@ -115,7 +114,5 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .WithOne(us => us.User)
             .HasForeignKey(us => us.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-
     }
 }

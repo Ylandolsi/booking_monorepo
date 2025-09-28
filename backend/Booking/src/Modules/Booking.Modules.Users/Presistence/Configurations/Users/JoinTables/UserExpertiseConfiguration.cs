@@ -19,6 +19,5 @@ internal sealed class UserExpertiseConfiguration : IEntityTypeConfiguration<User
             .WithMany(s => s.UserExpertises)
             .HasForeignKey(ul => ul.ExpertiseId)
             .OnDelete(DeleteBehavior.Cascade);
-
     }
 }

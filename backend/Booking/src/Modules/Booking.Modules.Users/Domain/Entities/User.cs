@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-using Booking.Common.Domain.Entity;
+﻿using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain.JoinTables;
 using Booking.Modules.Users.Domain.ValueObjects;
@@ -14,11 +12,19 @@ public static class Genders
     public const string Female = "Female";
 
     public static readonly HashSet<string> ValidGenders = new() { Male, Female };
-    public static bool IsValid(string gender) => ValidGenders.Contains(gender);
+
+    public static bool IsValid(string gender)
+    {
+        return ValidGenders.Contains(gender);
+    }
 }
 
 public sealed class User : IdentityUser<int>, IEntity
 {
+    private User()
+    {
+    }
+
     public string Slug { get; private set; } = string.Empty;
     public Name Name { get; private set; } = null!;
     public Status Status { get; private set; } = null!;
@@ -26,21 +32,38 @@ public sealed class User : IdentityUser<int>, IEntity
     public string Gender { get; private set; } = "Male";
     public SocialLinks SocialLinks { get; private set; } = null!;
 
-    public ProfileCompletionStatus ProfileCompletionStatus { get; private set; } = new ProfileCompletionStatus();
+    public ProfileCompletionStatus ProfileCompletionStatus { get; } = new();
 
     // TODO : add limited lenght to this 
-    public string? GoogleEmail { get; private set; } = null;
-    public bool IntegratedWithGoogle { get; private set; } = false;
+    public string? GoogleEmail { get; private set; }
+    public bool IntegratedWithGoogle { get; private set; }
     public string KonnectWalledId { get; private set; } = "";
     public string TimeZoneId { get; private set; } = "Africa/Tunis";
     public string Bio { get; private set; } = string.Empty;
 
+    // TODO : configure these one to many as readonly 
+    //builder.Navigation(o => o.Items)
+    // .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+    // ONE TO MANY 
+    public ICollection<Experience> Experiences { get; } = new List<Experience>();
+    public ICollection<Education> Educations { get; private set; } = new List<Education>();
+
+
+    // MANY TO MANY RELATIONSHIP
+
+    public ICollection<MentorMentee> UserMentors { get; private set; } = new List<MentorMentee>();
+
+    public ICollection<MentorMentee> UserMentees { get; private set; } = new List<MentorMentee>();
+
+    // MAX 4
+    public ICollection<UserExpertise> UserExpertises { get; } = new HashSet<UserExpertise>();
+
+    // MAX 4 
+    public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-    private User()
-    {
-    }
 
 
     public static User Create(
@@ -66,7 +89,7 @@ public sealed class User : IdentityUser<int>, IEntity
             ProfilePictureUrl = new ProfilePicture(profilePictureSource),
             Slug = slug,
             CreatedAt = DateTime.UtcNow,
-            TimeZoneId = timeZoneId,
+            TimeZoneId = timeZoneId
         };
 
 
@@ -75,10 +98,7 @@ public sealed class User : IdentityUser<int>, IEntity
 
     public Result UpdateTimezone(string timeZoneId)
     {
-        if (timeZoneId == "")
-        {
-            return Result.Failure(UserErrors.InvalidTimeZone(timeZoneId));
-        }
+        if (timeZoneId == "") return Result.Failure(UserErrors.InvalidTimeZone(timeZoneId));
 
         TimeZoneId = timeZoneId;
         return Result.Success();
@@ -141,36 +161,27 @@ public sealed class User : IdentityUser<int>, IEntity
         var profileCompletion = ProfileCompletionStatus.GetCompletionPercentage();
 
         if (profileCompletion < 80)
-        {
             return Result.Failure(Error.Problem(
                 "User.InsufficientProfileCompletion",
                 "Profile must be at least 80% complete to become a mentor"));
-        }
 
         if (!Experiences.Any())
-        {
             return Result.Failure(Error.Problem(
                 "User.NoExperience",
                 "User must have at least one experience to become a mentor"));
-        }
 
         if (!UserExpertises.Any())
-        {
             return Result.Failure(Error.Problem(
                 "User.NoExpertise",
                 "User must have at least one expertise to become a mentor"));
-        }
 
         return Result.Success();
     }
 
     public Result BecomeMentor()
     {
-        Result isPossible = CanBecomeMentor();
-        if (isPossible.IsFailure)
-        {
-            return isPossible;
-        }
+        var isPossible = CanBecomeMentor();
+        if (isPossible.IsFailure) return isPossible;
 
         return Status.BecomeMentor();
     }
@@ -185,27 +196,4 @@ public sealed class User : IdentityUser<int>, IEntity
     {
         KonnectWalledId = konnectWalledId;
     }
-
-    // TODO : configure these one to many as readonly 
-    //builder.Navigation(o => o.Items)
-    // .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-    // ONE TO MANY 
-    public ICollection<Experience> Experiences { get; private set; } = new List<Experience>();
-    public ICollection<Education> Educations { get; private set; } = new List<Education>();
-
-
-    // MANY TO MANY RELATIONSHIP
-
-    public ICollection<MentorMentee> UserMentors { get; private set; } = new List<MentorMentee>();
-
-    public ICollection<MentorMentee> UserMentees { get; private set; } = new List<MentorMentee>();
-
-    // MAX 4
-    public ICollection<UserExpertise> UserExpertises { get; private set; } = new HashSet<UserExpertise>();
-
-    // MAX 4 
-    public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
-
-    
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Primitives;
-using Serilog.Context;
+﻿using Serilog.Context;
 
 namespace Booking.Api.Middlewares;
 
@@ -24,7 +23,7 @@ public class RequestContextLoggingMiddleware(RequestDelegate next)
     {
         context.Request.Headers.TryGetValue(
             CorrelationIdHeaderName,
-            out StringValues correlationId);
+            out var correlationId);
 
         return correlationId.FirstOrDefault() ?? context.TraceIdentifier;
         //     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^^
@@ -34,7 +33,7 @@ public class RequestContextLoggingMiddleware(RequestDelegate next)
     // REMARK: This middleware should be registered before SerilogRequestLoggingMiddleware
 
     // EXP : 
-    /* All logs for a slow request 
+    /* All logs for a slow request
     => help identify the time spent in each part of the request:
 
         CorrelationId = "slow-req-456"

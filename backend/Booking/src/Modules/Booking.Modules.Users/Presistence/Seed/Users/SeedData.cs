@@ -9,7 +9,5 @@ internal static class SeedData
     {
         modelBuilder.Entity<Expertise>().HasData(LanguageExpertiseSeeder.Expertises());
         modelBuilder.Entity<Language>().HasData(LanguageExpertiseSeeder.Languages());
-
     }
-
 }

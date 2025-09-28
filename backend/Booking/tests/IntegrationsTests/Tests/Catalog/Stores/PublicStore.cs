@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Booking.Modules.Catalog.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
@@ -34,7 +35,7 @@ public class PublicStore : CatalogTestBase
 
         Assert.Equal(HttpStatusCode.OK, responsePublicStore.StatusCode);
         var content = await responsePublicStore.Content.ReadAsStringAsync();
-        var jsonDoc = System.Text.Json.JsonDocument.Parse(content);
+        var jsonDoc = JsonDocument.Parse(content);
         var root = jsonDoc.RootElement;
 
         Assert.True(root.TryGetProperty("title", out _), "Response should contain title");

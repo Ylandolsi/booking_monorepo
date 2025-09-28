@@ -4,15 +4,6 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Escrow : Entity
 {
-    public int Id { get; private set; }
-
-    public decimal Price { get; private set; }
-    public EscrowState State { get; private set; }
-
-    public int OrderId { get; private set; }
-
-    public DateTime ReleaseAt { get; private set; }
-
     private Escrow()
     {
     }
@@ -23,6 +14,15 @@ public class Escrow : Entity
         OrderId = orderId;
         State = EscrowState.Held;
     }
+
+    public int Id { get; private set; }
+
+    public decimal Price { get; private set; }
+    public EscrowState State { get; private set; }
+
+    public int OrderId { get; private set; }
+
+    public DateTime ReleaseAt { get; private set; }
 
 
     public void SetRefunded()
@@ -40,5 +40,5 @@ public enum EscrowState
 {
     Held,
     Released,
-    Refunded,
+    Refunded
 }

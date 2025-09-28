@@ -1,4 +1,3 @@
-using Booking.Common.Contracts.Mentorships;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
@@ -23,7 +22,7 @@ public static class CatalogModule
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        string? connectionString = configuration.GetConnectionString("Database");
+        var connectionString = configuration.GetConnectionString("Database");
 
         services.AddDbContext<CatalogDbContext>((sp, options) => options
             .UseNpgsql(connectionString,

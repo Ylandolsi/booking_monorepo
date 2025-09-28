@@ -9,6 +9,3 @@ public sealed record GetEducationResponse(
     string? Description,
     bool ToPresent
 );
-
-
-

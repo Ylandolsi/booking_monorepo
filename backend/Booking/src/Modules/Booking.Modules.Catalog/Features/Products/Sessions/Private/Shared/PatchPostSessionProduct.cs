@@ -38,8 +38,7 @@ public record PatchPostSessionProductRequest
         ? null
         : JsonSerializer.Deserialize<List<DayAvailability>>(DayAvailabilitiesJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true ,
+            PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter() } // convert enum to string and vice versa
-
         });
 }

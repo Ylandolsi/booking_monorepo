@@ -5,10 +5,8 @@ using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Private.Shared;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.CreateStore;
 
@@ -68,15 +66,12 @@ public class CreateStoreHandler(
                 command.Description, socialLinksData);
 
             // Upload and set picture
-            
+
             var profilePictureResult = await storeService.UploadPicture(command.File, command.Slug);
             if (profilePictureResult.IsFailure)
-            {
                 logger.LogWarning("Failed to upload picture for store {Slug}: {Error}",
                     command.Slug, profilePictureResult.Error.Description);
-                // Continue with default picture instead of failing
-            }
-
+            // Continue with default picture instead of failing
             store.UpdatePicture(profilePictureResult.IsSuccess ? profilePictureResult.Value : new Picture());
 
             // Save to database

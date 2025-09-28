@@ -26,18 +26,16 @@ internal sealed class CreateOrLoginCommandHandler(
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
     {
-        GoogleClaims.ClaimsGoogle? claims = GoogleClaims.ExtractClaims(command.Principal);
+        var claims = GoogleClaims.ExtractClaims(command.Principal);
 
         if (claims is null)
-        {
             return Result.Failure<LoginResponse>(
                 GoogleErrors.UserRegistrationFailed("Invalid claims from external provider."));
-        }
 
         var loginInfo = new UserLoginInfo("Google", claims.Id, "Google");
 
         // Find user by the external login first
-        User? user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
+        var user = await userManager.FindByLoginAsync(loginInfo.LoginProvider, loginInfo.ProviderKey);
 
 
         if (user is null)
@@ -50,8 +48,8 @@ internal sealed class CreateOrLoginCommandHandler(
                 // If user doesn't exist at all, create a new one
                 logger.LogInformation("Creating new user with email {Email}.", claims.Email);
 
-                string uniqueSlug = await slugGenerator.GenerateUniqueSlug(
-                    async (slug) => await context.Users.AsNoTracking().AnyAsync(u => u.Slug == slug, cancellationToken),
+                var uniqueSlug = await slugGenerator.GenerateUniqueSlug(
+                    async slug => await context.Users.AsNoTracking().AnyAsync(u => u.Slug == slug, cancellationToken),
                     claims.FirstName,
                     claims.LastName
                 );
@@ -66,7 +64,7 @@ internal sealed class CreateOrLoginCommandHandler(
 
                 user.IntegrateWithGoogle(claims.Email);
 
-                IdentityResult createResult = await userManager.CreateAsync(user);
+                var createResult = await userManager.CreateAsync(user);
 
 
                 if (!createResult.Succeeded)
@@ -89,7 +87,7 @@ internal sealed class CreateOrLoginCommandHandler(
                 }
                 else
                 {
-                    // fallback to tunisia 
+                    // fallback to tunisia
                     user.UpdateTimezone("Africa/Tunis");
                 }*/
 
@@ -97,7 +95,7 @@ internal sealed class CreateOrLoginCommandHandler(
             }
 
             // Add the external login to the user (either existing by email or newly created)
-            IdentityResult addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
+            var addLoginResult = await userManager.AddLoginAsync(user, loginInfo);
             await googleTokenService.StoreUserTokensAsyncByUser(user, command.GoogleTokens);
             user.IntegrateWithGoogle(claims.Email);
             user.UpdateProfileCompletion();
@@ -116,23 +114,20 @@ internal sealed class CreateOrLoginCommandHandler(
         // At this point, 'user' is valid, so generate tokens and return the response
         // This part depends on your ITokenProvider implementation
 
-        string? currentIp = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-        string? currentUserAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString();
+        var currentIp = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        var currentUserAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString();
 
-        Result result = await tokenHelper.GenerateTokens(user, currentIp, currentUserAgent, cancellationToken);
-        if (result.IsFailure)
-        {
-            return Result.Failure<LoginResponse>(result.Error);
-        }
+        var result = await tokenHelper.GenerateTokens(user, currentIp, currentUserAgent, cancellationToken);
+        if (result.IsFailure) return Result.Failure<LoginResponse>(result.Error);
 
         logger.LogInformation("User {Email} logged in successfully.!", user.Email);
 
         var response = new LoginResponse
         (
-            UserSlug: user.Slug,
-            FirstName: user.Name.FirstName,
-            LastName: user.Name.LastName,
-            Email: user.Email!,
+            user.Slug,
+            user.Name.FirstName,
+            user.Name.LastName,
+            user.Email!,
             ProfilePictureUrl: user.ProfilePictureUrl.ProfilePictureLink,
             IsMentor: user.Status.IsMentor,
             MentorActive: user.Status.IsMentor && user.Status.IsActive

@@ -5,17 +5,6 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Payment : Entity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-    public int Id { get; private set; }
-
-    public int StoreId { get; private set; }
-    public string Reference { get; private set; }
-    public int OrderId { get; private set; }
-    public int ProductId { get; private set; }
-    public decimal Price { get; private set; }
-    public PaymentStatus Status { get; private set; }
-
     private Payment()
     {
     }
@@ -36,6 +25,17 @@ public class Payment : Entity
         Status = status;
     }
 
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+    public int Id { get; private set; }
+
+    public int StoreId { get; private set; }
+    public string Reference { get; private set; }
+    public int OrderId { get; private set; }
+    public int ProductId { get; private set; }
+    public decimal Price { get; }
+    public PaymentStatus Status { get; private set; }
+
     public void SetComplete(decimal? price = null)
     {
         price = price ?? Price;
@@ -51,5 +51,5 @@ public class Payment : Entity
 public enum PaymentStatus
 {
     Pending,
-    Completed,
+    Completed
 }

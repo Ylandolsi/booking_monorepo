@@ -7,7 +7,7 @@ public static class TimeConvertion
         var targetTz = TimeZoneInfo.FindSystemTimeZoneById(targetTimeZoneId);
         return TimeZoneInfo.ConvertTimeFromUtc(utcInstant, targetTz);
     }
-    
+
     public static DateTime ToInstant(DateOnly date, TimeOnly time, string timeZoneId)
     {
         // 1. Combine DateOnly + TimeOnly into a DateTime (local "unspecified" kind)
@@ -17,7 +17,7 @@ public static class TimeConvertion
         var tz = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
 
         // 3. Convert local time in that zone to UTC
-        DateTime utcDateTime = TimeZoneInfo.ConvertTimeToUtc(localDateTime, tz);
+        var utcDateTime = TimeZoneInfo.ConvertTimeToUtc(localDateTime, tz);
 
         return utcDateTime;
 

@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle, Button, DrawerDialog } from '
 import { cn } from '@/lib/cn';
 import { formatDateLong } from '@/utils';
 import { useState } from 'react';
-import type { SessionSlotType } from '@/features/app/session/booking/shared';
 import type { BookingSummaryType } from '@/api/stores';
+import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
 interface BookingSummaryProps {
   booking: BookingSummaryType | null;

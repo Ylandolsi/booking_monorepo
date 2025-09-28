@@ -10,8 +10,6 @@ namespace Booking.Modules.Catalog.Features.Payout.Admin.Reject;
 
 public class RejectPayoutAdmin : IEndpoint
 {
-    public record Request(int PayoutId);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost(CatalogEndpoints.Payouts.Admin.RejectPayout,
@@ -29,4 +27,6 @@ public class RejectPayoutAdmin : IEndpoint
             .RequireAuthorization("Admin")
             .WithTags(Tags.Admin, Tags.Payout);
     }
+
+    public record Request(int PayoutId);
 }

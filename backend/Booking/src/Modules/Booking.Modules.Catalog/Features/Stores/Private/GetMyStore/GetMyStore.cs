@@ -1,7 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +10,6 @@ using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 namespace Booking.Modules.Catalog.Features.Stores.Private.GetMyStore;
 
 public record GetMyStoreQuery(int UserId) : IQuery<GetStoreResponse>;
-
-
 
 public class GetMyStoreHandler(
     CatalogDbContext context,
@@ -28,7 +25,8 @@ public class GetMyStoreHandler(
             if (request.UserId <= 0)
             {
                 logger.LogWarning("Invalid user ID provided: {UserId}", request.UserId);
-                return Result.Failure<GetStoreResponse>(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
+                return Result.Failure<GetStoreResponse>(Error.Problem("Store.InvalidUserId",
+                    "User ID must be greater than 0"));
             }
 
             // Get store from database : improve this query 
@@ -50,10 +48,10 @@ public class GetMyStoreHandler(
                 .Select(sl => new SocialLink(sl.Platform, sl.Url))
                 .ToList();
 
-            List<ProductResponse> mappedStoreProducts = new List<ProductResponse>();
+            var mappedStoreProducts = new List<ProductResponse>();
             foreach (var product in store.Products)
             {
-                if (product.IsPublished == false)
+                if (!product.IsPublished)
                     continue;
 
                 var mappedProduct = new ProductResponse
@@ -69,9 +67,9 @@ public class GetMyStoreHandler(
                     IsPublished = product.IsPublished, //  only retrieve published 
                     ThumbnailPicture = product.ThumbnailPicture,
                     UpdatedAt = product.UpdatedAt,
-                    CreatedAt = product.CreatedAt,
+                    CreatedAt = product.CreatedAt
                 };
-                 mappedStoreProducts.Add(mappedProduct);
+                mappedStoreProducts.Add(mappedProduct);
             }
 
             var mappedResult = new GetStoreResponse
@@ -81,7 +79,7 @@ public class GetMyStoreHandler(
                 Description = store.Description,
                 Picture = store.Picture,
                 SocialLinks = socialLinks,
-                Products = mappedStoreProducts,
+                Products = mappedStoreProducts
             };
 
             return Result.Success(mappedResult);

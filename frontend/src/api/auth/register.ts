@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { api } from '@/lib/api/api-client';
+import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
 import type { RegisterInput } from '@/features/auth';
 

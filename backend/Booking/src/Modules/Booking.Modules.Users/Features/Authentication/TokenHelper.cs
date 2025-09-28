@@ -8,28 +8,28 @@ using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.Features.Authentication;
 
-public class TokenHelper(TokenProvider tokenProvider,
-                           UsersDbContext context,
-                           TokenWriterCookies tokenWriterCookies,
-                           IOptions<JwtOptions> jwtOptions,
-                           ILogger<TokenHelper> logger)
+public class TokenHelper(
+    TokenProvider tokenProvider,
+    UsersDbContext context,
+    TokenWriterCookies tokenWriterCookies,
+    IOptions<JwtOptions> jwtOptions,
+    ILogger<TokenHelper> logger)
 {
     private readonly AccessOptions _jwtOptions = jwtOptions.Value.AccessToken;
 
     public async Task<Result> GenerateTokens(User user,
-                                             string? currentIp,
-                                             string? currentUserAgent,
-                                             CancellationToken cancellationToken)
+        string? currentIp,
+        string? currentUserAgent,
+        CancellationToken cancellationToken)
     {
-
-        string accessToken = tokenProvider.GenerateJwtToken(user);
+        var accessToken = tokenProvider.GenerateJwtToken(user);
         if (string.IsNullOrEmpty(accessToken))
         {
             logger.LogError("Failed to generate access token for user with email: {Email}", user.Email);
             return Result.Failure<string>(TokenGenerationError.TokenGenerationFailed);
         }
 
-        string refreshToken = tokenProvider.GenerateRefreshToken();
+        var refreshToken = tokenProvider.GenerateRefreshToken();
         if (string.IsNullOrEmpty(refreshToken))
         {
             logger.LogError("Failed to generate refresh token for user with email: {Email}", user.Email);
@@ -64,12 +64,10 @@ public class TokenHelper(TokenProvider tokenProvider,
 
 
         return Result.Success();
-
     }
 
     // TODO : 
     // - Add method to revoke refresh token
     // - Add method to revoke all refresh tokens for a user
     // - Cleanup expired tokens
-    
 }

@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { AdminPayoutKeys } from './admin-payout-keys';
-import { api, CatalogEndpoints } from '@/lib';
+import { api, CatalogEndpoints } from '@/api/utils';
 import { toLocalISOString } from '@/utils/format';
 
 export interface AdminPayoutResponse {

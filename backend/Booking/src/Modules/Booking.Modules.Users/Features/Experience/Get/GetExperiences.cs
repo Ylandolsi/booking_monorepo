@@ -7,21 +7,20 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Users.Features.Experience.Get;
 
-
 internal sealed class GetExperiences : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GetUserExperiences, async (
-            string userSlug,
-            IQueryHandler<GetExperienceQuery, List<GetExperienceResponse>> handler,
-            CancellationToken cancellationToken) =>
-        {
-            var query = new GetExperienceQuery(userSlug);
-            Result<List<GetExperienceResponse>> result = await handler.Handle(query, cancellationToken);
+                string userSlug,
+                IQueryHandler<GetExperienceQuery, List<GetExperienceResponse>> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var query = new GetExperienceQuery(userSlug);
+                var result = await handler.Handle(query, cancellationToken);
 
-            return result.Match(Results.Ok, CustomResults.Problem);
-        })
-        .WithTags(Tags.Experience);
+                return result.Match(Results.Ok, CustomResults.Problem);
+            })
+            .WithTags(Tags.Experience);
     }
 }

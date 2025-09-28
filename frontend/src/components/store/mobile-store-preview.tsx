@@ -1,9 +1,9 @@
 import { LazyImage } from '@/utils';
 import { FALLBACK_PROFILE_PICTURE } from '@/lib';
-import { socialPlatforms } from '@/features/app/store/create/setup-store';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Product, Store } from '@/api/stores';
+import { socialPlatforms } from '@/features/app/store';
 
 interface MobileStorePreviewProps {
   store: Store;

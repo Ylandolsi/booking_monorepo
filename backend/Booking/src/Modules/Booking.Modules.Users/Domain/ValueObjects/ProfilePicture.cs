@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common;
 using Booking.Common.Results;
 
@@ -6,28 +5,22 @@ namespace Booking.Modules.Users.Domain.ValueObjects;
 
 public class ProfilePicture : ValueObject
 {
-    public string ProfilePictureLink { get; private set; }
-    public string ThumbnailUrlPictureLink { get; private set; }
-
     public ProfilePicture(string profilePictureLink = "", string thumbnailUrlPictureLink = "")
     {
         if (!isProfilePictureLinkValid(profilePictureLink) && !isProfilePictureLinkValid(thumbnailUrlPictureLink))
-        {
             ResetToDefaultProfilePicture();
-        }
         else
-        {
             UpdateProfilePicture(profilePictureLink, thumbnailUrlPictureLink);
-        }
     }
+
+    public string ProfilePictureLink { get; private set; }
+    public string ThumbnailUrlPictureLink { get; private set; }
 
 
     public Result UpdateProfilePicture(string profilePictureLink, string thumbnailUrlPictureLink = "")
     {
         if (!isProfilePictureLinkValid(profilePictureLink) && !isProfilePictureLinkValid(thumbnailUrlPictureLink))
-        {
             return Result.Failure(ProfilePictureErrors.InvalidProfilePictureUrl);
-        }
 
         ProfilePictureLink = AddHttpsPrefix(profilePictureLink);
         ThumbnailUrlPictureLink = AddHttpsPrefix(thumbnailUrlPictureLink);
@@ -47,8 +40,11 @@ public class ProfilePicture : ValueObject
         return Result.Success();
     }
 
-    private bool isProfilePictureLinkValid(string Link) => !string.IsNullOrWhiteSpace(Link) &&
-                                                           IsValidUrl(Link);
+    private bool isProfilePictureLinkValid(string Link)
+    {
+        return !string.IsNullOrWhiteSpace(Link) &&
+               IsValidUrl(Link);
+    }
 
     private static bool IsValidUrl(string profilePictureLink)
     {
@@ -61,15 +57,13 @@ public class ProfilePicture : ValueObject
     private static string AddHttpsPrefix(string profilePictureUrl)
     {
         if (!profilePictureUrl.StartsWith("http://") && !profilePictureUrl.StartsWith("https://"))
-        {
             profilePictureUrl = "https://" + profilePictureUrl;
-        }
 
         return profilePictureUrl;
     }
 
 
-    protected override IEnumerable<Object> GetEqualityComponents()
+    protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return ProfilePictureLink;
     }

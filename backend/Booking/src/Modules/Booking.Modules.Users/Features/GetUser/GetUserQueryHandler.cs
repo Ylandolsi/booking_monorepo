@@ -18,17 +18,16 @@ internal sealed class GetUserQueryHandler(
 
         var user = await context.Users
             .AsNoTracking() // necessary to disable tracking
-                            // for the entities inside the select  ,
-                            // else error will happen: 
-                            // bcz value objects are tracked while the main 
-                            // entity is not tracked
-            .Where(u => u.Slug == request.UserSlug).
-            Include(u => u.Experiences)
-           .Include(u => u.Educations)
-           .Include(u => u.UserExpertises)
-           .Include(u => u.UserLanguages)
-           .Include(u => u.Experiences)
-           //.AsSplitQuery()
+            // for the entities inside the select  ,
+            // else error will happen: 
+            // bcz value objects are tracked while the main 
+            // entity is not tracked
+            .Where(u => u.Slug == request.UserSlug).Include(u => u.Experiences)
+            .Include(u => u.Educations)
+            .Include(u => u.UserExpertises)
+            .Include(u => u.UserLanguages)
+            .Include(u => u.Experiences)
+            //.AsSplitQuery()
             .Select(u => new UserResponse
             {
                 Slug = u.Slug,
@@ -41,7 +40,7 @@ internal sealed class GetUserQueryHandler(
                 Bio = u.Bio,
                 Experiences = u.Experiences.ToList(),
                 Educations = u.Educations.ToList(),
-                TimeZoneId = u.TimeZoneId, 
+                TimeZoneId = u.TimeZoneId,
                 Expertises = u.UserExpertises.Select(ue => ue.Expertise).ToList(),
                 Languages = u.UserLanguages.Select(ul => ul.Language).ToList()
             })

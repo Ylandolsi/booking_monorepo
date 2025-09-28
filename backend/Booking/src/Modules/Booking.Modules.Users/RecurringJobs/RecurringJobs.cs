@@ -1,4 +1,3 @@
-using Booking.Modules.Users.BackgroundJobs;
 using Booking.Modules.Users.BackgroundJobs.Cleanup;
 using Hangfire;
 
@@ -10,10 +9,10 @@ public static class RecurringJobs
     {
         UseTokenCleanup();
     }
+
     public static void UseTokenCleanup()
     {
         RecurringJob.AddOrUpdate<TokenCleanupJob>(
-
             "token-cleanup-job",
             job => job.CleanUpAsync(null),
             Cron.Daily(1, 0), // Runs daily at 2:00 AM GMT+1 
@@ -21,8 +20,5 @@ public static class RecurringJobs
             {
                 TimeZone = TimeZoneInfo.Utc // timezone = GMT (UTC)
             });
-
     }
-
-   
 }

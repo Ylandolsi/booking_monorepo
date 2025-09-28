@@ -2,7 +2,7 @@ namespace Booking.Common.Contracts.Users;
 
 public class UserDto
 {
-    public required string Slug { get; set;  }
+    public required string Slug { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required ProfilePictureDto ProfilePicture { get; set; }

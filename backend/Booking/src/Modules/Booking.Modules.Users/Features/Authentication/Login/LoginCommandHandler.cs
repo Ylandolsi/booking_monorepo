@@ -11,28 +11,29 @@ using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.Features.Authentication.Login;
 
-public sealed class LoginCommandHandler
-                (UsersDbContext context,
-                 UserManager<User> userManager,
-                 TokenProvider tokenProvider,
-                 TokenWriterCookies tokenWriterCookies,
-                 IHttpContextAccessor httpContextAccessor,
-                 IOptions<JwtOptions> jwtOptions,
-                 TokenHelper tokenHelper,
-                 ILogger<LoginCommandHandler> logger) : ICommandHandler<LoginCommand, LoginResponse>
+public sealed class LoginCommandHandler(
+    UsersDbContext context,
+    UserManager<User> userManager,
+    TokenProvider tokenProvider,
+    TokenWriterCookies tokenWriterCookies,
+    IHttpContextAccessor httpContextAccessor,
+    IOptions<JwtOptions> jwtOptions,
+    TokenHelper tokenHelper,
+    ILogger<LoginCommandHandler> logger) : ICommandHandler<LoginCommand, LoginResponse>
 {
     private readonly AccessOptions _jwtOptions = jwtOptions.Value.AccessToken;
 
     public async Task<Result<LoginResponse>> Handle(LoginCommand command,
-                                                        CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
-        User? user = await userManager.FindByEmailAsync(command.Email);
+        var user = await userManager.FindByEmailAsync(command.Email);
 
         if (user is null)
         {
             logger.LogWarning("Login attempt failed for email : {Email}", command.Email);
             return Result.Failure<LoginResponse>(UserErrors.IncorrectEmailOrPassword);
         }
+
         if (await userManager.IsLockedOutAsync(user))
         {
             logger.LogWarning("Login attempt for locked-out account: {Email}", command.Email);
@@ -56,24 +57,20 @@ public sealed class LoginCommandHandler
         }
 
 
+        var currentIp = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+        var currentUserAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString();
 
-        string? currentIp = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
-        string? currentUserAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString();
-
-        Result resultt = await tokenHelper.GenerateTokens(user, currentIp, currentUserAgent, cancellationToken);
-        if (resultt.IsFailure)
-        {
-            return Result.Failure<LoginResponse>(resultt.Error);
-        }
+        var resultt = await tokenHelper.GenerateTokens(user, currentIp, currentUserAgent, cancellationToken);
+        if (resultt.IsFailure) return Result.Failure<LoginResponse>(resultt.Error);
         logger.LogInformation("User {Email} logged in successfully.!", command.Email);
 
 
         var response = new LoginResponse
         (
-            UserSlug: user.Slug,
-            FirstName: user.Name.FirstName,
-            LastName: user.Name.LastName,
-            Email: user.Email!,
+            user.Slug,
+            user.Name.FirstName,
+            user.Name.LastName,
+            user.Email!,
             ProfilePictureUrl: user.ProfilePictureUrl.ProfilePictureLink,
             IsMentor: user.Status.IsMentor,
             MentorActive: user.Status.IsMentor && user.Status.IsActive
@@ -83,5 +80,3 @@ public sealed class LoginCommandHandler
         return Result.Success(response);
     }
 }
-
-

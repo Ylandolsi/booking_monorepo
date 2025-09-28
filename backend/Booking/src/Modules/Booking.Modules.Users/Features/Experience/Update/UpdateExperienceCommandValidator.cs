@@ -1,4 +1,3 @@
-
 using FluentValidation;
 
 namespace Booking.Modules.Users.Features.Experience.Update;

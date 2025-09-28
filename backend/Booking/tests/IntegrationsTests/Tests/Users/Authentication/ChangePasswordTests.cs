@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -31,7 +30,6 @@ public class ChangePasswordTests : AuthenticationTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-
     }
 
     [Fact]
@@ -52,14 +50,12 @@ public class ChangePasswordTests : AuthenticationTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
     }
 
     [Fact]
     public async Task ChangePassword_Should_ReturnBadRequest_WhenOldPasswordIsIncorrect()
     {
-
-        await RegisterAndVerifyUser(DefaultEmail, DefaultPassword, true);
+        await RegisterAndVerifyUser(DefaultEmail, DefaultPassword);
         await LoginUser(DefaultEmail, DefaultPassword);
 
         var client = Factory.CreateClient();
@@ -84,7 +80,7 @@ public class ChangePasswordTests : AuthenticationTestBase
     public async Task ChangePassword_Should_ReturnOk_WhenRequestIsValid()
     {
         // Arrange
-        await RegisterAndVerifyUser(DefaultEmail, DefaultPassword, true);
+        await RegisterAndVerifyUser(DefaultEmail, DefaultPassword);
         await LoginUser(DefaultEmail, DefaultPassword);
 
         var client = Factory.CreateClient();

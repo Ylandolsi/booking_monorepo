@@ -1,7 +1,5 @@
 using Booking.Common.Authorization;
-using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Authorizations;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Booking.Api.Services;

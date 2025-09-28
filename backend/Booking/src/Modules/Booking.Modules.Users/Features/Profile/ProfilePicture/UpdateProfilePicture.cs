@@ -19,10 +19,10 @@ internal sealed class UpdateProfilePicture : IEndpoint
                 ICommandHandler<UpdateProfilePictureCommand, ProfilePictureRespone> handler,
                 CancellationToken cancellationToken) =>
             {
-                int userId = userContext.UserId;
+                var userId = userContext.UserId;
                 var command = new UpdateProfilePictureCommand(userId, file);
 
-                Result<ProfilePictureRespone> result = await handler.Handle(command, cancellationToken);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
                     dto => Results.Ok(dto),

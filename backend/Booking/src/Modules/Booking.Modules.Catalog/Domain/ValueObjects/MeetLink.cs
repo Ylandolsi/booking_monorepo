@@ -4,10 +4,9 @@ namespace Booking.Modules.Catalog.Domain.ValueObjects;
 
 public class MeetLink : ValueObject
 {
-    public string Url { get; private set; }
-    public string Value => Url; // Add Value property for consistency
-
-    private MeetLink() { }
+    private MeetLink()
+    {
+    }
 
     public MeetLink(string url)
     {
@@ -19,6 +18,9 @@ public class MeetLink : ValueObject
 
         Url = url.Trim();
     }
+
+    public string Url { get; }
+    public string Value => Url; // Add Value property for consistency
 
     private static bool IsValidGoogleMeetUrl(string url)
     {

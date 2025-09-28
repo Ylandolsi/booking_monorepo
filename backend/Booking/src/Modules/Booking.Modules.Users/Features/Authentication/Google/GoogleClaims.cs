@@ -1,13 +1,9 @@
 using System.Security.Claims;
-using Booking.Modules.Users.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace Booking.Modules.Users.Features.Authentication.Google.Signin;
 
 public static class GoogleClaims
 {
-    public record ClaimsGoogle(string Id, string Email, string FirstName, string LastName, string? Picture);
-
     private static readonly Dictionary<string, string[]> ClaimMappings = new()
     {
         { "Id", new[] { ClaimTypes.NameIdentifier } },
@@ -21,22 +17,17 @@ public static class GoogleClaims
     {
         var claims = new Dictionary<string, string>();
         foreach (var mapping in ClaimMappings)
+        foreach (var claimType in mapping.Value)
         {
-            foreach (var claimType in mapping.Value)
+            var value = principal.FindFirst(claimType)?.Value;
+            if (!string.IsNullOrEmpty(value))
             {
-                var value = principal.FindFirst(claimType)?.Value;
-                if (!string.IsNullOrEmpty(value))
-                {
-                    claims[mapping.Key] = value;
-                    break;
-                }
+                claims[mapping.Key] = value;
+                break;
             }
         }
 
-        if (!claims.ContainsKey("Id") || !claims.ContainsKey("Email") || !claims.ContainsKey("FirstName"))
-        {
-            return null;
-        }
+        if (!claims.ContainsKey("Id") || !claims.ContainsKey("Email") || !claims.ContainsKey("FirstName")) return null;
 
         return new ClaimsGoogle(
             claims["Id"],
@@ -46,5 +37,6 @@ public static class GoogleClaims
             claims.GetValueOrDefault("Picture")
         );
     }
-    
-}    
+
+    public record ClaimsGoogle(string Id, string Email, string FirstName, string LastName, string? Picture);
+}

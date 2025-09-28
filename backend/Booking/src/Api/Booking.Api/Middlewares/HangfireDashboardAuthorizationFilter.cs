@@ -12,23 +12,17 @@ public class HangfireDashboardAuthorizationFilter(IApplicationBuilder app) : IDa
         var httpContext = context.GetHttpContext();
 
 
-        if (httpContext.User is { Identity.IsAuthenticated: false })
-        {
-            return false;
-        }
+        if (httpContext.User is { Identity.IsAuthenticated: false }) return false;
 
         var scope = app.ApplicationServices.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         // TODO : or we can replace this by checking the claims of user 
-        int userId = httpContext.User.GetUserId() ??
+        var userId = httpContext.User.GetUserId() ??
                      throw new Exception("IdUser Claim doesnt exists , user is not authenticated");
 
         var user = await userManager.FindByIdAsync(userId.ToString());
 
-        if (user is null)
-        {
-            return false;
-        }
+        if (user is null) return false;
 
         var isAdmin = await userManager.IsInRoleAsync(user, "admin");
         return isAdmin;

@@ -1,9 +1,9 @@
-﻿
-namespace Booking.Common.Uploads;
+﻿namespace Booking.Common.Uploads;
 
 public class ImageProcessingResult
 {
     public string OriginalUrl { get; set; }
+
     public string ThumbnailUrl { get; set; }
     //public string LargeUrl { get; set; }
     //public string MediumUrl { get; set; }

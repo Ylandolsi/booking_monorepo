@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Experience.Update;
@@ -14,10 +14,11 @@ internal sealed class UpdateExperienceCommandHandler(
 {
     public async Task<Result> Handle(UpdateExperienceCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Updating experience {ExperienceId} for user {UserId}", command.ExperienceId, command.UserId);
+        logger.LogInformation("Updating experience {ExperienceId} for user {UserId}", command.ExperienceId,
+            command.UserId);
 
 
-        User? user = await context.Users
+        var user = await context.Users
             .FirstOrDefaultAsync(u => u.Id == command.UserId, cancellationToken);
         if (user == null)
         {
@@ -31,7 +32,8 @@ internal sealed class UpdateExperienceCommandHandler(
 
         if (experience == null)
         {
-            logger.LogWarning("Experience with ID {ExperienceId} not found for user {UserId}", command.ExperienceId, command.UserId);
+            logger.LogWarning("Experience with ID {ExperienceId} not found for user {UserId}", command.ExperienceId,
+                command.UserId);
             return Result.Failure(ExperienceErrors.ExperienceNotFound);
         }
 
@@ -51,11 +53,13 @@ internal sealed class UpdateExperienceCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to update experience {ExperienceId} for user {UserId}", command.ExperienceId, command.UserId);
+            logger.LogError(ex, "Failed to update experience {ExperienceId} for user {UserId}", command.ExperienceId,
+                command.UserId);
             return Result.Failure(Error.Problem("Experience.UpdateFailed", "Failed to update experience"));
         }
 
-        logger.LogInformation("Successfully updated experience {ExperienceId} for user {UserId}", command.ExperienceId, command.UserId);
+        logger.LogInformation("Successfully updated experience {ExperienceId} for user {UserId}", command.ExperienceId,
+            command.UserId);
         return Result.Success();
     }
 }

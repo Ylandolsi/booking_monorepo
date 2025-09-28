@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Newtonsoft.Json;
 
 namespace Booking.Modules.Users.Presistence;
 
@@ -30,7 +29,7 @@ public sealed class UsersDbContext
     public DbSet<UserExpertise> UserExpertises { get; set; }
     public DbSet<MentorMentee> UserMentors { get; set; }
 
-    
+
     // 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -49,7 +48,7 @@ public sealed class UsersDbContext
         modelBuilder.HasDefaultSchema(Schemas.Users);
         SeedData.Seed(modelBuilder);
     }
-    
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.Properties<Enum>()
@@ -69,6 +68,4 @@ public sealed class UsersDbContext
         var result = await base.SaveChangesAsync(cancellationToken);
         return result;
     }
-
- 
 }

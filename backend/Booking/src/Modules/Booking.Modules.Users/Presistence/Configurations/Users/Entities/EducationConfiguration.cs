@@ -44,8 +44,8 @@ internal sealed class EducationConfiguration : IEntityTypeConfiguration<Educatio
         {
             t.HasCheckConstraint("CK_Education_Dates_Valid", "end_date IS NULL OR end_date >= start_date");
             t.HasCheckConstraint("CK_Education_Field_Length", "LENGTH(field) >= 2 AND LENGTH(field) <= 100");
-            t.HasCheckConstraint("CK_Education_University_Length", "LENGTH(university) >= 2 AND LENGTH(university) <= 100");
+            t.HasCheckConstraint("CK_Education_University_Length",
+                "LENGTH(university) >= 2 AND LENGTH(university) <= 100");
         });
     }
-
 }

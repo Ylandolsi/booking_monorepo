@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { PayoutKeys } from '@/features/app/payout/api/payout-keys';
 import type { PayoutType } from '@/features/app/payout/types/payout';
-import { api, CatalogEndpoints } from '@/lib';
+import { api, CatalogEndpoints } from '@/api/utils';
 
 const getHistoryPayout = async (): Promise<Array<PayoutType>> => {
   return await api.get<Array<PayoutType>>(CatalogEndpoints.Payouts.PayoutHistory);

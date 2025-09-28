@@ -10,25 +10,25 @@ namespace Booking.Modules.Users.Features.Language.Update;
 
 internal sealed class UpdateLanguage : IEndpoint
 {
-    public sealed record Request(List<int>? LanguageIds);
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut(UsersEndpoints.UpdateUserLanguages, async (
-            Request request,
-            UserContext userContext,
-            ICommandHandler<UpdateUserLanguagesCommand> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int userId = userContext.UserId;
-            
-            var command = new UpdateUserLanguagesCommand(userId, request.LanguageIds);
+                Request request,
+                UserContext userContext,
+                ICommandHandler<UpdateUserLanguagesCommand> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var userId = userContext.UserId;
 
-            Result result = await handler.Handle(command, cancellationToken);
+                var command = new UpdateUserLanguagesCommand(userId, request.LanguageIds);
 
-            return result.Match(Results.NoContent, CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Language);
+                var result = await handler.Handle(command, cancellationToken);
+
+                return result.Match(Results.NoContent, CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Language);
     }
+
+    public sealed record Request(List<int>? LanguageIds);
 }

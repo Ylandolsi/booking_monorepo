@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -28,15 +27,15 @@ public class UserRegistrationTests : AuthenticationTestBase
         };
 
         // Act
-        HttpResponseMessage response = await ActClient.PostAsJsonAsync(UsersEndpoints.Register, registrationPayload);
+        var response = await ActClient.PostAsJsonAsync(UsersEndpoints.Register, registrationPayload);
 
         // Assert
         response.EnsureSuccessStatusCode();
 
 
-
         await Task.Delay(TimeSpan.FromSeconds(2));
-        var sentEmail = EmailCapturer.FirstOrDefault(e => e.Destination.ToAddresses.Contains(registrationPayload.Email));
+        var sentEmail =
+            EmailCapturer.FirstOrDefault(e => e.Destination.ToAddresses.Contains(registrationPayload.Email));
         Assert.NotNull(sentEmail);
         Assert.NotNull(sentEmail.Message.Body.Html.Data);
     }
@@ -62,6 +61,7 @@ public class UserRegistrationTests : AuthenticationTestBase
         // Assert
         Assert.NotEqual(HttpStatusCode.OK, secondResponse.StatusCode);
     }
+
     [Theory]
     [InlineData("invalid-email", "Password123!")]
     [InlineData("test@test.com", "short")]

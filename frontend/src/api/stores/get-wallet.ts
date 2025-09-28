@@ -1,4 +1,4 @@
-import { api, CatalogEndpoints } from '@/lib';
+import { api, CatalogEndpoints } from '@/api/utils';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
 async function getWallet(): Promise<Wallet> {

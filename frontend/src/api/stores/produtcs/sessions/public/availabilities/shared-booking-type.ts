@@ -1,11 +1,11 @@
 export const DAYS_OF_WEEK: { key: DayOfWeek; label: string; short: string }[] = [
-  { key: 'sunday', label: 'Sunday', short: 'Sun' },
-  { key: 'monday', label: 'Monday', short: 'Mon' },
-  { key: 'tuesday', label: 'Tuesday', short: 'Tue' },
-  { key: 'wednesday', label: 'Wednesday', short: 'Wed' },
-  { key: 'thursday', label: 'Thursday', short: 'Thu' },
-  { key: 'friday', label: 'Friday', short: 'Fri' },
-  { key: 'saturday', label: 'Saturday', short: 'Sat' },
+  { key: 'Sunday', label: 'Sunday', short: 'Sun' },
+  { key: 'Monday', label: 'Monday', short: 'Mon' },
+  { key: 'Tuesday', label: 'Tuesday', short: 'Tue' },
+  { key: 'Wednesday', label: 'Wednesday', short: 'Wed' },
+  { key: 'Thursday', label: 'Thursday', short: 'Thu' },
+  { key: 'Friday', label: 'Friday', short: 'Fri' },
+  { key: 'Saturday', label: 'Saturday', short: 'Sat' },
 ];
 
 export const PREDEFINED_TIME_SLOTS = Array.from({ length: 11 }, (_, i) => {
@@ -23,7 +23,8 @@ export const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => {
   return `${hour}:00`;
 });
 
-export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
+export type DayOfWeek = (typeof DAYS)[number];
 
 export type SessionSlotType = {
   startTime: string; // 16:00

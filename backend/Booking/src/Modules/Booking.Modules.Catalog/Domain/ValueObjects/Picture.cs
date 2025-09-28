@@ -5,28 +5,22 @@ namespace Booking.Modules.Catalog.Domain.ValueObjects;
 
 public class Picture : ValueObject
 {
-    public string MainLink { get; private set; }
-    public string ThumbnailLink { get; private set; }
-
     public Picture(string mainLink = "", string thumbnailLink = "")
     {
         if (!isProfilePictureLinkValid(mainLink) && !isProfilePictureLinkValid(thumbnailLink))
-        {
             ResetToDefaultProfilePicture();
-        }
         else
-        {
             UpdateProfilePicture(mainLink, thumbnailLink);
-        }
     }
+
+    public string MainLink { get; private set; }
+    public string ThumbnailLink { get; private set; }
 
 
     public Result UpdateProfilePicture(string mainLink, string thumbnailLink = "")
     {
         if (!isProfilePictureLinkValid(mainLink) && !isProfilePictureLinkValid(thumbnailLink))
-        {
             return Result.Failure(ProfilePictureErrors.InvalidProfilePictureUrl);
-        }
 
         MainLink = AddHttpsPrefix(mainLink);
         ThumbnailLink = AddHttpsPrefix(thumbnailLink);
@@ -46,8 +40,11 @@ public class Picture : ValueObject
         return Result.Success();
     }
 
-    private bool isProfilePictureLinkValid(string Link) => !string.IsNullOrWhiteSpace(Link) &&
-                                                           IsValidUrl(Link);
+    private bool isProfilePictureLinkValid(string Link)
+    {
+        return !string.IsNullOrWhiteSpace(Link) &&
+               IsValidUrl(Link);
+    }
 
     private static bool IsValidUrl(string profilePictureLink)
     {
@@ -60,15 +57,13 @@ public class Picture : ValueObject
     private static string AddHttpsPrefix(string profilePictureUrl)
     {
         if (!profilePictureUrl.StartsWith("http://") && !profilePictureUrl.StartsWith("https://"))
-        {
             profilePictureUrl = "https://" + profilePictureUrl;
-        }
 
         return profilePictureUrl;
     }
 
 
-    protected override IEnumerable<Object> GetEqualityComponents()
+    protected override IEnumerable<object> GetEqualityComponents()
     {
         yield return MainLink;
         yield return ThumbnailLink;

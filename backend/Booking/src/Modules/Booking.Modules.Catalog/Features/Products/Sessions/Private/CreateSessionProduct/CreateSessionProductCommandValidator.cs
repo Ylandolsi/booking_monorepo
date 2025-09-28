@@ -77,7 +77,8 @@ internal sealed class PostSessionProductCommandValidator : AbstractValidator<Pos
 
                 return true;
             })
-            .WithMessage("Invalid availability configuration. Time ranges must be in HH:mm format and end time must be after start time.");
+            .WithMessage(
+                "Invalid availability configuration. Time ranges must be in HH:mm format and end time must be after start time.");
 
         RuleFor(c => c.Subtitle)
             .MaximumLength(100)

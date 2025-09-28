@@ -30,15 +30,12 @@ public class PayoutJob
         var cancellationToken = context?.CancellationToken.ShutdownToken ?? CancellationToken.None;
 
 
-        var payoutsNotCompleted  = await _context.Payouts
+        var payoutsNotCompleted = await _context.Payouts
             .Where(p => p.Status == PayoutStatus.Approved && p.UpdatedAt + TimeSpan.FromHours(2) <= DateTime.UtcNow)
             .ToListAsync(cancellationToken);
-       
-        foreach (var payout in payoutsNotCompleted)
-        {
-            payout.Pending();
-        }
-        
+
+        foreach (var payout in payoutsNotCompleted) payout.Pending();
+
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Hangfire Job:  payout job finished.");
     }

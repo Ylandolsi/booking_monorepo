@@ -2,7 +2,6 @@
 using System.Text.RegularExpressions;
 using Amazon.SimpleEmail.Model;
 using Bogus;
-using Booking.Modules.Users.BackgroundJobs;
 using IntegrationsTests.Abstractions.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -15,28 +14,22 @@ namespace IntegrationsTests.Abstractions.Base;
 [Collection(nameof(IntegrationTestsCollection))]
 public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
 {
-    protected readonly Faker Fake = new();
+    protected readonly HttpClient _authenticatedVerifiedUserClient;
+    protected readonly HttpClient _client;
+    private readonly Func<Task> _resetDatabase;
     protected readonly IServiceScope _scope;
-    protected readonly IntegrationTestsWebAppFactory Factory;
-    protected List<SendEmailRequest> EmailCapturer => Factory.CapturedEmails;
-
-    protected readonly CookieManager CookieManager;
-    protected readonly TestHttpClientFactory ClientFactory;
-
-    // Default clients (backward compatibility)
-    protected HttpClient ArrangeClient => ClientFactory.GetArrangeClient("default");
-    protected HttpClient ActClient => ClientFactory.GetActClient("default");
+    protected readonly string _verifiedUserEmail = "verified.user@example.com";
 
 
     // authentications purpose
     // users claims wihtout really creating a user ( not persisted in the database )
     // for endpoints that require authentication and authorization
     protected readonly Guid _verifiedUserId = Guid.NewGuid();
-    protected readonly string _verifiedUserEmail = "verified.user@example.com";
-    protected readonly HttpClient _client;
-    protected readonly HttpClient _authenticatedVerifiedUserClient;
-    private readonly Func<Task> _resetDatabase;
+    protected readonly TestHttpClientFactory ClientFactory;
 
+    protected readonly CookieManager CookieManager;
+    protected readonly IntegrationTestsWebAppFactory Factory;
+    protected readonly Faker Fake = new();
 
 
     public BaseIntegrationTest(IntegrationTestsWebAppFactory factory)
@@ -50,6 +43,23 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
 
         CookieManager = new CookieManager();
         ClientFactory = new TestHttpClientFactory(factory, CookieManager);
+    }
+
+    protected List<SendEmailRequest> EmailCapturer => Factory.CapturedEmails;
+
+    // Default clients (backward compatibility)
+    protected HttpClient ArrangeClient => ClientFactory.GetArrangeClient();
+    protected HttpClient ActClient => ClientFactory.GetActClient();
+
+    public async Task InitializeAsync()
+    {
+        await _resetDatabase();
+        EmailCapturer?.Clear();
+    }
+
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 
     protected bool IsSucceed(int statusCode) // Change parameter type to int
@@ -67,23 +77,38 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
         Assert.True(response.IsSuccessStatusCode, $"Expected success status code, but got {(int)response.StatusCode}");
     }
 
-    public async Task InitializeAsync()
+    protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
     {
-        await _resetDatabase();
-        EmailCapturer?.Clear();
-    }
+        var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
+        if (sentEmail is null) return (null, null);
 
-    public Task DisposeAsync() => Task.CompletedTask;
+        var match = Regex.Match(
+            sentEmail.Message.Body.Html.Data,
+            @"href=['""](?<url>https?://[^'""]+\?token=[^&]+&email=[^'""]+)['""]",
+            RegexOptions.IgnoreCase);
+
+        if (!match.Success) return (null, null);
+
+        var url = match.Groups["url"].Value;
+        var uri = new Uri(url);
+
+        // Use QueryHelpers to parse and decode the query string
+        var queryParams = QueryHelpers.ParseQuery(uri.Query);
+
+        queryParams.TryGetValue("token", out var token);
+        queryParams.TryGetValue("email", out var email);
+
+        return (token.ToString(), email.ToString());
+    }
 
     #region Snapshot Testing Helpers
 
     protected async Task<JsonDocument> ParseResponseContent(HttpResponseMessage response)
     {
-        
         var content = await response.Content.ReadAsStringAsync();
         var jsonDocument = JsonDocument.Parse(content);
         return jsonDocument;
-        
+
         /*
          access an array
 
@@ -120,7 +145,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Captures and compares JSON response snapshot with optional field ignores.
+    ///     Captures and compares JSON response snapshot with optional field ignores.
     /// </summary>
     /// <param name="response">The HTTP response to snapshot.</param>
     /// <param name="snapshotName">Optional name for the snapshot file.</param>
@@ -139,9 +164,9 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     #region User Management Methods
 
     /// <summary>
-    /// Creates multiple users for testing scenarios
-    /// Usage: var users = CreateUsers("mentor", "mentee", "admin");
-    /// Then: await users["mentor"].arrange.PostAsync(...);
+    ///     Creates multiple users for testing scenarios
+    ///     Usage: var users = CreateUsers("mentor", "mentee", "admin");
+    ///     Then: await users["mentor"].arrange.PostAsync(...);
     /// </summary>
     protected Dictionary<string, (HttpClient arrange, HttpClient act)> CreateUsers(params string[] userIds)
     {
@@ -149,7 +174,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Gets HTTP clients for a specific user
+    ///     Gets HTTP clients for a specific user
     /// </summary>
     protected (HttpClient arrange, HttpClient act) GetClientsForUser(string userId)
     {
@@ -157,7 +182,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Clears cookies for a specific user or all users
+    ///     Clears cookies for a specific user or all users
     /// </summary>
     protected void ClearCookies(string? userId = null)
     {
@@ -165,7 +190,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Gets all cookies for a user
+    ///     Gets all cookies for a user
     /// </summary>
     protected Dictionary<string, string> GetCookies(string userId = "default")
     {
@@ -173,7 +198,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Checks if a user has authentication cookies
+    ///     Checks if a user has authentication cookies
     /// </summary>
     protected bool IsUserAuthenticated(string userId = "default")
     {
@@ -186,7 +211,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     #region Reset and Cleanup Methods
 
     /// <summary>
-    /// Resets state before each test (similar to resetBeforeEach in Node.js)
+    ///     Resets state before each test (similar to resetBeforeEach in Node.js)
     /// </summary>
     protected virtual void ResetBeforeEach()
     {
@@ -195,7 +220,7 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     /// <summary>
-    /// Cleanup method called after each test
+    ///     Cleanup method called after each test
     /// </summary>
     public virtual void Dispose()
     {
@@ -207,28 +232,4 @@ public abstract class BaseIntegrationTest : IDisposable, IAsyncLifetime
     }
 
     #endregion
-
-    protected (string? Token, string? Email) ExtractTokenAndEmailFromEmail(string userEmail)
-    {
-        var sentEmail = EmailCapturer.LastOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
-        if (sentEmail is null) return (null, null);
-
-        var match = Regex.Match(
-            sentEmail.Message.Body.Html.Data,
-            @"href=['""](?<url>https?://[^'""]+\?token=[^&]+&email=[^'""]+)['""]",
-            RegexOptions.IgnoreCase);
-
-        if (!match.Success) return (null, null);
-
-        var url = match.Groups["url"].Value;
-        var uri = new Uri(url);
-
-        // Use QueryHelpers to parse and decode the query string
-        var queryParams = QueryHelpers.ParseQuery(uri.Query);
-
-        queryParams.TryGetValue("token", out var token);
-        queryParams.TryGetValue("email", out var email);
-
-        return (token.ToString(), email.ToString());
-    }
 }

@@ -4,7 +4,7 @@
  */
 
 import type { ProductType } from '@/api/stores';
-import { buildUrlWithParams } from '@/lib';
+import { buildUrlWithParams } from '@/api/utils';
 
 // Param placeholders
 export const ROUTE_PARAMS = {

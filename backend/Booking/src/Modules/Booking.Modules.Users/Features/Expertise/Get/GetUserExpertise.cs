@@ -12,15 +12,15 @@ internal sealed class GetUserExpertise : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(UsersEndpoints.GetUserExpertises, async (
-            string userSlug,
-            IQueryHandler<GetUserExpertisesQuery, List<ExpertiseResponse>> handler,
-            CancellationToken cancellationToken) =>
-        {
-            var query = new GetUserExpertisesQuery(userSlug);
-            Result<List<ExpertiseResponse>> result = await handler.Handle(query, cancellationToken);
+                string userSlug,
+                IQueryHandler<GetUserExpertisesQuery, List<ExpertiseResponse>> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var query = new GetUserExpertisesQuery(userSlug);
+                var result = await handler.Handle(query, cancellationToken);
 
-            return result.Match(Results.Ok, CustomResults.Problem);
-        })
-        .WithTags(Tags.Expertise);
+                return result.Match(Results.Ok, CustomResults.Problem);
+            })
+            .WithTags(Tags.Expertise);
     }
 }

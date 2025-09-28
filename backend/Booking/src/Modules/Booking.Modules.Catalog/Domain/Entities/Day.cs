@@ -7,6 +7,10 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Day : Entity
 {
+    private Day()
+    {
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
@@ -18,10 +22,6 @@ public class Day : Entity
     public bool IsActive { get; private set; } = true;
 
     public ICollection<SessionAvailability> Availabilities { get; set; } = [];
-
-    private Day()
-    {
-    }
 
     public static Day Create(int productId, string productSlug, DayOfWeek dayOfWeek, bool isActive = true)
     {
@@ -38,7 +38,7 @@ public class Day : Entity
     public Result ToggleDay()
     {
         if (!IsActive) return Activate();
-        else return Deactivate();
+        return Deactivate();
     }
 
     public Result Activate()
@@ -46,10 +46,7 @@ public class Day : Entity
         if (IsActive) return Result.Failure(DayErrors.AlreadyActive);
 
         IsActive = true;
-        foreach (var availability in Availabilities)
-        {
-            availability.Activate();
-        }
+        foreach (var availability in Availabilities) availability.Activate();
 
         return Result.Success();
     }
@@ -59,10 +56,7 @@ public class Day : Entity
         if (!IsActive) return Result.Failure(DayErrors.AlreadyInactive);
 
         IsActive = false;
-        foreach (var availability in Availabilities)
-        {
-            availability.Deactivate();
-        }
+        foreach (var availability in Availabilities) availability.Deactivate();
 
         return Result.Success();
     }

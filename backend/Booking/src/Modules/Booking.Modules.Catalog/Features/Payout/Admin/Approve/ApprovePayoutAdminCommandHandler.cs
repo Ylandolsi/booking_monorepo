@@ -54,8 +54,7 @@ public class ApprovePayoutAdminCommandHandler(
             "Meetini",
             "ylandolsi66@gmail.com",
             "25202909",
-            payout.KonnectWalletId,
-            true);
+            payout.KonnectWalletId);
 
         if (resultKonnect.IsFailure)
         {

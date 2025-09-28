@@ -10,6 +10,35 @@ namespace Booking.Modules.Users.Features.Profile.SocialLinks;
 
 internal sealed class UpdateSocialLinks : IEndpoint
 {
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapPut("users/profile/social-links", async (
+                Request request,
+                UserContext userContext,
+                ICommandHandler<UpdateSocialLinksCommand> handler,
+                CancellationToken cancellationToken) =>
+            {
+                var userId = userContext.UserId;
+
+
+                var command = new UpdateSocialLinksCommand(
+                    userId,
+                    request.LinkedIn,
+                    request.Twitter,
+                    request.Github,
+                    request.Youtube,
+                    request.Facebook,
+                    request.Instagram,
+                    request.Portfolio);
+
+                var result = await handler.Handle(command, cancellationToken);
+
+                return result.Match(Results.NoContent, CustomResults.Problem);
+            })
+            .RequireAuthorization()
+            .WithTags(Tags.Profile);
+    }
+
     public sealed record Request(
         string? LinkedIn,
         string? Twitter,
@@ -18,33 +47,4 @@ internal sealed class UpdateSocialLinks : IEndpoint
         string? Facebook,
         string? Instagram,
         string? Portfolio);
-
-    public void MapEndpoint(IEndpointRouteBuilder app)
-    {
-        app.MapPut("users/profile/social-links", async (
-            Request request,
-            UserContext userContext,
-            ICommandHandler<UpdateSocialLinksCommand> handler,
-            CancellationToken cancellationToken) =>
-        {
-            int userId = userContext.UserId;
-
-
-            var command = new UpdateSocialLinksCommand(
-                userId,
-                request.LinkedIn,
-                request.Twitter,
-                request.Github,
-                request.Youtube,
-                request.Facebook,
-                request.Instagram,
-                request.Portfolio);
-
-            Result result = await handler.Handle(command, cancellationToken);
-
-            return result.Match(Results.NoContent, CustomResults.Problem);
-        })
-        .RequireAuthorization()
-        .WithTags(Tags.Profile);
-    }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Amazon;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -7,17 +8,11 @@ using Booking.Common;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
 using Booking.Common.Options;
-using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
-using Npgsql;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-
 
 namespace Booking.Api.Services;
 
@@ -26,8 +21,9 @@ public static class Infrastructure
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration,
-        WebApplicationBuilder builder) =>
-        services
+        WebApplicationBuilder builder)
+    {
+        return services
             .AddCors()
             .AddEnumToString()
             .AddOptions(configuration)
@@ -39,6 +35,7 @@ public static class Infrastructure
             .AddHealthChecks(configuration)
             .AddAuthenticationInternal(configuration)
             .AddAuthorizationInternal();
+    }
     //.AddObservability(builder);
 
     /*private static IServiceCollection AddObservability(this IServiceCollection services, WebApplicationBuilder builder)
@@ -180,10 +177,8 @@ public static class Infrastructure
         var connectionString = configuration.GetConnectionString("Database");
 
         if (string.IsNullOrEmpty(connectionString))
-        {
             // Consider logging this or throwing a more specific exception
             throw new InvalidOperationException("Database connection string is not configured.");
-        }
 
         services
             .AddHealthChecks()
@@ -217,7 +212,7 @@ public static class Infrastructure
         services.AddDefaultAWSOptions(new AWSOptions
         {
             Credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey),
-            Region = Amazon.RegionEndpoint.GetBySystemName(awsRegion)
+            Region = RegionEndpoint.GetBySystemName(awsRegion)
         });
         // have its own polling and retry policies
         // TODO : recheck it 

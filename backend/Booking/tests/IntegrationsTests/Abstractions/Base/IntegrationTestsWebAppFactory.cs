@@ -1,15 +1,11 @@
-using System.Data.Common;
-using Amazon.SimpleEmail;
-using Amazon.SimpleEmail.Model;
-using Booking.Api;
-using Booking.Modules.Mentorships.Persistence;
+using System.Data;
 using System.Data.Common;
 using Amazon.SimpleEmail;
 using Amazon.SimpleEmail.Model;
 using Booking.Api;
 using Booking.Common.Options;
 using Booking.Modules.Catalog.Features;
-using Booking.Modules.Mentorships.Persistence;
+using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Users.Presistence;
 using IntegrationsTests.Mocking;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +16,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Http;
 using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
@@ -39,13 +34,11 @@ namespace IntegrationsTests.Abstractions.Base;
 public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer;
-
-
-    private Respawner _respawner = default!;
     private string _connectionString = default!;
     private DbConnection _dbConnection = default!;
 
-    public List<SendEmailRequest> CapturedEmails { get; private set; } = new();
+
+    private Respawner _respawner = default!;
 
     public IntegrationTestsWebAppFactory()
     {
@@ -62,6 +55,39 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
         _connectionString = _dbContainer.GetConnectionString();
 
         Environment.SetEnvironmentVariable("ConnectionStrings:Database", _connectionString);
+    }
+
+    public List<SendEmailRequest> CapturedEmails { get; private set; } = new();
+
+    public async Task InitializeAsync()
+    {
+        await _dbContainer.StartAsync();
+        using (var scope = Services.CreateScope())
+        {
+            var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+            await usersDbContext.Database.MigrateAsync();
+            await SeedData.Initialize(usersDbContext);
+
+            var catalogDbContext = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+            await catalogDbContext.Database.MigrateAsync();
+        }
+
+        await InitializeDbRespawner();
+    }
+
+
+    public async Task DisposeAsync()
+    {
+        await _dbContainer.StopAsync();
+
+        if (_dbConnection?.State == ConnectionState.Open) await _dbConnection.CloseAsync();
+
+        _dbConnection?.Dispose();
+
+        NpgsqlConnection.ClearAllPools();
+
+        await _dbContainer.StopAsync();
+        await _dbContainer.DisposeAsync();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -85,20 +111,14 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
             config.AddInMemoryCollection(testConfig);
         });
 
-        builder.ConfigureServices(services =>
-        {
-
-        });
+        builder.ConfigureServices(services => { });
 
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<IHttpClientFactory>();
 
             // Configure KonnectClient to use the test server
-            services.AddHttpClient("KonnectClient", client =>
-                {
-                    client.BaseAddress = CreateClient().BaseAddress;
-                })
+            services.AddHttpClient("KonnectClient", client => { client.BaseAddress = CreateClient().BaseAddress; })
                 .ConfigurePrimaryHttpMessageHandler(() => Server.CreateHandler());
 
             // Configure Konnect options for testing
@@ -116,10 +136,7 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                                                            typeof(DbContextOptions<UsersDbContext>));
 
 
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
+            if (descriptor != null) services.Remove(descriptor);
 
 
             services.AddDbContext<UsersDbContext>((sp, options) => options
@@ -130,31 +147,14 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                     })
                 .UseSnakeCaseNamingConvention());
 
-            // Add MentorshipsDbContext for testing
-            var mentorshipsDescriptor =
-                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<MentorshipsDbContext>));
-            if (mentorshipsDescriptor != null)
-            {
-                services.Remove(mentorshipsDescriptor);
-            }
 
-            services.AddDbContext<MentorshipsDbContext>((sp, options) => options
-                .UseNpgsql(_connectionString,
-                    npgsqlOptions =>
-                    {
-                        npgsqlOptions.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "mentorships");
-                    })
-                .UseSnakeCaseNamingConvention());
 
             // Add CatalogDbContext for testing
             var catalogDescriptor =
-                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<Booking.Modules.Catalog.Persistence.CatalogDbContext>));
-            if (catalogDescriptor != null)
-            {
-                services.Remove(catalogDescriptor);
-            }
+                services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<CatalogDbContext>));
+            if (catalogDescriptor != null) services.Remove(catalogDescriptor);
 
-            services.AddDbContext<Booking.Modules.Catalog.Persistence.CatalogDbContext>((sp, options) => options
+            services.AddDbContext<CatalogDbContext>((sp, options) => options
                 .UseNpgsql(_connectionString,
                     npgsqlOptions =>
                     {
@@ -163,52 +163,12 @@ public class IntegrationTestsWebAppFactory : WebApplicationFactory<Program>, IAs
                 .UseSnakeCaseNamingConvention());
 
             var amazonSesDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IAmazonSimpleEmailService));
-            if (amazonSesDescriptor != null)
-            {
-                services.Remove(amazonSesDescriptor);
-            }
+            if (amazonSesDescriptor != null) services.Remove(amazonSesDescriptor);
 
-            var mockSes = CaptureAmazonSESServiceMock.CreateMock(out List<SendEmailRequest> capturedEmails);
+            var mockSes = CaptureAmazonSESServiceMock.CreateMock(out var capturedEmails);
             CapturedEmails = capturedEmails;
-            services.AddSingleton<IAmazonSimpleEmailService>(mockSes);
+            services.AddSingleton(mockSes);
         });
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _dbContainer.StartAsync();
-        using (var scope = Services.CreateScope())
-        {
-            var usersDbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-            await usersDbContext.Database.MigrateAsync();
-            await SeedData.Initialize(usersDbContext);
-
-            var mentorshipsDbContext = scope.ServiceProvider.GetRequiredService<MentorshipsDbContext>();
-            await mentorshipsDbContext.Database.MigrateAsync();
-
-            var catalogDbContext = scope.ServiceProvider.GetRequiredService<Booking.Modules.Catalog.Persistence.CatalogDbContext>();
-            await catalogDbContext.Database.MigrateAsync();
-        }
-
-        await InitializeDbRespawner();
-    }
-
-
-    public async Task DisposeAsync()
-    {
-        await _dbContainer.StopAsync();
-
-        if (_dbConnection?.State == System.Data.ConnectionState.Open)
-        {
-            await _dbConnection.CloseAsync();
-        }
-
-        _dbConnection?.Dispose();
-
-        NpgsqlConnection.ClearAllPools();
-
-        await _dbContainer.StopAsync();
-        await _dbContainer.DisposeAsync();
     }
 
     public async Task ResetDatabase()

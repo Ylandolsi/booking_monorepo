@@ -29,7 +29,8 @@ public class NotificationService
             }
             else
             {
-                _logger.LogWarning("Hub context is null, cannot send real-time notification to user {userSlug}", userSlug);
+                _logger.LogWarning("Hub context is null, cannot send real-time notification to user {userSlug}",
+                    userSlug);
             }
         }
         catch (Exception ex)

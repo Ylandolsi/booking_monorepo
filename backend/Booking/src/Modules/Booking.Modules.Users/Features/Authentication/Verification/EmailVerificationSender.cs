@@ -9,16 +9,16 @@ namespace Booking.Modules.Users.Features.Authentication.Verification;
 
 internal sealed class EmailVerificationSender
 {
-    private readonly UserManager<User> _userManager;
-    private readonly EmailVerificationLinkFactory _emailVerificationLinkFactory;
     private readonly IBackgroundJobClient _backgroundJobClient;
+    private readonly EmailVerificationLinkFactory _emailVerificationLinkFactory;
     private readonly ILogger<EmailVerificationSender> _logger;
+    private readonly UserManager<User> _userManager;
 
 
     public EmailVerificationSender(UserManager<User> userManager,
-                                   EmailVerificationLinkFactory emailVerificationLinkFactory,
-                                   IBackgroundJobClient backgroundJobClient,
-                                   ILogger<EmailVerificationSender> logger )
+        EmailVerificationLinkFactory emailVerificationLinkFactory,
+        IBackgroundJobClient backgroundJobClient,
+        ILogger<EmailVerificationSender> logger)
     {
         _userManager = userManager;
         _emailVerificationLinkFactory = emailVerificationLinkFactory;
@@ -30,15 +30,15 @@ internal sealed class EmailVerificationSender
     {
         _logger.LogInformation("Generating email verification token for user {UserId}", user.Id);
 
-        string emailVerificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        string verificationEmailLink = _emailVerificationLinkFactory.Create(emailVerificationToken, user.Email!);
+        var emailVerificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var verificationEmailLink = _emailVerificationLinkFactory.Create(emailVerificationToken, user.Email!);
 
         _logger.LogInformation("Enqueuing verification email job for {Email}", user.Email);
 
         try
         {
-            _backgroundJobClient.Enqueue<VerificationEmailForRegistrationJob>(
-                            job => job.SendAsync(user.Email!, verificationEmailLink, null));
+            _backgroundJobClient.Enqueue<VerificationEmailForRegistrationJob>(job =>
+                job.SendAsync(user.Email!, verificationEmailLink, null));
         }
         catch (Exception ex)
         {
@@ -46,7 +46,4 @@ internal sealed class EmailVerificationSender
             throw;
         }
     }
-
-
 }
-

@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -34,12 +33,13 @@ public class SendResetTokenTests : AuthenticationTestBase
         Assert.NotNull(sentEmail);
         Assert.Contains("Password Reset Request", sentEmail.Message.Body.Html.Data);
     }
+
     [Fact]
     public async Task SendResetToken_ShouldSendEmail_WhenEmailIsNotVerified()
     {
         EmailCapturer.Clear();
         var userEmail = Fake.Internet.Email();
-        await RegisterAndVerifyUser(userEmail, DefaultPassword , false);
+        await RegisterAndVerifyUser(userEmail, DefaultPassword, false);
 
         var requestPayload = new { Email = userEmail };
 
@@ -54,7 +54,7 @@ public class SendResetTokenTests : AuthenticationTestBase
 
         var sentEmail = EmailCapturer.FirstOrDefault(e => e.Destination.ToAddresses.Contains(userEmail));
         Assert.NotNull(sentEmail);
-        
+
         Assert.Contains("Password Reset Request", sentEmail.Message.Body.Html.Data);
     }
 

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Booking.Common.Authentication;
 
-public sealed class UserContext 
+public sealed class UserContext
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -18,14 +18,13 @@ public sealed class UserContext
             .User
             .GetUserId() ??
         throw new UnauthException("User context is unavailable");
-    
+
     public string UserSlug =>
         _httpContextAccessor
             .HttpContext?
             .User
             .GetUserSlug() ??
         throw new UnauthException("User context is unavailable");
-    
 
 
     public string? RefreshToken =>
@@ -33,6 +32,4 @@ public sealed class UserContext
             .HttpContext?
             .Request
             .Cookies["refresh_token"];
-
-
 }

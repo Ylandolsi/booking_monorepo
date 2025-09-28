@@ -46,5 +46,4 @@ internal sealed class ExperienceConfiguration : IEntityTypeConfiguration<Experie
             t.HasCheckConstraint("CK_Experience_Company_Length", "LENGTH(company) >= 2 AND LENGTH(company) <= 100");
         });
     }
-
 }

@@ -3,10 +3,9 @@ using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Presistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.Features.Authentication.Me;
 

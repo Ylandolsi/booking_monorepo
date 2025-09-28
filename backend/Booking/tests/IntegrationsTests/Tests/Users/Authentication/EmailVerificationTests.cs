@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Authentication;
 using IntegrationsTests.Abstractions.Base;
 
@@ -16,9 +15,8 @@ public class EmailVerificationTests : AuthenticationTestBase
     [Fact]
     public async Task ReSendVerificationEmail_ShouldSendNewEmail_WhenUserNotVerified()
     {
-
         var userEmail = Fake.Internet.Email();
-        await RegisterAndVerifyUser(userEmail, "Password123!", verify: false  );
+        await RegisterAndVerifyUser(userEmail, "Password123!", false);
 
         // Act
         var resendPayload = new { Email = userEmail };
@@ -35,7 +33,7 @@ public class EmailVerificationTests : AuthenticationTestBase
     {
         // Arrange
         var userEmail = Fake.Internet.Email();
-        await RegisterAndVerifyUser(userEmail, "Password123!", verify: false);
+        await RegisterAndVerifyUser(userEmail, "Password123!", false);
 
         // Act
         var verificationPayload = new { Email = userEmail, Token = "invalid-token" };
@@ -51,7 +49,7 @@ public class EmailVerificationTests : AuthenticationTestBase
     {
         // Arrange
         var userEmail = Fake.Internet.Email();
-        await RegisterAndVerifyUser(userEmail, "Password123!", verify: false );
+        await RegisterAndVerifyUser(userEmail, "Password123!", false);
         await Task.Delay(TimeSpan.FromSeconds(2)); // Allow email to be "sent"
         var (token, parsedEmail) = ExtractTokenAndEmailFromEmail(userEmail);
         Assert.NotNull(token);

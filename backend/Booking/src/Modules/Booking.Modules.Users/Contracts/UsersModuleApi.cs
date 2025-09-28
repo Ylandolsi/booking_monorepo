@@ -10,7 +10,7 @@ namespace Booking.Modules.Users.Contracts;
 
 public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
 {
-    private IServiceProvider ServiceProvider { get; set; } = serviceProvider;
+    private IServiceProvider ServiceProvider { get; } = serviceProvider;
 
     public async Task<GoogleTokensDto?> GetUserTokensAsync(int userId)
     {
@@ -23,7 +23,7 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
         return new GoogleTokensDto
         {
             AccessToken = response.AccessToken,
-            RefreshToken = response.RefreshToken,
+            RefreshToken = response.RefreshToken
             /*
             ExpiresAt = response.ExpiresAt,
             */
@@ -38,7 +38,7 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
         var googleTokenMapped = new GoogleTokens
         {
             AccessToken = googleTokens.AccessToken,
-            RefreshToken = googleTokens.RefreshToken,
+            RefreshToken = googleTokens.RefreshToken
             /*
             ExpiresAt = googleTokens.ExpiresAt,
         */
@@ -58,12 +58,12 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
             cacheKey,
             async _ => { return await usersDbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, ctx); },
             TimeSpan.FromSeconds(1),
-            token: ctx
+            ctx
         );
 
         return new UserDto
         {
-            Slug = userData.Slug ,
+            Slug = userData.Slug,
             FirstName = userData.Name.FirstName,
             LastName = userData.Name.LastName,
             Email = userData.Email,
@@ -74,8 +74,7 @@ public class UsersModuleApi(IServiceProvider serviceProvider) : IUsersModuleApi
                 ThumbnailUrlPictureLink = userData.ProfilePictureUrl.ThumbnailUrlPictureLink
             },
             TimeZoneId = userData.TimeZoneId,
-            KonnectWalletId = userData.KonnectWalledId,  
-            
+            KonnectWalletId = userData.KonnectWalledId
         };
     }
 }

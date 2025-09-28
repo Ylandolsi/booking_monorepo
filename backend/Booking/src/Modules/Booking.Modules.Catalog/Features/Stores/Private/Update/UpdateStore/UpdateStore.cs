@@ -1,13 +1,12 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Private.Shared;
+using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SocialLink = Booking.Modules.Catalog.Features.Stores.Shared.SocialLink;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Update.UpdateStore;
 
@@ -57,29 +56,18 @@ public class UpdateStoreHandler(
 
 
             if (command.Orders is not null)
-            {
                 foreach (var product in store.Products)
-                {
                     if (command.Orders.TryGetValue(product.ProductSlug, out var order))
-                    {
                         if (order != product.DisplayOrder && order != 0)
-                        {
                             product.UpdateDisplayOrder(order);
-                        }
-                    }
-                }
-            }
 
             if (command?.File is not null) // only update when provided 
             {
                 var profilePictureResult = await storeService.UploadPicture(command.File, command.Slug);
                 if (profilePictureResult.IsFailure)
-                {
                     logger.LogWarning("Failed to upload picture for store {Slug}: {Error}",
                         command.Slug, profilePictureResult.Error.Description);
-                    // Continue with default picture instead of failing
-                }
-
+                // Continue with default picture instead of failing
                 store.UpdatePicture(profilePictureResult.IsSuccess ? profilePictureResult.Value : new Picture());
             }
 

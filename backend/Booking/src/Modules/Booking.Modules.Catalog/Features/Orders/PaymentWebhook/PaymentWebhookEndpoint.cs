@@ -1,24 +1,14 @@
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
-using Booking.Modules.Catalog.Features;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Orders.PaymentWebhook;
 
 public class PaymentWebhookEndpoint : IEndpoint
 {
-    public record WebhookRequest(
-        string PaymentReference,
-        string Status,
-        decimal? Amount = null,
-        string? Currency = null,
-        Dictionary<string, object>? AdditionalData = null
-    );
-
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(CatalogEndpoints.Payment.Webhook, async (
@@ -37,4 +27,12 @@ public class PaymentWebhookEndpoint : IEndpoint
             .WithDescription("Handle payment status updates from payment provider")
             .AllowAnonymous();
     }
+
+    public record WebhookRequest(
+        string PaymentReference,
+        string Status,
+        decimal? Amount = null,
+        string? Currency = null,
+        Dictionary<string, object>? AdditionalData = null
+    );
 }

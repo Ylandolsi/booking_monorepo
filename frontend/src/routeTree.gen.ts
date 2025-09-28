@@ -15,7 +15,6 @@ import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
-import { Route as TestThumbnailModesRouteImport } from './routes/test/thumbnail-modes'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
@@ -66,11 +65,6 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
-} as any)
-const TestThumbnailModesRoute = TestThumbnailModesRouteImport.update({
-  id: '/test/thumbnail-modes',
-  path: '/test/thumbnail-modes',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
@@ -195,7 +189,6 @@ export interface FileRoutesByFullPath {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -223,7 +216,6 @@ export interface FileRoutesByTo {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -253,7 +245,6 @@ export interface FileRoutesById {
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
-  '/test/thumbnail-modes': typeof TestThumbnailModesRoute
   '/app/': typeof AppIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -284,7 +275,6 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/thumbnail-modes'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -312,7 +302,6 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/thumbnail-modes'
     | '/app'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -341,7 +330,6 @@ export interface FileRouteTypes {
     | '/error-exp/simple-loading-demo'
     | '/test/dashboard'
     | '/test/img'
-    | '/test/thumbnail-modes'
     | '/app/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -362,7 +350,6 @@ export interface RootRouteChildren {
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
-  TestThumbnailModesRoute: typeof TestThumbnailModesRoute
   publicStoreStoreSlugIndexRoute: typeof publicStoreStoreSlugIndexRoute
   publicStoreStoreSlugSProductSlugRoute: typeof publicStoreStoreSlugSProductSlugRoute
 }
@@ -410,13 +397,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
-    }
-    '/test/thumbnail-modes': {
-      id: '/test/thumbnail-modes'
-      path: '/test/thumbnail-modes'
-      fullPath: '/test/thumbnail-modes'
-      preLoaderRoute: typeof TestThumbnailModesRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/test/img': {
       id: '/test/img'
@@ -634,7 +614,6 @@ const rootRouteChildren: RootRouteChildren = {
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
-  TestThumbnailModesRoute: TestThumbnailModesRoute,
   publicStoreStoreSlugIndexRoute: publicStoreStoreSlugIndexRoute,
   publicStoreStoreSlugSProductSlugRoute: publicStoreStoreSlugSProductSlugRoute,
 }

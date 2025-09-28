@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Microsoft.EntityFrameworkCore;
 using Booking.Modules.Users.Presistence;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Users.BackgroundJobs.Cleanup;
@@ -31,7 +31,7 @@ public class TokenCleanupJob
         var cancellationToken = context?.CancellationToken.ShutdownToken ?? CancellationToken.None;
 
         var utcNow = DateTime.UtcNow;
-        int refreshTokensRemovedCount = 0;
+        var refreshTokensRemovedCount = 0;
 
         try
         {
@@ -48,7 +48,8 @@ public class TokenCleanupJob
                 _context.RefreshTokens.RemoveRange(oldRefreshTokens);
                 refreshTokensRemovedCount = oldRefreshTokens.Count;
                 context?.WriteLine($"Found {refreshTokensRemovedCount} revoked or expired refresh tokens to remove.");
-                _logger.LogInformation("Hangfire Job: Found {Count} revoked or expired refresh tokens to remove.", refreshTokensRemovedCount);
+                _logger.LogInformation("Hangfire Job: Found {Count} revoked or expired refresh tokens to remove.",
+                    refreshTokensRemovedCount);
             }
             else
             {
@@ -58,9 +59,11 @@ public class TokenCleanupJob
 
             if (refreshTokensRemovedCount > 0)
             {
-                await _context.SaveChangesAsync(CancellationToken.None); // Assuming CancellationToken.None is acceptable for a background job
+                await _context.SaveChangesAsync(CancellationToken
+                    .None); // Assuming CancellationToken.None is acceptable for a background job
                 context?.WriteLine("Successfully removed tokens from the database.");
-                _logger.LogInformation("Hangfire Job: Successfully removed {RefreshTokenCount} refresh tokens.", refreshTokensRemovedCount);
+                _logger.LogInformation("Hangfire Job: Successfully removed {RefreshTokenCount} refresh tokens.",
+                    refreshTokensRemovedCount);
             }
         }
         catch (OperationCanceledException)
@@ -78,6 +81,7 @@ public class TokenCleanupJob
         }
 
         context?.WriteLine("Token cleanup job finished.");
-        _logger.LogInformation("Hangfire Job: Token cleanup job finished. Removed {RefreshTokenCount} refresh tokens.", refreshTokensRemovedCount);
+        _logger.LogInformation("Hangfire Job: Token cleanup job finished. Removed {RefreshTokenCount} refresh tokens.",
+            refreshTokensRemovedCount);
     }
 }
