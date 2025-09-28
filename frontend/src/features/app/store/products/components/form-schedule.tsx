@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-schedule';
 import { mapDayToNumber } from '@/utils/enum-days-week';
-import { TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
+import { DAYS, TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
 import { Clock, Timer, X } from 'lucide-react';
 import {
   Accordion,
@@ -15,7 +15,6 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -23,8 +22,6 @@ import {
   SelectValue,
 } from '@/components/ui';
 import type { ProductFormData } from '@/features/app/store/products';
-
-const DAYS: DayOfWeek[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
   const { schedule, actions, error } = useFormSchedule(form);
@@ -46,7 +43,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
             </Alert>
           )}
           {DAYS.map((day) => {
-            const daySchedule = schedule.find((s) => s.dayOfWeek === mapDayToNumber(day));
+            const daySchedule = schedule.find((s) => s.dayOfWeek === day);
             if (!daySchedule) return null;
 
             return (

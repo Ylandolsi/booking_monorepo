@@ -32,7 +32,7 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
           <h1 className="line-clamp-2 text-3xl font-extrabold break-all text-slate-900 dark:text-white">{product.title}</h1>
           <p className="mt-2 line-clamp-3 text-lg break-all text-slate-600 dark:text-slate-400">{product.subtitle}</p>
           <div className="mt-4">
-            <span className="text-primary text-4xl font-bold">{product.price.toFixed(2)}$</span>
+            <span className="text-primary text-4xl font-bold">{product.price?.toFixed(2) || 0}$</span>
           </div>
           <div className="mt-6 mb-10 max-h-40 space-y-4 overflow-y-auto text-slate-700 dark:text-slate-300">
             <h2 className="text-xl font-bold break-all text-slate-900 dark:text-white">Description</h2>
