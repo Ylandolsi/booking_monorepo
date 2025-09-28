@@ -17,7 +17,6 @@ internal sealed class RegisterCommandHandler(
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
     EmailVerificationSender emailVerificationSender,
-    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<RegisterCommandHandler> logger)
     : ICommandHandler<RegisterCommand>
 {
@@ -73,10 +72,6 @@ internal sealed class RegisterCommandHandler(
             logger.LogInformation("User registered successfully with email: {Email}", command.Email);
 
             user = (await context.Users.FirstOrDefaultAsync(u => u.Email == command.Email, cancellationToken))!;
-
-            await mentorshipsModuleApi.CreateWalletForUserId(user.Id, cancellationToken);
-
-
             await emailVerificationSender.SendVerificationEmailAsync(user);
 
             logger.LogInformation("email verification background job triggered for user with ID: {UserId}", user.Id);

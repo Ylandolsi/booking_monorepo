@@ -21,7 +21,6 @@ internal sealed class CreateOrLoginCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
-    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<CreateOrLoginCommandHandler> logger) : ICommandHandler<CreateOrLoginCommand, LoginResponse>
 {
     public async Task<Result<LoginResponse>> Handle(CreateOrLoginCommand command, CancellationToken cancellationToken)
@@ -77,7 +76,6 @@ internal sealed class CreateOrLoginCommandHandler(
                 }
 
                 user = await context.Users.FirstOrDefaultAsync(c => c.Email == claims.Email, cancellationToken);
-                await mentorshipsModuleApi.CreateWalletForUserId(user.Id, cancellationToken);
 
                 /*
                 var calendar = await mentorshipsModuleApi.GetUserCalendar(user.Id);

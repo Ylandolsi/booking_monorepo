@@ -22,7 +22,6 @@ internal sealed class IntegrateAccountCommandHandler(
     UsersDbContext context,
     UserContext userContext,
     GoogleTokenService googleTokenService,
-    IMentorshipsModuleApi mentorshipsModuleApi,
     ILogger<IntegrateAccountCommandHandler> logger) : ICommandHandler<IntegrateAccountCommand>
 {
     public async Task<Result> Handle(IntegrateAccountCommand command, CancellationToken cancellationToken)

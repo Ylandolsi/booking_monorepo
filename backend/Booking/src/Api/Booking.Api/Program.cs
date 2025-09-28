@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Booking.Api;
 using Booking.Api.Extensions;
 using Booking.Api.Services;
 using Booking.Common;
@@ -39,7 +40,8 @@ Assembly[] moduleApplicationAssemblies =
 [
     AssemblyReference.Assembly,
     //Booking.Modules.Mentorships.AssemblyReference.Assembly,
-    Booking.Modules.Users.AssemblyReference.Assembly
+    Booking.Modules.Users.AssemblyReference.Assembly,
+    Booking.Modules.Catalog.AssemblyReference.Assembly,
 ];
 
 
@@ -69,10 +71,12 @@ builder.Services.AddUsersModule(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
-/*
+
 builder.Services.AddSingleton<TestProfileSeeder>();
+/*
 builder.Services.AddHostedService<SeedHostedService>();
 */
+
 
 
 var app = builder.Build();

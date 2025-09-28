@@ -230,7 +230,6 @@ internal sealed class BookSessionCommandHandler(
                 await context.Payments.AddAsync(payment, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
 
-                // Get mentee user details for payment
 
 
                 // Create payment with Konnect

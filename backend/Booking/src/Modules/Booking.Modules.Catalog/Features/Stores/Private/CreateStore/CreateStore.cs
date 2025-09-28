@@ -73,10 +73,19 @@ public class CreateStoreHandler(
                     command.Slug, profilePictureResult.Error.Description);
             // Continue with default picture instead of failing
             store.UpdatePicture(profilePictureResult.IsSuccess ? profilePictureResult.Value : new Picture());
-
-            // Save to database
+        
+            
+            // create wallet for the store 
             await dbContext.AddAsync(store, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var walletStore = new Wallet(store.Id, 0);
+            
+            await dbContext.AddAsync(walletStore, cancellationToken);
+            
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Save to database
             await unitOfWork.CommitTransactionAsync(cancellationToken);
 
             logger.LogInformation("Successfully created store {StoreId} with slug {Slug} for user {UserId}",
