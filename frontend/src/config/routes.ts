@@ -45,6 +45,10 @@ export const ROUTE_PATHS = {
       CREATE_STORE: '/app/store/create', // create store flow
       SETUP_STORE: '/app/store/setup', // initial setup wizard after creating store
       //DASHBOARD: '/app/store/dashboard', // manage products, orders, settings
+
+      // Public store preview
+      PUBLIC_PREVIEW: '/store/$storeSlug',
+      PUBLIC_SESSION_PRODUCT: '/store/$storeSlug/s/$productSlug',
     },
     BOOKING: {
       SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
@@ -150,6 +154,11 @@ export const routeBuilder = {
     editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,
     createStore: () => ROUTE_PATHS.APP.STORE.CREATE_STORE,
     setupStore: () => ROUTE_PATHS.APP.STORE.SETUP_STORE,
+
+    // public store preview
+    publicStorePreview: ({ storeSlug }: { storeSlug: string }) => ROUTE_PATHS.APP.STORE.PUBLIC_PREVIEW.replace('$storeSlug', storeSlug),
+    publicSessionProduct: ({ storeSlug, productSlug }: { storeSlug: string; productSlug: string }) =>
+      ROUTE_PATHS.APP.STORE.PUBLIC_SESSION_PRODUCT.replace('$storeSlug', storeSlug).replace('$productSlug', productSlug),
   },
 
   // Booking routes

@@ -1,9 +1,12 @@
-import { usePublicStore } from '@/api/stores';
+import { usePublicStore, type Product } from '@/api/stores';
 import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader } from '@/components';
+import { routes } from '@/config';
+import { useAppNavigation } from '@/hooks';
 import { GenerateIdCrypto } from '@/lib';
 import { useParams } from '@tanstack/react-router';
 
 export const PublicStorePreview = () => {
+  const navigate = useAppNavigation();
   const { storeSlug } = useParams({ strict: false }) as Record<string, string | undefined>;
   const { data: store, isLoading, isError } = usePublicStore(storeSlug!, { enabled: !!storeSlug });
   if (!storeSlug) return null;
@@ -11,9 +14,10 @@ export const PublicStorePreview = () => {
   if (isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
   if (!store) return <ErrorComponenet message="Store not found." title="Store Error" />;
 
-  const handleProductClick = (product: any) => {
-    // Implement navigation to product detail page
+  const handleProductClick = (product: Product) => {
     console.log('Product clicked:', product);
+    if (product.productType !== 'Session') return; // only session products for now
+    navigate.goTo({ to: routes.to.store.publicSessionProduct({ storeSlug: store.slug, productSlug: product.productSlug }) });
   };
 
   console.log(store.products);

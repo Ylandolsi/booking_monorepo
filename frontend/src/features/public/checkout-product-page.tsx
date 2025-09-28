@@ -9,6 +9,7 @@ import { createProductSchema } from '@/api/stores/produtcs/sessions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@radix-ui/react-label';
+import { useAppNavigation } from '@/hooks';
 
 // TODO : needs to be generic to handle both form / api data
 
@@ -44,11 +45,12 @@ export function ProductCheckout({ product, children }: { product: Product; child
       phone: '',
     },
   });
+
   return (
     <div className="bg-background-light dark:bg-background-dark relative text-slate-800 dark:text-slate-200">
       <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
         {/* todo change this to home page for the user  */}
-        <Link className="flex items-center gap-2" to={routes.to.store.index() + '/'}>
+        <Link className="flex items-center gap-2" to={routes.to.store.publicStorePreview({ storeSlug: product.storeSlug }) as string | undefined}>
           <X />
           <span className="font-bold text-slate-900 dark:text-white">Back to Store</span>
         </Link>

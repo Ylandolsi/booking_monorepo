@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useFormSchedule } from '@/features/app/store/products/hooks/use-form-schedule';
-import { mapDayToNumber } from '@/utils/enum-days-week';
-import { DAYS, TIME_OPTIONS, type DayOfWeek } from '@/features/app/session/booking/shared';
+import { DAYS, TIME_OPTIONS } from '@/features/app/session/booking/shared';
 import { Clock, Timer, X } from 'lucide-react';
 import {
   Accordion,
