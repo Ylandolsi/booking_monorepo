@@ -8,7 +8,7 @@ import { buildUrlWithParams } from '@/lib';
 
 // Param placeholders
 export const ROUTE_PARAMS = {
-  MENTOR_SLUG: '$mentorSlug',
+  // StoreSlug and ProductSlug are used in multiple places : todo
   USER_SLUG: '$userSlug',
   REQUEST_ID: '$requestId',
 } as const;
@@ -52,12 +52,6 @@ export const ROUTE_PATHS = {
     },
     BOOKING: {
       SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
-    },
-
-    // Mentor routes
-    MENTOR: {
-      BECOME: '/app/mentor/become',
-      SET_SCHEDULE: '/app/mentor/set-schedule',
     },
 
     // Profile routes
@@ -170,12 +164,6 @@ export const routeBuilder = {
     index: () => ROUTE_PATHS.APP.MEETS.INDEX,
   },
 
-  // Mentor routes
-  mentor: {
-    become: () => ROUTE_PATHS.APP.MENTOR.BECOME,
-    setSchedule: () => ROUTE_PATHS.APP.MENTOR.SET_SCHEDULE,
-  },
-
   profile: {
     integrations: () => ROUTE_PATHS.APP.PROFILE.INTEGRATIONS,
   },
@@ -221,7 +209,6 @@ export const routes = {
   isAuthRoute: (path: string) => path.startsWith('/auth'),
   isAppRoute: (path: string) => path.startsWith('/app'),
   isBookingRoute: (path: string) => path.startsWith('/booking'),
-  isMentorRoute: (path: string) => path.startsWith('/mentor'),
   isProfileRoute: (path: string) => path.startsWith('/profile'),
   isTestRoute: (path: string) => path.startsWith('/test') || path.startsWith('/error-exp'),
 

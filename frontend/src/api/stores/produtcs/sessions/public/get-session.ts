@@ -10,7 +10,7 @@ export interface SessionProductResponse {
   durationMinutes: number;
   bufferTimeMinutes: number;
   meetingInstructions: string;
-  dayAvailabilities: DayAvailability[];
+  // dayAvailabilities: DayAvailability[];
   timeZoneId: string;
   previewImage?: Picture;
   thumbnailImage?: Picture;

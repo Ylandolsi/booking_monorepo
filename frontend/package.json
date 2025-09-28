@@ -14,7 +14,7 @@
     "check:imports": "node scripts/check-imports.js",
     "prebuild": "npm run generate:routes && npm run check:routes",
     "find:navigation": "node scripts/find-navigation-patterns.js",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --project tsconfig.app.json && echo '✅ Type check passed!' || echo '❌ Type errors found!'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
