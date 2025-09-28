@@ -59,15 +59,6 @@ docker inspect -f '{{ .Name }} - {{ range .NetworkSettings.Ports }}{{ println . 
 Check and free a specific port (e.g., 8081):
 
 ```bash
-# List processes using port 8081
-sudo lsof -i :8081
-
-# Manually kill processes blocking port 8081
-sudo kill 50559 50568
-
-# Force kill if necessary
-sudo kill -9 50559 50568
-
-# Confirm port is free (no output means free)
-sudo lsof -i :8081
+# force kill
+sudo lsof -ti :8081 | xargs sudo kill
 ```

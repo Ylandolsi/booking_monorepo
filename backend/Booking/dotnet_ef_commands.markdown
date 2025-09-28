@@ -1,52 +1,44 @@
-## https://claude.ai/chat/a5dd9237-52e8-49c8-88e6-703768f4caaf
+# .NET and EF Core Development Guide
 
-## https://cloud.google.com/products/alloydb?hl=en
+## External Resources
 
-## https://chriscooper0.github.io/calendar/
+### Documentation & Tools
 
-how inhertiance works in store ( navigation property to products) : sessionProducts implement products and appear int
-that navigation property
+- [Claude AI Chat](https://claude.ai/chat/a5dd9237-52e8-49c8-88e6-703768f4caaf)
+- [Google AlloyDB](https://cloud.google.com/products/alloydb?hl=en)
+- [Calendar Component](https://chriscooper0.github.io/calendar/)
 
-If you actually want to save the enum as a string in the database:
+## EF Core Configuration Notes
 
-You need to configure EF Core explicitly, e.g.:
+### Entity Inheritance & Navigation Properties
+
+**Store inheritance pattern**: SessionProducts implement Products and appear in the navigation property.
+
+### Enum Storage as Strings
+
+To save enums as strings in the database, configure EF Core explicitly:
+
+```csharp
 modelBuilder
-.Entity<Payout>()
-.Property(p => p.Status)
-.HasConversion<string>();
-This way:
-
-DB column → "Pending" / "Completed"
-
-## JSON → "Pending" / "Completed"
-
-request aborted vs cancellation token
-| Aspect | `HttpContext.RequestAborted` | `cancellationToken` (method param) |
-| ----------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
-| **Scope** | Only for the current HTTP request | General-purpose, can be chained or created manually |
-| **Triggered by** | Client disconnects, request times out | Whatever cancellation policy you define (timeouts, linked tokens, manual cancel) |
-| **Control** | Framework-controlled | You (developer) decide |
-| **Best practice** | Use it to stop work when client goes away | Use it for explicit cancellation needs beyond HTTP lifecycle |
-
----
-
-PolyJSON
-
-# .NET and EF Core Commands
-
-In EF Core, if you don’t configure anything, it uses your C# property names (usually PascalCase).
-
-Check wallet balance with row-level locking
-
-```c#
- var wallet = await _dbContext.Wallets.
-    Where(w => w.UserId == request.UserId).
-    ExecuteUpdateAsync(w => w.SetProperty(x => x.Balance, x => x.Balance), cancellationToken);
+    .Entity<Payout>()
+    .Property(p => p.Status)
+    .HasConversion<string>();
 ```
 
-## Table level conditions
+This ensures:
 
-````c#
+- **DB column** → `"Pending"` / `"Completed"`
+- **JSON output** → `"Pending"` / `"Completed"`
+
+### Property Naming Convention
+
+In EF Core, if you don't configure anything, it uses your C# property names (usually PascalCase).
+
+### Table-Level Constraints
+
+Add database-level validation constraints:
+
+```csharp
 // Add table-level constraints
 builder.ToTable("sessions", t =>
 {
@@ -55,22 +47,33 @@ builder.ToTable("sessions", t =>
     t.HasCheckConstraint("CK_Session_Date_Valid", "scheduled_at > created_at");
 });
 ```
-### tests
-```bash
-dotnet test tests/IntegrationsTests/IntegrationsTests.csproj --filter "CreateStore_ShouldSucceed_WhenValidDataProvided" -v d
 
+### Row-Level Locking
+
+Check wallet balance with row-level locking:
+
+```csharp
+var wallet = await _dbContext.Wallets
+    .Where(w => w.UserId == request.UserId)
+    .ExecuteUpdateAsync(w => w.SetProperty(x => x.Balance, x => x.Balance), cancellationToken);
+```
+
+## Cancellation Tokens
+
+### Request Aborted vs Cancellation Token
+
+| Aspect            | `HttpContext.RequestAborted`              | `cancellationToken` (method param)                                               |
+| ----------------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
+| **Scope**         | Only for the current HTTP request         | General-purpose, can be chained or created manually                              |
+| **Triggered by**  | Client disconnects, request times out     | Whatever cancellation policy you define (timeouts, linked tokens, manual cancel) |
+| **Control**       | Framework-controlled                      | You (developer) decide                                                           |
+| **Best practice** | Use it to stop work when client goes away | Use it for explicit cancellation needs beyond HTTP lifecycle                     |
 
 ## Entity Framework Migrations
 
-Add migrations for the Users module:
-```bash
-    dotnet ef migrations add FixUpdatedAt \
-  --project src/Modules/Booking.Modules.Catalog/Booking.Modules.Catalog.csproj \
-  --startup-project src/Api/Booking.Api/Booking.Api.csproj \
-  --context CatalogDbContext \
-  --configuration Debug \
-  --output-dir Persistence/Migrations
-```
+### Migration Commands by Module
+
+#### Users Module Migration
 
 ```bash
 dotnet ef migrations add Initial \
@@ -81,7 +84,18 @@ dotnet ef migrations add Initial \
   --output-dir Persistence/Migrations
 ```
 
-Add migrations for the Mentorships module:
+#### Catalog Module Migration
+
+```bash
+dotnet ef migrations add FixUpdatedAt \
+  --project src/Modules/Booking.Modules.Catalog/Booking.Modules.Catalog.csproj \
+  --startup-project src/Api/Booking.Api/Booking.Api.csproj \
+  --context CatalogDbContext \
+  --configuration Debug \
+  --output-dir Persistence/Migrations
+```
+
+#### Mentorships Module Migration
 
 ```bash
 dotnet ef migrations add MentorInitial \
@@ -92,32 +106,83 @@ dotnet ef migrations add MentorInitial \
   --output-dir Persistence/Migrations
 ```
 
-Add migration to sync model and database:
+### Alternative Migration Commands
+
+#### Sync Model and Database
 
 ```bash
 dotnet ef migrations add SyncModelAndDb --project ../Infrastructure --startup-project .
 ```
 
-Add initial migration for the Mentorships module:
+#### Initial Mentorships Migration (Alternative)
 
 ```bash
 cd /path/to/mentorships/module
 dotnet ef migrations add InitialMentorshipsMigration --startup-project ../Api/Booking.Api
 ```
 
-## Notes on EF Core Parameters
+### EF Core Parameters Explained
 
-- The `--project` parameter specifies where migration files are generated (e.g., Users or Mentorships module).
-- The `--startup-project` parameter points to the project with the DI container setup (e.g., API project).
-- EF Tools use the API project's `Program.cs` to build services and create the `DbContext`.
+- **`--project`**: Specifies where migration files are generated (e.g., Users or Mentorships module)
+- **`--startup-project`**: Points to the project with the DI container setup (e.g., API project)
+- **`--context`**: Specifies the DbContext class to use
+- **`--configuration`**: Build configuration (Debug/Release)
+- **`--output-dir`**: Directory where migration files will be created
 
-## JSON Serialization Notes
+**Note**: EF Tools use the API project's `Program.cs` to build services and create the `DbContext`.
 
-- `System.Text.Json` is case-insensitive by default, but `Newtonsoft.Json` is case-sensitive.
-- When returning EF Core entities directly, `System.Text.Json` serializes every public getter (mapped or not), so
-  properties like `DomainEvents` may appear in the output despite not being database columns.
+## Testing
 
-## Background Jobs in Tests
+### Running Specific Tests
 
-In integration tests, background jobs need to be triggered manually because they are not automatically executed in the
-test environment.
+Run a specific test with detailed output:
+
+```bash
+dotnet test tests/IntegrationsTests/IntegrationsTests.csproj \
+  --filter "CreateStore_ShouldSucceed_WhenValidDataProvided" \
+  -v d
+```
+
+## Development Notes
+
+### JSON Serialization
+
+**System.Text.Json vs Newtonsoft.Json**:
+
+- `System.Text.Json` is case-insensitive by default
+- `Newtonsoft.Json` is case-sensitive
+
+**EF Core Entity Serialization**:
+When returning EF Core entities directly, `System.Text.Json` serializes every public getter (mapped or not), so properties like `DomainEvents` may appear in the output despite not being database columns.
+
+### Background Jobs in Tests
+
+In integration tests, background jobs need to be triggered manually because they are not automatically executed in the test environment.
+
+### PolyJSON
+
+_Note: Additional JSON handling utilities and patterns._
+
+## Quick Reference
+
+### Common EF Core Commands
+
+```bash
+# Add migration
+dotnet ef migrations add <MigrationName> --project <ModuleProject> --startup-project <ApiProject> --context <DbContext>
+
+# Update database
+dotnet ef database update --project <ModuleProject> --startup-project <ApiProject> --context <DbContext>
+
+# Remove last migration
+dotnet ef migrations remove --project <ModuleProject> --startup-project <ApiProject> --context <DbContext>
+
+# List migrations
+dotnet ef migrations list --project <ModuleProject> --startup-project <ApiProject> --context <DbContext>
+```
+
+### Module Contexts
+
+- **Users**: `UsersDbContext`
+- **Catalog**: `CatalogDbContext`
+- **Mentorships**: `MentorshipsDbContext`
