@@ -1,24 +1,10 @@
-import { Calendar, Clock, DollarSign, MessageCircle, CheckCircle, Edit3 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-  Badge,
-  Button,
-  Textarea,
-  Label,
-  DrawerDialog,
-  Input,
-} from '@/components/ui';
+import { Calendar, Clock, DollarSign, CheckCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, Button, DrawerDialog } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDateLong } from '@/utils';
-import type { BookingSummaryType } from '../types/booking-types';
 import { useState } from 'react';
 import type { SessionSlotType } from '@/features/app/session/booking/shared';
+import type { BookingSummaryType } from '@/api/stores';
 
 interface BookingSummaryProps {
   booking: BookingSummaryType | null;
@@ -39,17 +25,11 @@ export function BookingSummary({
   booking,
   selectedDate,
   selectedSlot,
-  notes,
-  onNotesChange,
-  title,
-  onTitleChange,
   onBookSession,
   isBookingInProgress,
   isBookingDisabled,
   className,
 }: BookingSummaryProps) {
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const formatTime = (timeString: string): string => {
@@ -75,14 +55,6 @@ export function BookingSummary({
       minute: '2-digit',
       hour12: true,
     });
-  };
-
-  const getInitials = (name: string): string => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase();
   };
 
   const handleBookSessionClick = () => {
@@ -153,7 +125,6 @@ export function BookingSummary({
               <Clock className="h-4 w-4" />
               Session Details
             </h4>
-
             <div className="grid gap-4">
               <div className="flex items-center justify-between rounded-lg bg-blue-50 p-3">
                 <div className="flex items-center gap-3">
@@ -194,19 +165,19 @@ export function BookingSummary({
                 </div>
               </div>
             </div>
-
             {/* Total */}
             <div className="border-t pt-4">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold">Total</span>
-                <span className="text-2xl font-bold text-green-600">${booking.total}</span>
+                <span className="text-2xl font-bold text-green-600">${booking.session.price}</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            {/* Session Title */}
-            <div className="border-border border-b">
+          {/* Session Title and Notes */}
+          {/* <div className="space-y-3"> */}
+          {/* Session Title */}
+          {/* <div className="border-border border-b">
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <MessageCircle className="h-4 w-4" />
@@ -233,9 +204,9 @@ export function BookingSummary({
                 </div>
               )}
               {isEditingTitle && <p className="text-muted-foreground text-xs">{title.length}/500 characters</p>}
-            </div>
-            {/* Notes Section */}
-            <div>
+            </div> */}
+          {/* Notes Section */}
+          {/* <div>
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <MessageCircle className="h-4 w-4" />
@@ -263,13 +234,13 @@ export function BookingSummary({
                 </div>
               )}
               {isEditingTitle && <p className="text-muted-foreground text-xs">{notes.length}/500 characters</p>}
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </CardContent>
       </Card>
 
       {/* Booking Action */}
-      <Card>
+      {/* <Card>
         <CardContent className="pt-6">
           <Button className="w-full" size="lg" onClick={handleBookSessionClick} disabled={isBookingDisabled || isBookingInProgress}>
             {isBookingInProgress ? (
@@ -280,7 +251,7 @@ export function BookingSummary({
             ) : (
               <>
                 <CheckCircle className="mr-2 h-4 w-4" />
-                Book Session - ${booking.total}
+                Book Session - ${booking.session.price}
               </>
             )}
           </Button>
@@ -292,7 +263,7 @@ export function BookingSummary({
             </p>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Confirmation Modal */}
       <DrawerDialog

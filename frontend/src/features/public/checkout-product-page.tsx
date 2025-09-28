@@ -1,15 +1,12 @@
 import { BookingPage } from '@/features/app/store/products/components/checkout/book';
 import type { Product } from '@/api/stores';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
-import { Form, FormControl, FormField, FormItem, FormLabel, Input, Link } from '@/components/ui';
+import { Form, FormControl, FormField, FormItem, FormLabel, Input, Link, Textarea } from '@/components/ui';
 import { routes } from '@/config';
 import { X } from 'lucide-react';
 import z from 'zod';
-import { createProductSchema } from '@/api/stores/produtcs/sessions';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Label } from '@radix-ui/react-label';
-import { useAppNavigation } from '@/hooks';
 
 // TODO : needs to be generic to handle both form / api data
 
@@ -32,6 +29,7 @@ const userDataBookFromSchema = z.object({
   fullName: z.string().min(2, 'Full name must be at least 2 characters').max(100, 'Full name must be at most 100 characters'),
   email: z.string().email('Invalid email address'),
   phone: z.string().min(10, 'Phone number must be at least 10 digits').max(15, 'Phone number must be at most 15 digits').optional().or(z.literal('')),
+  notes: z.string().max(500, 'Notes must be at most 500 characters').optional().or(z.literal('')),
 });
 
 type userDataBookInput = z.infer<typeof userDataBookFromSchema>;
@@ -43,6 +41,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
       fullName: '',
       email: '',
       phone: '',
+      notes: '',
     },
   });
 
@@ -122,7 +121,29 @@ export function ProductCheckout({ product, children }: { product: Product; child
                     );
                   }}
                 />
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground mb-2 flex flex-col items-start justify-start gap-2">
+                          <div>Additional notes</div> <div className="">(Optional : Max 500 characters)</div>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder="Add any specific topics you'd like to discuss or questions you have..."
+                            className="min-h-[80px] w-full resize-none break-all"
+                            maxLength={500}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
               </div>
+
               <button
                 onClick={() => alert('Purchase completed!')}
                 className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
@@ -136,5 +157,3 @@ export function ProductCheckout({ product, children }: { product: Product; child
     </div>
   );
 }
-
-export function UserDataForm() {}

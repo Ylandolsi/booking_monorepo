@@ -14,7 +14,7 @@ interface TimeSlotsProps {
   mentorRate?: number;
 }
 
-export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect, isLoading = false, className, mentorRate = 50 }: TimeSlotsProps) {
+export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect, isLoading = false, className }: TimeSlotsProps) {
   const getEndTime = (startTime: string): string => {
     const [hours, minutes] = startTime.split(':');
     const time = new Date();
@@ -126,11 +126,11 @@ export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect,
                         <div className={cn('text-sm', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>30 minutes session</div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      {/* TODO : only for 30 minutes */}
-                      <div className="text-lg font-bold">${mentorRate / 2}</div>
-                      {/* <div className={cn('text-xs', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>per session</div> */}
-                    </div>
+                    {/* <div className="text-right"> */}
+                    {/* TODO : only for 30 minutes */}
+                    {/* <div className="text-lg font-bold">$</div> */}
+                    {/* <div className={cn('text-xs', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>per session</div> */}
+                    {/* </div> */}
                   </Button>
                 );
               })}

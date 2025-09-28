@@ -163,7 +163,6 @@ export function BookingPage({ product }: { product: Product }) {
             selectedSlot={selectedSlot}
             onSlotSelect={setSelectedSlot}
             isLoading={monthlyAvailabilityQuery.isLoading}
-            // mentorRate={mentorDetailsQuery.data?.hourlyRate}
           />
         </div>
 

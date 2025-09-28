@@ -117,8 +117,6 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
         price: Number((product?.price / 2).toFixed(2)),
         currency: '$',
       },
-
-      //currency: '$',
     };
   };
 
