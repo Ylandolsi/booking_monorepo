@@ -6,7 +6,6 @@
 
 - [Claude AI Chat](https://claude.ai/chat/a5dd9237-52e8-49c8-88e6-703768f4caaf)
 - [Google AlloyDB](https://cloud.google.com/products/alloydb?hl=en)
-- [Calendar Component](https://chriscooper0.github.io/calendar/)
 
 ## EF Core Configuration Notes
 
@@ -56,6 +55,76 @@ Check wallet balance with row-level locking:
 var wallet = await _dbContext.Wallets
     .Where(w => w.UserId == request.UserId)
     .ExecuteUpdateAsync(w => w.SetProperty(x => x.Balance, x => x.Balance), cancellationToken);
+```
+
+### Join Tables (Many-to-Many)
+
+Explicit join tables for many-to-many relationships:
+
+```csharp
+// Domain entities
+public class User {
+    public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
+}
+public class Language {
+    public ICollection<UserLanguage> UserLanguages { get; private set; } = new List<UserLanguage>();
+}
+public class UserLanguage { // Join table
+    public int UserId { get; set; }
+    public User User { get; set; } = default!;
+    public int LanguageId { get; set; }
+    public Language Language { get; set; } = default!;
+}
+
+// Configuration
+builder.HasKey(ul => new { ul.UserId, ul.LanguageId });
+builder.HasOne(ul => ul.User)
+.WithMany(u => u.UserLanguages)
+.HasForeignKey(ul => ul.UserId)
+.OnDelete(DeleteBehavior.Cascade);
+// and do the same for language
+builder.HasOne(ul => ul.Language)
+.WithMany(l => l.UserLanguages)
+....
+
+// config of language entity :
+builder.HasMany(l => l.UserLanguages)
+    .WithOne(ul => ul.Language)
+    .HasForeignKey(ul => ul.LanguageId)
+    .OnDelete(DeleteBehavior.Cascade);
+```
+
+### Data Seeding
+
+Seed initial data in OnModelCreating:
+
+```csharp
+// SeedData.cs
+internal static class SeedData
+{
+    public static async Task Seed(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Language>().HasData(LanguageSeeder.Languages());
+    }
+}
+
+// LanguageSeeder.cs
+public static class LanguageSeeder
+{
+    public static List<Language> Languages() => new List<Language>
+    {
+        new Language("English", 1),
+        new Language("French", 2),
+    };
+}
+
+// In DbContext
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    base.OnModelCreating(modelBuilder);
+    modelBuilder.ApplyConfigurationsFromAssembly(typeof(DbContext).Assembly);
+    SeedData.Seed(modelBuilder);
+}
 ```
 
 ## Cancellation Tokens
