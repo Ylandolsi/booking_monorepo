@@ -7,6 +7,7 @@ import { X } from 'lucide-react';
 import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams, useSearch } from '@tanstack/react-router';
 
 // TODO : needs to be generic to handle both form / api data
 
@@ -45,11 +46,13 @@ export function ProductCheckout({ product, children }: { product: Product; child
     },
   });
 
+  const params = useParams({ strict: false }) as Record<string, string | undefined>;
+  const storeSlug = params.storeSlug;
   return (
     <div className="bg-background-light dark:bg-background-dark relative text-slate-800 dark:text-slate-200">
       <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
         {/* todo change this to home page for the user  */}
-        <Link className="flex items-center gap-2" to={routes.to.store.publicStorePreview({ storeSlug: product.storeSlug }) as string | undefined}>
+        <Link className="flex items-center gap-2" to={routes.to.store.publicStorePreview({ storeSlug: storeSlug || '/' }) as string}>
           <X />
           <span className="font-bold text-slate-900 dark:text-white">Back to Store</span>
         </Link>
