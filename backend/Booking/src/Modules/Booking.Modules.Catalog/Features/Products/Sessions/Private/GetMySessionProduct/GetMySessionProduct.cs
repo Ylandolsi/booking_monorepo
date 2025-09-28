@@ -38,7 +38,7 @@ public class GetSessionProductHandler(
                     Error.Problem("SessionProduct.InvalidSlug", "Product slug must be valid"));
             }
 
-            var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId);
+            var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken);
             if (store == null)
             {
                 logger.LogWarning("Someone is Trying to acesss another store product details ");

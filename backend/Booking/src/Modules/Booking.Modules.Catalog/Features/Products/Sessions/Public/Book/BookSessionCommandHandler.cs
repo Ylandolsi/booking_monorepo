@@ -218,7 +218,7 @@ internal sealed class BookSessionCommandHandler(
                 session.SetWaitingForPayment();
 
                 // Create payment record with pending status
-                var payment = new Payment(
+                var payment = new Domain.Entities.Payment(
                     order.Id,
                     product.StoreId,
                     product.Id,
