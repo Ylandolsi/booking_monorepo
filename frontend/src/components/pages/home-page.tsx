@@ -5,9 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/api/auth';
-import { useMentor } from '@/hooks/use-mentor';
 import { useAppNavigation } from '@/hooks/use-navigation';
-import { Calendar, BookOpen, Video, TrendingUp, Settings, User } from 'lucide-react';
+import { Calendar, Video, TrendingUp, Settings, User } from 'lucide-react';
 import { GiTeacher } from 'react-icons/gi';
 import { useGetSessions } from '@/features/app/session';
 
@@ -15,7 +14,6 @@ export function HomePage() {
   const location = useLocation();
   const error = new URLSearchParams(location.search).get('error') ?? undefined;
   const { currentUser } = useAuth();
-  const { isMentor } = useMentor();
   const nav = useAppNavigation();
 
   const { data: sessionsData, isLoading: sessionsIsLoading } = useGetSessions();
@@ -64,7 +62,7 @@ export function HomePage() {
         <h1 className="text-foreground text-3xl font-bold tracking-tight">
           {getGreeting()}, {currentUser?.firstName}! 👋
         </h1>
-        <p className="text-muted-foreground mt-2">{isMentor ? 'Welcome back to your mentoring dashboard' : 'Ready to learn something new today?'}</p>
+        <p className="text-muted-foreground mt-2">{'Welcome back to your mentoring dashboard'}</p>
       </div>
 
       {/* Quick Stats */}
@@ -96,57 +94,30 @@ export function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
-              {isMentor ? (
-                <>
-                  <Button
-                    variant="outline"
-                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
-                    onClick={() => nav.goToMentorSetSchedule()}
-                  >
-                    <div className="flex w-full items-center gap-2">
-                      <Calendar className="text-primary h-5 w-5" />
-                      <span className="font-medium">Set Availability</span>
-                    </div>
-                    <span className="text-muted-foreground text-sm">Update your available time slots</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
-                    onClick={() => nav.goToMeets()}
-                  >
-                    <div className="flex w-full items-center gap-2">
-                      <Video className="text-primary h-5 w-5" />
-                      <span className="font-medium">View Sessions</span>
-                    </div>
-                    <span className="text-muted-foreground text-sm">Manage your upcoming meetings</span>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
-                    onClick={() => nav.goToMentorBecome()}
-                  >
-                    <div className="flex w-full items-center gap-2">
-                      <GiTeacher className="text-primary h-5 w-5" />
-                      <span className="font-medium">Become a Mentor</span>
-                    </div>
-                    <span className="text-muted-foreground text-sm">Share your expertise with others</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
-                    onClick={() => nav.goToMeets()}
-                  >
-                    <div className="flex w-full items-center gap-2">
-                      <BookOpen className="text-primary h-5 w-5" />
-                      <span className="font-medium">Find Mentors</span>
-                    </div>
-                    <span className="text-muted-foreground text-sm">Discover experts in your field</span>
-                  </Button>
-                </>
-              )}
+              <>
+                <Button
+                  variant="outline"
+                  className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
+                  onClick={() => nav.goToMentorSetSchedule()}
+                >
+                  <div className="flex w-full items-center gap-2">
+                    <Calendar className="text-primary h-5 w-5" />
+                    <span className="font-medium">Set Availability</span>
+                  </div>
+                  <span className="text-muted-foreground text-sm">Update your available time slots</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-auto flex-col items-start justify-start space-y-2 p-4 text-left"
+                  onClick={() => nav.goToMeets()}
+                >
+                  <div className="flex w-full items-center gap-2">
+                    <Video className="text-primary h-5 w-5" />
+                    <span className="font-medium">View Sessions</span>
+                  </div>
+                  <span className="text-muted-foreground text-sm">Manage your upcoming meetings</span>
+                </Button>
+              </>
             </CardContent>
           </Card>
         </div>
@@ -174,14 +145,10 @@ export function HomePage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {isMentor ? (
-                  <Badge variant="secondary" className="gap-1">
-                    <GiTeacher className="h-3 w-3" />
-                    Mentor
-                  </Badge>
-                ) : (
-                  <Badge variant="outline">Student</Badge>
-                )}
+                <Badge variant="secondary" className="gap-1">
+                  <GiTeacher className="h-3 w-3" />
+                  Mentor
+                </Badge>
               </div>
               <Button variant="outline" size="sm" className="w-full" onClick={() => nav.goToProfile(currentUser?.slug || '')}>
                 <Settings className="mr-2 h-4 w-4" />

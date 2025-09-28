@@ -1,35 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Badge,
-  Separator,
-  LoadingState,
-  ErrorComponenet,
-} from '@/components';
-import {
-  ArrowLeft,
-  Calendar,
-  DollarSign,
-  User,
-  CreditCard,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Eye,
-} from 'lucide-react';
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Separator, LoadingState, ErrorComponenet } from '@/components';
+import { ArrowLeft, Calendar, DollarSign, User, CreditCard, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
-import {
-  useGetAllPayoutsAdmin,
-  useApprovePayoutAdmin,
-  useRejectPayoutAdmin,
-} from './api';
+import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin } from './api';
 import { formatDate } from '@/utils/format';
 import { mapPayoutStatus, type PayoutStatus } from './types/admin-payout';
 
@@ -52,24 +26,14 @@ export function AdminPayoutRequestDetailsPage() {
   }
 
   if (error || !allPayouts) {
-    return (
-      <ErrorComponenet
-        message="Failed to load payout request"
-        title="Error Loading Data"
-      />
-    );
+    return <ErrorComponenet message="Failed to load payout request" title="Error Loading Data" />;
   }
 
   // Find the specific payout request
-  const payoutRequest = allPayouts.find(p => p.id === requestId);
-  
+  const payoutRequest = allPayouts.find((p) => p.id === requestId);
+
   if (!payoutRequest) {
-    return (
-      <ErrorComponenet
-        message="Payout request not found"
-        title="Request Not Found"
-      />
-    );
+    return <ErrorComponenet message="Payout request not found" title="Request Not Found" />;
   }
 
   const status = mapPayoutStatus(payoutRequest.status);
@@ -82,31 +46,31 @@ export function AdminPayoutRequestDetailsPage() {
         return {
           variant: 'secondary' as const,
           className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
-          icon: <Clock className="w-4 h-4" />,
+          icon: <Clock className="h-4 w-4" />,
         };
       case 'approved':
         return {
           variant: 'default' as const,
           className: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100',
-          icon: <CheckCircle className="w-4 h-4" />,
+          icon: <CheckCircle className="h-4 w-4" />,
         };
       case 'completed':
         return {
           variant: 'default' as const,
           className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
-          icon: <CheckCircle className="w-4 h-4" />,
+          icon: <CheckCircle className="h-4 w-4" />,
         };
       case 'rejected':
         return {
           variant: 'destructive' as const,
           className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100',
-          icon: <XCircle className="w-4 h-4" />,
+          icon: <XCircle className="h-4 w-4" />,
         };
       default:
         return {
           variant: 'default' as const,
           className: '',
-          icon: <Clock className="w-4 h-4" />,
+          icon: <Clock className="h-4 w-4" />,
         };
     }
   }
@@ -138,16 +102,11 @@ export function AdminPayoutRequestDetailsPage() {
 
   return (
     <>
-      <div className="mx-auto p-6 space-y-6">
+      <div className="mx-auto space-y-6 p-6">
         {/* Header with Back Button */}
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={handleBack}
-            className="gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
+          <Button variant="ghost" size="sm" onClick={handleBack} className="gap-2">
+            <ArrowLeft className="h-4 w-4" />
             Back to Payout Requests
           </Button>
         </div>
@@ -166,50 +125,50 @@ export function AdminPayoutRequestDetailsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Main Details */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {/* Request Overview */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Eye className="w-5 h-5" />
+                  <Eye className="h-5 w-5" />
                   Request Overview
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <User className="w-4 h-4" />
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <User className="h-4 w-4" />
                       User Information
                     </div>
                     <div>
                       <p className="font-medium">User ID: {payoutRequest.userId}</p>
-                      <p className="text-sm text-muted-foreground">Konnect Wallet: {payoutRequest.konnectWalletId}</p>
-                      <p className="text-sm text-muted-foreground">Wallet ID: {payoutRequest.walletId}</p>
+                      <p className="text-muted-foreground text-sm">Konnect Wallet: {payoutRequest.konnectWalletId}</p>
+                      <p className="text-muted-foreground text-sm">Wallet ID: {payoutRequest.walletId}</p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <Calendar className="h-4 w-4" />
                       Request Date
                     </div>
                     <p className="font-medium">{formatDate(payoutRequest.createdAt)}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <DollarSign className="w-4 h-4" />
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <DollarSign className="h-4 w-4" />
                       Amount Requested
                     </div>
                     <p className="text-2xl font-bold">${payoutRequest.amount.toFixed(2)}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <CreditCard className="w-4 h-4" />
+                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                      <CreditCard className="h-4 w-4" />
                       Payment Method
                     </div>
                     <p className="font-medium">Konnect Wallet</p>
@@ -221,7 +180,7 @@ export function AdminPayoutRequestDetailsPage() {
                     <Separator />
                     <div className="space-y-2">
                       <h4 className="font-medium">Payment Reference</h4>
-                      <p className="text-sm text-muted-foreground font-mono">{payoutRequest.paymentRef}</p>
+                      <p className="text-muted-foreground font-mono text-sm">{payoutRequest.paymentRef}</p>
                     </div>
                   </>
                 )}
@@ -232,9 +191,7 @@ export function AdminPayoutRequestDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Financial Information</CardTitle>
-                <CardDescription>
-                  Basic payout information
-                </CardDescription>
+                <CardDescription>Basic payout information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -262,30 +219,28 @@ export function AdminPayoutRequestDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>System Information</CardTitle>
-                <CardDescription>
-                  Internal tracking details
-                </CardDescription>
+                <CardDescription>Internal tracking details</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                  <div className="bg-muted flex justify-between rounded-lg p-3">
                     <div>
                       <p className="font-medium">Payout ID</p>
-                      <p className="text-sm text-muted-foreground">Internal system identifier</p>
+                      <p className="text-muted-foreground text-sm">Internal system identifier</p>
                     </div>
                     <span className="font-mono">{payoutRequest.id}</span>
                   </div>
-                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                  <div className="bg-muted flex justify-between rounded-lg p-3">
                     <div>
                       <p className="font-medium">User ID</p>
-                      <p className="text-sm text-muted-foreground">Requesting user</p>
+                      <p className="text-muted-foreground text-sm">Requesting user</p>
                     </div>
                     <span className="font-mono">{payoutRequest.userId}</span>
                   </div>
-                  <div className="flex justify-between p-3 bg-muted rounded-lg">
+                  <div className="bg-muted flex justify-between rounded-lg p-3">
                     <div>
                       <p className="font-medium">Wallet ID</p>
-                      <p className="text-sm text-muted-foreground">Internal wallet reference</p>
+                      <p className="text-muted-foreground text-sm">Internal wallet reference</p>
                     </div>
                     <span className="font-mono">{payoutRequest.walletId}</span>
                   </div>
@@ -301,26 +256,24 @@ export function AdminPayoutRequestDetailsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>
-                    Approve or reject this payout request
-                  </CardDescription>
+                  <CardDescription>Approve or reject this payout request</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button 
+                  <Button
                     onClick={() => setIsApproveDialogOpen(true)}
                     className="w-full bg-green-600 hover:bg-green-700"
                     disabled={approvePayoutMutation.isPending || rejectPayoutMutation.isPending}
                   >
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <CheckCircle className="mr-2 h-4 w-4" />
                     {approvePayoutMutation.isPending ? 'Approving...' : 'Approve Request'}
                   </Button>
-                  <Button 
+                  <Button
                     variant="destructive"
                     onClick={() => setIsRejectDialogOpen(true)}
                     className="w-full"
                     disabled={approvePayoutMutation.isPending || rejectPayoutMutation.isPending}
                   >
-                    <XCircle className="w-4 h-4 mr-2" />
+                    <XCircle className="mr-2 h-4 w-4" />
                     {rejectPayoutMutation.isPending ? 'Rejecting...' : 'Reject Request'}
                   </Button>
                 </CardContent>
@@ -331,23 +284,21 @@ export function AdminPayoutRequestDetailsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Payout Details</CardTitle>
-                <CardDescription>
-                  Konnect wallet information
-                </CardDescription>
+                <CardDescription>Konnect wallet information</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Konnect Wallet ID</label>
+                  <label className="text-muted-foreground text-sm font-medium">Konnect Wallet ID</label>
                   <p className="font-mono text-sm">{payoutRequest.konnectWalletId}</p>
                 </div>
                 {payoutRequest.paymentRef && payoutRequest.paymentRef !== '' && (
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Payment Reference</label>
+                    <label className="text-muted-foreground text-sm font-medium">Payment Reference</label>
                     <p className="font-mono text-sm">{payoutRequest.paymentRef}</p>
                   </div>
                 )}
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Status</label>
+                  <label className="text-muted-foreground text-sm font-medium">Status</label>
                   <div className="mt-1">
                     <Badge {...statusProps}>
                       {statusProps.icon}

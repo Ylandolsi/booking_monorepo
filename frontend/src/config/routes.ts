@@ -50,9 +50,6 @@ export const ROUTE_PATHS = {
       PUBLIC_PREVIEW: '/store/$storeSlug',
       PUBLIC_SESSION_PRODUCT: '/store/$storeSlug/s/$productSlug',
     },
-    BOOKING: {
-      SESSION: `/app/booking/session/${ROUTE_PARAMS.MENTOR_SLUG}`,
-    },
 
     // Profile routes
     PROFILE: {
@@ -153,11 +150,6 @@ export const routeBuilder = {
     publicStorePreview: ({ storeSlug }: { storeSlug: string }) => ROUTE_PATHS.APP.STORE.PUBLIC_PREVIEW.replace('$storeSlug', storeSlug),
     publicSessionProduct: ({ storeSlug, productSlug }: { storeSlug: string; productSlug: string }) =>
       ROUTE_PATHS.APP.STORE.PUBLIC_SESSION_PRODUCT.replace('$storeSlug', storeSlug).replace('$productSlug', productSlug),
-  },
-
-  // Booking routes
-  booking: {
-    session: (mentorSlug: string) => ROUTE_PATHS.APP.BOOKING.SESSION.replace(ROUTE_PARAMS.MENTOR_SLUG, mentorSlug),
   },
 
   meets: {
