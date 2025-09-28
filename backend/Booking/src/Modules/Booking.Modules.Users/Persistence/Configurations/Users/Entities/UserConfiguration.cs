@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Booking.Modules.Users.Presistence.Configurations.Users.Entities;
+namespace Booking.Modules.Users.Persistence.Configurations.Users.Entities;
 
 internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {

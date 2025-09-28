@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Booking.Modules.Users.Presistence;
+namespace Booking.Modules.Users.Persistence;
 
 internal sealed class UnitOfWork : IUnitOfWork, IDisposable
 {

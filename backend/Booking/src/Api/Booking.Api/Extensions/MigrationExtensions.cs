@@ -1,5 +1,6 @@
 ﻿using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Api.Extensions;

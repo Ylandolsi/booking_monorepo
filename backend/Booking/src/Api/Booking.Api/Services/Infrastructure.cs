@@ -10,7 +10,8 @@ using Booking.Common.Email;
 using Booking.Common.Options;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 

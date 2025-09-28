@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Users.Features;
-using Booking.Modules.Users.Presistence;
+ 
 using Hangfire;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.EntityFrameworkCore;

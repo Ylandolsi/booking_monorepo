@@ -1,7 +1,7 @@
 using Booking.Common.Contracts.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Google;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ZiggyCreatures.Caching.Fusion;

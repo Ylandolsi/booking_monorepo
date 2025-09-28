@@ -4,7 +4,7 @@ using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Utils;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

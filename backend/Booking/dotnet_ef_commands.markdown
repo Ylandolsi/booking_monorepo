@@ -164,17 +164,6 @@ dotnet ef migrations add FixUpdatedAt \
   --output-dir Persistence/Migrations
 ```
 
-#### Mentorships Module Migration
-
-```bash
-dotnet ef migrations add MentorInitial \
-  --project src/Modules/Booking.Modules.Mentorships/Booking.Modules.Mentorships.csproj \
-  --startup-project src/Api/Booking.Api/Booking.Api.csproj \
-  --context MentorshipsDbContext \
-  --configuration Debug \
-  --output-dir Persistence/Migrations
-```
-
 ### Alternative Migration Commands
 
 #### Sync Model and Database

@@ -6,7 +6,8 @@ using Booking.Api;
 using Booking.Common.Options;
 using Booking.Modules.Catalog.Features;
 using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using IntegrationsTests.Mocking;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

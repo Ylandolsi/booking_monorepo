@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Booking.Modules.Users.Presistence;
+namespace Booking.Modules.Users.Persistence;
 
 public sealed class UsersDbContext
     : IdentityDbContext<User, IdentityRole<int>, int>

@@ -1,6 +1,7 @@
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

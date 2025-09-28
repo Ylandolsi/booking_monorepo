@@ -2,7 +2,7 @@ using Booking.Modules.Users.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Booking.Modules.Users.Presistence.Configurations.Users;
+namespace Booking.Modules.Users.Persistence.Configurations.Users;
 
 internal sealed class EmailVerificationTokenConfiguration : IEntityTypeConfiguration<EmailVerificationToken>
 {

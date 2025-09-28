@@ -10,7 +10,8 @@ using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Google;
 using Booking.Modules.Users.Features.Authentication.Verification;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;

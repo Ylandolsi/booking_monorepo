@@ -4,7 +4,8 @@ using Booking.Modules.Users.Features;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Me;
 using Booking.Modules.Users.Features.Utils;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;

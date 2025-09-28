@@ -1,4 +1,4 @@
-﻿namespace Booking.Modules.Users.Presistence;
+﻿namespace Booking.Modules.Users.Persistence;
 
 internal static class Schemas
 {

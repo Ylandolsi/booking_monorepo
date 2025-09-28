@@ -1,7 +1,7 @@
 using Booking.Common;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

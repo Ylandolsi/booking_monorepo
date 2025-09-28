@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Booking.Modules.Users.Presistence;
+namespace Booking.Modules.Users.Persistence;
 
 public class UsersDbContextFactory : IDesignTimeDbContextFactory<UsersDbContext>
 {

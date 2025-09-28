@@ -3,7 +3,8 @@ using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Verification;
-using Booking.Modules.Users.Presistence;
+using Booking.Modules.Users.Persistence;
+ 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
