@@ -102,17 +102,11 @@ backend/
 │   │       │   ├── Domain/               # User domain logic
 │   │       │   │   ├── Entities/         # User, Profile entities
 │   │       │   │   ├── ValueObjects/     # Email, Name value objects
-│   │       │   │   ├── JoinTables/       # Many-to-many relationships
 │   │       │   │   ├── Services/         # Domain services
 │   │       │   │   ├── UserErrors.cs     # Domain errors
 │   │       │   │   └── UserConstraints.cs # Domain constraints
 │   │       │   ├── Features/             # User feature implementations
 │   │       │   │   ├── Authentication/   # Login, JWT, Google OAuth
-│   │       │   │   ├── Profile/          # User profile management
-│   │       │   │   ├── Education/        # Education history
-│   │       │   │   ├── Experience/       # Professional experience
-│   │       │   │   ├── Expertise/        # Skills and expertise
-│   │       │   │   ├── Language/         # User languages
 │   │       │   │   ├── GetUser/          # User retrieval
 │   │       │   │   ├── ImageProcessor/   # Profile image processing
 │   │       │   │   └── UsersEndpoints.cs # HTTP endpoints
@@ -256,7 +250,7 @@ The shared kernel containing cross-cutting concerns and common functionality use
 
 **Location**: `src/Modules/Booking.Modules.Users/`
 
-Handles all user-related functionality including authentication, profile management, and user data.
+Handles the authentication
 
 #### Key Responsibilities:
 
@@ -269,9 +263,7 @@ Handles all user-related functionality including authentication, profile managem
 
 ##### Domain
 
-- **Entities/** - User, UserProfile, and related entities
-- **ValueObjects/** - Email, Name, and other user-specific value objects
-- **Services/** - Domain services for user operations
+- **Entities/** - User, and related entities
 - **UserErrors.cs** - Domain-specific error definitions
 
 ##### Features
@@ -280,11 +272,6 @@ Handles all user-related functionality including authentication, profile managem
   - JWT token generation and validation
   - Cookie-based token storage
   - Password reset functionality
-- **Profile/** - User profile CRUD operations
-- **Education/** - User education history management
-- **Experience/** - Professional experience tracking
-- **Expertise/** - Skills and expertise areas
-- **Language/** - Multi-language user preferences
 
 ##### Infrastructure
 
@@ -348,12 +335,6 @@ Manages the marketplace catalog including products, stores, orders, and payment 
 - **Persistence/** - Entity Framework configurations for catalog entities
 - **BackgroundJobs/** - Catalog-related background processing
 
-## Architectural Patterns & Implementation
-
-### CQRS Implementation
-
-The application implements **Command Query Responsibility Segregation (CQRS)** to separate read and write operations, providing better performance, scalability, and maintainability.
-
 #### Command and Query Interfaces
 
 **Commands** - Represent operations that change system state:
@@ -382,15 +363,7 @@ public sealed record GetUserQuery(Guid UserId) : IQuery<UserResponse>;
 **Command Handlers** - Process commands and return Results:
 
 ```csharp
-public interface ICommandHandler<in TCommand> where TCommand : ICommand
-{
-    Task<Result> Handle(TCommand command, CancellationToken cancellationToken);
-}
 
-public interface ICommandHandler<in TCommand, TResponse> where TCommand : ICommand<TResponse>
-{
-    Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken);
-}
 
 // Example implementation
 public sealed class LoginCommandHandler : ICommandHandler<LoginCommand, LoginResponse>
@@ -420,8 +393,6 @@ public interface IQueryHandler<in TQuery, TResponse> where TQuery : IQuery<TResp
 ```
 
 ### Minimal API Endpoint Pattern
-
-The application uses a **vertical slice architecture** where each feature contains all its dependencies in one folder, including the HTTP endpoint definition.
 
 #### Endpoint Interface
 
@@ -465,35 +436,7 @@ internal sealed class Login : IEndpoint
 
 ### FluentValidation Integration
 
-The application uses **FluentValidation** for request validation with automatic integration into the CQRS pipeline.
-
-#### Validation Decorator Pattern
-
-Validation is applied automatically using a decorator pattern in the MediatR pipeline:
-
-```csharp
-// ValidationDecorator.cs - Wraps command handlers
-public sealed class CommandHandler<TCommand, TResponse> : ICommandHandler<TCommand, TResponse>
-    where TCommand : ICommand<TResponse>
-{
-    private readonly ICommandHandler<TCommand, TResponse> _innerHandler;
-    private readonly IEnumerable<IValidator<TCommand>> _validators;
-
-    public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
-    {
-        // 1. Validate command before processing
-        ValidationFailure[] validationFailures = await ValidateAsync(command, _validators);
-
-        if (validationFailures.Length > 0)
-        {
-            return Result.Failure<TResponse>(CreateValidationError(validationFailures));
-        }
-
-        // 2. Execute inner handler if validation passes
-        return await _innerHandler.Handle(command, cancellationToken);
-    }
-}
-```
+The application uses **FluentValidation** for request validation with automatic integration into the pipeline ( middleware for endpoints ).
 
 #### Validator Implementation
 
@@ -527,39 +470,65 @@ Validators are automatically discovered and registered:
 services.AddValidatorsFromAssembly(AssemblyReference.Assembly);
 ```
 
-### Result Pattern Implementation
+### Custom Results & Validation Decorator
 
-The application uses the **Result pattern** to handle success and failure cases functionally, avoiding exceptions for expected failures.
+**CustomResults**: `Booking.Common.Results`
 
-#### Core Result Types
+The `CustomResults` class provides a unified way to return problem details (`IResult`) from API endpoints, following the RFC 7807 Problem Details for HTTP APIs standard.
 
-```csharp
-// Base Result class
-public class Result
+- Returns ProblemDetails JSON with:
+
+  - `title` → based on `Error.Code`
+  - `detail` → human-readable `Error.Description`
+  - `type` → link to RFC specification for the error type
+  - `status` → HTTP status code (400, 404, 409, 401, 500...)
+  - `extensions` → includes validation errors if present
+
+  #### Example Error Responses
+
+##### 1. Validation Error Response
+
+When a request fails validation (e.g., missing required fields, invalid format), the `ValidationDecorator` returns a `ValidationError`. The `CustomResults.Problem` method serializes it into a 400 Bad Request problem response:
+
+```json
 {
-    public bool IsSuccess { get; }
-    public bool IsFailure => !IsSuccess;
-    public Error Error { get; }
-
-    // Factory methods
-    public static Result Success() => new Result(true, Error.None);
-    public static Result Failure(Error error) => new Result(false, error);
-}
-
-// Generic Result for values
-public class Result<TValue> : Result
-{
-    public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException();
-
-    // Implicit conversion support
-    public static implicit operator Result<TValue>(TValue? value)
-        => value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
+  "title": "InvalidInput",
+  "detail": "One or more validation errors occurred.",
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  "status": 400,
+  "errors": {
+    "Email": [
+      "Email must not be empty.",
+      "Email must be a valid email address."
+    ],
+    "Password": ["Password must be at least 8 characters long."]
+  }
 }
 ```
 
-#### Error Handling System
+**Notes**:
 
-**Error Record** - Immutable error representation:
+- `title` → comes from the error code
+- `detail` → short description
+- `errors` → dictionary of property names and their validation messages
+
+##### 2. Not Found Error Response
+
+When a requested resource doesn't exist, a 404 Not Found response is returned:
+
+```json
+{
+  "title": "User.NotFound",
+  "detail": "The user with the given ID was not found.",
+  "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+  "status": 404
+}
+```
+
+- **CustomResults.Problem** - Converts failed `Result` objects into consistent HTTP Problem responses
+- **ValidationDecorator** - Ensures all commands pass validation before being handled, returning structured validation errors when they fail
+
+#### Error Handling System
 
 ```csharp
 public record Error
@@ -591,57 +560,6 @@ public enum ErrorType
 }
 ```
 
-#### Result Usage Patterns
-
-**In Command Handlers:**
-
-```csharp
-public async Task<Result<LoginResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
-{
-    // Domain validation
-    var user = await _userManager.FindByEmailAsync(command.Email);
-    if (user is null)
-        return Result.Failure<LoginResponse>(UserErrors.IncorrectEmailOrPassword);
-
-    // Business logic validation
-    if (await _userManager.IsLockedOutAsync(user))
-        return Result.Failure<LoginResponse>(UserErrors.AccountLockedOut);
-
-    // Success case
-    var token = await _tokenProvider.GenerateAsync(user);
-    return Result.Success(new LoginResponse(token, user.Email));
-}
-```
-
-**In Endpoints:**
-
-```csharp
-var result = await handler.Handle(command, cancellationToken);
-
-// Pattern matching for response
-return result.Match(
-    onSuccess: Results.Ok,           // 200 with data
-    onFailure: CustomResults.Problem  // Appropriate error status
-);
-```
-
-#### Custom Results for HTTP Responses
-
-```csharp
-public static class CustomResults
-{
-    public static IResult Problem(Error error) => error.Type switch
-    {
-        ErrorType.Validation => Results.BadRequest(CreateProblemDetails(error, 400)),
-        ErrorType.Problem => Results.BadRequest(CreateProblemDetails(error, 400)),
-        ErrorType.NotFound => Results.NotFound(CreateProblemDetails(error, 404)),
-        ErrorType.Conflict => Results.Conflict(CreateProblemDetails(error, 409)),
-        ErrorType.Unauthorized => Results.Unauthorized(),
-        _ => Results.Problem(CreateProblemDetails(error, 500))
-    };
-}
-```
-
 ### Custom Error System
 
 The application defines domain-specific errors for each module, providing consistent error handling across the system.
@@ -669,31 +587,14 @@ public static class UserErrors
         "User.NotFound",
         "The user was not found");
 }
-```
+// using it
+return Result.Failure<LoginResponse>(UserErrors.AccountLockedOut);
 
-**ValidationError** - Special error type for validation failures ( there is a validation behavior to link this pattern ):
-
-```csharp
-public sealed record ValidationError : Error
-{
-    public Error[] Errors { get; }
-
-    public ValidationError(Error[] errors) : base(
-        "Validation.General",
-        "One or more validation errors occurred",
-        ErrorType.Validation)
-    {
-        Errors = errors;
-    }
-
-    // Create from FluentValidation failures
-    public static ValidationError FromResults(IEnumerable<Result> results);
-}
 ```
 
 ### Pipeline Behaviors
 
-The application uses **MediatR pipeline behaviors** to implement cross-cutting concerns.
+The application uses **pipeline behaviors** to implement cross-cutting concerns.
 
 #### Validation Behavior
 
@@ -735,8 +636,6 @@ public sealed class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRe
     }
 }
 ```
-
-This architectural approach ensures **consistent**, **maintainable**, and **testable** code across the entire application while providing excellent developer experience and runtime performance.
 
 ### Local Development Setup
 
