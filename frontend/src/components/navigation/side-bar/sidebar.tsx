@@ -41,8 +41,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, collapsed = false, setCollapsed 
   const isMobile = useIsMobile();
   const nav = useAppNavigation();
 
-  if (error) return <MainErrorFallback />;
   if (isLoading) return <PageLoading />;
+  if (error || !currentUser) return <MainErrorFallback />;
 
   const handleItemClick = (item: Item) => {
     setItemActive(item.name);
@@ -61,7 +61,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, collapsed = false, setCollapsed 
       <aside
         className={` ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 lg:static lg:z-auto lg:translate-x-0 ${collapsed ? 'w-16' : 'w-80'} border-border bg-card flex h-full transform flex-col border-r shadow-xl transition-all duration-300 ease-in-out lg:h-screen lg:transform-none lg:shadow-none`}
       >
-        <div
+        {/* <div
           className={`border-border flex items-center border-b ${collapsed ? 'flex h-14 justify-center p-2 shadow-2xl' : 'flex justify-between p-6'}`}
         >
           {collapsed ? (
@@ -101,10 +101,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, collapsed = false, setCollapsed 
               </Button>
             </>
           )}
-        </div>
+        </div> */}
 
         {/* Navigation Section */}
-        <div className={`flex-1 overflow-y-auto ${collapsed ? 'p-2' : 'p-4'}`}>
+        <div className={`mt-10 flex-1 overflow-y-auto ${collapsed ? 'p-2' : 'p-4'}`}>
           <NavigationSection currentUser={currentUser} itemActive={itemActive} collapsed={collapsed} handleItemClick={handleItemClick} />
 
           {!collapsed && <Separator className="my-4" />}

@@ -22,9 +22,7 @@ export type User = {
   firstName: string;
   lastName: string;
   email: string;
-  status: Status;
   gender: 'Male' | 'Female';
-  bio: string;
   integratedWithGoogle: boolean;
   googleEmail?: string | null;
   konnectWalletId?: string | null;
