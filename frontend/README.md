@@ -43,12 +43,6 @@ This document outlines common patterns and best practices for the frontend appli
   showHomeButton={true}
 />
 
-// Custom usage with specific message
-<MentorRequired
-  title="Become a Mentor to Schedule Sessions"
-  message="You need mentor privileges to create and manage mentoring sessions."
-  actionDescription="To schedule sessions with students, please complete your mentor registration first."
-/>
 ```
 
 ### Error Component Selection Logic
@@ -58,8 +52,7 @@ const getErrorComponent = (error: any) => {
   const status = error.status || error.response?.status;
 
   if (!status || status === 0) {
-    return <NetworkError onRetry={() => dataQuery.refetch()} />;
-  }
+    return <NetworkError onRetry={() => dataQuery.refetch()}} />;
 
   if (status === 404) {
     return <ErrorComponenet title="Resource Not Found" message={error.message} />;
@@ -139,8 +132,7 @@ function MyComponent() {
 
 ```ts
 // To use search params, configure the route file:
-const routeApi = getRouteApi(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION);
-const { redirectTo, token, email } = routeApi.useSearch();
+const { redirectTo, token, email } = useSearch({ strict: false });
 
 // Route file configuration:
 export const Route = createFileRoute(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION)({
@@ -151,22 +143,6 @@ export const Route = createFileRoute(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION)({
     email: search.email as string | undefined,
   }),
 });
-```
-
-### Acess Params
-
-### Accessing Search Params
-
-```ts
-export const StorePreview = () => {
-  const params = useParams({ strict: false }) as Record<string, string | undefined>;
-  return <div>Store Preview Component - Store Slug: {params.storeSlug}</div>;
-};
-```
-
-```ts
-const search = useSearch({ strict: false });
-const redirectTo = (search.redirectTo as string) || './app';
 ```
 
 ### Conditional Routing Based on Search Params
@@ -187,6 +163,17 @@ export const Route = createFileRoute(ROUTE_PATHS.AUTH.RESET_PASSWORD)({
     }
   },
 });
+```
+
+### Acess Params
+
+### Accessing Search Params
+
+```ts
+export const StorePreview = () => {
+  const params = useParams({ strict: false }) as Record<string, string | undefined>;
+  return <div>Store Preview Component - Store Slug: {params.storeSlug}</div>;
+};
 ```
 
 ## Uncaught Errors and Not Found Pages
