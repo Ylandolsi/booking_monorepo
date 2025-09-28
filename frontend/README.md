@@ -1,20 +1,384 @@
-# Frontend Patterns and Documentation
+# Booking Frontend
 
-This document outlines common patterns and best practices for the frontend application, including error handling, loading states, routing, and component usage.
+A modern React frontend application for a booking/marketplace platform built with Vite, TypeScript, and TanStack Router.
 
 ## Table of Contents
 
+- [Overview](#overview)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [API Integration](#api-integration)
+- [Getting Started](#getting-started)
+- [Development Patterns](#development-patterns)
 - [Error Handling Patterns](#error-handling-patterns)
 - [Loading Handling Patterns](#loading-handling-patterns)
 - [Search Params](#search-params)
 - [Uncaught Errors and Not Found Pages](#uncaught-errors-and-not-found-pages)
 - [TanStack Query Patterns](#tanstack-query-patterns)
-- [Patterns](#patterns)
+- [Component Patterns](#component-patterns)
   - [Alert](#alert)
   - [Guards](#guards)
     - [AuthGuard](#authguard)
     - [StoreGuard](#storeguard)
   - [Navigation](#navigation)
+
+## Overview
+
+This frontend application provides a comprehensive user interface for the booking/marketplace platform with:
+
+- **Type-safe routing** with TanStack Router for seamless navigation
+- **Server state management** with TanStack Query for efficient data fetching
+- **Real-time communication** with SignalR for live notifications
+- **Modern UI components** built with Radix UI and Tailwind CSS
+- **File upload capabilities** with drag-and-drop support
+- **Form handling** with React Hook Form and Zod validation
+- **Responsive design** optimized for desktop and mobile devices
+
+## Technology Stack
+
+- **React 18** - UI library with concurrent features
+- **TypeScript** - Type safety and enhanced developer experience
+- **TanStack Router** - Type-safe, file-based routing
+- **TanStack Query** - Powerful data synchronization for React
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Radix UI (Shadcn)** - Unstyled, accessible UI primitives
+- **React Hook Form** - Performant forms with easy validation
+- **Zod** - TypeScript-first schema validation
+- **SignalR** - Real-time web functionality
+- **Axios** - Promise-based HTTP client
+- **Sonner** - Toast notifications
+- **class-variance-authority** - Component variant management
+
+## Project Structure
+
+```
+frontend/
+├── src/
+│   ├── api/                              # API integration layer
+│   │   ├── auth/                         # Authentication API endpoints
+│   │   │   ├── login.ts                  # User login functionality
+│   │   │   ├── logout.ts                 # User logout functionality
+│   │   │   ├── register.ts               # User registration
+│   │   │   ├── forgot-password.ts        # Password recovery
+│   │   │   ├── reset-password.ts         # Password reset
+│   │   │   ├── verify-email.ts           # Email verification
+│   │   │   ├── oauth-api.ts              # OAuth integration (Google, etc.)
+│   │   │   ├── user.ts                   # User profile management
+│   │   │   ├── use-auth.ts               # Authentication hooks
+│   │   │   └── auth-keys.ts              # Query keys for auth
+│   │   ├── stores/                       # Store management endpoints
+│   │   ├── utils/                        # API utility functions
+│   │   │   ├── api-client.ts             # Core HTTP client with auth
+│   │   │   ├── fetcher.ts                # TanStack Query fetcher
+│   │   │   ├── auth-endpoints.ts         # Auth endpoint definitions
+│   │   │   ├── catalog-endpoints.ts      # Catalog endpoint definitions
+│   │   │   ├── to-form-data.ts           # FormData conversion utility
+│   │   │   └── validate-file.ts          # File validation helpers
+│   │   └── index.ts                      # API exports
+│   ├── assets/                           # Static assets
+│   │   ├── calendar-image.jpeg           # UI images
+│   │   ├── logo.svg                      # Application logos
+│   │   ├── logo_m.png                    # Mobile logo variant
+│   │   ├── fallback-session-product-thumbnail.jpg # Fallback images
+│   │   └── index.ts                      # Asset exports
+│   ├── components/                       # Reusable UI components
+│   │   ├── errors/                       # Error handling components
+│   │   ├── guards/                       # Route protection components
+│   │   ├── headers/                      # Header and navigation
+│   │   ├── layouts/                      # Layout components
+│   │   ├── navigation/                   # Navigation components
+│   │   ├── pages/                        # Page-specific components
+│   │   ├── seo/                          # SEO optimization components
+│   │   ├── shared/                       # Shared utility components
+│   │   ├── store/                        # Store-related components
+│   │   ├── ui/                           # Base UI components (Radix UI)
+│   │   ├── wrappers/                     # HOC and wrapper components
+│   │   ├── logo.tsx                      # Logo component
+│   │   ├── scrollable-content.tsx        # Scrollable container
+│   │   ├── tab-navigation.tsx            # Tab navigation
+│   │   ├── theme-toggle.tsx              # Dark/light mode toggle
+│   │   ├── upload-image.tsx              # File upload component
+│   │   └── index.ts                      # Component exports
+│   ├── config/                           # Application configuration
+│   │   ├── env.ts                        # Environment variable validation
+│   │   ├── routes.ts                     # Route constants
+│   │   └── index.ts                      # Config exports
+│   ├── features/                         # Feature-based state management
+│   │   ├── admin/                        # Admin panel features
+│   │   ├── app/                          # Core app features
+│   │   ├── auth/                         # Authentication state
+│   │   ├── public/                       # Public features
+│   │   └── index.ts                      # Feature exports
+│   ├── hooks/                            # Custom React hooks
+│   │   ├── use-debounce.ts               # Input debouncing
+│   │   ├── use-media-query.ts            # Responsive breakpoints
+│   │   ├── use-navigation.ts             # Navigation utilities
+│   │   ├── use-outside-click.ts          # Click outside detection
+│   │   ├── use-query-state.ts            # URL state management
+│   │   ├── use-time-filter.ts            # Time filtering logic
+│   │   ├── use-upload-picture.tsx        # File upload handling
+│   │   └── index.ts                      # Hook exports
+│   ├── lib/                              # Core utilities and helpers
+│   │   ├── cn.ts                         # Tailwind class name utility
+│   │   ├── consts.ts                     # Application constants
+│   │   ├── deep-copy.ts                  # Object cloning utility
+│   │   ├── id.ts                         # ID generation
+│   │   ├── utils.ts                      # General utilities
+│   │   └── index.ts                      # Library exports
+│   ├── providers/                        # React context providers
+│   │   ├── app-provider.tsx              # Main app provider
+│   │   ├── react-query.tsx               # TanStack Query setup
+│   │   └── react-router.tsx              # Router configuration
+│   ├── routes/                           # File-based routing (TanStack Router)
+│   │   ├── __root.tsx                    # Root layout component
+│   │   ├── index.tsx                     # Landing page
+│   │   ├── home.tsx                      # Home page
+│   │   ├── unauthorized.tsx              # 403 error page
+│   │   ├── (public)/                     # Public routes group
+│   │   ├── app/                          # Protected app routes
+│   │   ├── auth/                         # Authentication routes
+│   │   ├── error-exp/                    # Error experiment routes
+│   │   ├── test/                         # Testing routes
+│   │   └── routeTree.gen.ts              # Auto-generated route tree
+│   ├── services/                         # Business logic services
+│   │   ├── date/                         # Date/time utilities
+│   │   ├── image/                        # Image processing
+│   │   ├── indexedDB/                    # Client-side storage
+│   │   ├── notifications/                # Push notifications
+│   │   └── pixels/                       # Analytics tracking
+│   ├── stores/                           # Global state management
+│   │   └── store.ts                      # Redux store configuration
+│   ├── types/                            # TypeScript type definitions
+│   │   ├── Budget.ts                     # Budget-related types
+│   │   ├── Category.ts                   # Category data types
+│   │   ├── Image.ts                      # Image handling types
+│   │   ├── Order.ts                      # Order management types
+│   │   ├── Payment.ts                    # Payment types
+│   │   ├── Product.ts                    # Product catalog types
+│   │   ├── Staff.ts                      # Staff management types
+│   │   ├── Statistics.ts                 # Analytics types
+│   │   ├── Store.ts                      # Store types
+│   │   └── Upsell.ts                     # Upselling types
+│   ├── utils/                            # Utility functions
+│   │   ├── balance-utils.ts              # Currency formatting
+│   │   ├── invoice-utils.ts              # Invoice generation
+│   │   └── redirect-utils.ts             # Navigation helpers
+│   ├── main.tsx                          # Application entry point
+│   ├── index.css                         # Global styles
+│   └── vite-env.d.ts                     # Vite type definitions
+├── .tanstack/                            # TanStack Router cache
+├── docs/                                 # Project documentation
+│   ├── form.md                           # Form patterns
+│   ├── ROUTING.md                        # Routing guide
+│   ├── SCRIPTS_AND_ESLINT.md            # Development workflow
+│   └── zod.md                           # Schema validation
+├── eslint-rules/                         # Custom ESLint rules
+│   ├── enforce-route-constants.js        # Route validation
+│   └── route-config.js                   # Route configuration
+├── public/                               # Static assets
+│   ├── google-calendar.png               # Integration assets
+│   └── konnect.svg                       # Service logos
+├── scripts/                              # Build and development scripts
+│   ├── check-imports.js                  # Import validation
+│   └── find-navigation-patterns.js       # Pattern analysis
+├── components.json                       # Radix UI configuration
+├── eslint.config.js                      # ESLint rules
+├── package.json                          # Dependencies and scripts
+├── tailwind.config.cjs                   # Tailwind configuration
+├── tsconfig.json                         # TypeScript config
+├── vite.config.ts                        # Vite build config
+└── README.md                            # Project documentation
+```
+
+## API Integration
+
+The frontend connects to the .NET backend through a comprehensive API integration layer that handles authentication, data fetching, and real-time communication.
+
+### Core API Architecture
+
+#### 1. **HTTP Client Setup** (`src/api/utils/api-client.ts`)
+
+The application uses a custom API client built on the Fetch API with:
+
+- **Automatic authentication** - JWT tokens sent via HTTP-only cookies
+- **Request/response interceptors** - For error handling and token refresh
+- **Type-safe requests** - Full TypeScript support for API calls
+- **Automatic retry logic** - For failed requests with exponential backoff
+
+```typescript
+// Example API client usage
+const response = await fetchApi<User>('users/profile', {
+  method: 'GET',
+  params: { includePreferences: true },
+});
+```
+
+#### 2. **Environment Configuration** (`src/config/env.ts`)
+
+Environment variables are validated using Zod schemas:
+
+- `VITE_API_URL` - Backend API base URL (default: http://localhost:5000)
+- `VITE_APP_URL` - Frontend app URL (default: http://localhost:3000)
+- `VITE_ENVIRONMENT` - Current environment (development/staging/production)
+
+#### 3. **Authentication Flow** (`src/api/auth/`)
+
+**Available Auth Endpoints:**
+
+- `login.ts` - Email/password and OAuth login
+- `register.ts` - New user registration with email verification
+- `oauth-api.ts` - Google OAuth integration
+- `forgot-password.ts` / `reset-password.ts` - Password recovery flow
+- `verify-email.ts` - Email verification process
+
+**Auth Hook Usage:**
+
+```typescript
+import { useAuth } from '@/api/auth';
+
+const { user, login, logout, isLoading } = useAuth();
+```
+
+### TanStack Query Integration
+
+#### 4. **Server State Management**
+
+The app uses TanStack Query for efficient server state management:
+
+**Query Keys** (`src/api/auth/auth-keys.ts`):
+
+```typescript
+export const authKeys = {
+  all: ['auth'] as const,
+  user: () => [...authKeys.all, 'user'] as const,
+  profile: (userId: string) => [...authKeys.user(), userId] as const,
+};
+```
+
+**Custom Fetcher** (`src/api/utils/fetcher.ts`):
+
+- Performance monitoring for API calls
+- Consistent error handling across queries
+- Request deduplication and caching
+
+**Query Provider Setup** (`src/providers/react-query.tsx`):
+
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      cacheTime: 10 * 60 * 1000, // 10 minutes
+      retry: (failureCount, error) => {
+        // Custom retry logic based on error type
+        return failureCount < 3 && error.status !== 404;
+      },
+    },
+  },
+});
+```
+
+### Real-time Communication
+
+#### 5. **SignalR Integration**
+
+Real-time features powered by SignalR:
+
+- **Live notifications** - Order updates, payment confirmations
+- **Real-time collaboration** - Multi-user editing capabilities
+- **Connection management** - Automatic reconnection on network issues
+
+### API Endpoint Organization
+
+#### 6. **Modular Endpoint Structure**
+
+**Authentication Endpoints** (`src/api/utils/auth-endpoints.ts`):
+
+- User login/logout/registration
+- Password reset and email verification
+- OAuth provider integration
+- Token refresh and validation
+
+**Catalog Endpoints** (`src/api/utils/catalog-endpoints.ts`):
+
+- Product and service management
+- Store operations and analytics
+- Order processing and tracking
+- Payment and payout handling
+
+### File Upload Handling
+
+#### 7. **Multi-format Upload Support**
+
+**Upload Component** (`src/components/upload-image.tsx`):
+
+- Drag-and-drop interface
+- Multiple file selection
+- Progress tracking and preview
+- Image optimization and validation
+
+**Upload Utilities** (`src/api/utils/`):
+
+- `validate-file.ts` - File type and size validation
+- `to-form-data.ts` - FormData conversion for multipart uploads
+
+### Error Handling & Loading States
+
+#### 8. **Comprehensive Error Management**
+
+**Error Boundaries** (`src/components/errors/`):
+
+- Network error recovery
+- 404 and 403 error pages
+- Fallback UI components
+
+**Loading States** (`src/features/`):
+
+- Global loading indicators
+- Skeleton loaders for content
+- Optimistic updates for better UX
+
+### Development Tools
+
+#### 9. **API Development Workflow**
+
+**Development Scripts**:
+
+- `npm run dev` - Start development server with API proxy
+- `npm run type-check` - Validate TypeScript across API types
+- `npm run check:imports` - Validate import paths and dependencies
+
+This architecture ensures type safety, performance, and maintainability while providing a seamless developer experience for API integration.
+
+### Local Development Setup
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment**
+
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   ```
+
+3. **Start development server**
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+The application will be available at `http://localhost:5173`
+
+## Development Patterns
 
 ## Error Handling Patterns
 
