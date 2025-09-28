@@ -1,6 +1,6 @@
+using Booking.Common;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Features.Payment;
 using Booking.Modules.Users.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

@@ -1,9 +1,9 @@
+using Booking.Common;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Mentorships.Features.Payment;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

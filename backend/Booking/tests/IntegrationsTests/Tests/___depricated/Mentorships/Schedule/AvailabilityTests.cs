@@ -1,10 +1,8 @@
 using System.Net;
-using System.Net.Http.Json;
-using Booking.Modules.Mentorships.Features;
 using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 
-namespace IntegrationsTests.Tests.Mentorships.Schedule;
+namespace IntegrationsTests.Tests.___depricated.Mentorships.Schedule;
 
 public class ScheduleTests : MentorshipTestBase
 {

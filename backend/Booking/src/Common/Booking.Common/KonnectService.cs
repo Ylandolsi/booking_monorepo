@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Booking.Common.Options;
 using Booking.Common.Results;
-using Booking.Modules.Mentorships.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Booking.Modules.Mentorships.Features.Payment;
+namespace Booking.Common;
 
 public static class PaymentErrors
 {

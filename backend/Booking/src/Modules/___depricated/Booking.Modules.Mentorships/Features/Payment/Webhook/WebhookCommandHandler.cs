@@ -1,3 +1,4 @@
+using Booking.Common;
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;

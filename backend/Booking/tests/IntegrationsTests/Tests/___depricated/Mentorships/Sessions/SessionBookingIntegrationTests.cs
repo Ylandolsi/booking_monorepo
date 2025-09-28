@@ -1,17 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Booking.Modules.Mentorships.Features;
-using Booking.Modules.Mentorships.Domain.Enums;
-using Booking.Modules.Mentorships.Persistence;
-using Booking.Modules.Users.Features;
-using IntegrationsTests.Abstractions.Base;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
 using IntegrationsTests.Abstractions;
+using IntegrationsTests.Abstractions.Base;
 
-namespace IntegrationsTests.Tests.Mentorships.Sessions;
+namespace IntegrationsTests.Tests.___depricated.Mentorships.Sessions;
 
 public class SessionBookingIntegrationTests : MentorshipTestBase
 {

@@ -1,3 +1,4 @@
+using Booking.Common;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;

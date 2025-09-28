@@ -1,4 +1,4 @@
-namespace Booking.Modules.Mentorships.Options;
+namespace Booking.Common.Options;
 
 public class KonnectOptions
 {

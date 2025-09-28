@@ -1,3 +1,4 @@
+using Booking.Common;
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;
@@ -8,7 +9,6 @@ using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Utils;
 using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Mentorships.Features.Payment;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

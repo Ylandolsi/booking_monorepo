@@ -1,3 +1,4 @@
+using Booking.Common;
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;
@@ -5,7 +6,6 @@ using Booking.Common.Results;
 using Booking.Modules.Catalog.BackgroundJobs.Payment;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Persistence;
-using Booking.Modules.Mentorships.Features.Payment;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

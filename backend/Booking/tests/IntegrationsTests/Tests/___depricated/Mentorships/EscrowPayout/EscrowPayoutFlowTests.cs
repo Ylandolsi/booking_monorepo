@@ -1,23 +1,9 @@
-using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using Booking.Modules.Mentorships.Features;
-using Booking.Modules.Mentorships.Domain.Enums;
-using Booking.Modules.Mentorships.Domain.Entities;
-using Booking.Modules.Mentorships.Persistence;
-using Booking.Modules.Mentorships.BackgroundJobs.Escrow;
-using Booking.Modules.Mentorships.BackgroundJobs.Payout;
-using Booking.Modules.Mentorships.Features.Payout;
-using Booking.Modules.Mentorships.Features.Payout.Admin.Approve;
-using Booking.Modules.Mentorships.Features.Payout.Admin.GetAll;
+using IntegrationsTests.Abstractions;
 using IntegrationsTests.Abstractions.Base;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
-using Hangfire;
-using IntegrationsTests.Abstractions;
 
-namespace IntegrationsTests.Tests.Mentorships.EscrowPayout;
+namespace IntegrationsTests.Tests.___depricated.Mentorships.EscrowPayout;
 
 public class EscrowPayoutFlowTests : MentorshipTestBase
 {
