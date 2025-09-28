@@ -1,5 +1,5 @@
 import type { Item } from '@/components/navigation/side-bar';
-import type { User } from '@/types/api';
+import type { User } from '@/api/auth';
 import { Button } from '@/components/ui';
 import { useAppNavigation } from '@/hooks';
 import { Badge, Calendar, ChevronRight, Home, Store } from 'lucide-react';

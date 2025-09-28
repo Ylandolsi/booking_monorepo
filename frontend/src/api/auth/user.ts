@@ -1,5 +1,4 @@
 import { useQuery, queryOptions } from '@tanstack/react-query';
-import type { User } from '@/types/api';
 import { api, Endpoints } from '@/api/utils';
 import { authQueryKeys } from '@/api/auth';
 
@@ -17,3 +16,15 @@ export const getUserQueryOptions = () => {
 };
 
 export const useUser = () => useQuery(getUserQueryOptions());
+
+export type User = {
+  slug: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: 'Male' | 'Female';
+  integratedWithGoogle: boolean;
+  googleEmail?: string | null;
+  konnectWalletId?: string | null;
+  roles: string[];
+};

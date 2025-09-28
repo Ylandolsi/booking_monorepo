@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import type { User } from '@/types/api';
+import type { User } from '@/api/auth';
 import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';

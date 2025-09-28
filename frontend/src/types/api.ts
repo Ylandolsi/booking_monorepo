@@ -16,24 +16,3 @@ export type Meta = {
   total: number;
   totalPages: number;
 };
-
-export type User = {
-  slug: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  gender: 'Male' | 'Female';
-  integratedWithGoogle: boolean;
-  googleEmail?: string | null;
-  konnectWalletId?: string | null;
-  roles: string[];
-};
-
-export type Status = {
-  IsMentor: boolean;
-  IsActive: boolean;
-};
-
-export type AuthResponse = {
-  user: User;
-};

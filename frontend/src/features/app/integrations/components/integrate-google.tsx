@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui';
 import { googleOIDC } from '@/api/auth';
-import type { User } from '@/types/api';
+import type { User } from '@/api/auth';
 import { LazyImage } from '@/utils';
 import { CheckCircle, ExternalLink, Calendar, Clock } from 'lucide-react';
 

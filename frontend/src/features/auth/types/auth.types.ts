@@ -1,12 +1,6 @@
-import { z } from "zod";
-import { 
-  loginInputSchema, 
-  registerInputSchema, 
-  forgotPasswordInputSchema, 
-  resetPasswordSchema, 
-  verifyEmailSchema 
-} from "../lib/validation-schemas";
-import type { User } from "@/types/api";
+import { z } from 'zod';
+import { loginInputSchema, registerInputSchema, forgotPasswordInputSchema, resetPasswordSchema, verifyEmailSchema } from '../lib/validation-schemas';
+import type { User } from '@/api/auth';
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
 export type RegisterInput = z.infer<typeof registerInputSchema>;

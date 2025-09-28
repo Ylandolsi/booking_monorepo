@@ -2,7 +2,7 @@ import { LazyImage } from '@/utils/lazy-image';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { MdEdit } from 'react-icons/md';
-import type { User } from '@/types/api';
+import type { User } from '@/api/auth';
 
 interface UserAvatarProps {
   user: User;
@@ -40,14 +40,14 @@ export function UserAvatar({
   const avatarUrl = user.profilePicture.profilePictureLink || `https://www.gravatar.com/avatar/${user.email}?s=250&d=identicon`;
 
   return (
-    <div className={cn('relative group', className)}>
+    <div className={cn('group relative', className)}>
       <LazyImage
         src={avatarUrl}
         alt={`${user.firstName} ${user.lastName}`}
         placeholder={avatarUrl}
         className={cn(
           sizeClasses[size],
-          'rounded-2xl ring-4 ring-primary/20 object-cover transition-all cursor-pointer',
+          'ring-primary/20 cursor-pointer rounded-2xl object-cover ring-4 transition-all',
           onClick && 'hover:ring-primary/40',
           className,
         )}
@@ -66,9 +66,9 @@ export function UserAvatar({
         <Button
           size="sm"
           onClick={onEdit}
-          className={cn('absolute -top-2 -right-2 rounded-full bg-primary shadow-lg hover:bg-primary/90 transition-colors', editButtonSizes[size])}
+          className={cn('bg-primary hover:bg-primary/90 absolute -top-2 -right-2 rounded-full shadow-lg transition-colors', editButtonSizes[size])}
         >
-          <MdEdit className="text-primary-foreground w-4 h-4" />
+          <MdEdit className="text-primary-foreground h-4 w-4" />
         </Button>
       )}
     </div>
