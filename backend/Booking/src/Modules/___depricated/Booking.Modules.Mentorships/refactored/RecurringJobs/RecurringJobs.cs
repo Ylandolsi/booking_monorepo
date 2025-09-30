@@ -8,8 +8,8 @@ public static class RecurringJobsMentorShipModules
 {
     public static void AddRecurringJobs()
     {
-        useEscrowJob();
-        usePayoutJob();
+        // useEscrowJob();
+        // usePayoutJob();
     }
 
 
