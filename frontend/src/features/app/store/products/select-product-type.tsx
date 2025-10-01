@@ -1,4 +1,5 @@
 import type { ProductType } from '@/api/stores';
+import { Button } from '@/components';
 import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
 import { cn } from '@/lib';
@@ -66,9 +67,9 @@ export const SelectProductType = ({ className }: SelectProductTypeProps) => {
       </div>
       {/* Cancel Button */}
       <div className="mt-6 text-center">
-        <button onClick={onCancel} className="text-accent-foreground hover:text-foreground text-sm transition-colors">
+        <Button variant={'outline'} onClick={onCancel} className="text-accent-foreground hover:text-foreground text-sm transition-colors">
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ export function IntegrateKonnect({ user }: { user?: User }) {
         className={`group relative flex items-center gap-6 overflow-hidden rounded-2xl border-2 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
           konnectIntegrated
             ? 'border-green-200 bg-gradient-to-br from-white via-green-50/30 to-green-100/60 hover:shadow-green-100'
-            : 'hover:border-primary/30 hover:shadow-primary/10 border-gray-200 bg-gradient-to-br from-white via-gray-50/30 to-orange-50/60'
+            : 'hover:border-primary/30 hover:shadow-primary/10 to-destructive/10 from-background border-gray-200 bg-gradient-to-br'
         }`}
       >
         {/* Background decoration */}
@@ -29,9 +29,8 @@ export function IntegrateKonnect({ user }: { user?: User }) {
         <div className="relative flex-shrink-0">
           <div className={`absolute inset-0 rounded-2xl transition-all duration-300`} />
           <img
-            className="relative z-10 h-16 w-16 transition-transform duration-300 group-hover:scale-110"
+            className="relative z-10 h-16 w-16 rounded-sm bg-white p-2 transition-transform duration-300 group-hover:scale-110"
             alt="Konnect Network"
-            placeholder="/konnect.svg"
             src="/konnect.svg"
           />
           {konnectIntegrated && (
@@ -48,7 +47,7 @@ export function IntegrateKonnect({ user }: { user?: User }) {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-3">
-                <h3 className="group-hover:text-primary text-xl font-semibold text-gray-900 transition-colors">Konnect Network</h3>
+                <h3 className="group-hover:text-primary text-xl font-semibold transition-colors">Konnect Network</h3>
                 {konnectIntegrated && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
                     <CheckCircle className="h-3 w-3" />
@@ -88,7 +87,7 @@ export function IntegrateKonnect({ user }: { user?: User }) {
             {/* Action button */}
             <div className="flex-shrink-0">
               <Button
-                className={`group/btn relative overflow-hidden transition-all duration-300 ${
+                className={`group/btn relative overflow-hidden transition-all duration-300 dark:text-white ${
                   konnectIntegrated
                     ? 'border-green-200 bg-green-100 text-green-700 hover:bg-green-200'
                     : 'bg-primary hover:bg-primary/90 hover:shadow-primary/25 text-white hover:shadow-lg'
