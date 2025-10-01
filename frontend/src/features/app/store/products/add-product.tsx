@@ -100,8 +100,6 @@ export function AddProductFlow() {
     // <ThumbnailModeSelector value={data.thumbnailMode || 'expanded'} onChange={(mode) => handleFieldChange('thumbnailMode', mode)} />;
   }
   const watchedValues = form.watch();
-  console.log(watchedValues);
-  console.log(form.formState.errors);
   // Type selection doesn't need preview
   if (type == null || type == undefined) {
     return (

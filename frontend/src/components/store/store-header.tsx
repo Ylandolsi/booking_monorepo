@@ -23,8 +23,7 @@ export function StoreHeader({ store, className }: StoreHeaderProps) {
           alt="Sophia Carter"
           className="border-background-light dark:border-background-dark size-28 rounded-full border-4 object-cover"
           src={
-            // store.picture?.mainLink ||
-            false ||
+            store.picture?.mainLink ||
             'https://lh3.googleusercontent.com/aida-public/AB6AXuAVVUW7VSR5qKZvyiFJrocy8LklzRipqoFqpbkZCKyOmfv7JmjP8JHP9m_1XYbqwN-KKIeIPmcZBUOmFRgjxbJHdC5HxztN7NS8ZUr4P-UF91F9iYl6yoixDD-R-ViQ3gAu8FL9ZOJOcYFX6hKNuNedrFWV5RTbYVLnMQLXa4NX2EE1Y5bG63rMkkjBvNqg1N4IPDHAru9vJ6BRLLMb39w2wqmL0RyA16I57e3Dby5l7DSSisuJvzlzRNcXi7R2ecY5NBo4CXAaoL85'
           }
         />

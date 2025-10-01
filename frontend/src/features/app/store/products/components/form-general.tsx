@@ -23,9 +23,7 @@ export function FormGeneral({
   type?: ProductType;
   setActiveTab: (tab: TabsType) => void;
 }) {
-  const uiPicture = form.getValues('thumbnailPicture');
-
-  const { croppedImageUrl, setAspectRatio, openDialog } = useUploadPicture();
+  const { croppedImageUrl, setAspectRatio } = useUploadPicture();
 
   useEffect(() => {
     if (croppedImageUrl) {

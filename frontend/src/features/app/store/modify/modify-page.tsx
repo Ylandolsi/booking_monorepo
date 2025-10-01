@@ -9,40 +9,59 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { User, CheckCircle, Globe, Plus, Edit2Icon, Store } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useCreateStore, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
+import {
+  patchPostStoreSchema,
+  useCreateStore,
+  useMyStore,
+  useUpdateStore,
+  type PatchPostStoreRequest,
+  type Picture,
+  type Product,
+} from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useAppNavigation } from '@/hooks';
 
+export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
+
 export function ModifyStore() {
   const navigate = useAppNavigation();
   const { data: store, isLoading, isError } = useMyStore();
   const updateStoreMutation = useUpdateStore();
+
+  const { croppedImageUrl, setAspectRatio } = useUploadPicture();
+
+  const form = useForm<StoreFormData>({
+    resolver: zodResolver(patchPostStoreSchema),
+    defaultValues: {
+      slug: store?.slug || '',
+      title: store?.title || '',
+      description: store?.description || '',
+      socialLinks: store?.socialLinks || [],
+      file: undefined,
+
+      // ui :
+      picture: store?.picture,
+    },
+  });
+
+  useEffect(() => {
+    setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
+  }, []);
+
+  useEffect(() => {
+    if (croppedImageUrl) {
+      form.setValue('picture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
+    }
+  }, [croppedImageUrl, form]);
 
   if (isLoading) return <LoadingState type="spinner" />;
 
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   const products = store.products || [];
-
-  const form = useForm<PatchPostStoreRequest>({
-    resolver: zodResolver(patchPostStoreSchema),
-    defaultValues: {
-      slug: store.slug,
-      title: store.title,
-      description: store.description,
-      socialLinks: store.socialLinks,
-      file: undefined,
-    },
-  });
-
-  const { setAspectRatio } = useUploadPicture();
-
-  useEffect(() => {
-    setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
-  }, []);
 
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
@@ -56,11 +75,11 @@ export function ModifyStore() {
     }
   };
 
-  console.log(form.formState.errors);
-
   function handleProductEdit(product: Product): void {
     navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
   }
+
+  const watchedValues = form.watch();
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
@@ -190,7 +209,7 @@ export function ModifyStore() {
             ))}
         </div>
       </aside>
-      <MobilePreview />
+      <MobilePreview storeForm={watchedValues} />
     </div>
   );
 }

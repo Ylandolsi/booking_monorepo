@@ -27,7 +27,7 @@ import { useBooking, type Product } from '@/api/stores/produtcs';
 import { useParams } from '@tanstack/react-router';
 import { useIsMobile } from '@/hooks/use-media-query';
 
-export function BookingPage({ product }: { product: Product }) {
+export function BookingPage({ product }: { product: { price: number } }) {
   const nav = useAppNavigation();
   const isMobile = useIsMobile();
   const { currentUser } = useAuth();

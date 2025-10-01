@@ -3,28 +3,36 @@ import { useMyStore } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState, MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/components';
 import { GenerateIdCrypto } from '@/lib';
 import { Button } from '@/components/ui/button'; // For close button
+import { BookingPage } from '@/features/app/store/products/components/checkout/book';
+import type { StoreFormData } from '@/features/app';
 
 // New component for product details modal
 const ProductDetailsModal = ({ product, storeSlug, isOpen, onClose }: { product: any; storeSlug: string; isOpen: boolean; onClose: () => void }) => {
   if (!product) return null;
 
-  const simulatedUrl = `appname/store/${storeSlug}/${product.productType}/${product.slug}`; // Simulate live URL
+  // const simulatedUrl = `appname/store/${storeSlug}/${product.productType}/${product.slug}`; // Simulate live URL
 
   return (
-    <DrawerDialog open={isOpen} onOpenChange={onClose} title={`Simulated URL: ${simulatedUrl}`}>
-      <div className="flex items-center justify-center border border-2 py-10 shadow-2xl">
-        <ProductCheckout product={product} />
+    // <DrawerDialog open={isOpen} onOpenChange={onClose} title={`Simulated URL: ${simulatedUrl}`}>
+    <DrawerDialog open={isOpen} onOpenChange={onClose} title={`Product: ${product.title}`}>
+      <div className="flex items-center justify-center py-10">
+        <MobileContainer>
+          <ProductCheckout product={product}>{product.productType == 'Session' && <BookingPage product={product} />}</ProductCheckout>
+        </MobileContainer>
       </div>
     </DrawerDialog>
   );
 };
 
-export const MobilePreview = () => {
+export const MobilePreview = ({ storeForm }: { storeForm: StoreFormData }) => {
   const { data: store, isLoading, isError } = useMyStore();
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   if (isLoading) return <LoadingState type="spinner" />;
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+
+  const mergedStore = { ...store, ...storeForm }; // Merge form data with existing store data
+  console.log('Merged Store Data:', mergedStore); // Debugging line
 
   const handleProductClick = (product: any) => {
     setSelectedProduct(product);
@@ -37,7 +45,7 @@ export const MobilePreview = () => {
   return (
     <main className="flex flex-1 items-center justify-center">
       <MobileContainer>
-        <StoreHeader store={store} />
+        <StoreHeader store={mergedStore} />
         <div className="w-full space-y-4">
           {store.products.map((product, index) => (
             <div

@@ -9,7 +9,7 @@ export type ProductCheckoutType = Pick<Product, 'thumbnailPicture' | 'descriptio
 export function CheckoutPageProduct({ productData }: { productData: ProductCheckoutType }) {
   return (
     <div className="flex w-full flex-col items-start justify-center gap-5">
-      <ProductCheckout product={productData}>{productData.productType == 'Session' && <BookingPage />}</ProductCheckout>
+      <ProductCheckout product={productData}>{productData.productType == 'Session' && <BookingPage product={productData} />}</ProductCheckout>
     </div>
   );
 }

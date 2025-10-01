@@ -17,7 +17,7 @@ import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { useNavigate } from '@tanstack/react-router';
 import { ThemeToggle, UploadImage } from '@/components';
 import { useAuth } from '@/api/auth';
-import { SocialLinksForm } from '@/features/app';
+import { SocialLinksForm, type StoreFormData } from '@/features/app';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
@@ -26,7 +26,7 @@ export const SetupStore = () => {
 
   const createStoreMutation = useCreateStore();
 
-  const form = useForm<PatchPostStoreRequest>({
+  const form = useForm<StoreFormData>({
     resolver: zodResolver(patchPostStoreSchema),
     defaultValues: {
       title: '',
@@ -34,6 +34,9 @@ export const SetupStore = () => {
       description: '',
       socialLinks: [],
       file: undefined,
+
+      // ui :
+      picture: undefined,
     },
   });
 
@@ -59,14 +62,13 @@ export const SetupStore = () => {
     setAspectRatio(1 / 1); // Set aspect ratio to 1:1 for store profile picuture
   }, []);
 
-  // const generateSlug = (title: string) => {
-  //   const slug = title
-  //     .toLowerCase()
-  //     .replace(/[^a-z0-9]/g, '-')
-  //     .replace(/-+/g, '-')
-  //     .replace(/^-|-$/g, '');
-  //   form.setValue('slug', slug);
-  // };
+  useEffect(() => {
+    if (croppedImageUrl) {
+      form.setValue('picture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
+    }
+  }, [croppedImageUrl, form]);
+
+  const picture = form.getValues('picture');
 
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
@@ -189,7 +191,7 @@ export const SetupStore = () => {
         {/* Live Preview - keeping the same */}
         <div className="sticky top-4">
           <MobileContainer>
-            <StoreHeader store={{ ...watchedValues, picture: { mainLink: croppedImageUrl } } as Store} />
+            <StoreHeader store={{ ...watchedValues, picture } as Store} />
           </MobileContainer>
         </div>
       </div>
