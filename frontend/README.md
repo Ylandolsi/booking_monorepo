@@ -141,28 +141,12 @@ frontend/
 │   │   ├── test/                         # Testing routes
 │   │   └── routeTree.gen.ts              # Auto-generated route tree
 │   ├── services/                         # Business logic services
-│   │   ├── date/                         # Date/time utilities
-│   │   ├── image/                        # Image processing
-│   │   ├── indexedDB/                    # Client-side storage
-│   │   ├── notifications/                # Push notifications
-│   │   └── pixels/                       # Analytics tracking
-│   ├── stores/                           # Global state management
-│   │   └── store.ts                      # Redux store configuration
-│   ├── types/                            # TypeScript type definitions
-│   │   ├── Budget.ts                     # Budget-related types
-│   │   ├── Category.ts                   # Category data types
-│   │   ├── Image.ts                      # Image handling types
-│   │   ├── Order.ts                      # Order management types
-│   │   ├── Payment.ts                    # Payment types
-│   │   ├── Product.ts                    # Product catalog types
-│   │   ├── Staff.ts                      # Staff management types
-│   │   ├── Statistics.ts                 # Analytics types
-│   │   ├── Store.ts                      # Store types
-│   │   └── Upsell.ts                     # Upselling types
+│   │   ├── notificaiton-service/         # SignalR service
+│   ├── stores/                           # zustand state management
 │   ├── utils/                            # Utility functions
-│   │   ├── balance-utils.ts              # Currency formatting
-│   │   ├── invoice-utils.ts              # Invoice generation
-│   │   └── redirect-utils.ts             # Navigation helpers
+│   │   ├── format.ts                     # Date/time format helper
+│   │   ├── lazy-image.ts                 # Lazy Image with (Thumbnail/Main)
+│   │   └── enum-days-week.ts             # convert day enum to string and vice versa
 │   ├── main.tsx                          # Application entry point
 │   ├── index.css                         # Global styles
 │   └── vite-env.d.ts                     # Vite type definitions
