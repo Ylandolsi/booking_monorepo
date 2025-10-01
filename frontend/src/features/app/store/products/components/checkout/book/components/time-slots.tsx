@@ -126,11 +126,6 @@ export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect,
                         <div className={cn('text-sm', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>30 minutes session</div>
                       </div>
                     </div>
-                    {/* <div className="text-right"> */}
-                    {/* TODO : only for 30 minutes */}
-                    {/* <div className="text-lg font-bold">$</div> */}
-                    {/* <div className={cn('text-xs', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>per session</div> */}
-                    {/* </div> */}
                   </Button>
                 );
               })}
