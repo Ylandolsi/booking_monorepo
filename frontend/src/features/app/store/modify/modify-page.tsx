@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -6,13 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { User, CheckCircle, Globe, Plus, Check, Edit2Icon } from 'lucide-react';
+import { User, CheckCircle, Globe, Plus, Edit2Icon, Store } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
-import { MobilePreview, SocialLinksForm, socialPlatforms } from '@/features/app/store';
-import { ErrorComponenet, LoadingState, MobileContainer, ProductCard, StoreHeader, UploadImage } from '@/components';
+import { MobilePreview, SocialLinksForm } from '@/features/app/store';
+import { ErrorComponenet, LoadingState, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useAppNavigation } from '@/hooks';
 
@@ -62,7 +62,7 @@ export function ModifyStore() {
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
       <style>{`.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }`}</style>
       <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
-      <aside className="flex w-[460px] flex-col">
+      <aside className="flex w-[460px] flex-col px-6">
         <div className="flex-1">
           <div className="border-primary/20 dark:border-primary/30 border-b p-6">
             <Accordion type="single" collapsible className="w-full">
@@ -70,8 +70,8 @@ export function ModifyStore() {
                 <AccordionTrigger className="text-foreground hover:text-primary">
                   <div className="flex items-center gap-2">
                     {/* TODO change this  */}
-                    <Globe className="h-4 w-4" />
-                    <h2 className="text-xl font-bold">Edit Store Details</h2>
+                    <Store className="h-8 w-8" />
+                    <h2 className="text-3xl font-bold">Edit Store Details</h2>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="mt-0 space-y-4 p-2">
@@ -151,8 +151,8 @@ export function ModifyStore() {
               </AccordionItem>
             </Accordion>
           </div>
-          <div className="flex h-16 items-center justify-between px-6">
-            <h2 className="text-xl font-bold">My Products</h2>
+          <div className="flex h-16 items-center justify-between p-6">
+            <h2 className="text-3xl font-bold">My Products</h2>
             <Button
               variant={'ghost'}
               className="bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 text-primary flex items-center justify-center transition-colors"
@@ -164,7 +164,7 @@ export function ModifyStore() {
           </div>
           {products.length !== 0 &&
             products.map((product) => (
-              <div className="space-y-4 p-6 pt-0">
+              <div className="space-y-4 p-6">
                 <div className="group border-primary/20 dark:border-primary/30 bg-card-light dark:bg-card-dark hover:border-primary/40 relative rounded-xl border shadow-sm transition-all hover:shadow-lg">
                   <div className="flex items-center p-4">
                     <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
