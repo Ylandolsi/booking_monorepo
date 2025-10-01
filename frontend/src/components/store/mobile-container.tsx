@@ -8,7 +8,7 @@ interface MobileContainerProps {
 
 export function MobileContainer({ children, className }: MobileContainerProps) {
   return (
-    <div className={cn('relative w-fit overflow-hidden rounded-4xl', className)}>
+    <div className={cn('bg-background relative w-fit overflow-hidden rounded-4xl', className)}>
       <img src={IPHONE_MOCKUP} className="z-40"></img>
 
       <div

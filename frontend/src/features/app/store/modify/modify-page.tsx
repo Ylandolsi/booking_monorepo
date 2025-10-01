@@ -9,7 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { User, CheckCircle, Globe, Plus, Edit2Icon, Store } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useCreateStore, useMyStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
+import { patchPostStoreSchema, useCreateStore, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, UploadImage } from '@/components';
@@ -19,20 +19,21 @@ import { useAppNavigation } from '@/hooks';
 export function ModifyStore() {
   const navigate = useAppNavigation();
   const { data: store, isLoading, isError } = useMyStore();
+  const updateStoreMutation = useUpdateStore();
 
   if (isLoading) return <LoadingState type="spinner" />;
 
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
   const products = store.products || [];
-  const createStoreMutation = useCreateStore();
 
   const form = useForm<PatchPostStoreRequest>({
     resolver: zodResolver(patchPostStoreSchema),
     defaultValues: {
-      title: '',
-      description: '',
-      socialLinks: [],
+      slug: store.slug,
+      title: store.title,
+      description: store.description,
+      socialLinks: store.socialLinks,
       file: undefined,
     },
   });
@@ -47,12 +48,15 @@ export function ModifyStore() {
     try {
       console.log('Submitting store data:', data);
       // todo : handle this api
+      await updateStoreMutation.mutateAsync(data);
 
       navigate.goTo({ to: routes.to.store.index() + '/' });
     } catch (error) {
       console.error('Failed to update store:', error);
     }
   };
+
+  console.log(form.formState.errors);
 
   function handleProductEdit(product: Product): void {
     navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
@@ -133,10 +137,10 @@ export function ModifyStore() {
                           type="submit"
                           size="lg"
                           className="hover:bg-primary hover:accent text-primary-foreground w-full transition-all duration-300"
-                          disabled={createStoreMutation.isPending}
+                          disabled={updateStoreMutation.isPending}
                         >
-                          {createStoreMutation.isPending ? (
-                            'Creating Store...'
+                          {updateStoreMutation.isPending ? (
+                            'Updating Store...'
                           ) : (
                             <>
                               <CheckCircle className="mr-2 h-4 w-4" />
