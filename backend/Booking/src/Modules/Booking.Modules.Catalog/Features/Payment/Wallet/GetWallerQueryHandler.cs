@@ -20,7 +20,7 @@ public class GetWalletQueryHandler(
         {
             logger.LogWarning("Someone is Trying to acesss another store product details ");
             return Result.Failure<GetWalletResponse>(
-                Error.Unauthorized("UserId.DosentMatch.Store",
+                Error.Problem("UserId.DosentMatch.Store",
                     "You dont have the right permission to access this product"));
         }
 
