@@ -3,33 +3,21 @@ import { Card, CardContent, CardHeader, CardTitle, Button, DrawerDialog } from '
 import { cn } from '@/lib/cn';
 import { formatDateLong } from '@/utils';
 import { useState } from 'react';
-import type { BookingSummaryType } from '@/api/stores';
+import type { BookingHookState, BookingSummaryType } from '@/api/stores';
 import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
+import type { UseFormReturn } from 'react-hook-form';
 
 interface BookingSummaryProps {
   booking: BookingSummaryType | null;
   selectedDate: Date | undefined;
   selectedSlot: SessionSlotType | null;
-  notes: string;
-  onNotesChange: (notes: string) => void;
-  title: string;
-  onTitleChange: (title: string) => void; // Fixed parameter name
-
   onBookSession: () => void;
   isBookingInProgress: boolean;
   isBookingDisabled: boolean;
   className?: string;
 }
 
-export function BookingSummary({
-  booking,
-  selectedDate,
-  selectedSlot,
-  onBookSession,
-  isBookingInProgress,
-  isBookingDisabled,
-  className,
-}: BookingSummaryProps) {
+export function BookingSummary({ booking, selectedDate, selectedSlot, onBookSession, isBookingInProgress, className }: BookingSummaryProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const formatTime = (timeString: string): string => {
@@ -173,69 +161,6 @@ export function BookingSummary({
               </div>
             </div>
           </div>
-
-          {/* Session Title and Notes */}
-          {/* <div className="space-y-3"> */}
-          {/* Session Title */}
-          {/* <div className="border-border border-b">
-              <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2 text-sm font-medium">
-                  <MessageCircle className="h-4 w-4" />
-                  Session Title (Optional)
-                </Label>
-                <Button variant="ghost" size="sm" onClick={() => setIsEditingTitle(!isEditingTitle)}>
-                  <Edit3 className="mr-1 h-3 w-3" />
-                  {isEditingTitle ? 'Save' : 'Edit'}
-                </Button>
-              </div>
-              {isEditingTitle ? (
-                <Textarea
-                  placeholder="Add a title for your session (e.g., 'Career Advice', 'Project Discussion')"
-                  value={title}
-                  onChange={(e) => onTitleChange(e.target.value)}
-                  className="min-h-[80px] w-full resize-none break-all"
-                  maxLength={500}
-                />
-              ) : (
-                <div className="flex min-h-[80px] max-w-full items-center rounded-lg p-3 break-all">
-                  <p className="text-muted-foreground w-full text-sm text-wrap break-words">
-                    {title || 'No specific title added. Click Edit to add a title for your session.'}
-                  </p>
-                </div>
-              )}
-              {isEditingTitle && <p className="text-muted-foreground text-xs">{title.length}/500 characters</p>}
-            </div> */}
-          {/* Notes Section */}
-          {/* <div>
-              <div className="flex items-center justify-between">
-                <Label className="flex items-center gap-2 text-sm font-medium">
-                  <MessageCircle className="h-4 w-4" />
-                  Session Notes (Optional)
-                </Label>
-                <Button variant="ghost" size="sm" onClick={() => setIsEditingNotes(!isEditingNotes)}>
-                  <Edit3 className="mr-1 h-3 w-3" />
-                  {isEditingNotes ? 'Save' : 'Edit'}
-                </Button>
-              </div>
-
-              {isEditingNotes ? (
-                <Textarea
-                  placeholder="Add any specific topics you'd like to discuss or questions you have..."
-                  value={notes}
-                  onChange={(e) => onNotesChange(e.target.value)}
-                  className="min-h-[80px] w-full resize-none break-all"
-                  maxLength={500}
-                />
-              ) : (
-                <div className="flex min-h-[80px] max-w-full items-center rounded-lg p-3 break-all">
-                  <p className="text-muted-foreground w-full text-sm text-wrap break-words">
-                    {notes || "No specific notes added. Click Edit to add topics you'd like to discuss."}
-                  </p>
-                </div>
-              )}
-              {isEditingTitle && <p className="text-muted-foreground text-xs">{notes.length}/500 characters</p>}
-            </div> */}
-          {/* </div> */}
         </CardContent>
       </Card>
 

@@ -36,16 +36,6 @@ const userDataBookFromSchema = z.object({
 type userDataBookInput = z.infer<typeof userDataBookFromSchema>;
 
 export function ProductCheckout({ product, children }: { product: Product; children?: React.ReactNode }) {
-  const form = useForm<userDataBookInput>({
-    resolver: zodResolver(userDataBookFromSchema),
-    defaultValues: {
-      fullName: '',
-      email: '',
-      phone: '',
-      notes: '',
-    },
-  });
-
   const params = useParams({ strict: false }) as Record<string, string | undefined>;
   const storeSlug = params.storeSlug;
   return (
@@ -78,83 +68,6 @@ export function ProductCheckout({ product, children }: { product: Product; child
           </div>
 
           {children}
-
-          <Form {...form}>
-            <form>
-              <div className="mt-10 flex w-full flex-col gap-5">
-                <FormField
-                  control={form.control}
-                  name="fullName"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Full Name</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Full Name" />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Phone Number</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Phone Number" />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="text-foreground">Email Address</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="falten@gmail.com" />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormLabel className="text-foreground mb-2 flex flex-col items-start justify-start gap-2">
-                          <div>Additional notes</div> <div className="">(Optional : Max 500 characters)</div>
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            placeholder="Add any specific topics you'd like to discuss or questions you have..."
-                            className="min-h-[80px] w-full resize-none break-all"
-                            maxLength={500}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    );
-                  }}
-                />
-              </div>
-
-              <button
-                onClick={() => alert('Purchase completed!')}
-                className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
-              >
-                Buy Now
-              </button>
-            </form>
-          </Form>
         </div>
       </main>
     </div>

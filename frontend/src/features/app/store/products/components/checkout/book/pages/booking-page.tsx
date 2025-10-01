@@ -1,5 +1,21 @@
 import { Calendar } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, Alert, AlertDescription, Calendar as BookingCalendar, alertIconMap } from '@/components/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Alert,
+  AlertDescription,
+  Calendar as BookingCalendar,
+  alertIconMap,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  Input,
+  Textarea,
+} from '@/components/ui';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { ErrorComponenet } from '@/components';
 import React, { useEffect } from 'react';
@@ -19,12 +35,9 @@ export function BookingPage({ product }: { product: Product }) {
   const { productSlug, storeSlug } = useParams({ strict: false }) as Record<string, string | undefined>;
 
   const {
+    form,
     // State
-    selectedDate,
-    selectedSlot,
-    step,
-    notes,
-    title,
+    state,
     // Computed values
     availableSlots,
     bookingSummary,
@@ -37,11 +50,11 @@ export function BookingPage({ product }: { product: Product }) {
     setSelectedDate,
     setSelectedSlot,
     // setStep,
-    setTitle,
-    setNotes,
-    resetBooking,
+    setStep,
     handleBookSession,
   } = useBooking({ productSlug, storeSlug, product });
+
+  const { selectedDate, selectedSlot, step, title, notes } = state;
 
   const sessionConfirmedMentee = (data: NotificationSignalR) => {
     toast.success(data.title, {
@@ -161,15 +174,104 @@ export function BookingPage({ product }: { product: Product }) {
             booking={bookingSummary}
             selectedDate={selectedDate}
             selectedSlot={selectedSlot}
-            notes={notes}
-            onNotesChange={setNotes}
-            title={title}
-            onTitleChange={setTitle}
             onBookSession={handleBookSession}
             isBookingInProgress={bookSessionMutation.isPending || step === 'confirm'}
             isBookingDisabled={!selectedDate || !selectedSlot}
           />
 
+          {/* Input fields */}
+          <Form {...form}>
+            <form>
+              <div className="mt-10 flex w-full flex-col gap-5">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground">Full Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Full Name" />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground">Phone Number</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Phone Number" />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground">Email Address</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="falten@gmail.com" />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground mb-2 flex flex-col items-start justify-start gap-2">
+                          <div>Session Title</div>
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Session Title" />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-foreground mb-2 flex flex-col items-start justify-start gap-2">
+                          <div>Additional notes</div>
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder="Add any specific topics you'd like to discuss or questions you have..."
+                            className="min-h-[80px] w-full resize-none break-all"
+                            maxLength={500}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={handleBookSession}
+                className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
+              >
+                Buy Now
+              </button>
+            </form>
+          </Form>
           {bookSessionMutation.isError && (
             <Alert variant="destructive" className="mt-4">
               {React.createElement(alertIconMap['destructive'])}
