@@ -2,7 +2,7 @@ import { Logo } from '@/components/logo';
 import { Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/api/auth';
 import { useSideBar } from '@/stores';
-import { CreditCard, Menu } from 'lucide-react';
+import { CreditCard, Menu, Sidebar } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useGetWallet } from '@/api/stores';
 
@@ -27,7 +27,7 @@ function BalanceHeader() {
 }
 
 export function Header() {
-  const { setSidebarOpen } = useSideBar();
+  const { toggleSidebar } = useSideBar();
   const { currentUser } = useAuth();
 
   if (!currentUser || currentUser == undefined) return null;
@@ -37,8 +37,8 @@ export function Header() {
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left side - Logo and Menu (Mobile only) */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(true)} className="hover:bg-muted h-7.5 w-10 p-0">
-            <Menu className="h-5 w-5" />
+          <Button variant="ghost" size="sm" onClick={toggleSidebar} className="hover:bg-muted h-7.5 w-10 p-0">
+            <Sidebar className="h-5 w-5" />
           </Button>
           <Logo className="h-8" />
         </div>
