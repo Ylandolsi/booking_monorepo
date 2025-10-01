@@ -14,7 +14,7 @@ interface StoreHeaderProps {
 }
 
 export function StoreHeader({ store, className }: StoreHeaderProps) {
-  store = { ...store, socialLinks: [{ platform: 'twitter', url: 'https://twitter.com/sophiacarter' } as any] }; // TODO : remove this
+  store = { ...store };
   return (
     <header>
       <div className={cn('mt-5 flex flex-col items-center p-6', className)}>

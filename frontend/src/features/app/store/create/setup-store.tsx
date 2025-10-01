@@ -79,6 +79,8 @@ export const SetupStore = () => {
     }
   };
 
+  console.log('watchedValues', watchedValues);
+
   return (
     // <StoreGuard> // TODO uncomment this
     <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 py-10 lg:px-8">
