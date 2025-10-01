@@ -16,9 +16,9 @@ public record PatchPostStoreRequest
     public string? SocialLinksJson { get; init; } = null;
 
     // Computed property to deserialize SocialLinks
-    public IList<SocialLink>? SocialLinks => string.IsNullOrWhiteSpace(SocialLinksJson)
+    public List<SocialLink>? SocialLinks => string.IsNullOrWhiteSpace(SocialLinksJson)
         ? null
-        : JsonSerializer.Deserialize<IList<SocialLink>>(SocialLinksJson, new JsonSerializerOptions
+        : JsonSerializer.Deserialize<List<SocialLink>>(SocialLinksJson, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter() } // convert enum to string and vice vers  a 

@@ -52,7 +52,13 @@ public class UpdateStoreHandler(
 
             // Update store
             var socialLinksData = command.SocialLinks?.Select(sl => (sl.Platform, sl.Url)).ToList();
-            store.UpdateStoreWithLinks(command.Title, command.Description, socialLinksData);
+            store = store.UpdateStoreWithLinks(command.Title, command.Description, socialLinksData);
+
+            // Mark social links as modified for EF Core change tracking
+            if (command.SocialLinks != null)
+            {
+                context.Entry(store).Property(s => s.SocialLinks).IsModified = true;
+            }
 
 
             if (command.Orders is not null)

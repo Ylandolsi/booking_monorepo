@@ -93,7 +93,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.UseSwaggerWithUi();
     
     
-    /*
+    
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
-    // Drop databases
+    /*// Drop databases
     await usersDb.Database.EnsureDeletedAsync();
     await catalogDb.Database.EnsureDeletedAsync();
     app.ApplyMigrations();

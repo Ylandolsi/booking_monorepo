@@ -7,9 +7,6 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Store : Entity
 {
-    // Store social links as JSON
-    private readonly List<SocialLink> _socialLinks = new();
-
     private Store()
     {
     }
@@ -27,9 +24,11 @@ public class Store : Entity
 
     public bool IsPublished { get; private set; } = true;
 
+    // Store social links as JSON
+    public List<SocialLink> SocialLinks { get; private set; } = new List<SocialLink>();
+
     // STEP 1 : name/slug : STEP 2 profile picture , bio 
     public int Step { get; private set; }
-    public IReadOnlyList<SocialLink> SocialLinks => _socialLinks.AsReadOnly();
 
     // Navigation properties
     public ICollection<Product> Products { get; private set; } = new List<Product>();
@@ -76,9 +75,11 @@ public class Store : Entity
         Title = title;
         Description = description;
         if (socialLinks != null)
+        {
+            ClearSocialLinks();
             foreach (var (platform, url) in socialLinks)
                 AddSocialLink(platform, url);
-
+        }
 
         return this;
     }
@@ -108,48 +109,24 @@ public class Store : Entity
         var socialLink = SocialLink.Create(platform, url);
 
         // Remove existing link for the same platform
-        _socialLinks.RemoveAll(link => link.Platform.Equals(platform, StringComparison.OrdinalIgnoreCase));
+        SocialLinks.RemoveAll(link => link.Platform.Equals(platform, StringComparison.OrdinalIgnoreCase));
 
-        _socialLinks.Add(socialLink);
+        SocialLinks.Add(socialLink);
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void RemoveSocialLink(string platform)
     {
-        _socialLinks.RemoveAll(link => link.Platform.Equals(platform, StringComparison.OrdinalIgnoreCase));
+        SocialLinks.RemoveAll(link => link.Platform.Equals(platform, StringComparison.OrdinalIgnoreCase));
         UpdatedAt = DateTime.UtcNow;
     }
 
     public void ClearSocialLinks()
     {
-        _socialLinks.Clear();
+        SocialLinks.Clear();
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void UpdateComprehensive(
-        string title,
-        string slug,
-        string? description,
-        Picture? picture = null,
-        IEnumerable<(string platform, string url)>? socialLinks = null)
-    {
-        UpdateBasicInfo(title, slug, description);
-
-        if (picture != null) UpdatePicture(picture);
-
-        if (socialLinks != null)
-        {
-            ClearSocialLinks();
-            foreach (var (platform, url) in socialLinks) AddSocialLink(platform, url);
-        }
-    }
-
-    public void UpdateSocialLinks(IEnumerable<(string platform, string url)> socialLinks)
-    {
-        ClearSocialLinks();
-        foreach (var (platform, url) in socialLinks) AddSocialLink(platform, url);
-        UpdatedAt = DateTime.UtcNow;
-    }
 
     public void Publish()
     {
@@ -169,11 +146,4 @@ public static class StoreErros
     public static readonly Error NotFound = Error.NotFound(
         "Store.NotFound",
         "Store not found");
-
-    public static Error NotFoundById(int id)
-    {
-        return Error.NotFound(
-            "Store.NotFoundById",
-            $"Store with ID {id} not found");
-    }
 }
