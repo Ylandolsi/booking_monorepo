@@ -60,8 +60,8 @@ export function AddProductFlow() {
       clickToPay: 'Buy Now',
       productType: type === 'Session' ? 'Session' : 'DigitalDownload',
       thumbnailImage: undefined,
-      duration: type == 'Session' ? 30 : undefined,
-      bufferTime: type == 'Session' ? 15 : undefined,
+      durationMinutes: type == 'Session' ? 30 : undefined,
+      bufferTimeMinutes: type == 'Session' ? 15 : undefined,
       meetingInstructions: '',
       files: type == 'DigitalDownload' ? [] : undefined,
       deliveryUrl: '',
@@ -162,7 +162,7 @@ export function AddProductFlow() {
                     {/* Duration */}
                     <FormField
                       control={form.control}
-                      name="duration"
+                      name="durationMinutes"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
@@ -185,7 +185,7 @@ export function AddProductFlow() {
                     {/* Buffer Time */}
                     <FormField
                       control={form.control}
-                      name="bufferTime"
+                      name="bufferTimeMinutes"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>

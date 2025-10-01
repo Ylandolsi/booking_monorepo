@@ -8,7 +8,7 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        // Configure TPT inheritance
+        // Configure TPT inheritance : TODO
         builder.UseTptMappingStrategy();
 
         builder.HasKey(p => p.Id);

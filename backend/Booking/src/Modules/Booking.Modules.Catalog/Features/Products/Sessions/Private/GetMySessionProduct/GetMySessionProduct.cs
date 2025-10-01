@@ -102,6 +102,7 @@ public class GetSessionProductHandler(
                 TimeZoneId = sessionProduct.TimeZoneId,
                 IsPublished = sessionProduct.IsPublished,
                 DayAvailabilities = dayAvailabilities,
+                ClickToPay = sessionProduct.ClickToPay,
                 CreatedAt = sessionProduct.CreatedAt,
                 UpdatedAt = sessionProduct.UpdatedAt
             };

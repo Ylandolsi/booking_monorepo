@@ -18,8 +18,8 @@ export const dayAvailabilitiesSchema = z.object({
 
 export const createSessionProductSchema = createProductBaseSchema.extend({
   productType: z.literal(ProductType.Session),
-  duration: z.number().positive('Duration must be positive'),
-  bufferTime: z.number().min(0, 'Buffer time cannot be negative'),
+  durationMinutes: z.number().positive('Duration must be positive'),
+  bufferTimeMinutes: z.number().min(0, 'Buffer time cannot be negative'),
   meetingInstructions: z.string().optional(),
   timeZoneId: z.string().optional(),
   dayAvailabilities: z.array(dayAvailabilitiesSchema).min(1, 'At least one day schedule is required'),
@@ -36,8 +36,8 @@ export const patchPostSessionSchemaToFormData = (data: CreateSessionProductReque
     thumbnailImage: data.thumbnailImage || new File([], ''),
     description: data.description || '',
     timeZoneId: data.timeZoneId || 'Africa/Tunis',
-    durationMinutes: data.duration,
-    bufferTimeMinutes: data.bufferTime,
+    durationMinutes: data.durationMinutes,
+    bufferTimeMinutes: data.bufferTimeMinutes,
     meetingInstructions: data.meetingInstructions || '',
     price: data.price,
     clickToPay: data.clickToPay,
