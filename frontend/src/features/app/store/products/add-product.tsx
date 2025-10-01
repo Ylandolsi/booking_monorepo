@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  createProductSchema,
-  ProductType,
-  useCreateSession,
-  useMyProductSession,
-  useUpdateSession,
-  type CreateProductInput,
-  type Picture,
-} from '@/api/stores';
+import { createProductSchema, useCreateSession, useMyProductSession, useUpdateSession, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/features/app/store/products/select-product-type';
 import { ErrorComponenet, LoadingState, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, TabNavigation } from '@/components';
 import { ResponsiveBuilderLayout } from '@/features/app/store';
@@ -47,8 +39,12 @@ export function AddProductFlow() {
       }
       navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
     } catch (error) {
-      console.error('Failed to create product:', error);
-      // Handle error - show toast, etc.
+      if (productSlug) {
+        // specific error handling for update
+        console.error('Failed to update product:', error);
+      } else {
+        console.error('Failed to create product:', error);
+      }
     }
   };
   const onCancel = () => {
@@ -261,8 +257,14 @@ export function AddProductFlow() {
                   <Button type="button" variant="outline" onClick={() => setActiveTab('general')} className="flex-1 py-3">
                     Back
                   </Button>
-                  <Button type="submit" className="flex-1 py-3" disabled={createProductMutation.isPending}>
-                    {createProductMutation.isPending ? 'Creating...' : 'Create Product'}
+                  <Button type="submit" className="flex-1 py-3" disabled={createProductMutation.isPending || updateProductMutation.isPending}>
+                    {productSlug
+                      ? createProductMutation.isPending
+                        ? 'Updating...'
+                        : 'Update Product'
+                      : createProductMutation.isPending
+                        ? 'Creating...'
+                        : 'Create Product'}
                   </Button>
                 </div>
               </>
