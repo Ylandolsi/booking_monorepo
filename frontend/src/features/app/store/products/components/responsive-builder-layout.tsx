@@ -45,7 +45,7 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
                     </div>
                   </>
                 )}
-                {viewType == 'checkout' && <CheckoutPageProduct productData={previewData} f />}
+                {viewType == 'checkout' && <CheckoutPageProduct productData={previewData} />}
               </MobileContainer>
               <div className="mt-4 flex w-full items-center justify-center gap-2">
                 <Button

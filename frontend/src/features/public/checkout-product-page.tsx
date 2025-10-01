@@ -56,7 +56,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
             src={product.thumbnailPicture?.mainLink ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL}
           />
         </div>
-        <div className="flex flex-col overflow-x-hidden p-6">
+        <div className="mx-auto flex flex-col justify-center overflow-x-hidden px-2 pt-4">
           <h1 className="line-clamp-2 text-3xl font-extrabold break-all text-slate-900 dark:text-white">{product.title}</h1>
           <p className="mt-2 line-clamp-3 text-lg break-all text-slate-600 dark:text-slate-400">{product.subtitle}</p>
           <div className="mt-4">

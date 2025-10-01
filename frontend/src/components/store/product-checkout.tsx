@@ -14,9 +14,10 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
   return (
     <div className="bg-background-light dark:bg-background-dark relative text-slate-800 dark:text-slate-200">
       <header className="absolute top-0 right-0 left-0 z-10 flex items-center justify-between p-4">
-        <Link className="flex items-center gap-2" to={routes.to.store.index() + '/'}>
+        {/* todo change this to home page for the user  */}
+        <Link className="flex items-center gap-2" to={routes.to.store.index()}>
           <X />
-          <span className="font-bold text-slate-900 dark:text-white">My Store</span>
+          <span className="font-bold text-slate-900 dark:text-white">Back to Store</span>
         </Link>
       </header>
       <main className="w-full pt-16 pb-28 break-words">
@@ -28,7 +29,7 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
             src={product.thumbnailPicture?.mainLink ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL}
           />
         </div>
-        <div className="flex flex-col overflow-x-hidden p-6">
+        <div className="mx-auto flex flex-col justify-center overflow-x-hidden px-2 pt-4">
           <h1 className="line-clamp-2 text-3xl font-extrabold break-all text-slate-900 dark:text-white">{product.title}</h1>
           <p className="mt-2 line-clamp-3 text-lg break-all text-slate-600 dark:text-slate-400">{product.subtitle}</p>
           <div className="mt-4">
@@ -44,12 +45,12 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
         </div> */}
 
           {children}
-          <button
+          {/* <button
             onClick={() => alert('Purchase completed!')}
             className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
           >
             Buy Now
-          </button>
+          </button> */}
         </div>
       </main>
     </div>
