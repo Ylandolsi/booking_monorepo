@@ -46,6 +46,7 @@ public class Order : Entity
     // Navigation properties
     public Store Store { get; private set; } = null!;
     public Product Product { get; private set; } = null!;
+    public Escrow Escrow { get; private set; } = null!;
 
     // Static factory method for registered users
     public static Order Create(

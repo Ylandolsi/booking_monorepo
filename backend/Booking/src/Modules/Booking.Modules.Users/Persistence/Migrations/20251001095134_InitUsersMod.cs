@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Users.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitUsersMod : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,8 +39,8 @@ namespace Booking.Modules.Users.Persistence.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     slug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    name_first_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    name_last_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    first_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    last_name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     gender = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: true),
                     google_email = table.Column<string>(type: "text", nullable: true),
                     integrated_with_google = table.Column<bool>(type: "boolean", nullable: false),

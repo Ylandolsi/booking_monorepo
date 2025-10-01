@@ -9,22 +9,18 @@ internal class BookedSessionConfiguration : IEntityTypeConfiguration<BookedSessi
 {
     public void Configure(EntityTypeBuilder<BookedSession> builder)
     {
-        builder.ToTable("BookedSessions");
 
         // Configure Duration value object
         builder.Property(sp => sp.Duration)
             .HasConversion(
                 duration => duration.Minutes,
                 minutes => new Duration(minutes))
-            .HasColumnName("DurationMinutes")
             .IsRequired();
 
         builder.Property(sp => sp.MeetLink)
             .HasConversion(
                 meetLink => meetLink!.Url,
-                url => new MeetLink(url))
-            .HasColumnName("MeetLink");
-
+                url => new MeetLink(url));
 
         // TODO : add configuration for amount  , sessionStatus ... 
     }

@@ -31,19 +31,19 @@ internal class SessionAvailabilityConfiguration : IEntityTypeConfiguration<Sessi
 
         // Indexes
         builder.HasIndex(sa => sa.SessionProductId)
-            .HasDatabaseName("IX_SessionAvailability_SessionProductId");
+            .HasDatabaseName("ix_session_availability_session_product_id");
 
         builder.HasIndex(sa => new { sa.SessionProductId, sa.DayOfWeek, sa.IsActive })
-            .HasDatabaseName("IX_SessionAvailability_Product_Day_Active");
+            .HasDatabaseName("ix_session_availability_product_day_active");
 
         // Relationship
         builder.HasOne(sa => sa.SessionProduct)
             .WithMany(sp => sp.Availabilities)
-            .HasForeignKey(sa => sa.SessionProductId)
+            .HasForeignKey(sp => sp.SessionProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Check constraints
-        builder.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"StartTime\" < \"EndTime\"");
-        builder.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"DayOfWeek\" >= 0 AND \"DayOfWeek\" <= 6");
+        /*builder.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"StartTime\" < \"EndTime\"");
+        builder.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"DayOfWeek\" >= 0 AND \"DayOfWeek\" <= 6");*/
     }
 }

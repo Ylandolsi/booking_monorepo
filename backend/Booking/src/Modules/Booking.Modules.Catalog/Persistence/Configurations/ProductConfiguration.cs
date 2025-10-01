@@ -61,15 +61,11 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired();
 
         // Indexes
-        builder.HasIndex(p => p.StoreId)
-            .HasDatabaseName("IX_Products_StoreId");
+        builder.HasIndex(p => p.StoreId);
 
-        builder.HasIndex(p => p.IsPublished)
-            .HasDatabaseName("IX_Products_IsPublished");
+        builder.HasIndex(p => p.IsPublished);
 
-        builder.HasIndex(p => new { p.StoreId, p.DisplayOrder })
-            .HasDatabaseName("IX_Products_Store_DisplayOrder");
-
+        builder.HasIndex(p => new { p.StoreId, p.DisplayOrder });
         // Relationship to Store
         builder.HasOne(p => p.Store)
             .WithMany() // Store.Products navigation will be added later
@@ -77,8 +73,8 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
             .OnDelete(DeleteBehavior.Cascade);
 
         // Check constraints
-        builder.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
-        builder.HasCheckConstraint("CK_Product_Price_NonNegative", "\"Price\" >= 0");
-        builder.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"DisplayOrder\" >= 0");
+        /*builder.HasCheckConstraint("ck_product_title_not_empty", "LENGTH(TRIM(\"Title\")) > 0");
+        builder.HasCheckConstraint("ck_product_price_non_negative", "\"Price\" >= 0");
+        builder.HasCheckConstraint("ck_product_display_order_non_negative", "\"DisplayOrder\" >= 0");*/
     }
 }

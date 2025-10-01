@@ -9,14 +9,13 @@ internal class SessionProductConfiguration : IEntityTypeConfiguration<SessionPro
 {
     public void Configure(EntityTypeBuilder<SessionProduct> builder)
     {
-        builder.ToTable("SessionProducts");
 
         // Configure Duration value object
         builder.Property(sp => sp.Duration)
             .HasConversion(
                 duration => duration.Minutes,
                 minutes => new Duration(minutes))
-            .HasColumnName("DurationMinutes")
+            .HasColumnName("duration_minutes")
             .IsRequired();
 
         // Configure BufferTime value object
@@ -24,7 +23,7 @@ internal class SessionProductConfiguration : IEntityTypeConfiguration<SessionPro
             .HasConversion(
                 duration => duration.Minutes,
                 minutes => new Duration(minutes))
-            .HasColumnName("BufferTimeMinutes")
+            .HasColumnName("buffer_time_minutes")
             .IsRequired();
 
         builder.Property(sp => sp.MeetingInstructions)
@@ -44,12 +43,12 @@ internal class SessionProductConfiguration : IEntityTypeConfiguration<SessionPro
 
 
         builder.HasIndex(sp => sp.TimeZoneId)
-            .HasDatabaseName("IX_SessionProducts_TimeZone");
+            .HasDatabaseName("ix_session_products_time_zone");
 
         // Check constraints
-        builder.HasCheckConstraint("CK_SessionProduct_Duration_Valid",
+        /*builder.HasCheckConstraint("CK_SessionProduct_Duration_Valid",
             "\"DurationMinutes\" > 0 AND \"DurationMinutes\" % 15 = 0");
         builder.HasCheckConstraint("CK_SessionProduct_BufferTime_Valid",
-            "\"BufferTimeMinutes\" >= 0 AND \"BufferTimeMinutes\" % 15 = 0");
+            "\"BufferTimeMinutes\" >= 0 AND \"BufferTimeMinutes\" % 15 = 0");*/
     }
 }

@@ -26,6 +26,7 @@ public class SessionAvailability : Entity
 
     // Navigation properties
     public SessionProduct SessionProduct { get; private set; } = default!;
+    public Day Day { get; private set; } = default!;
 
     public static SessionAvailability Create(
         int sessionProductId,

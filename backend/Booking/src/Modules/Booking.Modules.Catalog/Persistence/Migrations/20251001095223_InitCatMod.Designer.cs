@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Catalog.Persistence.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20250914135747_CatalogInitial")]
-    partial class CatalogInitial
+    [Migration("20251001095223_InitCatMod")]
+    partial class InitCatMod
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,7 +44,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnName("day_of_week");
 
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
                     b.Property<int>("ProductId")
@@ -60,15 +62,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("session_product_id");
 
-                    b.Property<int>("StoreId")
-                        .HasColumnType("integer")
-                        .HasColumnName("store_id");
-
-                    b.Property<string>("StoreSlug")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("store_slug");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -76,8 +69,18 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_days");
 
+                    b.HasIndex("DayOfWeek")
+                        .HasDatabaseName("ix_days_day_of_week");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("ix_days_is_active");
+
                     b.HasIndex("SessionProductId")
                         .HasDatabaseName("ix_days_session_product_id");
+
+                    b.HasIndex("ProductId", "DayOfWeek")
+                        .IsUnique()
+                        .HasDatabaseName("ix_days_product_id_day_of_week");
 
                     b.ToTable("days", "catalog");
                 });
@@ -100,15 +103,16 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnName("order_id");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("price");
 
                     b.Property<DateTime>("ReleaseAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("release_at");
 
-                    b.Property<int>("State")
-                        .HasColumnType("integer")
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("state");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -117,6 +121,13 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_escrows");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_escrows_order_id");
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("ix_escrows_state");
 
                     b.ToTable("escrows", "catalog");
                 });
@@ -217,7 +228,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("time_zone_id");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -269,7 +280,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnName("order_id");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric")
+                        .HasColumnType("decimal(10,2)")
                         .HasColumnName("price");
 
                     b.Property<int>("ProductId")
@@ -278,7 +289,8 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.Property<string>("Reference")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("reference");
 
                     b.Property<int>("Status")
@@ -295,6 +307,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_payments");
+
+                    b.HasIndex("Reference")
+                        .IsUnique()
+                        .HasDatabaseName("ix_payments_reference");
 
                     b.ToTable("payments", "catalog");
                 });
@@ -326,8 +342,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("payment_ref");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -344,6 +361,12 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_payouts");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_payouts_status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_payouts_user_id");
 
                     b.ToTable("payouts", "catalog");
                 });
@@ -392,8 +415,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("product_slug");
 
-                    b.Property<int>("ProductType")
-                        .HasColumnType("integer")
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("product_type");
 
                     b.Property<int>("StoreId")
@@ -410,40 +434,28 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("subtitle");
 
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("thumbnail_url");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("title");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IsPublished")
-                        .HasDatabaseName("IX_Products_IsPublished");
+                        .HasDatabaseName("ix_product_is_published");
 
                     b.HasIndex("StoreId")
-                        .HasDatabaseName("IX_Products_StoreId");
+                        .HasDatabaseName("ix_product_store_id");
 
                     b.HasIndex("StoreId", "DisplayOrder")
-                        .HasDatabaseName("IX_Products_Store_DisplayOrder");
+                        .HasDatabaseName("ix_product_store_id_display_order");
 
-                    b.ToTable("product", "catalog", t =>
-                        {
-                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
-
-                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
-
-                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
-                        });
+                    b.ToTable("product", "catalog");
 
                     b.UseTptMappingStrategy();
                 });
@@ -475,12 +487,15 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.Property<int>("Duration")
                         .HasColumnType("integer")
-                        .HasColumnName("DurationMinutes");
+                        .HasColumnName("duration");
+
+                    b.Property<DateTime>("EndsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at");
 
                     b.Property<string>("MeetLink")
-                        .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("MeetLink");
+                        .HasColumnName("meet_link");
 
                     b.Property<string>("Note")
                         .IsRequired()
@@ -504,8 +519,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("scheduled_at");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<int>("StoreId")
@@ -529,7 +545,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_booked_sessions");
 
-                    b.ToTable("BookedSessions", "catalog");
+                    b.ToTable("booked_sessions", "catalog");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Sessions.SessionAvailability", b =>
@@ -584,17 +600,12 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasDatabaseName("ix_session_availabilities_day_id");
 
                     b.HasIndex("SessionProductId")
-                        .HasDatabaseName("IX_SessionAvailability_SessionProductId");
+                        .HasDatabaseName("ix_session_availability_session_product_id");
 
                     b.HasIndex("SessionProductId", "DayOfWeek", "IsActive")
-                        .HasDatabaseName("IX_SessionAvailability_Product_Day_Active");
+                        .HasDatabaseName("ix_session_availability_product_day_active");
 
-                    b.ToTable("session_availabilities", "catalog", t =>
-                        {
-                            t.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"day_of_week\" >= 0 AND \"day_of_week\" <= 6");
-
-                            t.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"start_time\" < \"end_time\"");
-                        });
+                    b.ToTable("session_availabilities", "catalog");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Store", b =>
@@ -642,7 +653,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("title");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -654,20 +665,13 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasName("pk_stores");
 
                     b.HasIndex("IsPublished")
-                        .HasDatabaseName("IX_Stores_IsPublished");
+                        .HasDatabaseName("ix_stores_is_published");
 
                     b.HasIndex("Slug")
                         .IsUnique()
-                        .HasDatabaseName("IX_Stores_Slug");
+                        .HasDatabaseName("ix_stores_slug");
 
-                    b.ToTable("stores", "catalog", t =>
-                        {
-                            t.HasCheckConstraint("CK_Store_Slug_Format", "\"slug\" ~ '^[a-z0-9-]+$'");
-
-                            t.HasCheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"slug\")) > 0");
-
-                            t.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
-                        });
+                    b.ToTable("stores", "catalog");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Wallet", b =>
@@ -703,11 +707,11 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
                     b.Property<int>("BufferTime")
                         .HasColumnType("integer")
-                        .HasColumnName("BufferTimeMinutes");
+                        .HasColumnName("buffer_time_minutes");
 
                     b.Property<int>("Duration")
                         .HasColumnType("integer")
-                        .HasColumnName("DurationMinutes");
+                        .HasColumnName("duration_minutes");
 
                     b.Property<string>("MeetingInstructions")
                         .HasMaxLength(1000)
@@ -723,20 +727,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .HasColumnName("time_zone_id");
 
                     b.HasIndex("TimeZoneId")
-                        .HasDatabaseName("IX_SessionProducts_TimeZone");
+                        .HasDatabaseName("ix_session_products_time_zone");
 
-                    b.ToTable("SessionProducts", "catalog", t =>
-                        {
-                            t.HasCheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
-
-                            t.HasCheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
-
-                            t.HasCheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
-
-                            t.HasCheckConstraint("CK_SessionProduct_BufferTime_Valid", "\"BufferTimeMinutes\" >= 0 AND \"BufferTimeMinutes\" % 15 = 0");
-
-                            t.HasCheckConstraint("CK_SessionProduct_Duration_Valid", "\"DurationMinutes\" > 0 AND \"DurationMinutes\" % 15 = 0");
-                        });
+                    b.ToTable("session_products", "catalog");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Day", b =>
@@ -745,6 +738,18 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .WithMany("Days")
                         .HasForeignKey("SessionProductId")
                         .HasConstraintName("fk_days_session_products_session_product_id");
+                });
+
+            modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Escrow", b =>
+                {
+                    b.HasOne("Booking.Modules.Catalog.Domain.Entities.Order", "Order")
+                        .WithOne("Escrow")
+                        .HasForeignKey("Booking.Modules.Catalog.Domain.Entities.Escrow", "OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_escrows_orders_order_id");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Order", b =>
@@ -777,12 +782,70 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_product_stores_store_id");
 
+                    b.OwnsOne("Booking.Modules.Catalog.Domain.ValueObjects.Picture", "PreviewPicture", b1 =>
+                        {
+                            b1.Property<int>("ProductId")
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("MainLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("preview_picture_main_link");
+
+                            b1.Property<string>("ThumbnailLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("preview_picture_thumbnail_link");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId")
+                                .HasConstraintName("fk_product_product_id");
+                        });
+
+                    b.OwnsOne("Booking.Modules.Catalog.Domain.ValueObjects.Picture", "ThumbnailPicture", b1 =>
+                        {
+                            b1.Property<int>("ProductId")
+                                .HasColumnType("integer")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("MainLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("thumbnail_picture_main_link");
+
+                            b1.Property<string>("ThumbnailLink")
+                                .IsRequired()
+                                .HasMaxLength(2048)
+                                .HasColumnType("character varying(2048)")
+                                .HasColumnName("thumbnail_picture_thumbnail_link");
+
+                            b1.HasKey("ProductId");
+
+                            b1.ToTable("product", "catalog");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ProductId")
+                                .HasConstraintName("fk_product_product_id");
+                        });
+
+                    b.Navigation("PreviewPicture");
+
                     b.Navigation("Store");
+
+                    b.Navigation("ThumbnailPicture");
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Sessions.SessionAvailability", b =>
                 {
-                    b.HasOne("Booking.Modules.Catalog.Domain.Entities.Day", null)
+                    b.HasOne("Booking.Modules.Catalog.Domain.Entities.Day", "Day")
                         .WithMany("Availabilities")
                         .HasForeignKey("DayId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -818,6 +881,8 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                                 .HasForeignKey("SessionAvailabilityId")
                                 .HasConstraintName("fk_session_availabilities_session_availabilities_id");
                         });
+
+                    b.Navigation("Day");
 
                     b.Navigation("SessionProduct");
 
@@ -871,6 +936,12 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Day", b =>
                 {
                     b.Navigation("Availabilities");
+                });
+
+            modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("Escrow")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.Store", b =>

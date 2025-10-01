@@ -6,6 +6,7 @@ using Booking.Api.Services;
 using Booking.Common;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog;
+using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
@@ -15,6 +16,7 @@ using Booking.Modules.Users.RecurringJobs;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using AssemblyReference = Booking.Modules.Catalog.AssemblyReference;
@@ -92,12 +94,13 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+    var catalogDb = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
     var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
-    /*// Drop databases
+    // Drop databases
     await usersDb.Database.EnsureDeletedAsync();
-    await mentorshipsDb.Database.EnsureDeletedAsync();
+    await catalogDb.Database.EnsureDeletedAsync();
     app.ApplyMigrations();
 
 
@@ -115,7 +118,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     await roleService.CreateRoleAsync("User");
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();*/
+    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 }
 
 app.MapHealthChecks("health", new HealthCheckOptions

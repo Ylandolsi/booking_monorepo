@@ -9,6 +9,7 @@
     <ItemGroup>
         <Folder Include="Domain\Events\"/>
         <Folder Include="Exceptions\"/>
+        <Folder Include="Persistence\Migrations\" />
         <Folder Include="Presistence\" />
     </ItemGroup>
 

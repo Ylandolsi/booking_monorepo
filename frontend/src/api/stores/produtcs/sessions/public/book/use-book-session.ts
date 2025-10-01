@@ -1,35 +1,56 @@
 import { useState } from 'react';
 import { useMonthlyAvailability } from '@/api/stores/produtcs/sessions/public';
 import { useBookSession, type BookSessionRequestType } from '@/api/stores/produtcs/sessions/public/book/book-session-api';
-import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 import type { DayAvailabilityType } from '@/api/stores/produtcs/sessions/public/availabilities/availability-types';
 import type { Product } from '@/api/stores/produtcs/products-type';
 import { toast } from 'sonner';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
-export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
+export const sessionSlotSchema = z.object({
+  startTime: z.string(), // 16:00
+  endTime: z.string(), // 16:00
+  isAvailable: z.boolean(),
+  isBooked: z.boolean(),
+});
 
-export interface BookingHookState {
-  selectedDate: Date | undefined;
-  selectedSlot: SessionSlotType | null;
-  step: BookingStep;
-  title: string;
-  email: string;
-  name: string;
-  phone: string;
-  notes?: string;
-}
+export type SessionSlotType = z.infer<typeof sessionSlotSchema>;
+
+export const bookingStepSchema = z.enum(['select', 'confirm', 'success', 'error']);
+
+export type BookingStep = z.infer<typeof bookingStepSchema>;
+
+export const bookingHookStateSchema = z.object({
+  selectedDate: z.date().optional(),
+  selectedSlot: sessionSlotSchema.nullable(),
+  step: bookingStepSchema,
+  title: z.string().min(3, 'Title must be at least 3 characters long.').max(100, 'Title cannot exceed 100 characters.').optional().or(z.literal('')),
+  email: z.string().email('Please enter a valid email address.'),
+  name: z.string().min(3, 'Name must be at least 3 characters long.'),
+  phone: z.string().regex(/^\d{8}$/, 'Please enter a valid phone number for Tunisia (+216xxxxxxxx).'),
+  notes: z.string().max(500, 'Notes cannot exceed 500 characters.').optional(),
+});
+
+export type BookingHookState = z.infer<typeof bookingHookStateSchema>;
 
 export function useBooking({ productSlug, storeSlug, product }: { productSlug?: string; storeSlug?: string; product: Product }) {
-  const [state, setState] = useState<BookingHookState>({
-    selectedDate: new Date(),
-    selectedSlot: null,
-    step: 'select',
-    notes: '',
-    title: '',
-    email: '',
-    name: '',
-    phone: '',
+  const form = useForm<BookingHookState>({
+    resolver: zodResolver(bookingHookStateSchema),
+    defaultValues: {
+      selectedDate: new Date(),
+      selectedSlot: null,
+      step: 'select',
+      notes: '',
+      title: '',
+      email: '',
+      name: '',
+      phone: '',
+    },
   });
+
+  const { watch, setValue, reset } = form;
+  const state = watch();
 
   const monthlyAvailabilityQuery = useMonthlyAvailability(
     productSlug,
@@ -60,69 +81,23 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
 
   // select date from calendar
   const setSelectedDate = (date: Date | undefined) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      selectedDate: date,
-      selectedSlot: null, // Reset slot when date changes
-    }));
+    setValue('selectedDate', date);
+    setValue('selectedSlot', null); // Reset slot when date changes
   };
 
   // select time slot from available slots of that day
   const setSelectedSlot = (slot: SessionSlotType | null) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      selectedSlot: slot,
-    }));
+    setValue('selectedSlot', slot);
   };
 
   // change the step of the booking process : select -> confirm -> success / error
   const setStep = (step: BookingStep) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      step,
-    }));
-  };
-
-  // set notes for the session
-  const setNotes = (notes: string) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      notes,
-    }));
-  };
-
-  // set title for the session
-  const setTitle = (title: string) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      title,
-    }));
-  };
-
-  const setEmail = (email: string) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      email,
-    }));
-  };
-
-  const setName = (name: string) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      name,
-    }));
-  };
-
-  const setPhone = (phone: string) => {
-    setState((prev: BookingHookState) => ({
-      ...prev,
-      phone,
-    }));
+    setValue('step', step);
   };
 
   // reset the booking process
   const resetBooking = () => {
-    setState({
+    reset({
       selectedDate: undefined,
       selectedSlot: null,
       step: 'select',
@@ -152,37 +127,21 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
   };
 
   // Handle booking submission
-  const handleBookSession = async () => {
-    if (!state.selectedDate || !state.selectedSlot || !productSlug) {
-      return;
-    }
-
-    // validate required fields
-    if (!state.title || !state.email || !state.name || !state.phone) {
-      toast.error('Please fill in all required fields.');
-      return;
-    }
-
-    if (!/^\S+@\S+\.\S+$/.test(state.email)) {
-      toast.error('Please enter a valid email address.');
-      return;
-    }
-
-    // Phone number validation for Tunisia (+216xxxxxxxx), Algeria (+213xxxxxxxxx), or Morocco (+212xxxxxxxxx)
-    if (!/^\+(216\d{8}|213\d{9}|212\d{9})$/.test(state.phone)) {
-      toast.error('Please enter a valid phone number for Tunisia (+216xxxxxxxx), Algeria (+213xxxxxxxxx), or Morocco (+212xxxxxxxxx).');
+  const handleBookSession = form.handleSubmit(async (data: BookingHookState) => {
+    if (!data.selectedDate || !data.selectedSlot || !productSlug) {
+      toast.error('Please select a date and time slot.');
       return;
     }
 
     const bookingRequest: BookSessionRequestType = {
-      date: state.selectedDate.toLocaleDateString('en-CA'),
-      startTime: state.selectedSlot.startTime,
-      endTime: state.selectedSlot.endTime,
-      notes: state.notes ?? '',
-      title: state.title,
-      email: state.email,
-      name: state.name,
-      phone: state.phone,
+      date: data.selectedDate.toLocaleDateString('en-CA'),
+      startTime: data.selectedSlot.startTime,
+      endTime: data.selectedSlot.endTime,
+      notes: data.notes ?? '',
+      title: data.title || '',
+      email: data.email,
+      name: data.name,
+      phone: data.phone,
       timeZoneId: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Africa/Tunis', // get the user's timezone
     };
 
@@ -194,18 +153,17 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
       console.error('Booking failed:', error);
       setStep('error');
     }
-  };
+  });
 
   const bookingSummary = createBookingSummary();
   console.log(state.selectedDate);
 
   return {
+    // Form instance
+    form,
+
     // State
-    selectedDate: state.selectedDate,
-    selectedSlot: state.selectedSlot,
-    step: state.step,
-    notes: state.notes,
-    title: state.title,
+    state,
 
     // Computed values
     selectedDayData,
@@ -220,8 +178,6 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
     setSelectedDate,
     setSelectedSlot,
     setStep,
-    setNotes,
-    setTitle,
     resetBooking,
     handleBookSession,
   };

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Catalog.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class CatalogInitial : Migration
+    public partial class InitCatMod : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 name: "catalog");
 
             migrationBuilder.CreateTable(
-                name: "BookedSessions",
+                name: "booked_sessions",
                 schema: "catalog",
                 columns: table => new
                 {
@@ -27,13 +27,14 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     store_id = table.Column<int>(type: "integer", nullable: false),
                     store_slug = table.Column<string>(type: "text", nullable: false),
                     title = table.Column<string>(type: "text", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "integer", nullable: false),
+                    duration = table.Column<int>(type: "integer", nullable: false),
                     price = table.Column<decimal>(type: "numeric", nullable: false),
                     amount_paid = table.Column<decimal>(type: "numeric", nullable: false),
                     note = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
-                    MeetLink = table.Column<string>(type: "text", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    meet_link = table.Column<string>(type: "text", nullable: true),
                     scheduled_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ends_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     confirmed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -45,25 +46,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "escrows",
-                schema: "catalog",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    price = table.Column<decimal>(type: "numeric", nullable: false),
-                    state = table.Column<int>(type: "integer", nullable: false),
-                    order_id = table.Column<int>(type: "integer", nullable: false),
-                    release_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_escrows", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "payments",
                 schema: "catalog",
                 columns: table => new
@@ -71,10 +53,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     store_id = table.Column<int>(type: "integer", nullable: false),
-                    reference = table.Column<string>(type: "text", nullable: false),
+                    reference = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     order_id = table.Column<int>(type: "integer", nullable: false),
                     product_id = table.Column<int>(type: "integer", nullable: false),
-                    price = table.Column<decimal>(type: "numeric", nullable: false),
+                    price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     status = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -96,7 +78,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     wallet_id = table.Column<int>(type: "integer", nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
                     payment_ref = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -119,17 +101,14 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     picture_main_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     picture_thumbnail_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     is_published = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     step = table.Column<int>(type: "integer", nullable: false),
-                    social_links = table.Column<string>(type: "jsonb", nullable: false)
+                    social_links = table.Column<string>(type: "jsonb", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_stores", x => x.id);
-                    table.CheckConstraint("CK_Store_Slug_Format", "\"slug\" ~ '^[a-z0-9-]+$'");
-                    table.CheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"slug\")) > 0");
-                    table.CheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                 });
 
             migrationBuilder.CreateTable(
@@ -156,26 +135,26 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     product_slug = table.Column<string>(type: "text", nullable: false),
-                    store_id = table.Column<int>(type: "integer", nullable: false),
                     store_slug = table.Column<string>(type: "text", nullable: false),
+                    store_id = table.Column<int>(type: "integer", nullable: false),
                     title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    click_to_pay = table.Column<string>(type: "text", nullable: false),
                     subtitle = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    thumbnail_url = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    product_type = table.Column<int>(type: "integer", nullable: false),
+                    product_type = table.Column<string>(type: "text", nullable: false),
                     price = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
+                    click_to_pay = table.Column<string>(type: "text", nullable: false),
                     display_order = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
                     is_published = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    thumbnail_picture_main_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    thumbnail_picture_thumbnail_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    preview_picture_main_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
+                    preview_picture_thumbnail_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_product", x => x.id);
-                    table.CheckConstraint("CK_Product_DisplayOrder_NonNegative", "\"display_order\" >= 0");
-                    table.CheckConstraint("CK_Product_Price_NonNegative", "\"price\" >= 0");
-                    table.CheckConstraint("CK_Product_Title_NotEmpty", "LENGTH(TRIM(\"title\")) > 0");
                     table.ForeignKey(
                         name: "fk_product_stores_store_id",
                         column: x => x.store_id,
@@ -208,9 +187,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     session_end_time = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     time_zone_id = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     note = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,21 +211,19 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SessionProducts",
+                name: "session_products",
                 schema: "catalog",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "integer", nullable: false),
-                    BufferTimeMinutes = table.Column<int>(type: "integer", nullable: false),
+                    duration_minutes = table.Column<int>(type: "integer", nullable: false),
+                    buffer_time_minutes = table.Column<int>(type: "integer", nullable: false),
                     meeting_instructions = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     time_zone_id = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValue: "Africa/Tunis")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SessionProducts", x => x.id);
-                    table.CheckConstraint("CK_SessionProduct_BufferTime_Valid", "\"BufferTimeMinutes\" >= 0 AND \"BufferTimeMinutes\" % 15 = 0");
-                    table.CheckConstraint("CK_SessionProduct_Duration_Valid", "\"DurationMinutes\" > 0 AND \"DurationMinutes\" % 15 = 0");
+                    table.PrimaryKey("PK_session_products", x => x.id);
                     table.ForeignKey(
                         name: "fk_session_products_product_id",
                         column: x => x.id,
@@ -254,6 +231,32 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         principalTable: "product",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "escrows",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    state = table.Column<string>(type: "text", nullable: false),
+                    order_id = table.Column<int>(type: "integer", nullable: false),
+                    release_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_escrows", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_escrows_orders_order_id",
+                        column: x => x.order_id,
+                        principalSchema: "catalog",
+                        principalTable: "orders",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,10 +268,8 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     product_id = table.Column<int>(type: "integer", nullable: false),
                     product_slug = table.Column<string>(type: "text", nullable: false),
-                    store_id = table.Column<int>(type: "integer", nullable: false),
-                    store_slug = table.Column<string>(type: "text", nullable: false),
                     day_of_week = table.Column<int>(type: "integer", nullable: false),
-                    is_active = table.Column<bool>(type: "boolean", nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     session_product_id = table.Column<int>(type: "integer", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -280,7 +281,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         name: "fk_days_session_products_session_product_id",
                         column: x => x.session_product_id,
                         principalSchema: "catalog",
-                        principalTable: "SessionProducts",
+                        principalTable: "session_products",
                         principalColumn: "id");
                 });
 
@@ -305,8 +306,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_session_availabilities", x => x.id);
-                    table.CheckConstraint("CK_SessionAvailability_DayOfWeek", "\"day_of_week\" >= 0 AND \"day_of_week\" <= 6");
-                    table.CheckConstraint("CK_SessionAvailability_TimeRange", "\"start_time\" < \"end_time\"");
                     table.ForeignKey(
                         name: "fk_session_availabilities_days_day_id",
                         column: x => x.day_id,
@@ -318,16 +317,48 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                         name: "fk_session_availabilities_session_products_session_product_id",
                         column: x => x.session_product_id,
                         principalSchema: "catalog",
-                        principalTable: "SessionProducts",
+                        principalTable: "session_products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_days_day_of_week",
+                schema: "catalog",
+                table: "days",
+                column: "day_of_week");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_days_is_active",
+                schema: "catalog",
+                table: "days",
+                column: "is_active");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_days_product_id_day_of_week",
+                schema: "catalog",
+                table: "days",
+                columns: new[] { "product_id", "day_of_week" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_days_session_product_id",
                 schema: "catalog",
                 table: "days",
                 column: "session_product_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_escrows_order_id",
+                schema: "catalog",
+                table: "escrows",
+                column: "order_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_escrows_state",
+                schema: "catalog",
+                table: "escrows",
+                column: "state");
 
             migrationBuilder.CreateIndex(
                 name: "ix_orders_created_at",
@@ -375,22 +406,41 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 column: "store_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_IsPublished",
+                name: "ix_payments_reference",
+                schema: "catalog",
+                table: "payments",
+                column: "reference",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_payouts_status",
+                schema: "catalog",
+                table: "payouts",
+                column: "status");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_payouts_user_id",
+                schema: "catalog",
+                table: "payouts",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_product_is_published",
                 schema: "catalog",
                 table: "product",
                 column: "is_published");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_Store_DisplayOrder",
-                schema: "catalog",
-                table: "product",
-                columns: new[] { "store_id", "display_order" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Products_StoreId",
+                name: "ix_product_store_id",
                 schema: "catalog",
                 table: "product",
                 column: "store_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_product_store_id_display_order",
+                schema: "catalog",
+                table: "product",
+                columns: new[] { "store_id", "display_order" });
 
             migrationBuilder.CreateIndex(
                 name: "ix_session_availabilities_day_id",
@@ -399,31 +449,31 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 column: "day_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionAvailability_Product_Day_Active",
+                name: "ix_session_availability_product_day_active",
                 schema: "catalog",
                 table: "session_availabilities",
                 columns: new[] { "session_product_id", "day_of_week", "is_active" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionAvailability_SessionProductId",
+                name: "ix_session_availability_session_product_id",
                 schema: "catalog",
                 table: "session_availabilities",
                 column: "session_product_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SessionProducts_TimeZone",
+                name: "ix_session_products_time_zone",
                 schema: "catalog",
-                table: "SessionProducts",
+                table: "session_products",
                 column: "time_zone_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stores_IsPublished",
+                name: "ix_stores_is_published",
                 schema: "catalog",
                 table: "stores",
                 column: "is_published");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Stores_Slug",
+                name: "ix_stores_slug",
                 schema: "catalog",
                 table: "stores",
                 column: "slug",
@@ -434,15 +484,11 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookedSessions",
+                name: "booked_sessions",
                 schema: "catalog");
 
             migrationBuilder.DropTable(
                 name: "escrows",
-                schema: "catalog");
-
-            migrationBuilder.DropTable(
-                name: "orders",
                 schema: "catalog");
 
             migrationBuilder.DropTable(
@@ -462,11 +508,15 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 schema: "catalog");
 
             migrationBuilder.DropTable(
+                name: "orders",
+                schema: "catalog");
+
+            migrationBuilder.DropTable(
                 name: "days",
                 schema: "catalog");
 
             migrationBuilder.DropTable(
-                name: "SessionProducts",
+                name: "session_products",
                 schema: "catalog");
 
             migrationBuilder.DropTable(

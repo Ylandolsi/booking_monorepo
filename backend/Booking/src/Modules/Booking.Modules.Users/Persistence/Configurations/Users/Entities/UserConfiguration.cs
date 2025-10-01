@@ -25,12 +25,15 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.OwnsOne(u => u.Name, name =>
         {
-            name.Property(n => n.FirstName).HasMaxLength(50).IsRequired();
-            name.Property(n => n.LastName).HasMaxLength(50).IsRequired();
+            name.Property(n => n.FirstName).HasMaxLength(50)
+                .HasColumnName("first_name")
+                .IsRequired();
+            name.Property(n => n.LastName).HasMaxLength(50)
+                .HasColumnName("last_name")
+                .IsRequired();
         });
 
 
-    
         builder.Property(u => u.Bio)
             .HasMaxLength(500)
             .IsRequired(false);
@@ -46,6 +49,5 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             t.HasCheckConstraint("CK_User_Gender_Valid",
                 "gender IS NULL OR gender IN ('Male', 'Female', 'Other', 'Prefer not to say')");
         });
-        
     }
 }

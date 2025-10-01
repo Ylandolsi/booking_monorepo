@@ -33,6 +33,7 @@
     <ItemGroup>
         <Folder Include="Features\Payout\Admin\GetDetailed\"/>
         <Folder Include="Features\Stores\Private\Update\depricated\"/>
+        <Folder Include="Persistence\Migrations\" />
     </ItemGroup>
 
     <ItemGroup>

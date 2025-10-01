@@ -24,6 +24,7 @@ public class Escrow : Entity
 
     public DateTime ReleaseAt { get; private set; }
 
+    public Order Order { get; private set; }
 
     public void SetRefunded()
     {

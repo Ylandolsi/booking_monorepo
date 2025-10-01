@@ -495,13 +495,13 @@ namespace Booking.Modules.Users.Persistence.Migrations
                                 .IsRequired()
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
-                                .HasColumnName("name_first_name");
+                                .HasColumnName("first_name");
 
                             b1.Property<string>("LastName")
                                 .IsRequired()
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
-                                .HasColumnName("name_last_name");
+                                .HasColumnName("last_name");
 
                             b1.HasKey("UserId");
 

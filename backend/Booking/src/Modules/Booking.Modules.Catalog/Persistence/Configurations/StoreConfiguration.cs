@@ -55,18 +55,18 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
         // Indexes
         builder.HasIndex(s => s.Slug)
             .IsUnique()
-            .HasDatabaseName("IX_Stores_Slug");
+            .HasDatabaseName("ix_stores_slug");
 
 
         builder.HasIndex(s => s.IsPublished)
-            .HasDatabaseName("IX_Stores_IsPublished");
+            .HasDatabaseName("ix_stores_is_published");
 
         // Check constraints
-        builder.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
+        /*builder.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");
         builder.HasCheckConstraint("CK_Store_Slug_NotEmpty", "LENGTH(TRIM(\"Slug\")) > 0");
         builder.HasCheckConstraint("CK_Store_Slug_Format",
-            "\"Slug\" ~ '^[a-z0-9-]+$'"); // Only lowercase letters, numbers, and hyphens
-
+            "\"Slug\" ~ '^[a-z0-9-]+$'"); // Only lowercase letters, numbers, a*d hyphens
+*/
         // Relationship to Products
         builder.HasMany(s => s.Products)
             .WithOne(p => p.Store)
