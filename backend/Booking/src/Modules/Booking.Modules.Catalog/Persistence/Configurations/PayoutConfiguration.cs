@@ -25,7 +25,7 @@ internal sealed class PayoutConfiguration : IEntityTypeConfiguration<Payout>
         builder.Property(p => p.Status)
             .IsRequired();
 
-        builder.HasIndex(p => p.UserId);
-        builder.HasIndex(p => p.Status);
+        /*builder.HasIndex(p => p.UserId);
+        builder.HasIndex(p => p.Status);*/
     }
 }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
 
 namespace Booking.Modules.Catalog.Domain.Entities;
@@ -15,6 +16,7 @@ public class Escrow : Entity
         State = EscrowState.Held;
     }
 
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
     public decimal Price { get; private set; }

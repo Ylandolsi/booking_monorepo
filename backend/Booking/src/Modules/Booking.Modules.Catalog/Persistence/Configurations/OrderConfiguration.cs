@@ -92,7 +92,7 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes
-        builder.HasIndex(o => o.StoreId)
+        /*builder.HasIndex(o => o.StoreId)
             .HasDatabaseName("ix_orders_store_id");
 
         builder.HasIndex(o => o.CustomerEmail)
@@ -111,6 +111,6 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.HasIndex(o => o.ScheduledAt)
             .HasDatabaseName("ix_orders_scheduled_at")
-            .HasFilter("scheduled_at IS NOT NULL");
+            .HasFilter("scheduled_at IS NOT NULL");*/
     }
 }

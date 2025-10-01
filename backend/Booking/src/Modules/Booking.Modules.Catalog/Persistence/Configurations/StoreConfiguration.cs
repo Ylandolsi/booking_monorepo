@@ -52,14 +52,14 @@ internal class StoreConfiguration : IEntityTypeConfiguration<Store>
                         new List<SocialLink>())
             .HasColumnType("jsonb"); // PostgreSQL specific
 
-        // Indexes
+        /*// Indexes
         builder.HasIndex(s => s.Slug)
             .IsUnique()
             .HasDatabaseName("ix_stores_slug");
 
 
         builder.HasIndex(s => s.IsPublished)
-            .HasDatabaseName("ix_stores_is_published");
+            .HasDatabaseName("ix_stores_is_published");*/
 
         // Check constraints
         /*builder.HasCheckConstraint("CK_Store_Title_NotEmpty", "LENGTH(TRIM(\"Title\")) > 0");

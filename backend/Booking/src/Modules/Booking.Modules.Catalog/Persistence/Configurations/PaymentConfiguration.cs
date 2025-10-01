@@ -32,7 +32,9 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         // Indexes
+        /*
         builder.HasIndex(p => p.Reference).IsUnique();
+        */
 
         // Add table-level constraints
         //     builder.ToTable("payments", t =>

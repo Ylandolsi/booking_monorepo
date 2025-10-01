@@ -91,6 +91,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.MapOpenApi();
     app.MapScalarApiReference(opt => { opt.WithTitle("Booking API"); });
     app.UseSwaggerWithUi();
+    
+    
+    /*
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
@@ -118,7 +121,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     await roleService.CreateRoleAsync("User");
 
     var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();*/
 }
 
 app.MapHealthChecks("health", new HealthCheckOptions

@@ -51,7 +51,7 @@ public class CompleteWebhook(
         if (order.ProductType == ProductType.Session)
         {
             var session
-                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.Id == order.ProductId, cancellationToken);
+                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductId == order.ProductId, cancellationToken);
             if (session is null)
             {
                 logger.LogError(

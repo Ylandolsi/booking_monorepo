@@ -28,6 +28,6 @@ internal sealed class EscrowConfiguration : IEntityTypeConfiguration<Escrow>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes
-        builder.HasIndex(e => e.State);
+        /*builder.HasIndex(e => e.State);*/
     }
 }

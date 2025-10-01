@@ -32,12 +32,13 @@ internal sealed class DayConfiguration : IEntityTypeConfiguration<Day>
             .HasForeignKey(a => a.DayId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Indexes
+        /*// Indexes
         builder.HasIndex(d => d.DayOfWeek);
-        builder.HasIndex(d => d.IsActive);
+        builder.HasIndex(d => d.IsActive);*/
         
+        /*
         // one day per product per day of week
         builder.HasIndex(d => new { d.ProductId, d.DayOfWeek })
-            .IsUnique();
+            .IsUnique();*/
     }
 }

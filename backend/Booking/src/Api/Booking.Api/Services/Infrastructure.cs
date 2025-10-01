@@ -93,7 +93,10 @@ public static class Infrastructure
                 //make this more reselllient
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
                 client.DefaultRequestHeaders.Add("x-api-key", konnectOptions.ApiKey);
-                client.Timeout = TimeSpan.FromSeconds(10);
+                client.Timeout = TimeSpan.FromSeconds(300);
+                /* Enable this for prod 
+                client.Timeout = TimeSpan.FromSeconds(konnectOptions.PaymentLifespan);
+            */
             })
             .AddStandardResilienceHandler();
 

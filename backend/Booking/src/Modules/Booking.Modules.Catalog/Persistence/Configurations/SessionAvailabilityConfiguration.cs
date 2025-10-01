@@ -29,12 +29,6 @@ internal class SessionAvailabilityConfiguration : IEntityTypeConfiguration<Sessi
             .IsRequired()
             .HasDefaultValue(true);
 
-        // Indexes
-        builder.HasIndex(sa => sa.SessionProductId)
-            .HasDatabaseName("ix_session_availability_session_product_id");
-
-        builder.HasIndex(sa => new { sa.SessionProductId, sa.DayOfWeek, sa.IsActive })
-            .HasDatabaseName("ix_session_availability_product_day_active");
 
         // Relationship
         builder.HasOne(sa => sa.SessionProduct)
@@ -42,6 +36,14 @@ internal class SessionAvailabilityConfiguration : IEntityTypeConfiguration<Sessi
             .HasForeignKey(sp => sp.SessionProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        
+        
+        /*// Indexes
+        builder.HasIndex(sa => sa.SessionProductId)
+            .HasDatabaseName("ix_session_availability_session_product_id");
+
+        builder.HasIndex(sa => new { sa.SessionProductId, sa.DayOfWeek, sa.IsActive })
+            .HasDatabaseName("ix_session_availability_product_day_active");*/
         // Check constraints
         /*builder.HasCheckConstraint("CK_SessionAvailability_TimeRange", "\"StartTime\" < \"EndTime\"");
         builder.HasCheckConstraint("CK_SessionAvailability_DayOfWeek", "\"DayOfWeek\" >= 0 AND \"DayOfWeek\" <= 6");*/

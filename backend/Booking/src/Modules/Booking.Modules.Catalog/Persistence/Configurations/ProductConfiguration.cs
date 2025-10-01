@@ -60,17 +60,19 @@ internal class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.CreatedAt)
             .IsRequired();
 
-        // Indexes
-        builder.HasIndex(p => p.StoreId);
 
-        builder.HasIndex(p => p.IsPublished);
-
-        builder.HasIndex(p => new { p.StoreId, p.DisplayOrder });
         // Relationship to Store
         builder.HasOne(p => p.Store)
             .WithMany() // Store.Products navigation will be added later
             .HasForeignKey(p => p.StoreId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        /*// Indexes
+        builder.HasIndex(p => p.StoreId);
+
+        builder.HasIndex(p => p.IsPublished);
+
+        builder.HasIndex(p => new { p.StoreId, p.DisplayOrder });*/
 
         // Check constraints
         /*builder.HasCheckConstraint("ck_product_title_not_empty", "LENGTH(TRIM(\"Title\")) > 0");

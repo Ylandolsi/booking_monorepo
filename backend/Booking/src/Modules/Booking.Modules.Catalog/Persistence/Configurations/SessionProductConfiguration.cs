@@ -42,8 +42,9 @@ internal class SessionProductConfiguration : IEntityTypeConfiguration<SessionPro
             .OnDelete(DeleteBehavior.Cascade);
 
 
+        /*
         builder.HasIndex(sp => sp.TimeZoneId)
-            .HasDatabaseName("ix_session_products_time_zone");
+            .HasDatabaseName("ix_session_products_time_zone");*/
 
         // Check constraints
         /*builder.HasCheckConstraint("CK_SessionProduct_Duration_Valid",
