@@ -9,6 +9,7 @@ export type RequestOptions = {
   body?: any;
   params?: Record<string, string | number | boolean | undefined | null>;
   cache?: RequestCache;
+  refreshed?: boolean; // internal use only
 };
 
 export function buildUrlWithParams(url: string, params?: RequestOptions['params']): string {
@@ -20,7 +21,7 @@ export function buildUrlWithParams(url: string, params?: RequestOptions['params'
 }
 
 async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', headers = {}, body, params, cache = 'no-store' } = options;
+  const { method = 'GET', headers = {}, body, params, cache = 'no-store', refreshed = false } = options;
 
   const fullUrl = buildUrlWithParams(`${env.API_URL}/${url}`, params);
 
@@ -42,9 +43,11 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
   });
 
   // handle unauthorized access
-  if (response.status === 401) {
+  if (response.status === 401 && !refreshed) {
+    // if the response type is unauthorized and we are on an auth page, just return undefined
     if (window.location.href.includes('auth')) return undefined as T; // Allow auth pages to handle 401 without redirecting
     // try to refresh the token
+
     try {
       const refreshResponse = await fetch(`${env.API_URL}/${RefreshAccessToken}`, {
         method: 'POST',
@@ -53,7 +56,7 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
 
       if (refreshResponse.ok) {
         // If token refresh is successful, retry the original request
-        return fetchApi<T>(url, options);
+        return fetchApi<T>(url, { ...options, refreshed: true });
       }
     } catch (error) {
       console.error('Token refresh failed:', error);
