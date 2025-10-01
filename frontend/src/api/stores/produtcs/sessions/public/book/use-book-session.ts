@@ -4,6 +4,7 @@ import { useBookSession, type BookSessionRequestType } from '@/api/stores/produt
 import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 import type { DayAvailabilityType } from '@/api/stores/produtcs/sessions/public/availabilities/availability-types';
 import type { Product } from '@/api/stores/produtcs/products-type';
+import { toast } from 'sonner';
 
 export type BookingStep = 'select' | 'confirm' | 'success' | 'error';
 
@@ -11,8 +12,11 @@ export interface BookingHookState {
   selectedDate: Date | undefined;
   selectedSlot: SessionSlotType | null;
   step: BookingStep;
-  notes: string;
   title: string;
+  email: string;
+  name: string;
+  phone: string;
+  notes?: string;
 }
 
 export function useBooking({ productSlug, storeSlug, product }: { productSlug?: string; storeSlug?: string; product: Product }) {
@@ -22,6 +26,9 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
     step: 'select',
     notes: '',
     title: '',
+    email: '',
+    name: '',
+    phone: '',
   });
 
   const monthlyAvailabilityQuery = useMonthlyAvailability(
@@ -33,7 +40,6 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
 
   const bookSessionMutation = useBookSession();
 
-  console.log('data ', monthlyAvailabilityQuery.data);
   // from the monthly data , get the selected day (user selects it from the calendar) data
   const selectedDayData: DayAvailabilityType | undefined =
     state.selectedDate && monthlyAvailabilityQuery.data
@@ -93,6 +99,27 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
     }));
   };
 
+  const setEmail = (email: string) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      email,
+    }));
+  };
+
+  const setName = (name: string) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      name,
+    }));
+  };
+
+  const setPhone = (phone: string) => {
+    setState((prev: BookingHookState) => ({
+      ...prev,
+      phone,
+    }));
+  };
+
   // reset the booking process
   const resetBooking = () => {
     setState({
@@ -101,6 +128,9 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
       step: 'select',
       notes: '',
       title: '',
+      email: '',
+      name: '',
+      phone: '',
     });
   };
 
@@ -127,7 +157,22 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
       return;
     }
 
-    // todo : add email ,  name and phone
+    // validate required fields
+    if (!state.title || !state.email || !state.name || !state.phone) {
+      toast.error('Please fill in all required fields.');
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(state.email)) {
+      toast.error('Please enter a valid email address.');
+      return;
+    }
+
+    // Phone number validation for Tunisia (+216xxxxxxxx), Algeria (+213xxxxxxxxx), or Morocco (+212xxxxxxxxx)
+    if (!/^\+(216\d{8}|213\d{9}|212\d{9})$/.test(state.phone)) {
+      toast.error('Please enter a valid phone number for Tunisia (+216xxxxxxxx), Algeria (+213xxxxxxxxx), or Morocco (+212xxxxxxxxx).');
+      return;
+    }
 
     const bookingRequest: BookSessionRequestType = {
       date: state.selectedDate.toLocaleDateString('en-CA'),
@@ -135,6 +180,10 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
       endTime: state.selectedSlot.endTime,
       notes: state.notes ?? '',
       title: state.title,
+      email: state.email,
+      name: state.name,
+      phone: state.phone,
+      timeZoneId: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Africa/Tunis', // get the user's timezone
     };
 
     try {

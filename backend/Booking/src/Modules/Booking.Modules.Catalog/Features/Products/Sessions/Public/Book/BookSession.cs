@@ -33,10 +33,6 @@ internal sealed class BookSession : IEndpoint
                     request.Note);
 
                 var result = await handler.Handle(command, cancellationToken);
-                // if there is amount to be paid : return link of payment 
-                // else return 'paid' 
-
-                // todo : change this : to payUrl , status 
 
                 return result.Match(
                     Results.Ok,

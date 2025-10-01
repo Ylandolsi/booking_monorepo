@@ -30,7 +30,7 @@ internal sealed class BookSessionCommandHandler(
         CancellationToken cancellationToken)
     {
         logger.LogInformation(
-            "Booking session for mentor {ProductSlug} on {Date} from {StartTime} to {EndTime}",
+            "Booking session for session product  {ProductSlug} on {Date} from {StartTime} to {EndTime}",
             command.ProductSlug, command.Date, command.StartTime, command.EndTime);
 
 
@@ -44,14 +44,6 @@ internal sealed class BookSessionCommandHandler(
 
         var sessionDateUtc = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
 
-        // todo  : maybe handle endtime and start time from the request as datetime .. 
-        if (endTime <= startTime)
-        {
-            logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
-                command.StartTime);
-            return Result.Failure<BookSessionRepsonse>(
-                Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
-        }
 
 
         var sessionStartDateTimeUtc =
@@ -59,6 +51,14 @@ internal sealed class BookSessionCommandHandler(
         var sessionEndDateTimeUtc =
             TimeConvertion.ToInstant(DateOnly.FromDateTime(sessionDate.Date), endTime, command.TimeZoneId);
 
+        
+        if (sessionEndDateTimeUtc <= sessionStartDateTimeUtc)
+        {
+            logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
+                command.StartTime);
+            return Result.Failure<BookSessionRepsonse>(
+                Error.Problem("Session.InvalidTimeRange", "End time must be after start time"));
+        }
 
         var durationMinutes = (int)(endTime - startTime).TotalMinutes;
 
@@ -75,12 +75,11 @@ internal sealed class BookSessionCommandHandler(
 
         if (product == null)
         {
-            logger.LogWarning("Active mentor with SLUG {ProductSlug} not found", command.ProductSlug);
+            logger.LogWarning("Active session product  with SLUG {ProductSlug} not found", command.ProductSlug);
             return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.NotFound", "Active mentor not found"));
         }
 
 
-        // TODO : maybe let the timezone fromt he store ? 
         var sessionStartDateTimeTimeZoneMentor = TimeConvertion.ConvertInstantToTimeZone(sessionStartDateTimeUtc,
             product.TimeZoneId == "" ? "Africa/Tunis" : product.TimeZoneId);
 
@@ -157,20 +156,20 @@ internal sealed class BookSessionCommandHandler(
             // or popualte it from the producT ? 
             var storeData = await context.Stores.FirstOrDefaultAsync(s => s.Id == product.StoreId, cancellationToken);
 
-            var mentorData = await usersModuleApi.GetUserInfo(storeData.UserId, cancellationToken);
+            var storeOwnerData = await usersModuleApi.GetUserInfo(storeData.UserId, cancellationToken);
 
-            if (string.IsNullOrEmpty(mentorData.GoogleEmail))
+            if (string.IsNullOrEmpty(storeOwnerData.GoogleEmail))
             {
                 logger.LogError(
                     "user tries to book a session with a mentor  {ProductSlug } who is not integrated with google calendar ",
-                    mentorData.Slug);
+                    storeOwnerData.Slug);
                 return Result.Failure<BookSessionRepsonse>(Error.NotFound("Mentor.Not.Integrated.Google.Calendar",
                     "Your mentor is not integrated with  google calendar"));
             }
 
 
             var sessionTitle = string.IsNullOrEmpty(command.Title)
-                ? $"Session : {mentorData.FirstName} {mentorData.LastName} & {command.Name}"
+                ? $"Session : {storeOwnerData.FirstName} {storeOwnerData.LastName} & {command.Name}"
                 : command.Title;
 
             var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
@@ -304,17 +303,17 @@ internal sealed class BookSessionCommandHandler(
     {
         try
         {
-            var mentorData = await usersModuleApi.GetUserInfo(mentorUserId, cancellationToken);
+            var storeOwnerData = await usersModuleApi.GetUserInfo(mentorUserId, cancellationToken);
 
             var sessionStartTime = session.ScheduledAt;
             var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
-            var emails = new List<string> { command.Email, mentorData.GoogleEmail, mentorData.Email };
+            var emails = new List<string> { command.Email, storeOwnerData.GoogleEmail, storeOwnerData.Email };
             var description = string.IsNullOrEmpty(command.Note) ? session.Title : command.Note;
 
             var meetRequest = new MeetingRequest
             {
-                Title = $"Meetini Session : {command.Title} ",
+                Title = $"Meetini Session : {command.Title} ", // todo change the name of app 
                 Description = description,
                 AttendeeEmails = emails,
                 StartTime = sessionStartTime,
