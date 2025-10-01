@@ -52,6 +52,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* html:not(.dark) body { 
+  background: rgba(255, 238, 238, 0.2),
+  background: -webkit-linear-gradient(to bottom, rgba(221, 239, 187, 0.2), rgba(255, 238, 238, 0.2)); 
+  background: linear-gradient(
+    to bottom,
+    rgba(221, 239, 187, 0.2),
+    rgba(255, 238, 238, 0.2)
+  ); 
+}
+*/
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.3438 0.0269 95.7226);
