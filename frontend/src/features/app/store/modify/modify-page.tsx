@@ -164,7 +164,7 @@ export function ModifyStore() {
           </div>
           {products.length !== 0 &&
             products.map((product) => (
-              <div className="space-y-4 p-6">
+              <div className="space-y-4 px-6 py-2">
                 <div className="group border-primary/20 dark:border-primary/30 bg-card-light dark:bg-card-dark hover:border-primary/40 relative rounded-xl border shadow-sm transition-all hover:shadow-lg">
                   <div className="flex items-center p-4">
                     <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
