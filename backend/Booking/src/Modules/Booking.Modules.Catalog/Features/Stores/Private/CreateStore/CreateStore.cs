@@ -15,9 +15,9 @@ public class CreateStoreHandler(
     StoreService storeService,
     IUnitOfWork unitOfWork,
     ILogger<CreateStoreHandler> logger)
-    : ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse>
+    : ICommandHandler<PostStoreCommand, PatchPostStoreResponse>
 {
-    public async Task<Result<PatchPostStoreResponse>> Handle(PatchPostStoreCommand command,
+    public async Task<Result<PatchPostStoreResponse>> Handle(PostStoreCommand command,
         CancellationToken cancellationToken)
     {
         logger.LogInformation(
@@ -103,7 +103,7 @@ public class CreateStoreHandler(
         }
     }
 
-    private static Result ValidateCommand(PatchPostStoreCommand command)
+    private static Result ValidateCommand(PatchStoreCommand command)
     {
         if (command.UserId <= 0)
             return Result.Failure(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
@@ -126,4 +126,6 @@ public class CreateStoreHandler(
 
         return Result.Success();
     }
+
+
 }

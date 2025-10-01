@@ -18,12 +18,12 @@ public class CreateStoreEndpoint : IEndpoint
         app.MapPost(CatalogEndpoints.Stores.Create, async (
                 [FromForm] PatchPostStoreRequest request,
                 UserContext userContext,
-                ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse> handler,
+                ICommandHandler<PostStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>
             {
                 var userId = userContext.UserId;
 
-                var command = new PatchPostStoreCommand
+                var command = new PostStoreCommand
                 {
                     UserId = userId,
                     Slug = request.Slug,

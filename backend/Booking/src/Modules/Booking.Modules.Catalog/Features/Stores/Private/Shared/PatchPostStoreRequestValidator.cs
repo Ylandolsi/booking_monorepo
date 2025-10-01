@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Booking.Modules.Catalog.Features.Stores.Private.Shared;
 
-internal sealed class CreateStoreCommandValidator : AbstractValidator<PatchPostStoreCommand>
+internal sealed class CreateStoreCommandValidator : AbstractValidator<PatchStoreCommand>
 {
     private static readonly string[] ValidPlatforms = new[]
     {

@@ -17,6 +17,7 @@ public record PatchSessionProductCommand : PatchPostSessionProductRequest, IComm
     public required string ProductSlug { get; init; }
 }
 
+
 public record PatchPostSessionProductRequest
 {
     public required string Title { get; init; }

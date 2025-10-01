@@ -18,12 +18,12 @@ public class UpdateStoreEndpoint : IEndpoint
         app.MapPut(CatalogEndpoints.Stores.Update, async (
                 [FromForm] PatchPostStoreRequest request,
                 UserContext userContext,
-                ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse> handler,
-                HttpContext context) =>
+                ICommandHandler<PatchStoreCommand, PatchPostStoreResponse> handler,
+                CancellationToken cancellationToken) =>
             {
                 var userId = userContext.UserId; // Placeholder
 
-                var command = new PatchPostStoreCommand
+                var command = new PatchStoreCommand
                 {
                     UserId = userId,
                     Slug = request.Slug,
@@ -33,7 +33,7 @@ public class UpdateStoreEndpoint : IEndpoint
                     Description = request.Description
                 };
 
-                var result = await handler.Handle(command, context.RequestAborted);
+                var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(Results.Ok, CustomResults.Problem);
             })

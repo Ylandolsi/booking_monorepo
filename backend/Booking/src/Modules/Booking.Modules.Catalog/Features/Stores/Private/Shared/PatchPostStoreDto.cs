@@ -30,7 +30,9 @@ public record PatchPostStoreRequest
      */
 }
 
-public record PatchPostStoreCommand : PatchPostStoreRequest, ICommand<PatchPostStoreResponse>
+public record PatchStoreCommand : PatchPostStoreRequest, ICommand<PatchPostStoreResponse>
 {
     public required int UserId { get; init; }
 }
+
+public record PostStoreCommand : PatchStoreCommand ;
