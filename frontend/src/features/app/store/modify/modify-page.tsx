@@ -54,6 +54,12 @@ export function ModifyStore() {
   useEffect(() => {
     if (croppedImageUrl) {
       form.setValue('picture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
+    } else {
+      // restore to default
+      form.setValue('picture', {
+        mainLink: store?.picture?.mainLink || '  ',
+        thumbnailLink: store?.picture?.thumbnailLink || store?.picture?.mainLink || '',
+      });
     }
   }, [croppedImageUrl, form]);
 

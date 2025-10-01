@@ -27,11 +27,11 @@ export const useUploadPicture = () => {
     const file = await store.getCroppedFile();
     onUpload(file);
     //if (file) store.selectFile(file!);
-    store.closeDialog();
+    store.closeDialog(false);
   };
 
   const handleCloseDialog = () => {
-    store.closeDialog();
+    store.closeDialog(true);
   };
 
   return {

@@ -21,7 +21,7 @@ type UploadImageState = {
 type UploadImageActions = {
   // Dialog actions
   openDialog: () => void;
-  closeDialog: () => void;
+  closeDialog: (cancel: boolean) => void;
 
   // Image processing actions
   setSelectedImage: (image: string | null) => void;
@@ -59,21 +59,18 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
 
   // Dialog actions
   openDialog: () => set({ isUploadDialogOpen: true }),
-  closeDialog: () => {
-    const { selectedImage, croppedImageUrl, aspectRatio, isAspectRatioLocked } = get();
+  closeDialog: (cancel: boolean = true) => {
+    const { selectedImage, croppedImageUrl } = get();
 
     // Clean up object URLs // TODO review this
     if (selectedImage) URL.revokeObjectURL(selectedImage);
-    //  if (croppedImageUrl) URL.revokeObjectURL(croppedImageUrl); // TODO revoke it after upload
+    if (cancel && croppedImageUrl) URL.revokeObjectURL(croppedImageUrl);
 
     // Reset to initial state
     set({
       ...initialState,
-      fileInputRef: get().fileInputRef, // Keep ref
-      imgRef: get().imgRef, // Keep ref
-      croppedImageUrl,
-      aspectRatio, // Preserve aspect ratio
-      isAspectRatioLocked, // Preserve lock state
+      croppedImageUrl: cancel ? null : croppedImageUrl, // Keep cropped image if not cancelling
+      selectedImage: null, // Always reset selected image
     });
   },
 

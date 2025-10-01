@@ -65,6 +65,9 @@ export const SetupStore = () => {
   useEffect(() => {
     if (croppedImageUrl) {
       form.setValue('picture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
+    } else {
+      // restore to default
+      form.setValue('picture', { mainLink: '', thumbnailLink: '' });
     }
   }, [croppedImageUrl, form]);
 
@@ -78,8 +81,6 @@ export const SetupStore = () => {
       console.error('Failed to create store:', error);
     }
   };
-
-  console.log('watchedValues', watchedValues);
 
   return (
     // <StoreGuard> // TODO uncomment this
