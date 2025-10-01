@@ -16,7 +16,7 @@ public class UpdateStoreEndpoint : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut(CatalogEndpoints.Stores.Update, async (
-                [FromBody] PatchPostStoreRequest request,
+                [FromForm] PatchPostStoreRequest request,
                 UserContext userContext,
                 ICommandHandler<PatchPostStoreCommand, PatchPostStoreResponse> handler,
                 HttpContext context) =>
@@ -39,6 +39,7 @@ public class UpdateStoreEndpoint : IEndpoint
             })
             .WithTags("Stores")
             .WithSummary("Update store comprehensively (title, description, picture, social links)")
+            .DisableAntiforgery()
             .RequireAuthorization();
     }
 }
