@@ -1,4 +1,5 @@
 import type { MonthAvailabilityType } from '@/api/stores/produtcs';
+import { productKeys } from '@/api/stores/stores-keys';
 import { api, buildUrlWithParams, CatalogEndpoints, QueryBuilders } from '@/api/utils';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
@@ -27,7 +28,7 @@ export function useMonthlyAvailability(
   return useQuery(
     queryOptions({
       // queryKey: availabilityQueryKeys.monthlyAvailability(productSlug, year, month),
-      queryKey: ['monthly-availability', productSlug, year, month],
+      queryKey: [productKeys.availability(productSlug!, year!, month!)],
       queryFn: () => getMonthlyAvailability(productSlug!, year!, month!),
       enabled: !!productSlug && !!year && !!month,
       ...overrides,

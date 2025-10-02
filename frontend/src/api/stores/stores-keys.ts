@@ -19,9 +19,8 @@ export const productKeys = {
   all: [PRODUCT_QUERY_KEY] as const,
   sessions: () => [PRODUCT_QUERY_KEY, 'sessions'] as const,
   session: (productSlug: string) => [PRODUCT_QUERY_KEY, 'sessions', productSlug] as const,
-  availability: (productSlug: string, date?: string) => {
-    const key = [PRODUCT_QUERY_KEY, 'sessions', productSlug, 'availability'];
-    return date ? [...key, date] : key;
+  availability: (productSlug: string, year: number, month: number) => {
+    return ['monthly-availability', productSlug, year, month];
   },
 } as const;
 

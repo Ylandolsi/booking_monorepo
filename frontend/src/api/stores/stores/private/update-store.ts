@@ -30,7 +30,7 @@ export const useUpdateStore = () => {
   return useMutation({
     mutationFn: (data: PatchPostStoreRequest) => updateStore(data),
     meta: {
-      invalidatesQuery: [[STORE_QUERY_KEY], storeKeys.myStore()],
+      invalidatesQuery: [storeKeys.all],
       successMessage: 'Store updated successfully!',
     },
   });

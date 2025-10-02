@@ -31,7 +31,7 @@ export function ModifyStore() {
   const { data: store, isLoading, isError } = useMyStore();
   const updateStoreMutation = useUpdateStore();
 
-  const { croppedImageUrl, setAspectRatio } = useUploadPicture();
+  const { croppedImageUrl, setAspectRatio, handleCloseDialog } = useUploadPicture();
 
   const form = useForm<StoreFormData>({
     resolver: zodResolver(patchPostStoreSchema),
@@ -74,6 +74,9 @@ export function ModifyStore() {
       console.log('Submitting store data:', data);
       // todo : handle this api
       await updateStoreMutation.mutateAsync(data);
+
+      // after upadte clean the cropped image
+      handleCloseDialog();
 
       navigate.goTo({ to: routes.to.store.index() + '/' });
     } catch (error) {

@@ -1,3 +1,4 @@
+import { productKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
 
@@ -34,7 +35,6 @@ export function useBookSession() {
     mutationFn: bookSession,
     meta: {
       // invalidatesQuery: [bookingQueryKeys.myBookings(), WalletKeys.wallet()],
-
       successAction: (data: BookSessionResponseType) => {
         // Open the payment URL in a new tab if it's a valid URL
         let isValidUrl: boolean = true;

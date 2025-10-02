@@ -1,7 +1,7 @@
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api } from '@/api/utils';
-import type { Store } from '@/api/stores';
+import { storeKeys, type Store } from '@/api/stores';
 
 export const getMyStore = async (): Promise<Store> => {
   try {
@@ -16,7 +16,7 @@ export function useMyStore(overrides?: Partial<UseQueryOptions<any, Error>>): Us
   return useQuery(
     queryOptions({
       // TODO : handle this queryKey: storeKeys.myStore(),
-      queryKey: ['my-store'],
+      queryKey: [storeKeys.all],
       queryFn: () => getMyStore(),
       ...overrides,
     }),

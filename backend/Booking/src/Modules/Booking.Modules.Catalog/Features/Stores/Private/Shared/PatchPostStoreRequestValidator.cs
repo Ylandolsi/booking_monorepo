@@ -62,7 +62,7 @@ internal sealed class SocialLinkValidator : AbstractValidator<SocialLink>
 {
     private static readonly string[] ValidPlatforms = new[]
     {
-        "portfolio", "github", "linkedin", "fb", "instagram", "tiktok", "twitter"
+        "portfolio", "website", "github", "linkedin", "facebook", "instagram", "tiktok", "twitter"
     };
 
     public SocialLinkValidator()

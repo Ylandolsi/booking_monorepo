@@ -30,7 +30,7 @@ export const useCreateStore = () => {
   return useMutation({
     mutationFn: (data: PatchPostStoreRequest) => createStore(data),
     meta: {
-      invalidatesQuery: [storeKeys.myStore()],
+      invalidatesQuery: [storeKeys.all],
     },
   });
 };

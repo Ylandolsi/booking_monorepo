@@ -4,6 +4,7 @@ import type {
   CreateSessionProductRequest,
   PatchPostSessionResponse,
 } from '@/api/stores/produtcs/sessions/private/schema-session';
+import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints, validateFile } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
 
@@ -34,6 +35,7 @@ export const useUpdateSession = () => {
     mutationFn: updateSession,
     meta: {
       // invalidatesQuery: [SESSION_QUERY_KEY],
+      invalidatesQuery: [storeKeys.all],
       successMessage: 'Session updated successfully!',
     },
   });

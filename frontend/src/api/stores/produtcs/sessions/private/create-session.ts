@@ -34,7 +34,7 @@ export const useCreateSession = () => {
   return useMutation<PatchPostSessionResponse, Error, { data: CreateProductInput }>({
     mutationFn: createSession,
     meta: {
-      invalidatesQuery: [storeKeys.myStore()],
+      invalidatesQuery: [storeKeys.all],
       successMessage: 'Session created successfully!',
     },
   });
