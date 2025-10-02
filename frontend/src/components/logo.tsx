@@ -1,13 +1,7 @@
 import { cn } from '@/lib/cn';
-import logo from '@/assets/logo.svg';
+// import logo from '@/assets/logo.svg';
+import { LOGO_FULL } from '@/assets';
 
 export const Logo = ({ className }: { className?: string }) => {
-  return (
-    <img
-      className={cn('h-12 w-auto', className)}
-      style={{ filter: 'invert(0) sepia(1) saturate(10) hue-rotate(175deg)' }}
-      src={logo}
-      alt="Workflow"
-    />
-  );
+  return <img className={cn('h-8 w-auto object-contain object-top', className)} src={LOGO_FULL} alt="Workflow" />;
 };

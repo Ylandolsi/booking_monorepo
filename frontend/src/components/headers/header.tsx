@@ -36,11 +36,11 @@ export function Header() {
     <header className="bg-card border-border sticky top-0 z-30 border-b shadow-sm">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left side - Logo and Menu (Mobile only) */}
-        <div className="flex items-center gap-3">
+        <div className="flex max-h-20 items-start gap-3">
           <Button variant="ghost" size="sm" onClick={toggleSidebar} className="hover:bg-muted h-7.5 w-10 p-0">
             <Sidebar className="h-5 w-5" />
           </Button>
-          <Logo className="h-8" />
+          {/* <Logo className="" /> */}
         </div>
 
         {

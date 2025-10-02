@@ -13,11 +13,12 @@ import {
 } from '@/components/ui';
 import { useAuth } from '@/api/auth';
 import { MainErrorFallback } from '@/components/errors';
-import { useSideBar } from '@/components';
+import { NavigationSection, useSideBar } from '@/components';
 import { useIsMobile } from '@/hooks';
 import { AccountSection } from '@/components/navigation/side-bar/account-section';
-import { NavigationSection } from '@/components/navigation/side-bar/navigation-section';
 import { AdminSection } from '@/components/navigation/side-bar/admin-section';
+import { LOGO_SHORT } from '@/assets';
+import { Logo } from '@/components/logo';
 
 export type Item = {
   name:
@@ -68,7 +69,9 @@ const Sidebar = () => {
         }}
       >
         {/* Navigation Section */}
-        <div className={`mt-10 flex-1 overflow-y-auto ${collapsed ? 'p-2' : 'p-4'}`}>
+        <div className={`flex-1 overflow-y-auto ${collapsed ? 'p-2' : 'p-4'}`}>
+          {collapsed ? <img src={LOGO_SHORT} className={`mx-auto mb-6 h-12 w-auto`} /> : <Logo className="mb-6 pl-2" />}
+
           <NavigationSection currentUser={currentUser} itemActive={itemActive} collapsed={collapsed} handleItemClick={handleItemClick} />
 
           {!collapsed && <Separator className="my-4" />}
