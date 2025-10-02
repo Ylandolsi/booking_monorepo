@@ -19,11 +19,8 @@ export const AuthLayout = ({ children }: LayoutProps) => {
         <Card className="mx-auto w-full max-w-md border-none shadow-lg">
           <CardHeader>
             <div className="flex justify-center">
-              <Link
-                className="flex items-center text-white"
-                to={ROUTE_PATHS.APP.INDEX}
-              >
-                <Logo />
+              <Link className="flex items-center text-white" to={ROUTE_PATHS.APP.INDEX}>
+                <Logo className="mx-auto h-auto w-[150px]" />
               </Link>
             </div>
           </CardHeader>
