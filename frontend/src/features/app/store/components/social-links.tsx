@@ -20,26 +20,30 @@ export const socialPlatforms = [
 ];
 
 export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRequest> }) => {
-  const [additionalPlatforms, setAdditionalPlatforms] = useState<string[]>([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(
+    new Set<string>([...(form.watch('socialLinks')?.map((link: any) => link.platform) || [])]),
+  ); // default selected
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  const selectedPlatformsArray = Array.from(selectedPlatforms);
   // we will show instagram and linkedin by default (first 2 in the socialPlatforms array)
 
   // availablePlatforms : the platforms that the user can add from the popover
 
-  const availablePlatforms = socialPlatforms.filter((p) => !additionalPlatforms.includes(p.key) && !['instagram', 'linkedin'].includes(p.key));
-
+  const availablePlatforms = socialPlatforms.filter((p) => !selectedPlatformsArray.includes(p.key));
   const handleAddPlatforms = () => {
-    setAdditionalPlatforms([...additionalPlatforms, ...selectedPlatforms]);
-    setSelectedPlatforms([]);
     setIsPopoverOpen(false);
   };
 
   const handleCheckboxChange = (key: string, checked: boolean) => {
     if (checked) {
-      setSelectedPlatforms([...selectedPlatforms, key]);
+      setSelectedPlatforms((prev) => new Set(prev).add(key));
     } else {
-      setSelectedPlatforms(selectedPlatforms.filter((p) => p !== key));
+      setSelectedPlatforms((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(key);
+        return newSet;
+      });
     }
   };
 
@@ -53,43 +57,8 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
           </div>
         </AccordionTrigger>
         <AccordionContent className="space-y-4">
-          {/* Default platforms */}
-          {socialPlatforms.slice(0, 2).map(({ key, label, icon: Icon }) => (
-            <FormField
-              key={key}
-              control={form.control}
-              name="socialLinks"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-foreground flex items-center gap-2">
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={`https://${key}.com/your-profile`}
-                      className="border-border text-foreground"
-                      value={field.value?.find((link: any) => link.platform === key)?.url || ''}
-                      onChange={(e) => {
-                        const currentLinks = field.value || [];
-                        const existingIndex = currentLinks.findIndex((link: any) => link.platform === key);
-                        if (existingIndex >= 0) {
-                          currentLinks[existingIndex].url = e.target.value;
-                        } else {
-                          currentLinks.push({ platform: key, url: e.target.value });
-                        }
-                        field.onChange(currentLinks.filter((link: any) => link.url));
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-
           {/* Dynamically added platforms */}
-          {additionalPlatforms.map((key) => {
+          {selectedPlatformsArray.map((key) => {
             const platform = socialPlatforms.find((p) => p.key === key);
             if (!platform) return null;
             const { label, icon: Icon } = platform;
@@ -152,7 +121,7 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox
                           id={key}
-                          checked={selectedPlatforms.includes(key)}
+                          checked={selectedPlatformsArray.includes(key)}
                           onCheckedChange={(checked) => {
                             handleCheckboxChange(key, checked as boolean);
                           }}
@@ -166,9 +135,15 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                         </label>
                       </div>
                     ))}
-                    <Button type="button" size="sm" onClick={handleAddPlatforms} disabled={selectedPlatforms.length === 0} className="mt-2 w-full">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleAddPlatforms}
+                      disabled={selectedPlatformsArray.length === 0}
+                      className="mt-2 w-full"
+                    >
                       <Check className="mr-2 h-4 w-4" />
-                      Add Selected ({selectedPlatforms.length})
+                      Add Selected ({selectedPlatformsArray.length})
                     </Button>
                   </div>
                 </div>
