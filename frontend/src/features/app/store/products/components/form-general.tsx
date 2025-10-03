@@ -1,4 +1,4 @@
-import type { ProductType } from '@/api/stores/produtcs';
+import type { CreateSessionProductRequest, ProductType } from '@/api/stores/produtcs';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
@@ -18,16 +18,27 @@ export function FormGeneral({
   form,
   type,
   setActiveTab,
+  editProductData,
 }: {
   form: UseFormReturn<ProductFormData>;
   type?: ProductType;
   setActiveTab: (tab: TabsType) => void;
+  editProductData?: CreateSessionProductRequest;
 }) {
   const { croppedImageUrl, setAspectRatio } = useUploadPicture();
 
   useEffect(() => {
     if (croppedImageUrl) {
       form.setValue('thumbnailPicture', { mainLink: croppedImageUrl || '', thumbnailLink: croppedImageUrl || '' });
+    } else {
+      // restore to default
+      // form.setValue(
+      //   'thumbnailPicture',
+      //   editProductData?  || {
+      //     mainLink: '',
+      //     thumbnailLink: '',
+      //   },
+      // );
     }
   }, [croppedImageUrl, form]);
 

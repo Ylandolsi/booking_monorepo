@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useUploadPicture } from '@/hooks';
 import { FormScheduleComponent } from '@/features/app/store/products/components/form-schedule';
 import { FormGeneral } from '@/features/app/store/products/components/form-general';
 import { useSearch } from '@tanstack/react-router';
@@ -25,31 +25,10 @@ export function AddProductFlow() {
   const { type, productSlug } = useSearch({ strict: false });
   const createProductMutation = useCreateSession();
   const updateProductMutation = useUpdateSession();
+  const { handleCloseDialog } = useUploadPicture();
+
   const { data: editProductData, isLoading: isEditLoading } = useMyProductSession(productSlug, { enabled: !!productSlug });
 
-  const onSubmit = async (data: CreateProductInput) => {
-    try {
-      console.log('submitting', data);
-      if (productSlug) {
-        // update
-        await updateProductMutation.mutateAsync({ productSlug: productSlug, data });
-      } else {
-        // create
-        await createProductMutation.mutateAsync({ data });
-      }
-      navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
-    } catch (error) {
-      if (productSlug) {
-        // specific error handling for update
-        console.error('Failed to update product:', error);
-      } else {
-        console.error('Failed to create product:', error);
-      }
-    }
-  };
-  const onCancel = () => {
-    navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
-  };
   const form = useForm<ProductFormData>({
     resolver: zodResolver(createProductSchema) as Resolver<CreateProductInput>,
     defaultValues: {
@@ -87,6 +66,32 @@ export function AddProductFlow() {
       form.reset(editProductData);
     }
   }, [productSlug, editProductData]);
+
+  const onSubmit = async (data: CreateProductInput) => {
+    try {
+      console.log('submitting', data);
+      if (productSlug) {
+        // update
+        await updateProductMutation.mutateAsync({ productSlug: productSlug, data });
+      } else {
+        // create
+        await createProductMutation.mutateAsync({ data });
+      }
+      // after update : delete cropped image
+      handleCloseDialog();
+      navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
+    } catch (error) {
+      if (productSlug) {
+        // specific error handling for update
+        console.error('Failed to update product:', error);
+      } else {
+        console.error('Failed to create product:', error);
+      }
+    }
+  };
+  const onCancel = () => {
+    navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
+  };
 
   if (isEditLoading) {
     return <LoadingState type="spinner" />;
@@ -143,7 +148,7 @@ export function AddProductFlow() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="max-h-full overflow-y-auto pb-6">
           <div className="space-y-6 px-6">
-            {type && activeTab === 'general' && <FormGeneral form={form} type={type} setActiveTab={setActiveTab} />}
+            {type && activeTab === 'general' && <FormGeneral editProductData={editProductData} form={form} type={type} setActiveTab={setActiveTab} />}
             {type && activeTab === 'details' && (
               <>
                 <div className="mb-6 text-center">

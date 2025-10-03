@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -6,18 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { User, CheckCircle, Globe, Plus, Edit2Icon, Store } from 'lucide-react';
+import { User, CheckCircle, Plus, Edit2Icon, Store } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import {
-  patchPostStoreSchema,
-  useCreateStore,
-  useMyStore,
-  useUpdateStore,
-  type PatchPostStoreRequest,
-  type Picture,
-  type Product,
-} from '@/api/stores';
+import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/features/app/store';
 import { ErrorComponenet, LoadingState, UploadImage } from '@/components';
@@ -30,7 +22,6 @@ export function ModifyStore() {
   const navigate = useAppNavigation();
   const { data: store, isLoading, isError } = useMyStore();
   const updateStoreMutation = useUpdateStore();
-
   const { croppedImageUrl, setAspectRatio, handleCloseDialog } = useUploadPicture();
 
   const form = useForm<StoreFormData>({
