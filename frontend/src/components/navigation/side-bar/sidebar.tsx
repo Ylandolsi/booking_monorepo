@@ -63,7 +63,7 @@ const Sidebar = () => {
       {/* Mobile overlay */}
       {sidebarOpen && <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setSidebarOpen(false)} />}
       <aside
-        className={` ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 lg:static lg:z-auto lg:translate-x-0 ${collapsed ? 'w-16' : 'w-80'} border-border bg-card flex h-full flex-col border-r shadow-xl transition-all duration-300 ease-in-out lg:h-screen lg:shadow-none`}
+        className={` ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 lg:static lg:z-auto lg:translate-x-0 ${collapsed ? 'w-16' : 'w-80'} border-border/40 bg-card flex h-full flex-col border-r shadow-xl transition-all duration-300 ease-in-out lg:h-screen lg:shadow-none`}
         style={{
           transitionProperty: 'transform, width',
         }}

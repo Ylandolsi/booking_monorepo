@@ -15,12 +15,12 @@ function BalanceHeader() {
 
   return (
     <Button className="bg-accent -primary text-primary hover:bg-primary-100/80 hidden border pr-2 pl-5 md:inline-flex">
-      <div className="space-x-1">
-        <span className="font-semibold"> Balance </span>
+      <div className="text-foreground f space-x-1">
+        <span className="ont-semibold"> Balance </span>
         <span className="font-bold">{`${walletData?.balance}$`}</span>
       </div>
       <div className="bg-primary-300 ml-auto rounded-md p-1">
-        <CreditCard className="text-primary" />
+        <CreditCard className="text-foreground" />
       </div>
     </Button>
   );
@@ -33,7 +33,7 @@ export function Header() {
   if (!currentUser || currentUser == undefined) return null;
 
   return (
-    <header className="bg-card border-border sticky top-0 z-30 border-b shadow-sm">
+    <header className="bg-card border-border/40 sticky top-0 z-30 border-b">
       <div className="flex items-center justify-between px-4 py-3">
         {/* Left side - Logo and Menu (Mobile only) */}
         <div className="flex max-h-20 items-start gap-3">
