@@ -8,6 +8,7 @@ import z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useSearch } from '@tanstack/react-router';
+import { SanitizeHtml } from '@/lib';
 
 // TODO : needs to be generic to handle both form / api data
 
@@ -64,7 +65,7 @@ export function ProductCheckout({ product, children }: { product: Product; child
           </div>
           <div className="mt-6 mb-10 max-h-40 space-y-4 overflow-y-auto text-slate-700 dark:text-slate-300">
             <h2 className="text-xl font-bold break-all text-slate-900 dark:text-white">Description</h2>
-            <p className="break-all">{product.description}</p>
+            <p className="break-all">{SanitizeHtml({ htmlContent: product.description || '' })}</p>
           </div>
 
           {children}

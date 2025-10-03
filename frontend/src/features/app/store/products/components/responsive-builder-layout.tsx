@@ -7,16 +7,11 @@ import type { ProductFormData } from '@/features/app/store/products/add-product'
 import { CheckoutPageProduct } from '@/features/app/store/products';
 import { ErrorComponenet, StoreHeader } from '@/components';
 import { useMyStore } from '@/api/stores';
-import DOMPurify from 'dompurify';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
   previewData: ProductFormData;
   className?: string;
-}
-export function ProductDescription({ description }: { description: string }) {
-  const cleanHTML = DOMPurify.sanitize(description);
-  return <div dangerouslySetInnerHTML={{ __html: cleanHTML }} />;
 }
 
 export function ResponsiveBuilderLayout({ children, previewData, className }: ResponsiveBuilderLayoutProps) {
