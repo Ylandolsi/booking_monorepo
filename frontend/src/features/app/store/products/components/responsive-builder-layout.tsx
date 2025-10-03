@@ -31,7 +31,7 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
         <div className="bg-card border-border min-w-xl flex-1 rounded-xl border shadow-lg">{children}</div>
 
         {/* Preview Side */}
-        <div>
+        <div className="min-w-fit">
           <div className="lg:sticky lg:top-4">
             <div className={cn('bg-muted/10 flex flex-col gap-2 p-4')}>
               <MobileContainer>
