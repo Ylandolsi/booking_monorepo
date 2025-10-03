@@ -80,6 +80,7 @@ export const ROUTE_PATHS = {
   TEST: {
     IMG: '/test/img',
     DASHBOARD: '/test/dashboard',
+    ANALYTICS: '/test/analytics',
   },
 
   // Utility routes

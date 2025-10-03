@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
+import { Route as TestAnalyticsRouteImport } from './routes/test/analytics'
 import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -74,6 +75,11 @@ const TestImgRoute = TestImgRouteImport.update({
 const TestDashboardRoute = TestDashboardRouteImport.update({
   id: '/test/dashboard',
   path: '/test/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestAnalyticsRoute = TestAnalyticsRouteImport.update({
+  id: '/test/analytics',
+  path: '/test/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ErrorExpSimpleLoadingDemoRoute =
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
+  '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
@@ -273,6 +282,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
     | '/app'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/auth/reset-password'
     | '/error-exp/simple-loading-demo'
+    | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
@@ -348,6 +360,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
   ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
+  TestAnalyticsRoute: typeof TestAnalyticsRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
   publicStoreStoreSlugIndexRoute: typeof publicStoreStoreSlugIndexRoute
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/test/dashboard'
       fullPath: '/test/dashboard'
       preLoaderRoute: typeof TestDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/test/analytics': {
+      id: '/test/analytics'
+      path: '/test/analytics'
+      fullPath: '/test/analytics'
+      preLoaderRoute: typeof TestAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/error-exp/simple-loading-demo': {
@@ -612,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
   ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
+  TestAnalyticsRoute: TestAnalyticsRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
   publicStoreStoreSlugIndexRoute: publicStoreStoreSlugIndexRoute,
