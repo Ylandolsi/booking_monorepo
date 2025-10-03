@@ -49,14 +49,14 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
 
   return (
     <Accordion type="single" collapsible className="w-full">
-      <AccordionItem value="social-links">
-        <AccordionTrigger className="text-foreground hover:text-primary">
-          <div className="flex items-center gap-2">
+      <AccordionItem value="social-links" className="border-0">
+        <AccordionTrigger className="hover:bg-accent/30 rounded-lg px-3 py-2 transition-colors hover:no-underline">
+          <div className="flex items-center gap-2 text-sm font-medium">
             <Globe className="h-4 w-4" />
-            Add Social Links (Optional)
+            Social Links (Optional)
           </div>
         </AccordionTrigger>
-        <AccordionContent className="space-y-4">
+        <AccordionContent className="space-y-4 pt-3">
           {/* Dynamically added platforms */}
           {selectedPlatformsArray.map((key) => {
             const platform = socialPlatforms.find((p) => p.key === key);
@@ -69,14 +69,14 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                 name="socialLinks"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground flex items-center gap-2">
+                    <FormLabel className="text-foreground flex items-center gap-2 text-sm font-medium">
                       <Icon className="h-4 w-4" />
                       {label}
                     </FormLabel>
                     <FormControl>
                       <Input
                         placeholder={`https://${key}.com/your-profile`}
-                        className="border-border text-foreground"
+                        className="border-border text-foreground h-11 rounded-lg"
                         value={field.value?.find((link: any) => link.platform === key)?.url || ''}
                         onChange={(e) => {
                           const currentLinks = field.value || [];
@@ -101,7 +101,7 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
             <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
               <PopoverTrigger asChild>
                 <div
-                  className="border-border bg-muted text-foreground hover:border-primary hover:text-primary flex cursor-pointer gap-2 border border-dashed px-3 py-2 text-sm"
+                  className="border-border/60 bg-accent/30 text-foreground hover:border-primary/50 hover:bg-accent/50 flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-3 text-sm font-medium transition-all duration-200"
                   onClick={() => {
                     setIsPopoverOpen(true);
                   }}
@@ -110,15 +110,15 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                   Add Another Platform
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-64 p-4" side="top" align="center">
+              <PopoverContent className="w-72 p-4" side="top" align="center">
                 <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="leading-none font-medium">Select Platforms</h4>
-                    <p className="text-muted-foreground text-sm">Choose which platforms to add</p>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold">Select Platforms</h4>
+                    <p className="text-muted-foreground text-xs">Choose which platforms to add</p>
                   </div>
-                  <div className="grid gap-2">
+                  <div className="grid gap-3">
                     {availablePlatforms.map(({ key, label, icon: Icon }) => (
-                      <div key={key} className="flex items-center space-x-2">
+                      <div key={key} className="hover:bg-accent/50 flex items-center space-x-3 rounded-lg p-2 transition-colors">
                         <Checkbox
                           id={key}
                           checked={selectedPlatformsArray.includes(key)}
@@ -128,9 +128,9 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                         />
                         <label
                           htmlFor={key}
-                          className="flex cursor-pointer items-center gap-2 text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          className="flex flex-1 cursor-pointer items-center gap-2 text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          <Icon className="h-4 w-4" />
+                          <Icon className="text-muted-foreground h-4 w-4" />
                           {label}
                         </label>
                       </div>
@@ -140,9 +140,9 @@ export const SocialLinksForm = ({ form }: { form: UseFormReturn<PatchPostStoreRe
                       size="sm"
                       onClick={handleAddPlatforms}
                       disabled={selectedPlatformsArray.length === 0}
-                      className="mt-2 w-full"
+                      className="mt-1 h-9 w-full rounded-lg"
                     >
-                      <Check className="mr-2 h-4 w-4" />
+                      <Check className="h-4 w-4" />
                       Add Selected ({selectedPlatformsArray.length})
                     </Button>
                   </div>

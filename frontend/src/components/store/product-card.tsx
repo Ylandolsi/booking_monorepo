@@ -5,7 +5,7 @@ import { COVER_IMAGE } from '@/features/public/checkout-product-page';
 import { useSortable } from '@dnd-kit/sortable';
 import { routes } from '@/config/routes';
 import { useAppNavigation } from '@/hooks';
-import { Grip, Move } from 'lucide-react';
+import { Grip } from 'lucide-react';
 import { CSS } from '@dnd-kit/utilities';
 
 type DisplayMode = 'full' | 'compact';
@@ -44,8 +44,9 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
   return (
     <div
       className={cn(
-        'bg-card border-border w-full rounded-2xl border p-4 shadow-sm',
-        'transition-shadow hover:shadow-md',
+        'group/card bg-card/50 border-border/50 w-full rounded-xl border p-5 shadow-sm backdrop-blur-sm',
+        'transition-all duration-300 ease-in-out',
+        'hover:border-border hover:bg-card hover:shadow-lg',
         onClick && 'cursor-pointer',
         className,
         edit && 'relative',
@@ -55,44 +56,49 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
       onClick={onClick}
     >
       {edit && (
-        <div {...attributes} {...listeners} className="bg-secondary text-primary absolute mr-2 cursor-move rounded-3xl p-1 active:cursor-grabbing">
-          <Move className="text-foreground" />
+        <div
+          {...attributes}
+          {...listeners}
+          className="bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 cursor-grab rounded-lg p-2 backdrop-blur-sm transition-all duration-200 active:scale-95 active:cursor-grabbing"
+        >
+          <Grip className="h-4 w-4" />
         </div>
       )}
       <div className="flex h-full w-full flex-col gap-4">
         {displayMode === 'full' && product.thumbnailPicture?.mainLink && (
-          <div className={cn(`min-w-[${COVER_IMAGE.width}] min-h-[${COVER_IMAGE.height}]`)}>
-            <img src={product.thumbnailPicture?.mainLink} alt={product.title} className="h-full w-full rounded-2xl object-cover" />
+          <div className="overflow-hidden rounded-lg">
+            <img
+              src={product.thumbnailPicture?.mainLink}
+              alt={product.title}
+              className="h-48 w-full object-cover transition-transform duration-300 group-hover/card:scale-105"
+            />
           </div>
         )}
-        {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
-        <div className="flex w-full items-start justify-between">
-          <div className="flex min-w-0 items-start gap-3">
-            {/* 
-              <div className={cn('flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg')}>
-                <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
-              </div>
-                 */}
 
-            <div className="min-w-0 text-left">
-              <h3 className="text-foreground line-clamp-2 font-semibold break-words">{product.title}</h3>
-              {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm break-words">{product.subtitle}</p>}
+        {/* Content Section */}
+        <div className="flex flex-1 flex-col gap-3">
+          <div className="flex w-full items-start justify-between gap-4">
+            <div className="min-w-0 flex-1 text-left">
+              <h3 className="text-foreground mb-1 line-clamp-2 text-base leading-tight font-semibold break-words">{product.title}</h3>
+              {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed break-words">{product.subtitle}</p>}
+            </div>
+
+            <div className="flex-none">
+              <span className="text-primary text-xl font-bold tracking-tight">${product.price}</span>
             </div>
           </div>
 
-          <div className="ml-4 flex-none text-right">
-            <span className="text-primary text-lg font-bold">${product.price}</span>
-          </div>
-        </div>
-
-        {
           <Button
             onClick={onActionClick}
-            className="bg-primary text-primary-foreground w-full rounded-3xl px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-90"
+            variant={edit ? 'outline' : 'default'}
+            className={cn(
+              'h-10 w-full rounded-lg text-sm font-medium transition-all duration-200',
+              edit ? 'hover:bg-accent hover:text-accent-foreground' : 'hover:scale-[1.02] hover:opacity-90',
+            )}
           >
-            {edit ? 'Edit' : product.clickToPay ? product.clickToPay : 'Buy Now'}
+            {edit ? 'Edit Product' : product.clickToPay ? product.clickToPay : 'Buy Now'}
           </Button>
-        }
+        </div>
       </div>
     </div>
   );

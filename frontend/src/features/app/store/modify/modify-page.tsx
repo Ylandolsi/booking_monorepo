@@ -113,43 +113,39 @@ export function ModifyStore() {
   console.log('Products state:', products); // Debugging line
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-12 px-4 py-8 lg:flex-row lg:items-start lg:px-6">
       <style>{`.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }`}</style>
       <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
-      <aside className="flex w-[460px] flex-col px-6">
+      <aside className="flex w-full max-w-lg flex-col gap-6">
         <div className="flex-1">
-          <div className="border-primary/20 dark:border-primary/30 border-b p-6">
+          <div className="bg-card/50 border-border/50 rounded-xl border shadow-sm backdrop-blur-sm">
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="store-details">
-                <AccordionTrigger className="text-foreground hover:text-primary">
-                  <div className="flex items-center gap-2">
-                    {/* TODO change this  */}
-                    <Store className="h-8 w-8" />
-                    <h2 className="text-3xl font-bold">Edit Store Details</h2>
+              <AccordionItem value="store-details" className="border-0">
+                <AccordionTrigger className="hover:bg-accent/50 rounded-t-xl px-6 py-5 transition-colors hover:no-underline">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary/10 text-primary rounded-lg p-2">
+                      <Store className="h-5 w-5" />
+                    </div>
+                    <h2 className="text-foreground text-xl font-semibold">Store Details</h2>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="mt-0 space-y-4 p-2">
-                  <div className="max-w-lg flex-1">
-                    <div className="mb-8 text-center">
-                      {/* <h1 className="from-primary to-chart-4 bg-gradient-to-r bg-clip-text text-3xl font-bold text-transparent">Create Your Linki Store</h1> */}
-                      {/* <p className="text-muted-foreground mt-2">Set up your personal mobile store in seconds</p> */}
-                    </div>
-
+                <AccordionContent className="px-6 pt-2 pb-6">
+                  <div className="space-y-5">
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                         <FormField
                           control={form.control}
                           name="title"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground flex items-center gap-2">
+                              <FormLabel className="text-foreground flex items-center gap-2 text-sm font-medium">
                                 <User className="h-4 w-4" />
                                 Store Name *
                               </FormLabel>
                               <FormControl>
                                 <Input
                                   placeholder="Your Amazing Store"
-                                  className="border-border text-foreground py-3 text-lg"
+                                  className="border-border text-foreground h-11 rounded-lg"
                                   {...field}
                                   onChange={(e) => {
                                     field.onChange(e);
@@ -166,12 +162,12 @@ export function ModifyStore() {
                           name="description"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-foreground">Store Description</FormLabel>
+                              <FormLabel className="text-foreground text-sm font-medium">Store Description</FormLabel>
                               <FormControl>
                                 <Textarea
                                   placeholder="Tell your customers what you offer..."
                                   rows={3}
-                                  className="border-border text-foreground"
+                                  className="border-border text-foreground resize-none rounded-lg"
                                   {...field}
                                 />
                               </FormControl>
@@ -186,15 +182,15 @@ export function ModifyStore() {
                         <Button
                           type="submit"
                           size="lg"
-                          className="hover:bg-primary hover:accent text-primary-foreground w-full transition-all duration-300"
+                          className="h-11 w-full rounded-lg font-medium transition-all duration-200"
                           disabled={updateStoreMutation.isPending}
                         >
                           {updateStoreMutation.isPending ? (
                             'Updating Store...'
                           ) : (
                             <>
-                              <CheckCircle className="mr-2 h-4 w-4" />
-                              Update store details
+                              <CheckCircle className="h-4 w-4" />
+                              Update Store Details
                             </>
                           )}
                         </Button>
@@ -205,26 +201,49 @@ export function ModifyStore() {
               </AccordionItem>
             </Accordion>
           </div>
-          <div className="flex h-16 items-center justify-between p-6">
-            <h2 className="text-3xl font-bold">My Products</h2>
-            <Button
-              variant={'ghost'}
-              className="bg-primary/10 hover:bg-primary/20 dark:bg-primary/20 dark:hover:bg-primary/30 text-primary flex items-center justify-center transition-colors"
-              aria-label="Add new product"
-              onClick={() => navigate.goTo({ to: routes.paths.APP.STORE.PRODUCT.INDEX + '/' })}
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
+
+          {/* Products Section */}
+          <div className="bg-card/50 border-border/50 rounded-xl border shadow-sm backdrop-blur-sm">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="products" className="border-0">
+                <AccordionTrigger className="hover:bg-accent/50 rounded-t-xl px-6 py-5 transition-colors hover:no-underline">
+                  <div className="flex w-full items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 text-primary rounded-lg p-2">
+                        <Grip className="h-5 w-5" />
+                      </div>
+                      <h2 className="text-foreground text-xl font-semibold">My Products</h2>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-primary/10 hover:bg-primary/20 text-primary h-9 w-9 rounded-lg p-0"
+                      aria-label="Add new product"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate.goTo({ to: routes.paths.APP.STORE.PRODUCT.INDEX + '/' });
+                      }}
+                    >
+                      <Plus className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pt-2 pb-6">
+                  <div className="space-y-3 p-4">
+                    {products.length !== 0 && (
+                      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                        <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
+                          {products.map((item) => (
+                            <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onClick={() => handleProductEdit(item)} />
+                          ))}
+                        </SortableContext>
+                      </DndContext>
+                    )}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </div>
-          {products.length !== 0 && (
-            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-              <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
-                {products.map((item) => (
-                  <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onClick={() => handleProductEdit(item)} />
-                ))}
-              </SortableContext>
-            </DndContext>
-          )}
         </div>
       </aside>
       <MobilePreview storeForm={watchedValues} />
