@@ -35,7 +35,7 @@ export function AddProductFlow() {
       title: '',
       subtitle: '',
       price: 0,
-      description: '',
+      description: '', // html content (from quill : should be sanitized on front and backend)
       clickToPay: 'Buy Now',
       productType: type === 'Session' ? 'Session' : 'DigitalDownload',
       thumbnailImage: undefined,

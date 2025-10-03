@@ -1,7 +1,7 @@
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Link } from '@/components/ui';
 import { routes } from '@/config';
-import type { ProductCheckoutType } from '@/features';
+import { ProductDescription, type ProductCheckoutType } from '@/features';
 import { cn } from '@/lib/cn';
 import { Upload, X } from 'lucide-react';
 
@@ -49,7 +49,7 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
           </div>
           <div className="mt-6 mb-10 max-h-40 space-y-4 overflow-y-auto text-slate-700 dark:text-slate-300">
             <h2 className="text-xl font-bold break-all text-slate-900 dark:text-white">Description</h2>
-            <p className="break-all">{product.description}</p>
+            {ProductDescription({ description: product.description || '' })}
           </div>
           {children}
         </div>

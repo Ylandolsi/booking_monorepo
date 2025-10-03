@@ -4,7 +4,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Button } from '@/components/ui/button';
 import { COVER_IMAGE, Input, Textarea, UploadImage } from '@/components';
 import type { ProductFormData, TabsType } from '@/features/app/store/products/add-product';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { LazyImage } from '@/utils';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
@@ -12,6 +12,8 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { cn } from '@/lib/cn';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Upload } from 'lucide-react';
+import Quill from 'quill';
+import 'quill/dist/quill.snow.css';
 
 // ThumbnailImage : file uploaded
 // ThumbnailPicture : object with mainLink and thumbnailLink
@@ -27,6 +29,32 @@ export function FormGeneral({
   editProductData?: CreateSessionProductRequest;
 }) {
   const { croppedImageUrl, setAspectRatio } = useUploadPicture();
+
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      const quill = new Quill(editorRef.current, {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            // [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            // [{ list: 'ordered' }, { list: 'bullet' }],
+            ['link', 'image'],
+            [
+              { color: ['var(--foreground)', 'var(--primary)', 'var(--secondary)', 'var(--accent)', 'var(--destructive)'] },
+              { background: ['var(--background)', 'var(--muted)', 'var(--secondary)', 'var(--accent)'] },
+            ],
+          ],
+        },
+      });
+      // Optional: Handle content changes
+      quill.on('text-change', () => {
+        form.setValue('description', quill.root.innerHTML); // Sync with form
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (croppedImageUrl) {
@@ -158,10 +186,10 @@ export function FormGeneral({
         control={form.control}
         name="description"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-foreground">Description *</FormLabel>
+          <FormItem className="gap-0">
+            <FormLabel className="text-foreground mb-2">Description *</FormLabel>
             <FormControl>
-              <Textarea placeholder="Describe what customers will get..." rows={4} className="resize-none" {...field} />
+              <div {...field} ref={editorRef} />
             </FormControl>
             <FormMessage />
           </FormItem>
