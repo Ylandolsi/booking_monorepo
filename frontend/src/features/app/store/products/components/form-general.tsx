@@ -11,6 +11,7 @@ import { useUploadPicture } from '@/hooks';
 import 'react-image-crop/dist/ReactCrop.css';
 import { cn } from '@/lib/cn';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
+import { Upload } from 'lucide-react';
 
 // ThumbnailImage : file uploaded
 // ThumbnailPicture : object with mainLink and thumbnailLink
@@ -140,7 +141,15 @@ export function FormGeneral({
       <UploadImage description="Thumbnail Image (Optional)" />
       <div className="flex items-center justify-center">
         <div className={cn(`w-${COVER_IMAGE.width} h-${COVER_IMAGE.height}`)}>
-          <img src={croppedImageUrl ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL} alt="Cover preview" className="h-full w-full object-cover" />
+          {croppedImageUrl ? (
+            <img src={croppedImageUrl} alt="Cover preview" className="h-full w-full object-cover" />
+          ) : (
+            <div className="text-muted-foreground flex h-full w-full flex-col items-center justify-center">
+              <Upload />
+              <span className="text-sm">Upload your image to preview it</span>
+            </div>
+          )}
+          {/* <img src={croppedImageUrl ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL} alt="Cover preview" className="h-full w-full object-cover" /> */}
         </div>
       </div>
 

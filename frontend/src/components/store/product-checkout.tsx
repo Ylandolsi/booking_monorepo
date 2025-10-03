@@ -2,7 +2,8 @@ import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Link } from '@/components/ui';
 import { routes } from '@/config';
 import type { ProductCheckoutType } from '@/features';
-import { X } from 'lucide-react';
+import { cn } from '@/lib/cn';
+import { Upload, X } from 'lucide-react';
 
 export const COVER_IMAGE = {
   width: 100, // rem
@@ -21,13 +22,24 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
         </Link>
       </header>
       <main className="w-full pt-16 pb-28 break-words">
-        <div className="bg-accent h-${COVER_IMAGE.height} w-${COVER_IMAGE.width} flex items-center justify-center">
+        <div className={cn(`min-w-[${COVER_IMAGE.width}] min-h-[${COVER_IMAGE.height}]`)}>
+          {/* <div className="bg-accent h-${COVER_IMAGE.height} w-${COVER_IMAGE.width} flex items-center justify-center"> */}
           {/* Change to lazy Image */}
-          <img
+          {/* <img
             alt="Product Image"
             className="h-full w-full object-cover"
-            src={product.thumbnailPicture?.mainLink ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL}
+             src={product.thumbnailPicture?.mainLink ?? FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL}
+
           />
+            */}
+          {product.thumbnailPicture?.mainLink ? (
+            <img src={product.thumbnailPicture?.mainLink} alt="Cover preview" className="h-full w-full object-cover" />
+          ) : (
+            <div className="text-muted-foreground flex h-full w-full flex-col items-center justify-center">
+              <Upload />
+              <span className="text-sm">Upload your image to preview it</span>
+            </div>
+          )}
         </div>
         <div className="mx-auto flex flex-col justify-center overflow-x-hidden px-2 pt-4">
           <h1 className="line-clamp-2 text-3xl font-extrabold break-all text-slate-900 dark:text-white">{product.title}</h1>
