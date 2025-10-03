@@ -34,6 +34,8 @@ public static class CatalogEndpoints
                 GetMonthlyAv =
                     $"{Base}/products/s/{{productSlug}}/availability/month";
         }
+
+        public const string Arrange = $"{Base}/produtcs/arrange"; 
     }
 
     public static class Orders

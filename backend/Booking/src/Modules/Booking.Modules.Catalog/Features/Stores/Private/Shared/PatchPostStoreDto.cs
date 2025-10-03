@@ -12,7 +12,6 @@ public record PatchPostStoreRequest
     public required string Slug { get; init; }
     public string Description { get; init; } = "";
     public IFormFile? File { get; init; } = null;
-    public Dictionary<string, int>? Orders { get; init; } = null; //  product slug is a key , order : int
     public string? SocialLinksJson { get; init; } = null;
 
     // Computed property to deserialize SocialLinks
