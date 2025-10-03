@@ -6,15 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { User, CheckCircle, Plus, Edit2Icon, Store } from 'lucide-react';
+import { User, CheckCircle, Plus, Edit2Icon, Store, Grip } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/features/app/store';
-import { ErrorComponenet, LoadingState, UploadImage } from '@/components';
+import { ErrorComponenet, LoadingState, ProductCard, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useAppNavigation } from '@/hooks';
+import { SortableContext, rectSortingStrategy, useSortable, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import { GenerateIdCrypto } from '@/lib';
 
 export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
 
@@ -23,6 +27,15 @@ export function ModifyStore() {
   const { data: store, isLoading, isError } = useMyStore();
   const updateStoreMutation = useUpdateStore();
   const { croppedImageUrl, setAspectRatio, handleCloseDialog } = useUploadPicture();
+
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [products, setProducts] = useState<Product[]>(store?.products || []);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   const form = useForm<StoreFormData>({
     resolver: zodResolver(patchPostStoreSchema),
@@ -58,8 +71,6 @@ export function ModifyStore() {
 
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
-  const products = store.products || [];
-
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
       console.log('Submitting store data:', data);
@@ -80,6 +91,26 @@ export function ModifyStore() {
   }
 
   const watchedValues = form.watch();
+
+  const handleDragEnd = ({ active, over }: any) => {
+    if (!over) {
+      return;
+    }
+
+    if (active.id === over.id) {
+      return;
+    }
+
+    setProducts((items) => {
+      return arrayMove(
+        items,
+        items.findIndex((it) => it.productSlug === active.id),
+        items.findIndex((it) => it.productSlug === over.id),
+      );
+    });
+  };
+
+  console.log('Products state:', products); // Debugging line
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-10 lg:flex-row lg:items-start">
@@ -185,31 +216,46 @@ export function ModifyStore() {
               <Plus className="h-5 w-5" />
             </Button>
           </div>
-          {products.length !== 0 &&
-            products.map((product) => (
-              <div className="space-y-4 px-6 py-2">
-                <div className="group border-primary/20 dark:border-primary/30 bg-card-light dark:bg-card-dark hover:border-primary/40 relative rounded-xl border shadow-sm transition-all hover:shadow-lg">
-                  <div className="flex items-center p-4">
-                    <span className="text-4xl">{product.productType === 'Session' ? '📅' : '📁'}</span>
-                    <div className="ml-4 flex-1">
-                      <p className="text-lg font-semibold">{product.title}</p>
-                      <p className="text-primary text-sm font-medium">${product.price}</p>
-                    </div>
-                    <Button
-                      variant={'ghost'}
-                      onClick={() => handleProductEdit(product)}
-                      className="flex size-8 items-center justify-center rounded-full bg-black/10 p-2 text-gray-600 transition-colors hover:bg-black/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
-                      aria-label="Edit product"
-                    >
-                      <Edit2Icon />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          {products.length !== 0 && (
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+              <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
+                {products.map((item) => (
+                  <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onClick={() => handleProductEdit(item)} />
+                ))}
+              </SortableContext>
+            </DndContext>
+          )}
         </div>
       </aside>
       <MobilePreview storeForm={watchedValues} />
     </div>
   );
 }
+
+// const SortableItem = ({ id, item }: { id: string; item: Product }) => {
+//   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+//   const navigate = useAppNavigation();
+//   const style = {
+//     transform: CSS.Transform.toString(transform),
+//     transition,
+//     opacity: isDragging ? 0.5 : 1, // Optional: Visual feedback during drag
+//   };
+
+//   const editProduct = () => {
+//     navigate.goTo({ to: routes.to.store.productEdit({ productSlug: item.productSlug, type: item.productType }) });
+//   };
+//   return (
+//     <div ref={setNodeRef} style={style}>
+//       <div className="group mt-2 flex items-center px-6 pb-10">
+//         {/* Drag handle */}
+//         <div {...attributes} {...listeners} className="mr-2 cursor-grab p-1 active:cursor-grabbing">
+//           <Grip className="text-black" />
+//         </div>
+//         {/* Product card */}
+//         <div className="flex-1 cursor-pointer">
+//           <ProductCard product={item} edit={true} onActionClick={editProduct} />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };

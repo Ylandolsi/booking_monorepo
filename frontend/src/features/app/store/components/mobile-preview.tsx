@@ -46,7 +46,7 @@ export const MobilePreview = ({ storeForm }: { storeForm: StoreFormData }) => {
     // <main className="flex flex-1 items-center justify-center">
     <MobileContainer>
       <StoreHeader store={mergedStore} />
-      <div className="w-full space-y-4">
+      <div className="w-full space-y-4 pb-10">
         {store.products.map((product, index) => (
           <div
             key={GenerateIdCrypto()}

@@ -1,20 +1,46 @@
 import { cn } from '@/lib/cn';
 import { Button } from '../ui';
 import type { Product } from '@/api/stores';
-import type { ProductFormData } from '@/features';
+import { COVER_IMAGE } from '@/features/public/checkout-product-page';
+import { useSortable } from '@dnd-kit/sortable';
+import { routes } from '@/config/routes';
+import { useAppNavigation } from '@/hooks';
+import { Grip, Move } from 'lucide-react';
+import { CSS } from '@dnd-kit/utilities';
 
 type DisplayMode = 'full' | 'compact';
 
-export type ProductCardType = Pick<Product, 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'>;
+export type ProductCardType = Pick<
+  Product,
+  'productSlug' | 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'
+>;
 
 interface ProductCardProps {
-  product: ProductCardType | ProductFormData;
+  product: ProductCardType;
   onClick?: () => void;
   displayMode?: DisplayMode;
   className?: string;
+  edit?: boolean;
+  onActionClick?: () => void; // New prop for action button click
 }
 
-export function ProductCard({ product, onClick, className, displayMode = 'full' }: ProductCardProps) {
+export function ProductCard({ product, onClick, className, displayMode = 'full', edit = false, onActionClick }: ProductCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: product.productSlug || '',
+    disabled: !edit || !product.productSlug,
+  });
+  const navigate = useAppNavigation();
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1, // Optional: Visual feedback during drag
+  };
+
+  const editProduct = () => {
+    navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
+  };
+
   return (
     <div
       className={cn(
@@ -22,12 +48,22 @@ export function ProductCard({ product, onClick, className, displayMode = 'full' 
         'transition-shadow hover:shadow-md',
         onClick && 'cursor-pointer',
         className,
+        edit && 'relative',
       )}
+      ref={setNodeRef}
+      style={style}
       onClick={onClick}
     >
-      <div className="flex flex-col gap-4">
+      {edit && (
+        <div {...attributes} {...listeners} className="bg-secondary text-primary absolute mr-2 cursor-move rounded-3xl p-1 active:cursor-grabbing">
+          <Move className="text-foreground" />
+        </div>
+      )}
+      <div className="flex h-full w-full flex-col gap-4">
         {displayMode === 'full' && product.thumbnailPicture?.mainLink && (
-          <img src={product.thumbnailPicture?.mainLink} alt={product.title} className="h-full w-full rounded-2xl object-cover" />
+          <div className={cn(`min-w-[${COVER_IMAGE.width}] min-h-[${COVER_IMAGE.height}]`)}>
+            <img src={product.thumbnailPicture?.mainLink} alt={product.title} className="h-full w-full rounded-2xl object-cover" />
+          </div>
         )}
         {/* Top row: thumbnail | title/subtitle (flexible) | price (fixed) */}
         <div className="flex w-full items-start justify-between">
@@ -49,9 +85,14 @@ export function ProductCard({ product, onClick, className, displayMode = 'full' 
           </div>
         </div>
 
-        <Button className="bg-primary text-primary-foreground w-full rounded-3xl px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-90">
-          {product.clickToPay ? product.clickToPay : 'Buy Now'}
-        </Button>
+        {
+          <Button
+            onClick={onActionClick}
+            className="bg-primary text-primary-foreground w-full rounded-3xl px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-90"
+          >
+            {edit ? 'Edit' : product.clickToPay ? product.clickToPay : 'Buy Now'}
+          </Button>
+        }
       </div>
     </div>
   );
