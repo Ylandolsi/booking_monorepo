@@ -1,12 +1,6 @@
 import { Button } from '@/components/ui';
 import { Home, ArrowLeft } from 'lucide-react';
-import {
-  AlertCircle,
-  XCircle,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-} from 'lucide-react';
+import { AlertCircle, XCircle, CheckCircle, AlertTriangle, Info } from 'lucide-react';
 import { routeBuilder } from '@/config';
 import { useAppNavigation } from '@/hooks';
 
@@ -45,48 +39,41 @@ export const ErrorComponenet = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full text-center space-y-6">
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         {/* 404 Icon */}
-        <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center">
-          <IconComponent className="w-6 h-6 text-muted-foreground" />
+        <div className="bg-primary/30 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+          <IconComponent className="text-foreground h-6 w-6" />
         </div>
 
         {/* Error Message */}
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+          <h1 className="text-foreground text-2xl font-bold">{title}</h1>
           <p className="text-muted-foreground">{message}</p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           {showBackButton && (
-            <Button
-              variant="outline"
-              onClick={handleGoBack}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
+            <Button variant="outline" onClick={handleGoBack} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
               Go Back
             </Button>
           )}
 
           {showHomeButton && (
             <Button onClick={handleGoHome} className="flex items-center gap-2">
-              <Home className="w-4 h-4" />
+              <Home className="h-4 w-4" />
               Go Home
             </Button>
           )}
         </div>
 
         {/* Helpful Links */}
-        <div className="text-xs text-muted-foreground flex flex-col justify-center items-center">
+        <div className="text-muted-foreground flex flex-col items-center justify-center text-xs">
           <p>You might want to check these pages instead:</p>
           <div className="mt-2 space-y-1">
-            <button
-              onClick={() => navigate.goToApp()}
-              className="block text-primary hover:underline"
-            >
+            <button onClick={() => navigate.goToApp()} className="text-primary block hover:underline">
               Dashboard
             </button>
             <button
@@ -94,7 +81,7 @@ export const ErrorComponenet = ({
                 // TODO : fix this
                 navigate.goTo(routeBuilder.profile.user('uhavetofixthisslug'))
               }
-              className="block text-primary hover:underline"
+              className="text-primary block hover:underline"
             >
               My Profile
             </button>

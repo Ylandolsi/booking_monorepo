@@ -32,56 +32,42 @@ export const IntegrationRequired = ({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full text-center space-y-6">
+    <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6 text-center">
         {/* Mentor Required Icon */}
-        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-          <Plug className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+        <div className="bg-primary/40 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+          <Plug className="text-foreground h-8 w-8" />
         </div>
 
         {/* Error Message */}
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+          <h1 className="text-foreground text-2xl font-bold">{title}</h1>
           <p className="text-muted-foreground">{message}</p>
-          {actionDescription && (
-            <p className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
-              {actionDescription}
-            </p>
-          )}
+          {actionDescription && <p className="text-muted-foreground bg-muted rounded-lg p-3 text-sm">{actionDescription}</p>}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           {showIntegrationPageButtton && (
-            <Button
-              onClick={handleIntegration}
-              className="flex items-center gap-2"
-            >
-              <UserPlus className="w-4 h-4" />
+            <Button onClick={handleIntegration} className="flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
               Integrate your account
             </Button>
           )}
 
           {showHomeButton && (
-            <Button
-              variant="outline"
-              onClick={handleGoHome}
-              className="flex items-center gap-2"
-            >
-              <Home className="w-4 h-4" />
+            <Button variant="outline" onClick={handleGoHome} className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
               Go Home
             </Button>
           )}
         </div>
 
         {/* Help Section */}
-        <div className="pt-4 border-t border-border">
-          <p className="text-xs text-muted-foreground">
+        <div className="border-border border-t pt-4">
+          <p className="text-muted-foreground text-xs">
             Need help with integrations ?{' '}
-            <button
-              onClick={handleContactSupport}
-              className="text-primary hover:underline"
-            >
+            <button onClick={handleContactSupport} className="text-primary hover:underline">
               Contact support
             </button>
           </p>
