@@ -170,14 +170,18 @@ const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<st
   const canvas = document.createElement('canvas');
   const scaleX = image.naturalWidth / image.width;
   const scaleY = image.naturalHeight / image.height;
+  const pixelRatio = window.devicePixelRatio;
 
-  canvas.width = cropData.width;
-  canvas.height = cropData.height;
+  canvas.width = scaleX * cropData.width * pixelRatio;
+  canvas.height = scaleY * cropData.height * pixelRatio;
   const ctx = canvas.getContext('2d');
 
   if (!ctx) {
     throw new Error('No 2d context');
   }
+
+  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  ctx.imageSmoothingQuality = 'high';
 
   ctx.drawImage(
     image,
@@ -187,8 +191,8 @@ const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<st
     cropData.height * scaleY,
     0,
     0,
-    cropData.width,
-    cropData.height,
+    cropData.width * scaleX,
+    cropData.height * scaleY,
   );
 
   return new Promise<string>((resolve) => {
@@ -201,7 +205,7 @@ const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<st
         resolve(URL.createObjectURL(blob));
       },
       'image/jpeg',
-      0.9,
+      1,
     );
   });
 };
