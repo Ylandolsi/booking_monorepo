@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMyStore } from '@/api/stores';
+import { useMyStore, type Product } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState, MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/components';
 import { GenerateIdCrypto } from '@/lib';
 import { Button } from '@/components/ui/button'; // For close button
@@ -24,17 +24,16 @@ const ProductDetailsModal = ({ product, storeSlug, isOpen, onClose }: { product:
   );
 };
 
-export const MobilePreview = ({ storeForm }: { storeForm: StoreFormData }) => {
+export const MobilePreview = ({ storeForm, productsRearranged }: { storeForm: StoreFormData; productsRearranged: Product[] }) => {
   const { data: store, isLoading, isError } = useMyStore();
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   if (isLoading) return <LoadingState type="spinner" />;
   if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
 
-  const mergedStore = { ...store, ...storeForm }; // Merge form data with existing store data
-  console.log('Merged Store Data:', mergedStore); // Debugging line
+  const mergedStore = { ...store, ...storeForm, products: productsRearranged }; // Merge form data with existing store data
 
-  const handleProductClick = (product: any) => {
+  const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
   };
 
@@ -47,7 +46,7 @@ export const MobilePreview = ({ storeForm }: { storeForm: StoreFormData }) => {
     <MobileContainer>
       <StoreHeader store={mergedStore} />
       <div className="w-full space-y-4 pb-10">
-        {store.products.map((product, index) => (
+        {mergedStore.products.map((product, index) => (
           <div
             key={GenerateIdCrypto()}
             onClick={() => handleProductClick(product)} // Add click handler

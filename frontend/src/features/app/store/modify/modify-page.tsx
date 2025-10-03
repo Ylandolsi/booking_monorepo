@@ -246,7 +246,7 @@ export function ModifyStore() {
           </div>
         </div>
       </aside>
-      <MobilePreview storeForm={watchedValues} />
+      <MobilePreview storeForm={watchedValues} productsRearranged={products} />
     </div>
   );
 }
