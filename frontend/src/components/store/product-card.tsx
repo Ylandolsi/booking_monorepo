@@ -1,12 +1,15 @@
 import { cn } from '@/lib/cn';
-import { Button } from '../ui';
+import { Button, Popover, PopoverContent, PopoverTrigger, Switch } from '../ui';
 import type { Product } from '@/api/stores';
 import { COVER_IMAGE } from '@/features/public/checkout-product-page';
 import { useSortable } from '@dnd-kit/sortable';
 import { routes } from '@/config/routes';
 import { useAppNavigation } from '@/hooks';
-import { Grip } from 'lucide-react';
+import { BrushCleaning, Delete, EllipsisVertical, Globe, Grip, Move, Option } from 'lucide-react';
 import { CSS } from '@dnd-kit/utilities';
+import { boolean } from 'zod';
+import { useState } from 'react';
+import { Label } from '@radix-ui/react-label';
 
 type DisplayMode = 'full' | 'compact';
 
@@ -25,6 +28,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onClick, className, displayMode = 'full', edit = false, onActionClick }: ProductCardProps) {
+  const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: product.productSlug || '',
     disabled: !edit || !product.productSlug,
@@ -56,14 +60,59 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
       onClick={onClick}
     >
       {edit && (
-        <div
-          {...attributes}
-          {...listeners}
-          className="bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground absolute top-3 right-3 z-10 cursor-grab rounded-lg p-2 backdrop-blur-sm transition-all duration-200 active:scale-95 active:cursor-grabbing"
-        >
-          <Grip className="h-4 w-4" />
-        </div>
+        <>
+          <div
+            {...attributes}
+            {...listeners}
+            className="bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground absolute top-3 left-3 z-10 cursor-grab rounded-lg p-2 backdrop-blur-sm transition-all duration-200 active:scale-95 active:cursor-grabbing"
+          >
+            <Move className="h-4 w-4" />
+          </div>
+          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+            <PopoverTrigger asChild>
+              <div
+                className="bg-accent text-foreground hover:bg-accent/80 absolute top-3 right-3 z-10 cursor-pointer rounded-lg p-2 transition-all duration-200"
+                onClick={() => {
+                  setIsPopoverOpen(true);
+                }}
+              >
+                <EllipsisVertical className="h-4 w-4" />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-72 p-4" side="top" align="center">
+              <div className="grid gap-4">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold">Product Options</h4>
+                  <p className="text-muted-foreground text-xs">Manage your product settings</p>
+                </div>
+                <div className="grid gap-3">
+                  <div className="hover:bg-accent/50 flex items-center space-x-3 rounded-lg p-2 transition-colors">
+                    <Globe className="text-muted-foreground h-4 w-4" />
+                    <Label
+                      htmlFor="featured-toggle"
+                      className="flex flex-1 cursor-pointer items-center gap-2 text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Published
+                    </Label>
+                    <Switch
+                      id="featured-toggle"
+                      defaultChecked={false}
+                      onCheckedChange={(checked) => {
+                        // Handle toggle change
+                      }}
+                    />
+                  </div>
+                  <Button type="button" variant={'destructive'} size="sm" onClick={editProduct} className="mt-1 h-9 w-full rounded-lg">
+                    <BrushCleaning className="h-4 w-4" />
+                    Delete Product
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </>
       )}
+
       <div className="flex h-full w-full flex-col gap-4">
         {displayMode === 'full' && product.thumbnailPicture?.mainLink && (
           <div className="mx-auto overflow-hidden rounded-lg">

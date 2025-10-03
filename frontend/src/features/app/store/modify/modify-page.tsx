@@ -234,7 +234,7 @@ export function ModifyStore() {
                       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                         <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
                           {products.map((item) => (
-                            <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onClick={() => handleProductEdit(item)} />
+                            <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onActionClick={() => handleProductEdit(item)} />
                           ))}
                         </SortableContext>
                       </DndContext>
@@ -250,31 +250,3 @@ export function ModifyStore() {
     </div>
   );
 }
-
-// const SortableItem = ({ id, item }: { id: string; item: Product }) => {
-//   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-//   const navigate = useAppNavigation();
-//   const style = {
-//     transform: CSS.Transform.toString(transform),
-//     transition,
-//     opacity: isDragging ? 0.5 : 1, // Optional: Visual feedback during drag
-//   };
-
-//   const editProduct = () => {
-//     navigate.goTo({ to: routes.to.store.productEdit({ productSlug: item.productSlug, type: item.productType }) });
-//   };
-//   return (
-//     <div ref={setNodeRef} style={style}>
-//       <div className="group mt-2 flex items-center px-6 pb-10">
-//         {/* Drag handle */}
-//         <div {...attributes} {...listeners} className="mr-2 cursor-grab p-1 active:cursor-grabbing">
-//           <Grip className="text-black" />
-//         </div>
-//         {/* Product card */}
-//         <div className="flex-1 cursor-pointer">
-//           <ProductCard product={item} edit={true} onActionClick={editProduct} />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
