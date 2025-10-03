@@ -51,18 +51,7 @@ export function ProductCheckout({ product, children }: { product: ProductCheckou
             <h2 className="text-xl font-bold break-all text-slate-900 dark:text-white">Description</h2>
             <p className="break-all">{product.description}</p>
           </div>
-          {/* <div className="bg-primary/10 dark:bg-primary/20 mt-6 rounded-lg p-4">
-          <h3 className="font-bold text-slate-900 dark:text-white">Fulfillment Note</h3>
-          <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">{fulfillmentNote}</p>
-        </div> */}
-
           {children}
-          {/* <button
-            onClick={() => alert('Purchase completed!')}
-            className="bg-primary shadow-primary/30 hover:bg-opacity-90 mt-10 h-14 w-full rounded-xl text-lg font-bold text-white shadow-lg transition-all duration-300"
-          >
-            Buy Now
-          </button> */}
         </div>
       </main>
     </div>
