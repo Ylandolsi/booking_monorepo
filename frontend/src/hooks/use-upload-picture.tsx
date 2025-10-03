@@ -1,7 +1,16 @@
 import { useUploadImageStore } from '@/stores/upload-image-store';
+import { useLocation } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 export const useUploadPicture = () => {
   const store = useUploadImageStore();
+  const location = useLocation();
+
+  useEffect(() => {
+    // when location changes :
+    // reset the uploaded image
+    store.resetUpload();
+  }, [location]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
