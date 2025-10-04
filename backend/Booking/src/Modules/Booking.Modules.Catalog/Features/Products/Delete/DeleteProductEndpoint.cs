@@ -1,4 +1,5 @@
 using Booking.Common.Authentication;
+using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
@@ -7,9 +8,9 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Booking.Modules.Catalog.Features.Products.Delete;
 
-public static class DeleteProductEndpoint
+public class DeleteProductEndpoint : IEndpoint
 {
-    public static void MapDeleteProduct(this IEndpointRouteBuilder app)
+    public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapDelete(CatalogEndpoints.Products.Delete,
                 async (string slug,

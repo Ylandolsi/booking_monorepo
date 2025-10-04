@@ -44,9 +44,6 @@ public class GetMyStoreHandler(
             var mappedStoreProducts = new List<ProductResponse>();
             foreach (var product in store.Products)
             {
-                if (!product.IsPublished)
-                    continue;
-
                 var mappedProduct = new ProductResponse
                 {
                     ProductSlug = product.ProductSlug,
