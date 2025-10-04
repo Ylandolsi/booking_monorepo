@@ -1,6 +1,6 @@
 import { cn } from '@/lib/cn';
 import { Button, Popover, PopoverContent, PopoverTrigger, Switch } from '../ui';
-import type { Product } from '@/api/stores';
+import { useDeleteProduct, useToggleProduct, type Product } from '@/api/stores';
 import { COVER_IMAGE } from '@/pages/public/checkout-product-page';
 import { useSortable } from '@dnd-kit/sortable';
 import { routes } from '@/config/routes';
@@ -15,7 +15,7 @@ type DisplayMode = 'full' | 'compact';
 
 export type ProductCardType = Pick<
   Product,
-  'productSlug' | 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType'
+  'productSlug' | 'thumbnailPicture' | 'description' | 'title' | 'subtitle' | 'price' | 'clickToPay' | 'productType' | 'isPublished'
 >;
 
 interface ProductCardProps {
@@ -33,6 +33,9 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
     id: product.productSlug || '',
     disabled: !edit || !product.productSlug,
   });
+
+  const deleteProductMutation = useDeleteProduct();
+  const toggleProductMutation = useToggleProduct();
   const navigate = useAppNavigation();
 
   const style = {
@@ -90,7 +93,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
               {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed break-words">{product.subtitle}</p>}
             </div>
 
-            <div className="">
+            {edit && product.productSlug && (
               <div className="flex items-center">
                 <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>
 
@@ -122,9 +125,12 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
                           </Label>
                           <Switch
                             id="featured-toggle"
-                            defaultChecked={false}
+                            className="data-[state=checked]:bg-green-600"
+                            defaultChecked={product.isPublished}
                             onCheckedChange={(checked) => {
                               // Handle toggle change
+                              if (!product.productSlug) return;
+                              toggleProductMutation.mutate({ productSlug: product.productSlug });
                             }}
                           />
                         </div>
@@ -137,7 +143,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
                   </PopoverContent>
                 </Popover>
               </div>
-            </div>
+            )}
           </div>
 
           <Button

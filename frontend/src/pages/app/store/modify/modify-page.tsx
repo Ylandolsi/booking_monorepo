@@ -11,8 +11,10 @@ import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import {
   patchPostStoreSchema,
+  useDeleteProduct,
   useMyStore,
   useRearrangeProducts,
+  useToggleProduct,
   useUpdateStore,
   type PatchPostStoreRequest,
   type Picture,
@@ -107,6 +109,7 @@ const ProductSection = ({
   store: Store;
 }) => {
   const rearrangeProductsMutation = useRearrangeProducts();
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -125,7 +128,7 @@ const ProductSection = ({
     setOrderChanged(false);
   }, [products, store.products]);
 
-  console.log('Products order changed:', orderChanged);
+  console.log('products :', products);
 
   const handleProductRearrange = async () => {
     if (!orderChanged) return;
