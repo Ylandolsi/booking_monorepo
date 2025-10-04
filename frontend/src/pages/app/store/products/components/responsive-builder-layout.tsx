@@ -4,9 +4,9 @@ import { ProductCard, type ProductCardType } from '@/components/store/product-ca
 import { useState } from 'react';
 import { Button, LoadingState } from '@/components/ui';
 import type { ProductFormData } from '@/pages/app/store/products/add-product-page';
-import { CheckoutPageProduct } from '@/pages/app/store/products';
 import { ErrorComponenet, StoreHeader } from '@/components';
 import { useMyStore } from '@/api/stores';
+import { CheckoutPageProduct } from '@/pages/app/store/products/book';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
