@@ -38,6 +38,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
   const deleteProductMutation = useDeleteProduct();
   const toggleProductMutation = useToggleProduct();
   const handleTogglePublished = (checked: boolean) => {
+    if (!edit) return;
     if (!product.productSlug) return;
     toggleProductMutation.mutate({ productSlug: product.productSlug });
     product.isPublished = checked;
@@ -52,6 +53,14 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
       }
       return prevProducts;
     });
+  };
+
+  const handleDeleteProduct = () => {
+    if (!edit || !product.productSlug) return;
+    deleteProductMutation.mutate({ productSlug: product.productSlug });
+    // optimistically update UI : todo we can make it better with react-query cache update
+    if (!setProducts) return;
+    setProducts((prevProducts) => prevProducts.filter((p) => p.productSlug !== product.productSlug));
   };
   const navigate = useAppNavigation();
 
@@ -150,7 +159,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
                             }}
                           />
                         </div>
-                        <Button type="button" variant={'destructive'} size="sm" onClick={editProduct} className="mt-1 h-9 w-full rounded-lg">
+                        <Button type="button" variant={'destructive'} size="sm" onClick={handleDeleteProduct} className="mt-1 h-9 w-full rounded-lg">
                           <BrushCleaning className="h-4 w-4" />
                           Delete Product
                         </Button>
