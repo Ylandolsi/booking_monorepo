@@ -1,7 +1,8 @@
-using System.Data.Entity;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Payout.User.History;
@@ -13,15 +14,28 @@ public class GetPayoutHistoryQueryHandler(
     public async Task<Result<List<PayoutResponse>>> Handle(GetPayoutHistoryQuery query,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("Get Payout History query executed for user with id {id}", query.UserId);
+        logger.LogInformation(
+            "Fetching payout history: UserId={UserId}",
+            query.UserId);
 
-        var store = await dbContext.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken); 
+        // Retrieve store for the user
+        var store = await dbContext.Stores
+            .FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken);
         
-        var payouts = await dbContext.Payouts.Where(p => p.StoreId == store.Id)
+        if (store is null)
+        {
+            logger.LogWarning(
+                "Payout history fetch failed - Store not found: UserId={UserId}",
+                query.UserId);
+            return Result.Failure<List<PayoutResponse>>(CatalogErrors.Store.NotFound);
+        }
+
+        // Retrieve payout history for the store
+        var payouts = await dbContext.Payouts
+            .Where(p => p.StoreId == store.Id)
+            .OrderByDescending(p => p.CreatedAt)
             .Select(p => new PayoutResponse
             {
-                /*Id = p.Id,
-                UserId = p.UserId,*/
                 KonnectWalletId = p.KonnectWalletId,
                 PaymentRef = p.PaymentRef,
                 WalletId = p.WalletId,
@@ -29,7 +43,14 @@ public class GetPayoutHistoryQueryHandler(
                 UpdatedAt = p.UpdatedAt,
                 CreatedAt = p.CreatedAt,
                 Status = p.Status
-            }).ToListAsync(cancellationToken);
+            })
+            .ToListAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Payout history fetched successfully: UserId={UserId}, StoreId={StoreId}, PayoutsCount={PayoutsCount}",
+            query.UserId,
+            store.Id,
+            payouts.Count);
 
         return Result.Success(payouts);
     }

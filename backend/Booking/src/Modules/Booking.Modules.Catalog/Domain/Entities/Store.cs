@@ -129,7 +129,6 @@ public class Store : Entity
         UpdatedAt = DateTime.UtcNow;
     }
 
-
     public void Publish()
     {
         IsPublished = true;
@@ -143,9 +142,13 @@ public class Store : Entity
     }
 }
 
+/// <summary>
+/// Store-specific error definitions.
+/// Consider using CatalogErrors.Store for consistency across the module.
+/// </summary>
 public static class StoreErros
 {
     public static readonly Error NotFound = Error.NotFound(
         "Store.NotFound",
-        "Store not found");
+        "The requested store was not found.");
 }

@@ -13,25 +13,44 @@ public class GetWalletQueryHandler(
 {
     public async Task<Result<GetWalletResponse>> Handle(GetWalletQuery query, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Fetching wallet for user with ID {UserId}", query.UserId);
+        logger.LogInformation(
+            "Fetching wallet information: UserId={UserId}",
+            query.UserId);
         
-        var store = await context.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken);
-        if (store == null)
+        // Retrieve store for the user
+        var store = await context.Stores
+            .FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken);
+        
+        if (store is null)
         {
-            logger.LogWarning("Someone is Trying to acesss another store product details ");
+            logger.LogWarning(
+                "Wallet fetch failed - Store not found: UserId={UserId}",
+                query.UserId);
             return Result.Failure<GetWalletResponse>(
-                Error.Problem("UserId.DosentMatch.Store",
-                    "You dont have the right permission to access this product"));
+                Error.NotFound("Store.NotFound", "Store not found for this user."));
         }
 
+        // Retrieve wallet for the store
+        var wallet = await context.Wallets
+            .FirstOrDefaultAsync(w => w.StoreId == store.Id, cancellationToken);
         
-        var wallet = await context.Wallets.FirstOrDefaultAsync(w => w.StoreId == store.Id, cancellationToken);
-        if (wallet == null)
+        if (wallet is null)
         {
-            logger.LogWarning("Wallet not found for user with ID {UserId}", query.UserId);
-            return Result.Failure<GetWalletResponse>(Error.Problem("Wallet not found",
-                "Wallet not found for the specified user."));
+            logger.LogWarning(
+                "Wallet fetch failed - Wallet not found: UserId={UserId}, StoreId={StoreId}",
+                query.UserId,
+                store.Id);
+            return Result.Failure<GetWalletResponse>(
+                Error.NotFound("Wallet.NotFound", "Wallet not found for this store."));
         }
+
+        logger.LogInformation(
+            "Wallet fetched successfully: UserId={UserId}, StoreId={StoreId}, WalletId={WalletId}, Balance={Balance}, PendingBalance={PendingBalance}",
+            query.UserId,
+            store.Id,
+            wallet.Id,
+            wallet.Balance,
+            wallet.PendingBalance);
         
         var walletResponse = new GetWalletResponse
         {

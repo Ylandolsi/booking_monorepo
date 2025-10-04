@@ -16,35 +16,48 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
 {
     public async Task<Result<GetStoreResponse>> Handle(GetStoreQuery command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Public retrieving store with slug :{StoreSlug} information.", command.StoreSlug);
+        logger.LogInformation(
+            "Fetching public store information: StoreSlug={StoreSlug}",
+            command.StoreSlug);
 
-        var store = await dbContext.Stores.AsNoTracking().Include(s => s.Products)
+        var store = await dbContext.Stores
+            .AsNoTracking()
+            .Include(s => s.Products)
             .FirstOrDefaultAsync(s => s.Slug == command.StoreSlug, cancellationToken);
 
         if (store is null)
         {
-            logger.LogError("Public user trying to retrieve store with invalid slug : {slug}", command.StoreSlug);
+            logger.LogWarning(
+                "Public store fetch failed - Store not found: StoreSlug={StoreSlug}",
+                command.StoreSlug);
             return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
         }
 
         if (!store.IsPublished)
         {
-            logger.LogError("Public user trying to retrieve unpublished store with slug : {slug}", command.StoreSlug);
+            logger.LogWarning(
+                "Public store fetch failed - Store not published: StoreSlug={StoreSlug}, StoreId={StoreId}",
+                command.StoreSlug,
+                store.Id);
             return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
         }
 
+        // Map social links
         var socialLinks = store.SocialLinks
             .Select(sl => new SocialLink(sl.Platform, sl.Url))
             .ToList();
 
-
+        // Map published products only
         var mappedStoreProducts = new List<ProductResponse>();
+        var publishedProductCount = 0;
 
         foreach (var product in store.Products)
         {
             if (!product.IsPublished)
                 continue;
 
+            publishedProductCount++;
+            
             var mappedProduct = new ProductResponse
             {
                 ProductSlug = product.ProductSlug,
@@ -55,10 +68,16 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
                 ProductType = product.ProductType,
                 Price = product.Price,
                 DisplayOrder = product.DisplayOrder,
-                IsPublished = product.IsPublished //  only retrieve published 
+                IsPublished = product.IsPublished
             };
             mappedStoreProducts.Add(mappedProduct);
         }
+
+        logger.LogInformation(
+            "Public store fetched successfully: StoreSlug={StoreSlug}, StoreId={StoreId}, PublishedProductsCount={PublishedProductsCount}",
+            command.StoreSlug,
+            store.Id,
+            publishedProductCount);
 
         var mappedResult = new GetStoreResponse
         {

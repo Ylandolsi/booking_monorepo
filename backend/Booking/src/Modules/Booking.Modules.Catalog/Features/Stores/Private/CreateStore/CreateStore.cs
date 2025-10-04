@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Private.Shared;
@@ -45,8 +46,7 @@ public class CreateStoreHandler(
             {
                 logger.LogWarning("User {UserId} already has a store with ID {StoreId}",
                     command.UserId, existingStore.Id);
-                return Result.Failure<PatchPostStoreResponse>(Error.Conflict("Store.AlreadyExists",
-                    "User already has a store"));
+                return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.UserAlreadyHasStore);
             }
 
             // Check slug availability
@@ -56,8 +56,7 @@ public class CreateStoreHandler(
             {
                 logger.LogWarning("Store slug {Slug} is not available for user {UserId}",
                     command.Slug, command.UserId);
-                return Result.Failure<PatchPostStoreResponse>(Error.Conflict("Store.Slug.NotAvailable",
-                    "Store slug is not available, please try another one"));
+                return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.SlugAlreadyExists);
             }
 
             // Create store entity
@@ -98,31 +97,29 @@ public class CreateStoreHandler(
             logger.LogError(ex, "Error creating store for user {UserId} with slug {Slug}",
                 command.UserId, command.Slug);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<PatchPostStoreResponse>(Error.Problem("Store.Creation.Failed",
-                "An error occurred while creating the store"));
+            return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.CreationFailed);
         }
     }
 
     private static Result ValidateCommand(PatchStoreCommand command)
     {
         if (command.UserId <= 0)
-            return Result.Failure(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
+            return Result.Failure(CatalogErrors.Store.InvalidUserId);
 
         if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(Error.Problem("Store.InvalidTitle", "Store title cannot be empty"));
+            return Result.Failure(CatalogErrors.Store.InvalidTitle);
 
         if (command.Title.Length > 100)
-            return Result.Failure(Error.Problem("Store.TitleTooLong", "Store title cannot exceed 100 characters"));
+            return Result.Failure(CatalogErrors.Store.TitleTooLong);
 
         if (string.IsNullOrWhiteSpace(command.Slug))
-            return Result.Failure(Error.Problem("Store.InvalidSlug", "Store slug cannot be empty"));
+            return Result.Failure(CatalogErrors.Store.InvalidSlug);
 
         if (command.Slug.Length > 50)
-            return Result.Failure(Error.Problem("Store.SlugTooLong", "Store slug cannot exceed 50 characters"));
+            return Result.Failure(CatalogErrors.Store.SlugTooLong);
 
         if (command.Description?.Length > 1000)
-            return Result.Failure(Error.Problem("Store.DescriptionTooLong",
-                "Store description cannot exceed 1000 characters"));
+            return Result.Failure(CatalogErrors.Store.DescriptionTooLong);
 
         return Result.Success();
     }

@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Stores.Private.Shared;
@@ -88,25 +89,23 @@ public class UpdateStoreHandler(
         {
             logger.LogError(ex, "Error updating store for user {UserId}", command.UserId);
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            return Result.Failure<PatchPostStoreResponse>(Error.Problem("Store.Update.Failed",
-                "An error occurred while updating the store"));
+            return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.UpdateFailed);
         }
     }
 
     private static Result ValidateCommand(PatchStoreCommand command)
     {
         if (command.UserId <= 0)
-            return Result.Failure(Error.Problem("Store.InvalidUserId", "User ID must be greater than 0"));
+            return Result.Failure(CatalogErrors.Store.InvalidUserId);
 
         if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(Error.Problem("Store.InvalidTitle", "Store title cannot be empty"));
+            return Result.Failure(CatalogErrors.Store.InvalidTitle);
 
         if (command.Title.Length > 100)
-            return Result.Failure(Error.Problem("Store.TitleTooLong", "Store title cannot exceed 100 characters"));
+            return Result.Failure(CatalogErrors.Store.TitleTooLong);
 
         if (command.Description?.Length > 1000)
-            return Result.Failure(Error.Problem("Store.DescriptionTooLong",
-                "Store description cannot exceed 1000 characters"));
+            return Result.Failure(CatalogErrors.Store.DescriptionTooLong);
 
         return Result.Success();
     }

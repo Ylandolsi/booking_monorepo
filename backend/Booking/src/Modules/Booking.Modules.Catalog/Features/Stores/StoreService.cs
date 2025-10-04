@@ -1,5 +1,6 @@
 using Booking.Common.Results;
 using Booking.Common.Uploads;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.AspNetCore.Http;
@@ -51,7 +52,7 @@ public class StoreService(
         }
         catch (Exception e)
         {
-            return Result.Failure<Picture>(Error.Failure("Upload.Image.Failed", e.Message));
+            return Result.Failure<Picture>(CatalogErrors.Upload.ImageFailed);
         }
     }
 

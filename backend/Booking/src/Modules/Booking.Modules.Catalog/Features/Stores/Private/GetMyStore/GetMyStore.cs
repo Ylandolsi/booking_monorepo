@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Features.Stores.Shared;
 using Booking.Modules.Catalog.Persistence;
@@ -25,8 +26,7 @@ public class GetMyStoreHandler(
             if (request.UserId <= 0)
             {
                 logger.LogWarning("Invalid user ID provided: {UserId}", request.UserId);
-                return Result.Failure<GetStoreResponse>(Error.Problem("Store.InvalidUserId",
-                    "User ID must be greater than 0"));
+                return Result.Failure<GetStoreResponse>(CatalogErrors.Store.InvalidUserId);
             }
 
             // Get store from database : improve this query 
@@ -38,7 +38,7 @@ public class GetMyStoreHandler(
             if (store == null)
             {
                 logger.LogInformation("No store found for user {UserId}", request.UserId);
-                return Result.Failure<GetStoreResponse>(StoreErros.NotFound);
+                return Result.Failure<GetStoreResponse>(CatalogErrors.Store.NotFound);
             }
 
             logger.LogInformation("Successfully retrieved store {StoreId} for user {UserId}", store.Id, request.UserId);
@@ -87,8 +87,7 @@ public class GetMyStoreHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error retrieving store for user {UserId}", request.UserId);
-            return Result.Failure<GetStoreResponse>(Error.Problem("Store.Retrieval.Failed",
-                "An error occurred while retrieving the store"));
+            return Result.Failure<GetStoreResponse>(CatalogErrors.Store.RetrievalFailed);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Booking.Common;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -16,37 +17,49 @@ public class ApprovePayoutAdminCommandHandler(
     public async Task<Result<ApprovePayoutAdminResponse>> Handle(ApprovePayoutAdminCommand command,
         CancellationToken cancellationToken)
     {
-        logger.LogInformation("Admin is approveing payout with id {id}", command.PayoutId);
-        var payout = await dbContext.Payouts.FirstOrDefaultAsync(p => p.Id == command.PayoutId, cancellationToken)
-            ;
+        logger.LogInformation(
+            "Admin approving payout: PayoutId={PayoutId}",
+            command.PayoutId);
+        
+        // Retrieve payout
+        var payout = await dbContext.Payouts
+            .FirstOrDefaultAsync(p => p.Id == command.PayoutId, cancellationToken);
+        
         if (payout is null)
         {
-            logger.LogError("Admin is trying to approve payout with id {id} that dosent exists", command.PayoutId);
-            return Result.Failure<ApprovePayoutAdminResponse>(Error.NotFound("Payout.NotFound", "Payout is not found"));
+            logger.LogWarning(
+                "Admin payout approval failed - Payout not found: PayoutId={PayoutId}",
+                command.PayoutId);
+            return Result.Failure<ApprovePayoutAdminResponse>(CatalogErrors.Payout.NotFound);
         }
 
-        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == payout.WalletId, cancellationToken);
+        // Retrieve wallet
+        var wallet = await dbContext.Wallets
+            .FirstOrDefaultAsync(w => w.Id == payout.WalletId, cancellationToken);
 
         if (wallet is null)
         {
-            logger.LogError("Admin is trying to approve payout of wallet of user with id:{ref}, dosent exists ",
+            logger.LogWarning(
+                "Admin payout approval failed - Wallet not found: PayoutId={PayoutId}, WalletId={WalletId}, StoreId={StoreId}",
+                command.PayoutId,
+                payout.WalletId,
                 payout.StoreId);
-            return Result.Failure<ApprovePayoutAdminResponse>(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
+            return Result.Failure<ApprovePayoutAdminResponse>(CatalogErrors.Wallet.NotFound);
         }
 
+        // Validate sufficient balance
         if (wallet.Balance < payout.Amount)
         {
-            logger.LogError(
-                "Admin is trying to approve payout : wallet.balance is less than the payout requested , user with id:{ref} ",
-                payout.StoreId);
-
-            return Result.Failure<ApprovePayoutAdminResponse>(Error.Failure("Wallet.Balance.IsNotSufficent",
-                "Wallet Balance is not sufficent "));
+            logger.LogWarning(
+                "Admin payout approval failed - Insufficient balance: PayoutId={PayoutId}, StoreId={StoreId}, WalletBalance={WalletBalance}, PayoutAmount={PayoutAmount}",
+                command.PayoutId,
+                payout.StoreId,
+                wallet.Balance,
+                payout.Amount);
+            return Result.Failure<ApprovePayoutAdminResponse>(CatalogErrors.Wallet.InsufficientBalance);
         }
 
-
-        // generate payment link here :
-        // change webhook 
+        // Create Konnect payment link for payout
         var resultKonnect = await konnectService.CreatePaymentPayout(
             (int)(payout.Amount * 100),
             payout.Id,
@@ -58,18 +71,24 @@ public class ApprovePayoutAdminCommandHandler(
 
         if (resultKonnect.IsFailure)
         {
-            logger.LogError("Failed to create payment link to approve the payout with id {id}", command.PayoutId);
-            return Result.Failure<ApprovePayoutAdminResponse>(Error.Failure("Failed.To.Create.Konnect.PaymentLink",
-                "Failed to create konnect payment link"));
+            logger.LogError(
+                "Admin payout approval failed - Konnect payment link creation failed: PayoutId={PayoutId}, Error={Error}",
+                command.PayoutId,
+                resultKonnect.Error.Description);
+            return Result.Failure<ApprovePayoutAdminResponse>(CatalogErrors.Payout.PaymentLinkCreationFailed);
         }
 
-
+        // Approve payout
         payout.Approve(resultKonnect.Value.PaymentRef);
-
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        logger.LogInformation(
+            "Admin payout approved successfully: PayoutId={PayoutId}, StoreId={StoreId}, Amount={Amount}, PaymentRef={PaymentRef}",
+            command.PayoutId,
+            payout.StoreId,
+            payout.Amount,
+            resultKonnect.Value.PaymentRef);
 
-        logger.LogInformation("Admin approveed payout with id {id} successfully ", command.PayoutId);
         return Result.Success(new ApprovePayoutAdminResponse(resultKonnect.Value.PayUrl));
     }
 }

@@ -1,6 +1,7 @@
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,49 +16,78 @@ public class PayoutCommandHandler(
 {
     public async Task<Result> Handle(PayoutCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("User with id : {userId} is requesting a payout with amount  : {Amount} $",
+        logger.LogInformation(
+            "Processing payout request: UserId={UserId}, Amount={Amount}",
             command.UserId,
             command.Amount);
 
+        // Retrieve user data and Konnect wallet information
         var userDataAndWalletKonnectInfo = await usersModuleApi.GetUserInfo(command.UserId, cancellationToken);
         var konnectWalletId = userDataAndWalletKonnectInfo.KonnectWalletId;
-        if (konnectWalletId == "")
+        
+        if (string.IsNullOrEmpty(konnectWalletId))
         {
-            logger.LogInformation(
-                "User with id : {userId} tried to request a payout with having a konnectWallet integrated",
+            logger.LogWarning(
+                "Payout request rejected - Konnect wallet not integrated: UserId={UserId}",
                 command.UserId);
-            return Result.Failure(Error.Failure("Konnect.Is.Not.Integrated",
-                "Integrate your account with konnect before trying to request a payout"));
+            return Result.Failure(CatalogErrors.Payout.KonnectNotIntegrated);
         }
 
-        var wallet = await dbContext.Wallets.FirstOrDefaultAsync(w => w.StoreId == command.UserId, cancellationToken);
+        // Retrieve store for the user
+        var store = await dbContext.Stores
+            .FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
+        
+        if (store is null)
+        {
+            logger.LogWarning(
+                "Payout request rejected - Store not found: UserId={UserId}",
+                command.UserId);
+            return Result.Failure(CatalogErrors.Store.NotFound);
+        }
+
+        // Retrieve wallet for the store
+        var wallet = await dbContext.Wallets
+            .FirstOrDefaultAsync(w => w.StoreId == store.Id, cancellationToken);
+        
         if (wallet is null)
         {
-            logger.LogError("Wallet is not found for User with id : {userId}", command.UserId);
-            return Result.Failure(Error.Problem("Wallet.NotFound", "Wallet is not found"));
+            logger.LogWarning(
+                "Payout request rejected - Wallet not found: UserId={UserId}, StoreId={StoreId}",
+                command.UserId,
+                store.Id);
+            return Result.Failure(CatalogErrors.Wallet.NotFound);
         }
 
+        // Validate sufficient balance
         if (wallet.Balance < command.Amount)
         {
-            logger.LogError(
-                "Wallet balance : {balance} is less than the  balance requested for the payout : {payoutAmount}",
+            logger.LogWarning(
+                "Payout request rejected - Insufficient balance: UserId={UserId}, StoreId={StoreId}, WalletBalance={WalletBalance}, RequestedAmount={RequestedAmount}",
+                command.UserId,
+                store.Id,
                 wallet.Balance,
                 command.Amount);
-            return Result.Failure(Error.Failure("Balance.Is.Not.Sufficient",
-                "You are trying to payout more money than you have in your wallet."));
+            return Result.Failure(CatalogErrors.Payout.InsufficientBalance);
         }
 
+        // Update wallet balances
         wallet.UpdateBalance(-command.Amount);
         wallet.UpdatePendingBalance(command.Amount);
-        Domain.Entities.Payout payout = new(command.UserId, konnectWalletId, wallet.Id, command.Amount);
+        
+        // Create payout entity
+        var payout = new Domain.Entities.Payout(store.Id, konnectWalletId, wallet.Id, command.Amount);
         await dbContext.AddAsync(payout, cancellationToken);
 
-        logger.LogInformation("Wallet balance reduced by {amount} for user {userId}. Payout of {payoutAmount} created.",
-            command.Amount,
-            command.UserId,
-            command.Amount);
-
         await dbContext.SaveChangesAsync(cancellationToken);
+
+        logger.LogInformation(
+            "Payout request processed successfully: UserId={UserId}, StoreId={StoreId}, PayoutId={PayoutId}, Amount={Amount}, NewBalance={NewBalance}, PendingBalance={PendingBalance}",
+            command.UserId,
+            store.Id,
+            payout.Id,
+            command.Amount,
+            wallet.Balance,
+            wallet.PendingBalance);
 
         return Result.Success();
     }
