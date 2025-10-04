@@ -22,7 +22,7 @@ import React, { useEffect } from 'react';
 import { useAuth } from '@/api/auth';
 import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
-import { BookingSummary, TimeSlots } from '@/pages/app/store/products/components/checkout/book';
+import { BookingSummary, TimeSlots } from '@/pages/app/store/products/book';
 import { useBooking, type Product } from '@/api/stores/produtcs';
 import { useParams } from '@tanstack/react-router';
 import { useIsMobile } from '@/hooks/use-media-query';

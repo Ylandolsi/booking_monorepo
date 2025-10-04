@@ -3,7 +3,7 @@ import { useMyStore, type Product } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState, MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/components';
 import { GenerateIdCrypto } from '@/lib';
 import { Button } from '@/components/ui/button'; // For close button
-import { BookingPage } from '@/pages/app/store/products/components/checkout/book';
+import { BookingPage } from '@/pages/app/store/products/book';
 import type { StoreFormData } from '@/pages/app';
 
 // New component for product details modal

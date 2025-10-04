@@ -1,4 +1,4 @@
-import { BookingPage } from '@/pages/app/store/products/components/checkout/book';
+import { BookingPage } from '@/pages/app/store/products/book';
 import type { Product } from '@/api/stores';
 import { ProductCheckout } from '@/components/store';
 

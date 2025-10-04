@@ -1,4 +1,4 @@
-import { BookingPage } from '@/pages/app/store/products/components/checkout/book';
+import { BookingPage } from '@/pages/app/store/products/book';
 import type { Product } from '@/api/stores';
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Form, FormControl, FormField, FormItem, FormLabel, Input, Link, Textarea } from '@/components/ui';
