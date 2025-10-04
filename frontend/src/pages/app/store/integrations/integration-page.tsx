@@ -1,5 +1,5 @@
 import { ErrorComponenet, LoadingState, Badge } from '@/components';
-import { IntegrateGoogle, IntegrateKonnect } from '@/pages/app/integrations';
+import { IntegrateGoogle, IntegrateKonnect } from '@/pages/app/store/integrations';
 import { useUser } from '@/api/auth';
 import { Settings } from 'lucide-react';
 

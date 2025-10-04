@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui';
-import { KonnectIntegrationDialog } from '@/pages/app/integrations/components/konnect-dialog';
+import { KonnectIntegrationDialog } from '@/pages/app/store/integrations/components/konnect-dialog';
 import type { User } from '@/api/auth';
 import { CheckCircle, ExternalLink, Wallet, Shield, Banknote } from 'lucide-react';
 import { useState } from 'react';
