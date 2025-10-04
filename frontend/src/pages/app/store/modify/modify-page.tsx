@@ -9,12 +9,21 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { User, CheckCircle, Plus, Grip, Store as StoreIcon } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product, type Store } from '@/api/stores';
+import {
+  patchPostStoreSchema,
+  useMyStore,
+  useRearrangeProducts,
+  useUpdateStore,
+  type PatchPostStoreRequest,
+  type Picture,
+  type Product,
+  type Store,
+} from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/pages/app/store';
 import { ErrorComponenet, LoadingState, ProductCard, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useDeepCompareEffect } from '@/hooks';
 import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { GenerateIdCrypto } from '@/lib';
@@ -72,7 +81,7 @@ export function ModifyStore() {
           {/* Store Details Section */}
           <StoreSection form={form} handleCloseDialog={handleCloseDialog} />
           {/* Products Section */}
-          <ProductSection products={products} setProducts={setProducts} />
+          <ProductSection products={products} setProducts={setProducts} store={store} />
         </div>
       </aside>
       <div>
@@ -88,14 +97,50 @@ const PreviewUrl = ({ store }: { store: Store }) => {
   return <InputToCopy input={link || ''} className="mb-4" label={'Store Public Link'} />;
 };
 
-const ProductSection = ({ products, setProducts }: { products: Product[]; setProducts: Dispatch<SetStateAction<Product[]>> }) => {
+const ProductSection = ({
+  products,
+  setProducts,
+  store,
+}: {
+  products: Product[];
+  setProducts: Dispatch<SetStateAction<Product[]>>;
+  store: Store;
+}) => {
+  const rearrangeProductsMutation = useRearrangeProducts();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+  const [orderChanged, setOrderChanged] = useState<boolean>(false);
 
+  useDeepCompareEffect(() => {
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].productSlug != store.products[i].productSlug) {
+        setOrderChanged(true);
+        return;
+      }
+    }
+    setOrderChanged(false);
+  }, [products, store.products]);
+
+  console.log('Products order changed:', orderChanged);
+
+  const handleProductRearrange = async () => {
+    if (!orderChanged) return;
+    try {
+      const productSlugs = products.map((p) => p.productSlug);
+      const mappedSlugs = {} as Record<string, number>;
+      productSlugs.forEach((slug, index) => {
+        mappedSlugs[slug] = index + 1;
+      });
+      await rearrangeProductsMutation.mutateAsync({ orders: mappedSlugs });
+      setOrderChanged(false);
+    } catch (error) {
+      console.error('Failed to rearrange products:', error);
+    }
+  };
   function handleProductEdit(product: Product): void {
     navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
   }
@@ -144,8 +189,8 @@ const ProductSection = ({ products, setProducts }: { products: Product[]; setPro
               </Button>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-6 pt-2 pb-6">
-            <div className="space-y-3 p-4">
+          <AccordionContent className="flex flex-col px-6 pt-2 pb-6">
+            <div className="flex flex-col space-y-3 p-4">
               {products.length !== 0 && (
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                   <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
@@ -154,6 +199,20 @@ const ProductSection = ({ products, setProducts }: { products: Product[]; setPro
                     ))}
                   </SortableContext>
                 </DndContext>
+              )}
+              {orderChanged && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleProductRearrange}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="rounded-lg"
+                    disabled={rearrangeProductsMutation.isPending}
+                  >
+                    Confirm Rearrange
+                  </Button>
+                </div>
               )}
             </div>
           </AccordionContent>
