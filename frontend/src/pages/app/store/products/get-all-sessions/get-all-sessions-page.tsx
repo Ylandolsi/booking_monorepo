@@ -1,7 +1,7 @@
 // component.tsx
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Columns3, Grid } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Columns3, Grid } from 'lucide-react';
 import { fi } from 'date-fns/locale';
 
 export type DayType = {
@@ -104,11 +104,32 @@ const CalendarGrid: React.FC<{ onHover: (day: string | null) => void }> = ({ onH
 //   transform: moreView ? 'translateY(-50%) translateX(40px)' : 'translateY(-50%) translateX(4px)',
 // }}
 const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
-  const [moreView, setMoreView] = useState(false);
   const [hoveredDay, setHoveredDay] = useState<string | null>(null);
+  const [date, setDate] = useState<Date>(new Date());
+  // const []
 
   const handleDayHover = (day: string | null) => {
     setHoveredDay(day);
+  };
+
+  const formatDateToMonthYear = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
+  };
+
+  const nextMonth = () => {
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setMonth(newDate.getMonth() + 1);
+      return newDate;
+    });
+  };
+
+  const prevMonth = () => {
+    setDate((prevDate) => {
+      const newDate = new Date(prevDate);
+      newDate.setMonth(newDate.getMonth() - 1);
+      return newDate;
+    });
   };
 
   const filteredDays = useMemo(() => {
@@ -121,10 +142,14 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
       <motion.div ref={ref} className="relative mx-auto my-10 flex w-full flex-col items-center justify-center gap-8 lg:flex-row" {...props}>
         <motion.div layout className="w-full max-w-lg">
           <motion.div key="calendar-view" className="flex w-full flex-col gap-4">
-            <div className="flex w-full items-center justify-between">
-              <motion.h2 className="mb-2 text-4xl font-bold tracking-wider">
-                LN <span className="opacity-50">2024</span>
-              </motion.h2>
+            <div className="flex w-full items-center justify-between gap-2">
+              <div className="flex items-center justify-center" onClick={prevMonth}>
+                <ArrowLeft className="h-6 w-6" />
+              </div>
+              <motion.h2 className="mb-2 text-4xl font-bold tracking-wider">{formatDateToMonthYear(date)}</motion.h2>
+              <div className="flex items-center justify-center" onClick={nextMonth}>
+                <ArrowRight className="h-6 w-6" />
+              </div>
             </div>
             <div className="grid grid-cols-7 gap-2">
               {daysOfWeek.map((day) => (
