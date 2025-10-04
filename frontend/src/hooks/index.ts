@@ -7,3 +7,4 @@ export * from './use-time-filter';
 export * from './use-upload-picture';
 export * from './use-media-query';
 export * from './use-copy-to-clipboard';
+export * from './use-deep-compare';
