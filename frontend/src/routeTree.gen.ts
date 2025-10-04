@@ -14,6 +14,7 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
@@ -61,6 +62,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthIndexRoute = AuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/product': typeof AppStoreProductRoute
@@ -208,7 +215,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
@@ -225,6 +231,7 @@ export interface FileRoutesByTo {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app': typeof AppIndexRoute
+  '/auth': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/product': typeof AppStoreProductRoute
@@ -255,6 +262,7 @@ export interface FileRoutesById {
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
   '/app/': typeof AppIndexRoute
+  '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
   '/app/store/product': typeof AppStoreProductRoute
@@ -286,6 +294,7 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
+    | '/auth/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
     | '/app/store/product'
@@ -297,7 +306,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/auth'
     | '/home'
     | '/unauthorized'
     | '/app/integration'
@@ -314,6 +322,7 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/app'
+    | '/auth'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
     | '/app/store/product'
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/test/dashboard'
     | '/test/img'
     | '/app/'
+    | '/auth/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
     | '/app/store/product'
@@ -403,6 +413,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/': {
+      id: '/auth/'
+      path: '/'
+      fullPath: '/auth/'
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRouteRoute
     }
     '/app/': {
       id: '/app/'
@@ -610,6 +627,7 @@ interface AuthRouteRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthIndexRoute: typeof AuthIndexRoute
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
@@ -619,6 +637,7 @@ const AuthRouteRouteChildren: AuthRouteRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  AuthIndexRoute: AuthIndexRoute,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(

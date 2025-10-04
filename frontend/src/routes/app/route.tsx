@@ -3,7 +3,7 @@ import { ROUTE_PATHS } from '@/config';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { useLocation } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/app')({
+export const Route = createFileRoute(ROUTE_PATHS.APP.INDEX)({
   component: RouteComponent,
 });
 function RouteComponent() {
