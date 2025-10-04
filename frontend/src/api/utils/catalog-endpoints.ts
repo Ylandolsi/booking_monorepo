@@ -28,7 +28,7 @@ export const CatalogEndpoints = {
       GetMonthlyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability/month`, // with query params year, month timeZoneId
     },
 
-    Arrange: `${BASE}/products/arrange`,
+    Arrange: `${BASE}/produtcs/arrange`, // Note: typo in backend endpoint
     Delete: (productSlug: string) => `${BASE}/products/${productSlug}`,
     TogglePublished: (productSlug: string) => `${BASE}/products/toggle/${productSlug}`,
   },
