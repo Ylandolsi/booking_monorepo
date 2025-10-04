@@ -8,7 +8,6 @@ import { useAuth } from '@/api/auth';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { Calendar, Video, TrendingUp, Settings, User } from 'lucide-react';
 import { GiTeacher } from 'react-icons/gi';
-import { useGetSessions } from '@/pages/app/session';
 
 export function HomePage() {
   const location = useLocation();
@@ -16,7 +15,7 @@ export function HomePage() {
   const { currentUser } = useAuth();
   const nav = useAppNavigation();
 
-  const { data: sessionsData, isLoading: sessionsIsLoading } = useGetSessions();
+  // const { data: sessionsData, isLoading: sessionsIsLoading } = useGetSessions();
 
   useEffect(() => {
     if (error) {
@@ -32,28 +31,28 @@ export function HomePage() {
   };
 
   // Helper to get the next session and time until it starts
-  const getNextSessionInfo = () => {
-    if (!sessionsData || !Array.isArray(sessionsData) || sessionsData.length === 0) return null;
-    const now = new Date();
-    const next = sessionsData[0];
-    const startTimeOfSession = new Date(next.scheduledAt);
-    const diffMs = startTimeOfSession.getTime() - now.getTime();
-    const diffMins = Math.round(diffMs / 60000);
-    let timeString = '';
-    if (diffMins < 60) {
-      timeString = `in ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
-    } else if (diffMins < 1440) {
-      const hours = Math.floor(diffMins / 60);
-      const mins = diffMins % 60;
-      timeString = `in ${hours} hour${hours !== 1 ? 's' : ''}${mins > 0 ? ` ${mins} min` : ''}`;
-    } else {
-      const days = Math.floor(diffMins / 1440);
-      timeString = `in ${days} day${days !== 1 ? 's' : ''}`;
-    }
-    return { next, timeString };
-  };
+  // const getNextSessionInfo = () => {
+  //   if (!sessionsData || !Array.isArray(sessionsData) || sessionsData.length === 0) return null;
+  //   const now = new Date();
+  //   const next = sessionsData[0];
+  //   const startTimeOfSession = new Date(next.scheduledAt);
+  //   const diffMs = startTimeOfSession.getTime() - now.getTime();
+  //   const diffMins = Math.round(diffMs / 60000);
+  //   let timeString = '';
+  //   if (diffMins < 60) {
+  //     timeString = `in ${diffMins} minute${diffMins !== 1 ? 's' : ''}`;
+  //   } else if (diffMins < 1440) {
+  //     const hours = Math.floor(diffMins / 60);
+  //     const mins = diffMins % 60;
+  //     timeString = `in ${hours} hour${hours !== 1 ? 's' : ''}${mins > 0 ? ` ${mins} min` : ''}`;
+  //   } else {
+  //     const days = Math.floor(diffMins / 1440);
+  //     timeString = `in ${days} day${days !== 1 ? 's' : ''}`;
+  //   }
+  //   return { next, timeString };
+  // };
 
-  const nextSessionInfo = getNextSessionInfo();
+  // const nextSessionInfo = getNextSessionInfo();
 
   return (
     <div className="space-y-8">
@@ -66,7 +65,7 @@ export function HomePage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="flex w-full items-center">
+      {/* <div className="flex w-full items-center">
         <Card className="w-full">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
@@ -79,7 +78,7 @@ export function HomePage() {
             </p>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       {/* Main Content Grid */}
       <div className="grid gap-6 xl:grid-cols-3">
@@ -150,9 +149,9 @@ export function HomePage() {
                   Mentor
                 </Badge>
               </div>
-              <Button variant="outline" size="sm" className="w-full" onClick={() => nav.goToProfile(currentUser?.slug || '')}>
+              <Button variant="outline" size="sm" className="w-full" onClick={() => nav.goTo({ to: '/app/store' })}>
                 <Settings className="mr-2 h-4 w-4" />
-                Edit Profile
+                Edit Store
               </Button>
             </CardContent>
           </Card>
