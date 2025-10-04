@@ -87,10 +87,10 @@ export function IntegrateKonnect({ user }: { user?: User }) {
             {/* Action button */}
             <div className="flex-shrink-0">
               <Button
-                className={`group/btn relative overflow-hidden transition-all duration-300 dark:text-white ${
+                className={`group/btn relative overflow-hidden transition-all duration-300 ${
                   konnectIntegrated
                     ? 'border-green-200 bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'bg-primary hover:bg-primary/90 hover:shadow-primary/25 text-white hover:shadow-lg'
+                    : 'bg-primary hover:bg-primary/90 hover:shadow-primary/25 hover:shadow-lg'
                 }`}
                 variant={konnectIntegrated ? 'outline' : 'default'}
                 disabled={!!konnectIntegrated}
