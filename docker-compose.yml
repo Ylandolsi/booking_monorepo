@@ -45,7 +45,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./.containers/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
     healthcheck:
@@ -100,3 +100,6 @@ services:
     #       action: sync
     #     - path: ./backend/*.csproj
     #       action: rebuild
+
+volumes:
+  postgres_data:
