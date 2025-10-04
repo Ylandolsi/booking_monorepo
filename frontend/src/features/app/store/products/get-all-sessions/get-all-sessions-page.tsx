@@ -26,7 +26,7 @@ const Day: React.FC<DayProps> = ({ classNames, day, onHover }) => {
   return (
     <>
       <motion.div
-        className={`relative flex items-center justify-center py-1 ${classNames}`}
+        className={`bg-primary relative flex items-center justify-center py-1 ${classNames}`}
         style={{ height: '4rem', borderRadius: 16 }}
         onMouseEnter={() => {
           setIsHovered(true);
@@ -39,11 +39,11 @@ const Day: React.FC<DayProps> = ({ classNames, day, onHover }) => {
         id={`day-${day.day}`}
       >
         <motion.div className="flex flex-col items-center justify-center">
-          {!(day.day[0] === '+' || day.day[0] === '-') && <span className="text-sm text-white">{day.day}</span>}
+          {!(day.day[0] === '+' || day.day[0] === '-') && <span className="text-primary-foreground text-sm">{day.day}</span>}
         </motion.div>
         {day.meetingInfo && (
           <motion.div
-            className="absolute right-1 bottom-1 flex size-5 items-center justify-center rounded-full bg-zinc-700 p-1 text-[10px] font-bold text-white"
+            className="bg-accent text-accent-foreground absolute right-1 bottom-1 flex size-5 items-center justify-center rounded-full p-1 text-[10px] font-bold"
             layoutId={`day-${day.day}-meeting-count`}
             style={{
               borderRadius: 999,
@@ -57,7 +57,7 @@ const Day: React.FC<DayProps> = ({ classNames, day, onHover }) => {
           {day.meetingInfo && isHovered && (
             <div className="absolute inset-0 flex size-full items-center justify-center">
               <motion.div
-                className="flex size-10 items-center justify-center bg-zinc-700 p-1 text-xs font-bold text-white"
+                className="bg-accent text-accent-foreground flex size-10 items-center justify-center p-1 text-xs font-bold"
                 layoutId={`day-${day.day}-meeting-count`}
                 style={{
                   borderRadius: 999,
@@ -106,7 +106,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
         <motion.div layout className="w-full max-w-lg">
           <motion.div key="calendar-view" className="flex w-full flex-col gap-4">
             <div className="flex w-full items-center justify-between">
-              <motion.h2 className="mb-2 text-4xl font-bold tracking-wider text-zinc-300">
+              <motion.h2 className="mb-2 text-4xl font-bold tracking-wider">
                 LN <span className="opacity-50">2024</span>
               </motion.h2>
               <motion.button
@@ -126,7 +126,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
             </div>
             <div className="grid grid-cols-7 gap-2">
               {daysOfWeek.map((day) => (
-                <div key={day} className="px-0/5 rounded-xl bg-[#323232] py-1 text-center text-xs text-white">
+                <div key={day} className="px-0/5 bg-primary text-background rounded-xl py-1 text-center text-xs">
                   {day}
                 </div>
               ))}
@@ -144,18 +144,18 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
           >
             <motion.div key="more-view" className="mt-4 flex w-full flex-col gap-4">
               <div className="flex w-full flex-col items-start justify-between">
-                <motion.h2 className="mb-2 text-4xl font-bold tracking-wider text-zinc-300">Bookings</motion.h2>
-                <p className="font-medium text-zinc-300/50">See upcoming and past events booked through your event type links.</p>
+                <motion.h2 className="mb-2 text-4xl font-bold tracking-wider">Bookings</motion.h2>
+                <p className="font-medium">See upcoming and past events booked through your event type links.</p>
               </div>
               <motion.div
-                className="flex h-[620px] flex-col items-start justify-start overflow-hidden overflow-y-scroll rounded-xl border-2 border-[#323232] shadow-md"
+                className="border-border bg-card flex h-[620px] flex-col items-start justify-start overflow-hidden overflow-y-scroll rounded-xl border shadow-xl"
                 layout
               >
                 <AnimatePresence>
                   {sortedDays
                     .filter((day) => day.meetingInfo)
                     .map((day) => (
-                      <motion.div key={day.day} className={`w-full border-b-2 border-[#323232] py-0 last:border-b-0`} layout>
+                      <motion.div key={day.day} className={`border-border w-full border-b-1 py-0 last:border-b-0`} layout>
                         {day.meetingInfo &&
                           day.meetingInfo.map((meeting, mIndex) => (
                             <motion.div
@@ -170,12 +170,12 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                               }}
                             >
                               <div className="mb-2 flex items-center justify-between">
-                                <span className="text-sm text-white">{meeting.date}</span>
-                                <span className="text-sm text-white">{meeting.time}</span>
+                                <span className="text-sm">{meeting.date}</span>
+                                <span className="text-sm">{meeting.time}</span>
                               </div>
-                              <h3 className="mb-1 text-lg font-semibold text-white">{meeting.title}</h3>
+                              <h3 className="mb-1 text-lg font-semibold">{meeting.title}</h3>
                               <p className="mb-1 text-sm text-zinc-600">{meeting.participants.join(', ')}</p>
-                              <div className="flex items-center text-blue-500">
+                              <div className="text-primary flex items-center">
                                 <svg
                                   className="mr-1 h-4 w-4"
                                   fill="none"
@@ -423,3 +423,11 @@ const DAYS: DayType[] = [
 ];
 
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+export const InteractiveCalendarDemo = () => {
+  return (
+    <main className="justify-star flex w-full flex-col items-center px-4 py-10 md:justify-center">
+      <InteractiveCalendar />
+    </main>
+  );
+};
