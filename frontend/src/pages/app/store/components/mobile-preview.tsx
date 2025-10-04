@@ -46,17 +46,20 @@ export const MobilePreview = ({ storeForm, productsRearranged }: { storeForm: St
     <MobileContainer>
       <StoreHeader store={mergedStore} />
       <div className="w-full space-y-4 pb-10">
-        {mergedStore.products.map((product, index) => (
-          <div
-            key={GenerateIdCrypto()}
-            onClick={() => handleProductClick(product)} // Add click handler
-            className="cursor-pointer" // Indicate it's clickable
-          >
-            <div className="group px-6">
-              <ProductCard product={product} />
+        {mergedStore.products.map((product, index) => {
+          if (!product.isPublished) return null;
+          return (
+            <div
+              key={GenerateIdCrypto()}
+              onClick={() => handleProductClick(product)} // Add click handler
+              className="cursor-pointer" // Indicate it's clickable
+            >
+              <div className="group px-6">
+                <ProductCard product={product} />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {/* Modal for product details */}
       <ProductDetailsModal product={selectedProduct} storeSlug={store.slug} isOpen={!!selectedProduct} onClose={handleCloseModal} />
