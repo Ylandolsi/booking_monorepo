@@ -20,13 +20,17 @@ export const CatalogEndpoints = {
       Create: `${BASE}/products/s/create`,
       Update: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
       GetMy: (productSlug: string) => `${BASE}/products/s/${productSlug}/private`,
+      GetAllSessionsMonthly: () => `${BASE}/products/s`, // queryParam :string? month ,string?year , string? timeZoneId
 
-      GetSessions: `${BASE}/s`, // Get booked sessions for store owner
       // Public endpoints
       Get: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
       Book: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
       GetMonthlyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability/month`, // with query params year, month timeZoneId
     },
+
+    Arrange: `${BASE}/products/arrange`,
+    Delete: (productSlug: string) => `${BASE}/products/${productSlug}`,
+    TogglePublished: (productSlug: string) => `${BASE}/products/toggle/${productSlug}`,
   },
 
   Orders: {
@@ -74,6 +78,15 @@ export const QueryBuilders = {
        * Build query parameters for monthly availability
        */
       monthlyAvailability: (year: number, month: number, timeZoneId: string = 'Africa/Tunis') => ({
+        year,
+        month,
+        timeZoneId,
+      }),
+
+      /**
+       * Build query parameters for getting all sessions
+       */
+      getAllSessions: (year: number, month: number, timeZoneId: string = 'Africa/Tunis') => ({
         year,
         month,
         timeZoneId,
