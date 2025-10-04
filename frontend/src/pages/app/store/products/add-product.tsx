@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createProductSchema, useCreateSession, useMyProductSession, useUpdateSession, type CreateProductInput, type Picture } from '@/api/stores';
-import { SelectProductType } from '@/pages/app/store/products/select-product-type';
+import { SelectProductType } from '@/pages/app/store/products/select-product-type-page';
 import { Card, CardContent, ErrorComponenet, LoadingState, Progress, TabNavigation } from '@/components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ResponsiveBuilderLayout } from '@/pages/app/store';
