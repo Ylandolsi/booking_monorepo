@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Run TypeScript type check to surface ONLY import/module resolution errors
- * Filters for TS2307, TS1192, TS2305, TS2304, TS2614, TS2306 error codes
+ * Filters for TS2307, TS1192, TS2305, TS2304, TS2614, TS2306 ,  error codes
  */
 import { spawnSync } from 'child_process';
 import path from 'path';
@@ -22,7 +22,9 @@ const res = spawnSync(tscCmd, args, {
 });
 
 // Filter output for import-related errors
-const lines = res.stdout.split('\n');
+const allOutput = res.stdout + '\n' + res.stderr;
+const lines = allOutput.split('\n');
+
 const importErrors = lines.filter((line) => {
   return importErrorCodes.some((code) => line.includes(`error ${code}:`));
 });
