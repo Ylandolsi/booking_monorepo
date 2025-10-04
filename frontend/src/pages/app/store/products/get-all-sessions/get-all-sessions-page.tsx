@@ -1,7 +1,8 @@
 // component.tsx
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Columns3, Grid } from 'lucide-react';
+import { fi } from 'date-fns/locale';
 
 export type DayType = {
   day: string;
@@ -83,6 +84,25 @@ const CalendarGrid: React.FC<{ onHover: (day: string | null) => void }> = ({ onH
   );
 };
 
+// <motion.button
+//   className="relative flex items-center gap-3 rounded-lg border border-[#323232] px-1.5 py-1 text-[#323232]"
+//   onClick={() => setMoreView(!moreView)}
+// >
+//   <Columns3 className="z-[2]" />
+//   <Grid className="z-[2]" />
+//   <div
+//     className="absolute top-0 left-0 h-[85%] w-7 rounded-md bg-white transition-transform duration-300"
+//     style={{
+//       top: '50%',
+//       transform: moreView ? 'translateY(-50%) translateX(40px)' : 'translateY(-50%) translateX(4px)',
+//     }}
+//   ></div>
+// </motion.button>
+// className="absolute top-0 left-0 h-[85%] w-7 rounded-md bg-white transition-transform duration-300"
+// style={{
+//   top: '50%',
+//   transform: moreView ? 'translateY(-50%) translateX(40px)' : 'translateY(-50%) translateX(4px)',
+// }}
 const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const [moreView, setMoreView] = useState(false);
   const [hoveredDay, setHoveredDay] = useState<string | null>(null);
@@ -91,13 +111,9 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
     setHoveredDay(day);
   };
 
-  const sortedDays = React.useMemo(() => {
+  const filteredDays = useMemo(() => {
     if (!hoveredDay) return DAYS;
-    return [...DAYS].sort((a, b) => {
-      if (a.day === hoveredDay) return -1;
-      if (b.day === hoveredDay) return 1;
-      return 0;
-    });
+    return [...DAYS].filter((day) => day.day === hoveredDay);
   }, [hoveredDay]);
 
   return (
@@ -109,20 +125,6 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
               <motion.h2 className="mb-2 text-4xl font-bold tracking-wider">
                 LN <span className="opacity-50">2024</span>
               </motion.h2>
-              <motion.button
-                className="relative flex items-center gap-3 rounded-lg border border-[#323232] px-1.5 py-1 text-[#323232]"
-                onClick={() => setMoreView(!moreView)}
-              >
-                <Columns3 className="z-[2]" />
-                <Grid className="z-[2]" />
-                <div
-                  className="absolute top-0 left-0 h-[85%] w-7 rounded-md bg-white transition-transform duration-300"
-                  style={{
-                    top: '50%',
-                    transform: moreView ? 'translateY(-50%) translateX(40px)' : 'translateY(-50%) translateX(4px)',
-                  }}
-                ></div>
-              </motion.button>
             </div>
             <div className="grid grid-cols-7 gap-2">
               {daysOfWeek.map((day) => (
@@ -134,7 +136,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
             <CalendarGrid onHover={handleDayHover} />
           </motion.div>
         </motion.div>
-        {moreView && (
+        {
           <motion.div
             className="w-full max-w-lg"
             initial={{ opacity: 0, y: 20 }}
@@ -152,7 +154,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                 layout
               >
                 <AnimatePresence>
-                  {sortedDays
+                  {filteredDays
                     .filter((day) => day.meetingInfo)
                     .map((day) => (
                       <motion.div key={day.day} className={`border-border w-full border-b-1 py-0 last:border-b-0`} layout>
@@ -200,7 +202,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
               </motion.div>
             </motion.div>
           </motion.div>
-        )}
+        }
       </motion.div>
     </AnimatePresence>
   );
