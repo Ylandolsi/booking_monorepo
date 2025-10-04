@@ -31,7 +31,9 @@ public class Store : Entity
     public int Step { get; private set; }
 
     // Navigation properties
-    public ICollection<Product> Products { get; private set; } = new List<Product>();
+    public ICollection<Product>? Products { get; private set; } = new List<Product>();
+    public ICollection<Payout>? Payouts { get; private set; } = new List<Payout>();
+    public ICollection<Payment>? Payments { get; private set; } = new List<Payment>();
 
     public static Store Create(int ownerId, string title, string slug, string? description = null)
     {

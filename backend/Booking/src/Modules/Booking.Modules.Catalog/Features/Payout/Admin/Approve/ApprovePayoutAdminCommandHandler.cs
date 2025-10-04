@@ -30,7 +30,7 @@ public class ApprovePayoutAdminCommandHandler(
         if (wallet is null)
         {
             logger.LogError("Admin is trying to approve payout of wallet of user with id:{ref}, dosent exists ",
-                payout.UserId);
+                payout.StoreId);
             return Result.Failure<ApprovePayoutAdminResponse>(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
         }
 
@@ -38,7 +38,7 @@ public class ApprovePayoutAdminCommandHandler(
         {
             logger.LogError(
                 "Admin is trying to approve payout : wallet.balance is less than the payout requested , user with id:{ref} ",
-                payout.UserId);
+                payout.StoreId);
 
             return Result.Failure<ApprovePayoutAdminResponse>(Error.Failure("Wallet.Balance.IsNotSufficent",
                 "Wallet Balance is not sufficent "));

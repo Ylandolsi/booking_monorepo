@@ -31,10 +31,17 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasConversion<int>()
             .IsRequired();
 
+        
+        builder.HasOne(p => p.Store)
+            .WithMany(s => s.Payments)
+            .HasForeignKey(p => p.StoreId)
+            .IsRequired();
+        
         // Indexes
-        /*
+        
         builder.HasIndex(p => p.Reference).IsUnique();
-        */
+        
+        
 
         // Add table-level constraints
         //     builder.ToTable("payments", t =>

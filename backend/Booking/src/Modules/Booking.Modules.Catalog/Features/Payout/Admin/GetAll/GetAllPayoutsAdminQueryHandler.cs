@@ -10,10 +10,10 @@ namespace Booking.Modules.Catalog.Features.Payout.Admin.GetAll;
 public class GetAllPayoutsAdminQueryHandler(
     CatalogDbContext dbContext,
     ILogger<GetAllPayoutsAdminQueryHandler> logger)
-    : IQueryHandler<GetAllPayoutsAdminQuery, List<PayoutResponse>>
+    : IQueryHandler<GetAllPayoutsAdminQuery, List<PayoutResponseAdmin>>
 {
     // TODO : add pagination here ! 
-    public async Task<Result<List<PayoutResponse>>> Handle(GetAllPayoutsAdminQuery query,
+    public async Task<Result<List<PayoutResponseAdmin>>> Handle(GetAllPayoutsAdminQuery query,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Admin is retrieving payouts.");
@@ -21,7 +21,7 @@ public class GetAllPayoutsAdminQueryHandler(
         DateTime? parsedUpToDate = null;
 
         if (status is not null and not ("pending" or "completed" or "approved" or "rejected"))
-            return Result.Failure<List<PayoutResponse>>(Error.Problem("Invalid.Status.Value",
+            return Result.Failure<List<PayoutResponseAdmin>>(Error.Problem("Invalid.Status.Value",
                 $"Invalid status value {status}.Allowed values are 'pending', 'completed', 'failed'.  "));
 
         if (query.UpToDate is not null)
@@ -35,10 +35,10 @@ public class GetAllPayoutsAdminQueryHandler(
         var payouts = await dbContext.Payouts.AsNoTracking()
             .Where(p => (status == null || p.Status.ToString().ToLower().Equals(status)) &&
                         (parsedUpToDate == null || parsedUpToDate <= p.CreatedAt))
-            .Select(p => new PayoutResponse
+            .Select(p => new PayoutResponseAdmin
             {
                 Id = p.Id,
-                UserId = p.UserId,
+                StoreId = p.StoreId,
                 KonnectWalletId = p.KonnectWalletId,
                 PaymentRef = p.PaymentRef,
                 WalletId = p.WalletId,

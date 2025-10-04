@@ -15,11 +15,13 @@ public class GetPayoutHistoryQueryHandler(
     {
         logger.LogInformation("Get Payout History query executed for user with id {id}", query.UserId);
 
-        var payouts = await dbContext.Payouts.Where(p => p.UserId == query.UserId)
+        var store = await dbContext.Stores.FirstOrDefaultAsync(s => s.UserId == query.UserId, cancellationToken); 
+        
+        var payouts = await dbContext.Payouts.Where(p => p.StoreId == store.Id)
             .Select(p => new PayoutResponse
             {
-                Id = p.Id,
-                UserId = p.UserId,
+                /*Id = p.Id,
+                UserId = p.UserId,*/
                 KonnectWalletId = p.KonnectWalletId,
                 PaymentRef = p.PaymentRef,
                 WalletId = p.WalletId,

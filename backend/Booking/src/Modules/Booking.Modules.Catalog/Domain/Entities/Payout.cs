@@ -5,9 +5,9 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 
 public class Payout : Entity
 {
-    public Payout(int userId, string konnectWalletId, int walletId, decimal amount)
+    public Payout(int storeId, string konnectWalletId, int walletId, decimal amount)
     {
-        UserId = userId;
+        StoreId = storeId;
         KonnectWalletId = konnectWalletId;
         WalletId = walletId;
         Amount = amount;
@@ -19,13 +19,16 @@ public class Payout : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
-    public int UserId { get; private set; }
+    public int StoreId { get; private set; }
     public string KonnectWalletId { get; private set; }
     public int WalletId { get; private set; }
     public decimal Amount { get; private set; }
 
     public string PaymentRef { get; private set; } = ""; // from Konnect
     public PayoutStatus Status { get; private set; }
+
+    // nav
+    public Store Store { get; private set; } = default!;
 
     public void Complete()
     {

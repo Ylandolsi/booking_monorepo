@@ -78,8 +78,8 @@ public class PayoutWebhookCommandHandler(
         if (wallet is null)
         {
             logger.LogError(
-                "Failed to find wallet for user {UserId} when processing payout {PayoutId} with reference {PaymentRef}",
-                payout.UserId, payout.Id, command.PaymentRef);
+                "Failed to find wallet for store {storeId} when processing payout {PayoutId} with reference {PaymentRef}",
+                payout.StoreId, payout.Id, command.PaymentRef);
 
             return Result.Failure(Error.NotFound("Wallet.NotFound", "Wallet not found for the user"));
         }

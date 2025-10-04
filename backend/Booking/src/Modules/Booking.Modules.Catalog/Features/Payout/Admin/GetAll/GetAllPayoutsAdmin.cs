@@ -20,7 +20,7 @@ public class GetAllPayoutsAdmin : IEndpoint
                     [FromQuery] string? timeZoneId,
                     UserContext userContext,
                     IQueryHandler<GetAllPayoutsAdminQuery,
-                        List<PayoutResponse>> handler,
+                        List<PayoutResponseAdmin>> handler,
                     CancellationToken cancellationToken) =>
                 {
                     timeZoneId = timeZoneId is "" or null ? "Africa/Tunis" : timeZoneId;

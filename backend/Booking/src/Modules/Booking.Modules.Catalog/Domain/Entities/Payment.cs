@@ -36,6 +36,9 @@ public class Payment : Entity
     public decimal Price { get; }
     public PaymentStatus Status { get; private set; }
 
+    // navigation, 
+    public Store Store { get; private set; } = default!;
+
     public void SetComplete(decimal? price = null)
     {
         price = price ?? Price;

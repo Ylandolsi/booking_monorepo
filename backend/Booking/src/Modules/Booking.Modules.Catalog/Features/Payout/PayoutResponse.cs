@@ -5,8 +5,8 @@ namespace Booking.Modules.Catalog.Features.Payout;
 
 public record PayoutResponse
 {
-    public int Id { get; init; }
-    public int UserId { get; init; }
+    // public int Id { get; init; }
+    //public int StoreSlug { get; init; }
     public string KonnectWalletId { get; init; }
     public int WalletId { get; init; }
     public decimal Amount { get; init; }
@@ -17,4 +17,10 @@ public record PayoutResponse
 
     public DateTime CreatedAt { get; init; }
     public DateTime UpdatedAt { get; init; }
+}
+
+public record PayoutResponseAdmin : PayoutResponse
+{
+    public int Id { get; init; }
+    public int StoreId { get; init; }
 }

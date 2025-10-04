@@ -29,8 +29,8 @@ public class RejectPayoutAdminCommandHandler(
         if (wallet is null)
         {
             logger.LogError(
-                "Admin is trying to reject payout with id {id}  , but Failed to find wallet of user with id{userId} ",
-                payout.Id, payout.UserId);
+                "Admin is trying to reject payout with id {id}  , but Failed to find wallet of store with id{userId} ",
+                payout.Id, payout.Store);
 
             return Result.Failure(Error.NotFound("Wallet.NotFound", "Wallet is not found"));
         }

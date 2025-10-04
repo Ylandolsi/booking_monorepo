@@ -13,7 +13,7 @@ internal sealed class PayoutConfiguration : IEntityTypeConfiguration<Payout>
         builder.HasKey(p => p.Id);
 
 
-        builder.Property(p => p.UserId)
+        builder.Property(p => p.StoreId)
             .IsRequired();
         
         builder.Property(p => p.WalletId)
@@ -25,6 +25,9 @@ internal sealed class PayoutConfiguration : IEntityTypeConfiguration<Payout>
         builder.Property(p => p.Status)
             .IsRequired();
 
+        builder.HasOne(p => p.Store)
+            .WithMany(s => s.Payouts)
+            .HasForeignKey(p => p.StoreId);
         /*builder.HasIndex(p => p.UserId);
         builder.HasIndex(p => p.Status);*/
     }
