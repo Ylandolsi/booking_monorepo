@@ -21,8 +21,8 @@ const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayP
 
 const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
-  const [date, setDate] = useState<Date>(new Date());
-  const { content, handleCopy } = useCopyToClipboard();
+  const currentDate = new Date();
+  const [date, setDate] = useState<Date>(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1)); // first day of current month
   const [meetingLink, setMeetingLink] = useState<string>('');
   const year = date.getFullYear();
   const month = date.getMonth(); // 0-indexed (0 = January, 11 = December)
@@ -140,7 +140,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                               }}
                               onClick={() => setMeetingLink(meeting.googleMeetLink || '')}
                             >
-                              <InputToCopy label="Meeting Link" input={meeting.googleMeetLink || ''} className="mb-4" />
+                              <InputToCopy label="Meeting Link" input={meetingLink} className="mb-4" />
                               <div className="mb-2 flex items-center justify-between">
                                 <span className="text-sm">{meeting.date}</span>
                                 <span className="text-sm">{meeting.time}</span>
