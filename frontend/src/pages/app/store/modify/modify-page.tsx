@@ -20,6 +20,7 @@ import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from
 import { CSS } from '@dnd-kit/utilities';
 import { GenerateIdCrypto } from '@/lib';
 import { toast } from 'sonner';
+import { InputToCopy } from '@/components/input-to-copy';
 
 export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
 
@@ -256,19 +257,6 @@ export function ModifyStore() {
 }
 
 const PreviewUrl = ({ store }: { store: Store }) => {
-  const { handleCopy } = useCopyToClipboard();
   const link = window.location.origin + '/store/' + store.slug;
-
-  return (
-    <div>
-      <Label className="font-bold">Store Public Link</Label>
-      <Input
-        type="text"
-        readOnly
-        value={link}
-        className="mt-1 mb-4 cursor-pointer font-bold select-all hover:ring-0 focus:border-0 focus:ring-0"
-        onClick={() => handleCopy(link)}
-      />
-    </div>
-  );
+  return <InputToCopy input={link || ''} className="mb-4" label={'Store Public Link'} />;
 };

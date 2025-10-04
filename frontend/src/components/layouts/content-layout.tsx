@@ -1,10 +1,9 @@
 import { AuthGuard, StoreGuard } from '@/components/guards';
 import Sidebar from '../navigation/side-bar/sidebar';
-import { PageLoading, SidebarProvider } from '@/components/ui/index';
+import { PageLoading } from '@/components/ui/index';
 import { BottomNav } from '../navigation/bottom-nav';
 import { useAuth } from '@/api/auth';
 import { MainErrorFallback } from '@/components/errors';
-import { useSideBar } from '@/stores';
 import { Header } from '@/components/headers';
 
 export function ContentLayout({ children }: { children: React.ReactNode }) {

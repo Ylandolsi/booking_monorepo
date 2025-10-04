@@ -7,6 +7,7 @@ import { DeepCopy, GenerateTimeZoneId } from '@/lib';
 
 import { Day, type DayProps } from '@/pages/app/store/products/get-all-sessions/components/day';
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { InputToCopy } from '@/components/input-to-copy';
 
 const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayProps['day'][] }> = ({ onHover, days }) => {
   return (
@@ -139,23 +140,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                               }}
                               onClick={() => setMeetingLink(meeting.googleMeetLink || '')}
                             >
-                              <div className="mb-8">
-                                <Label className="block font-semibold">
-                                  Meeting Link
-                                  <div className="relative mt-2">
-                                    <Input type="text" value={meetingLink} />
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCopy(meeting.googleMeetLink || '')}
-                                      aria-label="Copy meeting link"
-                                      className="absolute top-1/2 right-3 -translate-y-1/2 transform hover:cursor-pointer"
-                                    >
-                                      <Copy size={20} />
-                                    </button>
-                                    {content && <span className="text-primary absolute top-2 right-12 text-sm">Copied!</span>}
-                                  </div>
-                                </Label>
-                              </div>
+                              <InputToCopy label="Meeting Link" input={meeting.googleMeetLink || ''} className="mb-4" />
                               <div className="mb-2 flex items-center justify-between">
                                 <span className="text-sm">{meeting.date}</span>
                                 <span className="text-sm">{meeting.time}</span>
