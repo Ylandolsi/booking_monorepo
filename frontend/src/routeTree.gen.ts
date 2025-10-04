@@ -26,6 +26,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AuthEmailVerifiedRouteImport } from './routes/auth/email-verified'
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
+import { Route as AppStatisticsRouteImport } from './routes/app/statistics'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
@@ -124,6 +125,11 @@ const AuthEmailVerificationRoute = AuthEmailVerificationRouteImport.update({
   path: '/email-verification',
   getParentRoute: () => AuthRouteRoute,
 } as any)
+const AppStatisticsRoute = AppStatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppPayoutsRoute = AppPayoutsRouteImport.update({
   id: '/payouts',
   path: '/payouts',
@@ -192,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
   '/app/payouts': typeof AppPayoutsRoute
+  '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
   '/auth/email-verified': typeof AuthEmailVerifiedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/app/integration'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/statistics'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/app/integration'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/statistics'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/app/integration'
     | '/app/meets'
     | '/app/payouts'
+    | '/app/statistics'
     | '/auth/email-verification'
     | '/auth/email-verified'
     | '/auth/forgot-password'
@@ -498,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthEmailVerificationRouteImport
       parentRoute: typeof AuthRouteRoute
     }
+    '/app/statistics': {
+      id: '/app/statistics'
+      path: '/statistics'
+      fullPath: '/app/statistics'
+      preLoaderRoute: typeof AppStatisticsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/app/payouts': {
       id: '/app/payouts'
       path: '/payouts'
@@ -596,6 +615,7 @@ interface AppRouteRouteChildren {
   AppIntegrationRoute: typeof AppIntegrationRoute
   AppMeetsRoute: typeof AppMeetsRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
+  AppStatisticsRoute: typeof AppStatisticsRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppStoreCheckoutRoute: typeof AppStoreCheckoutRoute
@@ -608,6 +628,7 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIntegrationRoute: AppIntegrationRoute,
   AppMeetsRoute: AppMeetsRoute,
   AppPayoutsRoute: AppPayoutsRoute,
+  AppStatisticsRoute: AppStatisticsRoute,
   AppIndexRoute: AppIndexRoute,
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppStoreCheckoutRoute: AppStoreCheckoutRoute,

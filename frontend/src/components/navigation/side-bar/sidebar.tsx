@@ -25,12 +25,12 @@ export type Item = {
     | 'Home'
     | 'Edit Store'
     | 'Meetings'
-    | 'Search'
-    | 'Notifications'
-    | 'Settings'
-    | 'Set Availability'
+    // | 'Search'
+    // | 'Notifications'
+    // | 'Settings'
     | 'Integrations'
     | 'Payout'
+    | 'Statistics'
     | 'Payouts Requests';
 
   icon: JSX.Element;
