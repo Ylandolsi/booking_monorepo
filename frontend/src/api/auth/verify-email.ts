@@ -1,7 +1,7 @@
 import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
-import type { VerifyEmailInput } from '@/features/auth';
-import { verifyEmailSchema } from '@/features/auth';
+import type { VerifyEmailInput } from '@/pages/auth';
+import { verifyEmailSchema } from '@/pages/auth';
 
 // Email Verification
 export const verifyEmail = async (data: VerifyEmailInput): Promise<void> => {

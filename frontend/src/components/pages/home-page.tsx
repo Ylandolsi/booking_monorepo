@@ -8,7 +8,7 @@ import { useAuth } from '@/api/auth';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { Calendar, Video, TrendingUp, Settings, User } from 'lucide-react';
 import { GiTeacher } from 'react-icons/gi';
-import { useGetSessions } from '@/features/app/session';
+import { useGetSessions } from '@/pages/app/session';
 
 export function HomePage() {
   const location = useLocation();

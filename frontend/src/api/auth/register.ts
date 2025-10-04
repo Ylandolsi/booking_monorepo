@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
-import type { RegisterInput } from '@/features/auth';
+import type { RegisterInput } from '@/pages/auth';
 
 const registerUser = async (data: RegisterInput): Promise<void> => await api.post(Endpoints.Register, data);
 

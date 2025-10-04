@@ -1,7 +1,7 @@
 import { FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL } from '@/assets';
 import { Link } from '@/components/ui';
 import { routes } from '@/config';
-import { type ProductCheckoutType } from '@/features';
+import { type ProductCheckoutType } from '@/pages';
 import { SanitizeHtml } from '@/lib';
 import { cn } from '@/lib/cn';
 import { Upload, X } from 'lucide-react';

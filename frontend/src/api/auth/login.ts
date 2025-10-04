@@ -3,7 +3,7 @@ import type { User } from '@/api/auth';
 import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import * as Endpoints from '@/api/utils/auth-endpoints';
-import { type LoginInput } from '@/features/auth';
+import { type LoginInput } from '@/pages/auth';
 
 export const loginWithEmailAndPassword = async (data: LoginInput): Promise<User> => {
   const response = await api.post<User>(Endpoints.Login, data);

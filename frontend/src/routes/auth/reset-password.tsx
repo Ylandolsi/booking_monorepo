@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { ResetPassword } from '@/features/auth/pages/reset-password-page';
+import { ResetPassword } from '@/pages/auth/pages/reset-password-page';
 import { ROUTE_PATHS, routeBuilder } from '@/config/routes';
 
 export const Route = createFileRoute(ROUTE_PATHS.AUTH.RESET_PASSWORD)({

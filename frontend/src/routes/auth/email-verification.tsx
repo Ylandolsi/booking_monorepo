@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { VerificationEmailPage } from '@/features/auth/pages/email-verification/verify-email-page';
+import { VerificationEmailPage } from '@/pages/auth/pages/email-verification/verify-email-page';
 import { ROUTE_PATHS } from '@/config/routes';
 
 export const Route = createFileRoute(ROUTE_PATHS.AUTH.EMAIL_VERIFICATION)({

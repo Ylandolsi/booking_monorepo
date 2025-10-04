@@ -3,7 +3,7 @@ import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Product, Store } from '@/api/stores';
-import { socialPlatforms } from '@/features/app/store';
+import { socialPlatforms } from '@/pages/app/store';
 
 interface MobileStorePreviewProps {
   store: Store;

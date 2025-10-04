@@ -392,7 +392,7 @@ Real-time features powered by SignalR:
 - 404 and 403 error pages
 - Fallback UI components
 
-**Loading States** (`src/features/`):
+**Loading States** (`src/pages/`):
 
 - Global loading indicators
 - Skeleton loaders for content

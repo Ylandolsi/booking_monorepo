@@ -47,7 +47,7 @@ function MyComponent() {
 
 ```tsx
 import { ProfileStateWrapper, useQueryState } from '@/components/wrappers';
-import { useUserMentorData } from '@/features/mentor';
+import { useUserMentorData } from '@/pages/mentor';
 
 function MyProfilePage() {
   const combinedQuery = useUserMentorData();

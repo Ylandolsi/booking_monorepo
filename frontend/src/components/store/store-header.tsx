@@ -1,7 +1,7 @@
 import type { Store } from '@/api/stores';
 import { FALLBACK_PICTURE_STORE } from '@/assets';
 import { Link } from '@/components/ui';
-import { socialPlatforms } from '@/features/app/store';
+import { socialPlatforms } from '@/pages/app/store';
 import { cn } from '@/lib/cn';
 
 interface StoreHeaderProps {

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn';
 import { Button, Popover, PopoverContent, PopoverTrigger, Switch } from '../ui';
 import type { Product } from '@/api/stores';
-import { COVER_IMAGE } from '@/features/public/checkout-product-page';
+import { COVER_IMAGE } from '@/pages/public/checkout-product-page';
 import { useSortable } from '@dnd-kit/sortable';
 import { routes } from '@/config/routes';
 import { useAppNavigation } from '@/hooks';

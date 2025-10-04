@@ -75,26 +75,26 @@
 //       //     zones: [
 //       //       // Prevent cross-feature imports - features should be isolated
 //       //       {
-//       //         target: './src/features/auth',
-//       //         from: './src/features',
+//       //         target: './src/pages/auth',
+//       //         from: './src/pages',
 //       //         except: ['./auth'],
 //       //       },
 //       //       {
-//       //         target: './src/features/profile',
-//       //         from: './src/features',
+//       //         target: './src/pages/profile',
+//       //         from: './src/pages',
 //       //         except: ['./profile'],
 //       //       },
 //       //       // Add more feature restrictions as needed
 //       //       // {
-//       //       //   target: './src/features/dashboard',
-//       //       //   from: './src/features',
+//       //       //   target: './src/pages/dashboard',
+//       //       //   from: './src/pages',
 //       //       //   except: ['./dashboard'],
 //       //       // },
 //
 //       //       // Enforce unidirectional architecture
 //       //       // Features and app can't import from each other directly
 //       //       {
-//       //         target: './src/features',
+//       //         target: './src/pages',
 //       //         from: './src/app',
 //       //       },
 //
@@ -107,59 +107,59 @@
 //       //           './src/types',
 //       //           './src/utils',
 //       //         ],
-//       //         from: ['./src/features', './src/app'],
+//       //         from: ['./src/pages', './src/app'],
 //       //       },
 //
 //       //       // ENFORCE BARREL EXPORTS - Prevent direct internal imports
 //       //       // Block direct imports from feature internals (force barrel exports)
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/components',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/components',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/hooks',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/hooks',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/services',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/services',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/utils',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/utils',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/types',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/types',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features', './src/components'],
-//       //         from: './src/features/*/api',
+//       //         target: ['./src/app', './src/pages', './src/components'],
+//       //         from: './src/pages/*/api',
 //       //       },
 //
 //       //       // Block direct imports from shared module internals
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/components/ui',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/components/forms',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/hooks/use-*',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/lib/api',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/lib/utils',
 //       //       },
 //       //       {
-//       //         target: ['./src/app', './src/features'],
+//       //         target: ['./src/app', './src/pages'],
 //       //         from: './src/utils/helpers',
 //       //       },
 //       //     ],
@@ -177,39 +177,39 @@
 //       //     patterns: [
 //       //       {
 //       //         group: [
-//       //           '@/features/*/components/*',
-//       //           '!@/features/*/components/index',
+//       //           '@/pages/*/components/*',
+//       //           '!@/pages/*/components/index',
 //       //         ],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from components folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from components folder',
 //       //       },
 //       //       {
-//       //         group: ['@/features/*/hooks/*', '!@/features/*/hooks/index'],
+//       //         group: ['@/pages/*/hooks/*', '!@/pages/*/hooks/index'],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from hooks folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from hooks folder',
 //       //       },
 //       //       {
 //       //         group: [
-//       //           '@/features/*/services/*',
-//       //           '!@/features/*/services/index',
+//       //           '@/pages/*/services/*',
+//       //           '!@/pages/*/services/index',
 //       //         ],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from services folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from services folder',
 //       //       },
 //       //       {
-//       //         group: ['@/features/*/utils/*', '!@/features/*/utils/index'],
+//       //         group: ['@/pages/*/utils/*', '!@/pages/*/utils/index'],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from utils folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from utils folder',
 //       //       },
 //       //       {
-//       //         group: ['@/features/*/types/*', '!@/features/*/types/index'],
+//       //         group: ['@/pages/*/types/*', '!@/pages/*/types/index'],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from types folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from types folder',
 //       //       },
 //       //       {
-//       //         group: ['@/features/*/api/*', '!@/features/*/api/index'],
+//       //         group: ['@/pages/*/api/*', '!@/pages/*/api/index'],
 //       //         message:
-//       //           'Import from feature barrel export (@/features/[feature]) instead of directly from api folder',
+//       //           'Import from feature barrel export (@/pages/[feature]) instead of directly from api folder',
 //       //       },
 //       //       // Enforce barrel exports for shared modules
 //       //       {
