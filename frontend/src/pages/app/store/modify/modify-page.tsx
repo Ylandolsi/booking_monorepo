@@ -86,9 +86,9 @@ export function ModifyStore() {
           <ProductSection products={products} setProducts={setProducts} store={store} />
         </div>
       </aside>
-      <div>
+      <div className="sticky top-2 h-full w-fit">
         <PreviewUrl store={store} />
-        <MobilePreview storeForm={watchedValues} productsRearranged={products} />
+        <MobilePreview storeForm={watchedValues} productsRearranged={products} setProducts={setProducts} />
       </div>
     </div>
   );
@@ -198,7 +198,13 @@ const ProductSection = ({
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                   <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
                     {products.map((item) => (
-                      <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onActionClick={() => handleProductEdit(item)} />
+                      <ProductCard
+                        key={GenerateIdCrypto()}
+                        product={item}
+                        edit={true}
+                        onActionClick={() => handleProductEdit(item)}
+                        setProducts={setProducts}
+                      />
                     ))}
                   </SortableContext>
                 </DndContext>

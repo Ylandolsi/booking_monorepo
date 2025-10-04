@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { useMyStore, type Product } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState, MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/components';
 import { GenerateIdCrypto } from '@/lib';
@@ -24,7 +24,15 @@ const ProductDetailsModal = ({ product, storeSlug, isOpen, onClose }: { product:
   );
 };
 
-export const MobilePreview = ({ storeForm, productsRearranged }: { storeForm: StoreFormData; productsRearranged: Product[] }) => {
+export const MobilePreview = ({
+  storeForm,
+  productsRearranged,
+  setProducts,
+}: {
+  storeForm: StoreFormData;
+  productsRearranged: Product[];
+  setProducts: Dispatch<SetStateAction<Product[]>>;
+}) => {
   const { data: store, isLoading, isError } = useMyStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -55,7 +63,7 @@ export const MobilePreview = ({ storeForm, productsRearranged }: { storeForm: St
               className="cursor-pointer" // Indicate it's clickable
             >
               <div className="group px-6">
-                <ProductCard product={product} />
+                <ProductCard product={product} setProducts={setProducts} />
               </div>
             </div>
           );

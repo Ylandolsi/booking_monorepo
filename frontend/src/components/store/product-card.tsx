@@ -8,7 +8,7 @@ import { useAppNavigation } from '@/hooks';
 import { BrushCleaning, Delete, EllipsisVertical, Globe, Grip, Move, Option } from 'lucide-react';
 import { CSS } from '@dnd-kit/utilities';
 import { boolean } from 'zod';
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { Label } from '@radix-ui/react-label';
 
 type DisplayMode = 'full' | 'compact';
@@ -25,9 +25,10 @@ interface ProductCardProps {
   className?: string;
   edit?: boolean;
   onActionClick?: () => void; // New prop for action button click
+  setProducts?: Dispatch<SetStateAction<Product[]>>;
 }
 
-export function ProductCard({ product, onClick, className, displayMode = 'full', edit = false, onActionClick }: ProductCardProps) {
+export function ProductCard({ product, onClick, className, displayMode = 'full', edit = false, onActionClick, setProducts }: ProductCardProps) {
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: product.productSlug || '',
@@ -36,6 +37,22 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
 
   const deleteProductMutation = useDeleteProduct();
   const toggleProductMutation = useToggleProduct();
+  const handleTogglePublished = (checked: boolean) => {
+    if (!product.productSlug) return;
+    toggleProductMutation.mutate({ productSlug: product.productSlug });
+    product.isPublished = checked;
+    // optimistically update UI : todo we can make it better with react-query cache update
+    if (!setProducts) return;
+    setProducts((prevProducts) => {
+      const index = prevProducts.findIndex((p) => p.productSlug === product.productSlug);
+      console.log('index :', index);
+      if (index !== -1) {
+        const updatedProduct = { ...prevProducts[index], isPublished: checked };
+        return [...prevProducts.slice(0, index), updatedProduct, ...prevProducts.slice(index + 1)];
+      }
+      return prevProducts;
+    });
+  };
   const navigate = useAppNavigation();
 
   const style = {
@@ -129,8 +146,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
                             defaultChecked={product.isPublished}
                             onCheckedChange={(checked) => {
                               // Handle toggle change
-                              if (!product.productSlug) return;
-                              toggleProductMutation.mutate({ productSlug: product.productSlug });
+                              handleTogglePublished(checked as boolean);
                             }}
                           />
                         </div>
