@@ -22,13 +22,6 @@ public class GetMyStoreHandler(
 
         try
         {
-            // Validate user ID
-            if (request.UserId <= 0)
-            {
-                logger.LogWarning("Invalid user ID provided: {UserId}", request.UserId);
-                return Result.Failure<GetStoreResponse>(CatalogErrors.Store.InvalidUserId);
-            }
-
             // Get store from database : improve this query 
             var store = await context.Stores
                 .AsNoTracking()

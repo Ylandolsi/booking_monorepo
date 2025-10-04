@@ -27,15 +27,6 @@ public class UpdateStoreHandler(
 
         try
         {
-            // Validate command
-            var validationResult = ValidateCommand(command);
-            if (validationResult.IsFailure)
-            {
-                logger.LogWarning("Store update validation failed for user {UserId}: {Error}",
-                    command.UserId, validationResult.Error.Description);
-                return Result.Failure<PatchPostStoreResponse>(validationResult.Error);
-            }
-
             // Get existing store
             var store = await context.Stores
                 .Include(s => s.Products)
@@ -91,22 +82,5 @@ public class UpdateStoreHandler(
             await unitOfWork.RollbackTransactionAsync(cancellationToken);
             return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.UpdateFailed);
         }
-    }
-
-    private static Result ValidateCommand(PatchStoreCommand command)
-    {
-        if (command.UserId <= 0)
-            return Result.Failure(CatalogErrors.Store.InvalidUserId);
-
-        if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(CatalogErrors.Store.InvalidTitle);
-
-        if (command.Title.Length > 100)
-            return Result.Failure(CatalogErrors.Store.TitleTooLong);
-
-        if (command.Description?.Length > 1000)
-            return Result.Failure(CatalogErrors.Store.DescriptionTooLong);
-
-        return Result.Success();
     }
 }

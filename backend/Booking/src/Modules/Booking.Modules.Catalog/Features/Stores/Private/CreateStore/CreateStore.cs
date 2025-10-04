@@ -29,15 +29,6 @@ public class CreateStoreHandler(
 
         try
         {
-            // Validate input parameters
-            var validationResult = ValidateCommand(command);
-            if (validationResult.IsFailure)
-            {
-                logger.LogWarning("Store creation validation failed for user {UserId}: {Error}",
-                    command.UserId, validationResult.Error.Description);
-                return Result.Failure<PatchPostStoreResponse>(validationResult.Error);
-            }
-
             // Check if user already has a store
             var existingStore = await dbContext.Stores
                 .FirstOrDefaultAsync(s => s.UserId == command.UserId, cancellationToken);
@@ -100,29 +91,4 @@ public class CreateStoreHandler(
             return Result.Failure<PatchPostStoreResponse>(CatalogErrors.Store.CreationFailed);
         }
     }
-
-    private static Result ValidateCommand(PatchStoreCommand command)
-    {
-        if (command.UserId <= 0)
-            return Result.Failure(CatalogErrors.Store.InvalidUserId);
-
-        if (string.IsNullOrWhiteSpace(command.Title))
-            return Result.Failure(CatalogErrors.Store.InvalidTitle);
-
-        if (command.Title.Length > 100)
-            return Result.Failure(CatalogErrors.Store.TitleTooLong);
-
-        if (string.IsNullOrWhiteSpace(command.Slug))
-            return Result.Failure(CatalogErrors.Store.InvalidSlug);
-
-        if (command.Slug.Length > 50)
-            return Result.Failure(CatalogErrors.Store.SlugTooLong);
-
-        if (command.Description?.Length > 1000)
-            return Result.Failure(CatalogErrors.Store.DescriptionTooLong);
-
-        return Result.Success();
-    }
-
-
 }

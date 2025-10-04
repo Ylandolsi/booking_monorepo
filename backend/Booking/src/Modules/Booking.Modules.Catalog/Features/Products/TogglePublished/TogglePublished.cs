@@ -1,5 +1,6 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,18 +19,8 @@ public class TogglePublishedHandler(
         logger.LogInformation("Toggling published status for product {Slug} for user {UserId}", command.Slug,
             command.UserId);
 
-
         try
         {
-            // Validate command
-            var validationResult = ValidateCommand(command);
-            if (validationResult.IsFailure)
-            {
-                logger.LogWarning("Product toggle published validation failed for user {UserId}: {Error}",
-                    command.UserId, validationResult.Error.Description);
-                return Result.Failure<TogglePublishedResponse>(validationResult.Error);
-            }
-
             // Get existing product
             var product = await context.Products
                 .Include(p => p.Store)
@@ -39,8 +30,7 @@ public class TogglePublishedHandler(
             if (product is null)
             {
                 logger.LogWarning("Product not found for user {UserId} with slug {Slug}", command.UserId, command.Slug);
-                return Result.Failure<TogglePublishedResponse>(Error.Problem("Prodcut.Not.Found",
-                    $"Product with slug : {command.Slug} not found for user with id :{command.UserId}  "));
+                return Result.Failure<TogglePublishedResponse>(CatalogErrors.Product.NotFound);
             }
 
             // Toggle published status
@@ -58,19 +48,7 @@ public class TogglePublishedHandler(
         {
             logger.LogError(ex, "Error toggling published status for product {Slug} for user {UserId}", command.Slug,
                 command.UserId);
-            return Result.Failure<TogglePublishedResponse>(Error.Problem("Product.TogglePublished.Failed",
-                "An error occurred while toggling the published status"));
+            return Result.Failure<TogglePublishedResponse>(CatalogErrors.Product.TogglePublishedFailed);
         }
-    }
-
-    private static Result ValidateCommand(TogglePublishedCommand command)
-    {
-        if (command.UserId <= 0)
-            return Result.Failure(Error.Problem("Product.InvalidUserId", "User ID must be greater than 0"));
-
-        if (string.IsNullOrWhiteSpace(command.Slug))
-            return Result.Failure(Error.Problem("Product.InvalidSlug", "Product slug cannot be empty"));
-
-        return Result.Success();
     }
 }
