@@ -6,4 +6,3 @@ import LOGO_FULL from './logo_full.png';
 import LOGO_SHORT from './logo_short.png';
 
 export { LOGO_FULL, LOGO_SHORT, FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL, IPHONE_MOCKUP, FALLBACK_PICTURE_STORE };
-// export { LOGO_FULL, LOGO_SHORT };
