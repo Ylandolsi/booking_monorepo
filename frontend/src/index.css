@@ -62,6 +62,30 @@ body {
   ); 
 }
 */
+
+/* Hiding Scroll Bar */
+
+::-webkit-scrollbar {
+  /* width: 0; */
+  width: 5px;
+  height: 5px;
+  padding: 5px;
+}
+
+/* ::-webkit-scrollbar-track {
+    background-color: transparent;
+} */
+
+::-webkit-scrollbar-thumb {
+  /* background-color: transparent; */
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background: var(--tertiary);
+}
 :root {
   --background: oklch(0.9821 0 0);
   --foreground: oklch(0.2435 0 0);
