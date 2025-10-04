@@ -14,3 +14,4 @@ export * from './tab-navigation';
 export * from './store';
 export * from './theme-toggle';
 export * from './upload-image';
+export * from './input-to-copy';
