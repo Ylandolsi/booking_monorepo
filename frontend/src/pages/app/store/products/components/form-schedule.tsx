@@ -46,7 +46,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
             if (!daySchedule) return null;
 
             return (
-              <Card key={day} className={`cursor-pointer hover:bg-gray-50`}>
+              <Card key={day} className={`cursor-pointer`}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFor
                   <CardContent className="space-y-3">
                     {/* Time Ranges */}
                     {daySchedule.availabilityRanges.map((range) => (
-                      <div key={range.id} className="flex items-center gap-3 rounded-lg border bg-white p-3">
+                      <div key={range.id} className="bg-accent card flex items-center gap-3 rounded-lg border p-2">
                         <Clock className="h-4 w-4 text-gray-500" />
                         <Select
                           value={range.startTime}
