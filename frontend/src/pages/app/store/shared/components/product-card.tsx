@@ -1,15 +1,12 @@
 import { cn } from '@/lib/cn';
-import { Button, Popover, PopoverContent, PopoverTrigger, Switch } from '../../../../../components/ui';
 import { useDeleteProduct, useToggleProduct, type Product } from '@/api/stores';
-import { COVER_IMAGE } from '@/pages/app/store/public/checkout-product-page';
 import { useSortable } from '@dnd-kit/sortable';
 import { routes } from '@/config/routes';
 import { useAppNavigation } from '@/hooks';
-import { BrushCleaning, Delete, EllipsisVertical, Globe, Grip, Move, Option } from 'lucide-react';
+import { BrushCleaning, EllipsisVertical, Globe, Move } from 'lucide-react';
 import { CSS } from '@dnd-kit/utilities';
-import { boolean } from 'zod';
 import { useState, type Dispatch, type SetStateAction } from 'react';
-import { Label } from '@radix-ui/react-label';
+import { Label, Button, Popover, PopoverContent, PopoverTrigger, Switch } from '@/components/ui';
 
 type DisplayMode = 'full' | 'compact';
 

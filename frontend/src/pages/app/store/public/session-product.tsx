@@ -1,7 +1,6 @@
 import { usePublicStore } from '@/api/stores';
 import { ErrorComponenet, LoadingState } from '@/components';
-import { MobileContainer } from '@/pages/app/store';
-import { CheckoutPageProduct } from '@/pages/app/store/public/checkout-product-page';
+import { CheckoutPageProduct, MobileContainer } from '@/pages/app/store';
 import { useParams } from '@tanstack/react-router';
 
 const PublicStoreLayout = ({ children }: { children: React.ReactNode }) => {

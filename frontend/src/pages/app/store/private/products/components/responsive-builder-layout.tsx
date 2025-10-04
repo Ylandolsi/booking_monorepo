@@ -6,8 +6,7 @@ import { Button, LoadingState } from '@/components/ui';
 import type { ProductFormData } from '@/pages/app/store/private/products/add-product-page';
 import { ErrorComponenet } from '@/components';
 import { useMyStore } from '@/api/stores';
-import { CheckoutPageProduct } from '@/pages/app/store/private/products/book';
-import { StoreHeader } from '@/pages/app/store/shared';
+import { CheckoutPageProduct, StoreHeader } from '@/pages/app/store/shared';
 
 interface ResponsiveBuilderLayoutProps {
   children: React.ReactNode;
