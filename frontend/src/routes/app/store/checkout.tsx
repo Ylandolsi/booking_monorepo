@@ -1,4 +1,4 @@
-import { MobileContainer, ProductCheckout } from '@/components';
+import { MobileContainer, ProductCheckout } from '@/pages/app/store';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/app/store/checkout')({

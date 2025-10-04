@@ -1,6 +1,6 @@
 import type { ProductType } from '@/api/stores';
 import { routes } from '@/config';
-import { AddProductFlow } from '@/pages/app/store/products';
+import { AddProductFlow } from '@/pages/app/store/private/products';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute(routes.paths.APP.STORE.PRODUCT.INDEX)({

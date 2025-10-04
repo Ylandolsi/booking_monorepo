@@ -1,24 +1,14 @@
-import { useAppNavigation } from '@/hooks/use-navigation';
-import { X, LogOut, ChevronRight, ChevronLeft } from 'lucide-react';
-import { LazyImage } from '@/lib/lazy-image';
-import {
-  Button,
-  Separator,
-  Sidebar as SidebarShadcn,
-  PageLoading,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
-} from '@/components/ui';
+import { LogOut } from 'lucide-react';
+import { Button, Separator, PageLoading } from '@/components/ui';
 import { useAuth } from '@/api/auth';
 import { MainErrorFallback } from '@/components/errors';
-import { NavigationSection, useSideBar } from '@/components';
+import { NavigationSection } from '@/components';
 import { useIsMobile } from '@/hooks';
 import { AccountSection } from '@/components/navigation/side-bar/account-section';
 import { AdminSection } from '@/components/navigation/side-bar/admin-section';
 import { LOGO_SHORT } from '@/assets';
 import { Logo } from '@/components/logo';
+import { useSideBar } from '@/stores';
 
 export type Item = {
   name:
@@ -39,11 +29,9 @@ export type Item = {
 };
 
 const Sidebar = () => {
-  const { sidebarOpen, setSidebarOpen, toggleSidebar } = useSideBar();
+  const { sidebarOpen, setSidebarOpen, itemActive, setItemActive } = useSideBar();
   const { currentUser, error, isLoading, logout } = useAuth();
-  const { itemActive, setItemActive } = useSideBar();
   const isMobile = useIsMobile();
-  const nav = useAppNavigation();
   const collapsed = !sidebarOpen;
 
   if (isLoading) return <PageLoading />;

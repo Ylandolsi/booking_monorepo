@@ -2,12 +2,13 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import * as React from 'react';
 import { HelmetProvider } from 'react-helmet-async';
-import { PageLoading, useThemeStore } from '@/components';
+import { PageLoading } from '@/components';
 import { Toaster } from 'sonner';
 import { RouterProvider } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { queryClient } from '@/providers/react-query';
 import { router } from '@/providers/react-router';
+import { useThemeStore } from '@/stores/theme-store';
 
 type AppProviderProps = {
   children?: React.ReactNode;
