@@ -73,6 +73,9 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
             mappedStoreProducts.Add(mappedProduct);
         }
 
+        // sort via display order
+        mappedStoreProducts = mappedStoreProducts.OrderBy(p => p.DisplayOrder).ToList();
+
         logger.LogInformation(
             "Public store fetched successfully: StoreSlug={StoreSlug}, StoreId={StoreId}, PublishedProductsCount={PublishedProductsCount}",
             command.StoreSlug,
