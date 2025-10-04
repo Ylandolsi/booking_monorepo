@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -6,20 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { User, CheckCircle, Plus, Edit2Icon, Grip, Store as StoreIcon } from 'lucide-react';
+import { User, CheckCircle, Plus, Grip, Store as StoreIcon } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
 import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product, type Store } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/pages/app/store';
-import { ErrorComponenet, Label, LoadingState, ProductCard, UploadImage } from '@/components';
+import { ErrorComponenet, LoadingState, ProductCard, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
-import { useAppNavigation, useCopyToClipboard } from '@/hooks';
-import { SortableContext, rectSortingStrategy, useSortable, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { useAppNavigation } from '@/hooks';
+import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
 import { GenerateIdCrypto } from '@/lib';
-import { toast } from 'sonner';
 import { InputToCopy } from '@/components/input-to-copy';
 
 export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
@@ -29,15 +27,7 @@ export function ModifyStore() {
   const { data: store, isLoading, isError } = useMyStore();
   const updateStoreMutation = useUpdateStore();
   const { croppedImageUrl, setAspectRatio, handleCloseDialog } = useUploadPicture();
-
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [products, setProducts] = useState<Product[]>(store?.products || []);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
 
   const form = useForm<StoreFormData>({
     resolver: zodResolver(patchPostStoreSchema),
@@ -88,31 +78,7 @@ export function ModifyStore() {
     }
   };
 
-  function handleProductEdit(product: Product): void {
-    navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
-  }
-
   const watchedValues = form.watch();
-
-  const handleDragEnd = ({ active, over }: any) => {
-    if (!over) {
-      return;
-    }
-
-    if (active.id === over.id) {
-      return;
-    }
-
-    setProducts((items) => {
-      return arrayMove(
-        items,
-        items.findIndex((it) => it.productSlug === active.id),
-        items.findIndex((it) => it.productSlug === over.id),
-      );
-    });
-  };
-
-  console.log('Products state:', products); // Debugging line
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-12 px-4 py-8 lg:flex-row lg:items-start lg:px-6">
@@ -205,47 +171,7 @@ export function ModifyStore() {
           </div>
 
           {/* Products Section */}
-          <div className="bg-card/50 border-border/50 rounded-xl border shadow-sm backdrop-blur-sm">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="products" className="border-0">
-                <AccordionTrigger className="hover:bg-accent/50 rounded-t-xl px-6 py-5 transition-colors hover:no-underline">
-                  <div className="flex w-full items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 text-primary rounded-lg p-2">
-                        <Grip className="h-5 w-5" />
-                      </div>
-                      <h2 className="text-foreground text-xl font-semibold">My Products</h2>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="bg-primary/10 hover:bg-primary/20 text-primary h-9 w-9 rounded-lg p-0"
-                      aria-label="Add new product"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate.goTo({ to: routes.paths.APP.STORE.PRODUCT.INDEX + '/' });
-                      }}
-                    >
-                      <Plus className="h-5 w-5" />
-                    </Button>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pt-2 pb-6">
-                  <div className="space-y-3 p-4">
-                    {products.length !== 0 && (
-                      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-                        <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
-                          {products.map((item) => (
-                            <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onActionClick={() => handleProductEdit(item)} />
-                          ))}
-                        </SortableContext>
-                      </DndContext>
-                    )}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
+          <ProductSection products={products} setProducts={setProducts} />
         </div>
       </aside>
       <div>
@@ -259,4 +185,79 @@ export function ModifyStore() {
 const PreviewUrl = ({ store }: { store: Store }) => {
   const link = window.location.origin + '/store/' + store.slug;
   return <InputToCopy input={link || ''} className="mb-4" label={'Store Public Link'} />;
+};
+
+const ProductSection = ({ products, setProducts }: { products: Product[]; setProducts: Dispatch<SetStateAction<Product[]>> }) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  function handleProductEdit(product: Product): void {
+    navigate.goTo({ to: routes.to.store.productEdit({ productSlug: product.productSlug, type: product.productType }) });
+  }
+
+  const handleDragEnd = ({ active, over }: any) => {
+    if (!over) {
+      return;
+    }
+
+    if (active.id === over.id) {
+      return;
+    }
+
+    setProducts((items) => {
+      return arrayMove(
+        items,
+        items.findIndex((it) => it.productSlug === active.id),
+        items.findIndex((it) => it.productSlug === over.id),
+      );
+    });
+  };
+  const navigate = useAppNavigation();
+  return (
+    <div className="bg-card/50 border-border/50 rounded-xl border shadow-sm backdrop-blur-sm">
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="products" className="border-0">
+          <AccordionTrigger className="hover:bg-accent/50 rounded-t-xl px-6 py-5 transition-colors hover:no-underline">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 text-primary rounded-lg p-2">
+                  <Grip className="h-5 w-5" />
+                </div>
+                <h2 className="text-foreground text-xl font-semibold">My Products</h2>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="bg-primary/10 hover:bg-primary/20 text-primary h-9 w-9 rounded-lg p-0"
+                aria-label="Add new product"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate.goTo({ to: routes.paths.APP.STORE.PRODUCT.INDEX + '/' });
+                }}
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-6 pt-2 pb-6">
+            <div className="space-y-3 p-4">
+              {products.length !== 0 && (
+                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+                  <SortableContext items={products.map((p) => p.productSlug)} strategy={rectSortingStrategy}>
+                    {products.map((item) => (
+                      <ProductCard key={GenerateIdCrypto()} product={item} edit={true} onActionClick={() => handleProductEdit(item)} />
+                    ))}
+                  </SortableContext>
+                </DndContext>
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
+  );
 };
