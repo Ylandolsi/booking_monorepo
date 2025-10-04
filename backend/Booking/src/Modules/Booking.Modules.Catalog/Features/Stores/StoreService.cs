@@ -52,7 +52,7 @@ public class StoreService(
         }
         catch (Exception e)
         {
-            return Result.Failure<Picture>(CatalogErrors.Upload.ImageFailed);
+            return Result.Failure<Picture>(CatalogErrors.Upload.UploadFailed);
         }
     }
 
