@@ -65,6 +65,9 @@ public class GetMyStoreHandler(
                 mappedStoreProducts.Add(mappedProduct);
             }
 
+            // sort via display order
+            mappedStoreProducts = mappedStoreProducts.OrderBy(p => p.DisplayOrder).ToList();
+            
             var mappedResult = new GetStoreResponse
             {
                 Slug = store.Slug,
