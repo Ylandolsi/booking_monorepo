@@ -236,9 +236,9 @@
 //       //           'Import from lib barrel export (@/lib) instead of directly from internal folders',
 //       //       },
 //       //       {
-//       //         group: ['@/utils/*/[!index]*', '!@/utils/index'],
+//       //         group: ['@/lib/*/[!index]*', '!@/lib/index'],
 //       //         message:
-//       //           'Import from utils barrel export (@/utils) instead of directly from internal folders',
+//       //           'Import from utils barrel export (@/lib) instead of directly from internal folders',
 //       //       },
 //       //     ],
 //       //   },

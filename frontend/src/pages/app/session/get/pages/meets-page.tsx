@@ -18,7 +18,7 @@ import {
 } from '@/components';
 import { MeetingCard } from '@/pages/app/session/get/components';
 import { useGetSessions } from '@/pages/app/session/get/api';
-import { formatISODateTime, GenerateTimeZoneId } from '@/utils';
+import { formatISODateTime, GenerateTimeZoneId } from '@/lib';
 import { useTimeFilter, type TimeFilter } from '@/hooks/use-time-filter';
 import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 

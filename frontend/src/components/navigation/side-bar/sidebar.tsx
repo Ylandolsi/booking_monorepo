@@ -1,6 +1,6 @@
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { X, LogOut, ChevronRight, ChevronLeft } from 'lucide-react';
-import { LazyImage } from '@/utils/lazy-image';
+import { LazyImage } from '@/lib/lazy-image';
 import {
   Button,
   Separator,

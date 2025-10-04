@@ -1,4 +1,4 @@
-import { LazyImage } from '@/utils/lazy-image';
+import { LazyImage } from '@/lib/lazy-image';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { MdEdit } from 'react-icons/md';

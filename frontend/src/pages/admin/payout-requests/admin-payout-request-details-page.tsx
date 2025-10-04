@@ -4,7 +4,7 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Badg
 import { ArrowLeft, Calendar, DollarSign, User, CreditCard, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin } from './api';
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/lib';
 import { mapPayoutStatus, type PayoutStatus } from './types/admin-payout';
 
 export function AdminPayoutRequestDetailsPage() {

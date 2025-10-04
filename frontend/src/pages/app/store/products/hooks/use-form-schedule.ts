@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import { mapNumberToDay } from '@/utils/enum-days-week';
+import { mapNumberToDay } from '@/lib/enum-days-week';
 import { GenerateIdNumber } from '@/lib';
 import type { DailySchedule, AvailabilityRangeType, CreateProductInput } from '@/api/stores';
 import type { DayOfWeek } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';

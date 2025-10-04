@@ -1,6 +1,6 @@
 import { Clock } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
-import { formatDate, formatTime } from '@/utils';
+import { formatDate, formatTime } from '@/lib';
 import { cn } from '@/lib/cn';
 import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 

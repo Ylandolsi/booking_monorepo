@@ -2,7 +2,7 @@ import { api, CatalogEndpoints, type RequestOptions } from '@/api/utils';
 import type { Session } from '@/pages/app/session/get/types';
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { sessionQueryKeys } from '@/pages/app/session/get/api/sessions-get-keys';
-import { toLocalISOString } from '@/utils';
+import { toLocalISOString } from '@/lib';
 
 export const getSessions = async (upToDate?: string, timeZoneId?: string) => {
   return await api.get<Array<Session>>(CatalogEndpoints.Products.Sessions.GetSessions, {

@@ -1,4 +1,4 @@
-import { LazyImage } from '@/utils';
+import { LazyImage } from '@/lib';
 import { FALLBACK_PROFILE_PICTURE } from '@/lib';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';

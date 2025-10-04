@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { COVER_IMAGE, Input, Textarea, UploadImage } from '@/components';
 import type { ProductFormData, TabsType } from '@/pages/app/store/products/add-product';
 import { useEffect, useRef } from 'react';
-import { LazyImage } from '@/utils';
+import { LazyImage } from '@/lib';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
 import 'react-image-crop/dist/ReactCrop.css';

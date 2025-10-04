@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui';
 import { googleOIDC } from '@/api/auth';
 import type { User } from '@/api/auth';
-import { LazyImage } from '@/utils';
+import { LazyImage } from '@/lib';
 import { CheckCircle, ExternalLink, Calendar, Clock } from 'lucide-react';
 
 export function IntegrateGoogle({ user }: { user?: User }) {

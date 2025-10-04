@@ -1,7 +1,7 @@
 import { Calendar, Clock, DollarSign, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Button, DrawerDialog } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { formatDateLong } from '@/utils';
+import { formatDateLong } from '@/lib';
 import { useState } from 'react';
 import type { BookingHookState, BookingSummaryType } from '@/api/stores';
 import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';

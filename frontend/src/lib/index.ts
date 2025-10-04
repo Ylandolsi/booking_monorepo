@@ -3,3 +3,6 @@ export * from './id';
 export * from './deep-copy';
 export * from './consts.ts';
 export * from './sanitize-html.tsx';
+export * from './enum-days-week.ts';
+export * from './format.ts';
+export * from './lazy-image.tsx';

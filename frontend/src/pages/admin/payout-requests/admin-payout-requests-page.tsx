@@ -27,7 +27,7 @@ import { Filter, Eye, Check, X } from 'lucide-react';
 import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin, type AdminPayoutResponse } from './api';
 import { type PayoutStatus, type TimeFilter, mapPayoutStatus } from './types/admin-payout';
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/lib';
 
 export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
@@ -149,10 +149,10 @@ export function AdminPayoutRequestsPage() {
   };
 
   return (
-    <div className="mx-auto p-6 space-y-8">
+    <div className="mx-auto space-y-8 p-6">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold tracking-light">Payout Requests Management</h1>
+        <h1 className="tracking-light text-4xl font-bold">Payout Requests Management</h1>
         <p className="text-muted-foreground text-lg">Review and manage mentor payout requests</p>
       </div>
 
@@ -195,13 +195,13 @@ export function AdminPayoutRequestsPage() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Filter className="h-5 w-5 text-muted-foreground" />
+              <Filter className="text-muted-foreground h-5 w-5" />
               <CardTitle>Filters</CardTitle>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="space-y-2">
               <label className="text-sm font-medium">Time Period</label>
               <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeStatus(value)}>
@@ -259,7 +259,7 @@ export function AdminPayoutRequestsPage() {
             <TableBody>
               {payoutRequests.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-muted-foreground py-8 text-center">
                     No payout requests found for the selected filters.
                   </TableCell>
                 </TableRow>
@@ -269,11 +269,11 @@ export function AdminPayoutRequestsPage() {
                   const statusProps = getStatusBadgeProps(status);
                   return (
                     <TableRow key={request.id}>
-                      <TableCell className="font-medium font-mono text-sm">PR-{request.id.toString().padStart(3, '0')}</TableCell>
+                      <TableCell className="font-mono text-sm font-medium">PR-{request.id.toString().padStart(3, '0')}</TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <div className="font-medium">User ID: {request.userId}</div>
-                          <div className="text-sm text-muted-foreground">Wallet: {request.konnectWalletId}</div>
+                          <div className="text-muted-foreground text-sm">Wallet: {request.konnectWalletId}</div>
                         </div>
                       </TableCell>
                       <TableCell className="font-semibold">${request.amount.toFixed(2)}</TableCell>
@@ -293,7 +293,7 @@ export function AdminPayoutRequestsPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleApprove(request)}
-                                className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
+                                className="h-8 w-8 p-0 text-green-600 hover:bg-green-50 hover:text-green-700"
                                 disabled={approvePayoutMutation.isPending}
                               >
                                 <Check className="h-4 w-4" />
@@ -302,7 +302,7 @@ export function AdminPayoutRequestsPage() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleReject(request)}
-                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
                                 disabled={rejectPayoutMutation.isPending}
                               >
                                 <X className="h-4 w-4" />

@@ -23,7 +23,7 @@ import { DollarSign, Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 import { PayoutRequestForm } from './components';
 import { useHistoryPayout, useRequestPayout } from './api';
 import { useState } from 'react';
-import { formatDate } from '@/utils/format';
+import { formatDate } from '@/lib';
 import type { PayoutStatus } from '@/pages/app/payout/types/payout';
 import { useUser } from '@/api/auth';
 import { useAppNavigation } from '@/hooks';
