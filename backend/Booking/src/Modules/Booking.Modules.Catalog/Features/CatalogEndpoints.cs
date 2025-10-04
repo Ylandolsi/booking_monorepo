@@ -22,7 +22,8 @@ public static class CatalogEndpoints
             public const string Create = $"{Base}/products/s/create";
             public const string Update = $"{Base}/products/s/{{productSlug}}";
             public const string GetMy = $"{Base}/products/s/{{productSlug}}/private";
-            public const string GetSessions = $"{Base}/s"; // get booked session for the store owner 
+            public const string GetAllSessions = $"{Base}/products/s"; // get booked session for the store owner 
+            // queryParam :string? month ,string?year , string? timeZoneId
 
 
             // PUBLIC : 
