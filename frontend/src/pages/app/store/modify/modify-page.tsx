@@ -119,7 +119,7 @@ export function ModifyStore() {
       <style>{`.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24; }`}</style>
       <UploadPictureDialog onUpload={(file) => form.setValue('file', file)} />
       <aside className="flex w-full max-w-lg flex-col gap-6">
-        <div className="flex-1">
+        <div className="flex-1 space-y-2">
           <div className="bg-card/50 border-border/50 rounded-xl border shadow-sm backdrop-blur-sm">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="store-details" className="border-0">
