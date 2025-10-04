@@ -86,34 +86,38 @@ export function FormGeneral({
         <p className="text-muted-foreground">Fill in the details for your {type === 'Session' ? 'booking service' : 'digital product'}</p>
       </div>
       <UploadPictureDialog onUpload={(file) => form.setValue('thumbnailImage', file)} />
-      {/* Title */}
-      <FormField
-        control={form.control}
-        name="title"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-foreground">Title *</FormLabel>
-            <FormControl>
-              <Input placeholder={type === 'Session' ? '30-minute Strategy Call' : 'Ultimate Course Bundle'} className="py-3 text-lg" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      {/* Subtitle */}
-      <FormField
-        control={form.control}
-        name="subtitle"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-foreground">Subtitle</FormLabel>
-            <FormControl>
-              <Input placeholder="A brief description of what you offer" className="py-3" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+
+      <div className="flex w-full flex-wrap gap-4">
+        {/* Title */}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-foreground">Title *</FormLabel>
+              <FormControl>
+                <Input placeholder={type === 'Session' ? '30-minute Strategy Call' : 'Ultimate Course Bundle'} className="py-3" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Subtitle */}
+        <FormField
+          control={form.control}
+          name="subtitle"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-foreground">Subtitle</FormLabel>
+              <FormControl>
+                <Input placeholder="A brief description of what you offer" className="py-3" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
       {/* Price */}
       <FormField
         control={form.control}
