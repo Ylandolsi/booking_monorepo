@@ -3,7 +3,7 @@ import { MobileContainer } from '@/components/store/mobile-container';
 import { ProductCard, type ProductCardType } from '@/components/store/product-card';
 import { useState } from 'react';
 import { Button, LoadingState } from '@/components/ui';
-import type { ProductFormData } from '@/pages/app/store/products/add-product';
+import type { ProductFormData } from '@/pages/app/store/products/add-product-page';
 import { CheckoutPageProduct } from '@/pages/app/store/products';
 import { ErrorComponenet, StoreHeader } from '@/components';
 import { useMyStore } from '@/api/stores';

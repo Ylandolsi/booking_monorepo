@@ -3,7 +3,7 @@ import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { COVER_IMAGE, Input, Textarea, UploadImage } from '@/components';
-import type { ProductFormData, TabsType } from '@/pages/app/store/products/add-product';
+import type { ProductFormData, TabsType } from '@/pages/app/store/products/add-product-page';
 import { useEffect, useRef } from 'react';
 import { LazyImage } from '@/lib';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
