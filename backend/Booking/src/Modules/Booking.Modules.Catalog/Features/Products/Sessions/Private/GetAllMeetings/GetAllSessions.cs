@@ -1,3 +1,5 @@
+
+
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
@@ -13,20 +15,20 @@ internal sealed class GetAllSessions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet(CatalogEndpoints.Products.GetSessions, async (
+        app.MapGet(CatalogEndpoints.Products.Sessions.GetAllSessions, async (
                 [FromQuery] string? month,
                 [FromQuery] string? year,
                 [FromQuery] string? timeZoneId,
                 UserContext userContext,
-                IQueryHandler<GetSessionsQuery, List<SessionResponse>> handler,
+                IQueryHandler<GetSessionsQuery, MonthlySessionsResponse> handler,
                 CancellationToken cancellationToken) =>
             {
                 timeZoneId = timeZoneId is "" or null ? "Africa/Tunis" : timeZoneId;
 
                 int menteeId = userContext.UserId;
-                var query = new GetSessionsQuery(menteeId, month , year, timeZoneId);
+                var query = new GetSessionsQuery(menteeId, int.Parse(month), int.Parse(year), timeZoneId);
 
-                Result<List<SessionResponse>> result = await handler.Handle(query, cancellationToken);
+                var result = await handler.Handle(query, cancellationToken);
 
                 return result.Match(
                     Results.Ok,
@@ -36,4 +38,3 @@ internal sealed class GetAllSessions : IEndpoint
             .WithTags(Tags.Sessions);
     }
 }
-
