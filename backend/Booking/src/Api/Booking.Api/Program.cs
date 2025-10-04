@@ -94,34 +94,34 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     
     
     
-    using var scope = app.Services.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-    var catalogDb = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-    var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
+    // using var scope = app.Services.CreateScope();
+    // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    // var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+    // var catalogDb = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+    // var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
-    // Drop databases
-    await usersDb.Database.EnsureDeletedAsync();
-    await catalogDb.Database.EnsureDeletedAsync();
-    app.ApplyMigrations();
+    // // Drop databases
+    // await usersDb.Database.EnsureDeletedAsync();
+    // await catalogDb.Database.EnsureDeletedAsync();
+    // app.ApplyMigrations();
 
 
-    // Delete test users only
-    var testUsers = await userManager.Users
-        .ToListAsync();
+    // // Delete test users only
+    // var testUsers = await userManager.Users
+    //     .ToListAsync();
 
 
-    foreach (var user in testUsers)
-    {
-        await userManager.DeleteAsync(user);
-    }
+    // foreach (var user in testUsers)
+    // {
+    //     await userManager.DeleteAsync(user);
+    // }
 
-    await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod
-    await roleService.CreateRoleAsync("User");
+    // await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod
+    // await roleService.CreateRoleAsync("User");
 
-    var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+    // var TestProfileSeeder = new TestProfileSeeder(app.Services);
+    // await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 }
 
 app.MapHealthChecks("health", new HealthCheckOptions
