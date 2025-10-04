@@ -64,52 +64,10 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
           <div
             {...attributes}
             {...listeners}
-            className="bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground absolute top-3 left-3 z-10 cursor-grab rounded-lg p-2 backdrop-blur-sm transition-all duration-200 active:scale-95 active:cursor-grabbing"
+            className="bg-muted/80 hover:bg-muted text-muted-foreground hover:text-foreground absolute -top-2 left-[200px] -z-2 cursor-grab rounded-lg p-1 backdrop-blur-sm transition-all duration-200 active:scale-95 active:cursor-grabbing"
           >
             <Move className="h-4 w-4" />
           </div>
-          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-            <PopoverTrigger asChild>
-              <div
-                className="bg-accent text-foreground hover:bg-accent/80 absolute top-3 right-3 z-10 cursor-pointer rounded-lg p-2 transition-all duration-200"
-                onClick={() => {
-                  setIsPopoverOpen(true);
-                }}
-              >
-                <EllipsisVertical className="h-4 w-4" />
-              </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-72 p-4" side="top" align="center">
-              <div className="grid gap-4">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-semibold">Product Options</h4>
-                  <p className="text-muted-foreground text-xs">Manage your product settings</p>
-                </div>
-                <div className="grid gap-3">
-                  <div className="hover:bg-accent/50 flex items-center space-x-3 rounded-lg p-2 transition-colors">
-                    <Globe className="text-muted-foreground h-4 w-4" />
-                    <Label
-                      htmlFor="featured-toggle"
-                      className="flex flex-1 cursor-pointer items-center gap-2 text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Published
-                    </Label>
-                    <Switch
-                      id="featured-toggle"
-                      defaultChecked={false}
-                      onCheckedChange={(checked) => {
-                        // Handle toggle change
-                      }}
-                    />
-                  </div>
-                  <Button type="button" variant={'destructive'} size="sm" onClick={editProduct} className="mt-1 h-9 w-full rounded-lg">
-                    <BrushCleaning className="h-4 w-4" />
-                    Delete Product
-                  </Button>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
         </>
       )}
 
@@ -132,8 +90,53 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
               {product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed break-words">{product.subtitle}</p>}
             </div>
 
-            <div className="flex-none">
-              <span className="text-primary text-xl font-bold tracking-tight">${product.price}</span>
+            <div className="">
+              <div className="flex items-center">
+                <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>
+
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <div
+                      className="text-foreground hover:bg-accent/80 cursor-pointer rounded-lg p-1 transition-all duration-200"
+                      onClick={() => {
+                        setIsPopoverOpen(true);
+                      }}
+                    >
+                      <EllipsisVertical className="h-4 w-4" />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4" side="top" align="center">
+                    <div className="grid gap-4">
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-semibold">Product Options</h4>
+                        <p className="text-muted-foreground text-xs">Manage your product settings</p>
+                      </div>
+                      <div className="grid gap-3">
+                        <div className="hover:bg-accent/50 flex items-center space-x-3 rounded-lg p-2 transition-colors">
+                          <Globe className="text-muted-foreground h-4 w-4" />
+                          <Label
+                            htmlFor="featured-toggle"
+                            className="flex flex-1 cursor-pointer items-center gap-2 text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            Published
+                          </Label>
+                          <Switch
+                            id="featured-toggle"
+                            defaultChecked={false}
+                            onCheckedChange={(checked) => {
+                              // Handle toggle change
+                            }}
+                          />
+                        </div>
+                        <Button type="button" variant={'destructive'} size="sm" onClick={editProduct} className="mt-1 h-9 w-full rounded-lg">
+                          <BrushCleaning className="h-4 w-4" />
+                          Delete Product
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           </div>
 
