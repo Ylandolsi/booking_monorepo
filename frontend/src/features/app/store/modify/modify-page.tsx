@@ -6,19 +6,20 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { User, CheckCircle, Plus, Edit2Icon, Store, Grip } from 'lucide-react';
+import { User, CheckCircle, Plus, Edit2Icon, Grip, Store as StoreIcon } from 'lucide-react';
 import routes from '@/config/routes';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product } from '@/api/stores';
+import { patchPostStoreSchema, useMyStore, useUpdateStore, type PatchPostStoreRequest, type Picture, type Product, type Store } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/features/app/store';
-import { ErrorComponenet, LoadingState, ProductCard, UploadImage } from '@/components';
+import { ErrorComponenet, Label, LoadingState, ProductCard, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useAppNavigation } from '@/hooks';
 import { SortableContext, rectSortingStrategy, useSortable, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { GenerateIdCrypto } from '@/lib';
+import { toast } from 'sonner';
 
 export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
 
@@ -124,7 +125,7 @@ export function ModifyStore() {
                 <AccordionTrigger className="hover:bg-accent/50 rounded-t-xl px-6 py-5 transition-colors hover:no-underline">
                   <div className="flex items-center gap-3">
                     <div className="bg-primary/10 text-primary rounded-lg p-2">
-                      <Store className="h-5 w-5" />
+                      <StoreIcon className="h-5 w-5" />
                     </div>
                     <h2 className="text-foreground text-xl font-semibold">Store Details</h2>
                   </div>
@@ -246,7 +247,47 @@ export function ModifyStore() {
           </div>
         </div>
       </aside>
-      <MobilePreview storeForm={watchedValues} productsRearranged={products} />
+      <div>
+        <PreviewUrl store={store} />
+        <MobilePreview storeForm={watchedValues} productsRearranged={products} />
+      </div>
     </div>
   );
 }
+
+const PreviewUrl = ({ store }: { store: Store }) => {
+  const [copied, setCopied] = useState(false);
+  const link = window.location.origin + '/store/' + store.slug;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.success('Store link copied to clipboard!');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div>
+      <Label className="font-bold">Store Public Link</Label>
+      <Input
+        type="text"
+        readOnly
+        value={link}
+        className="mt-1 mb-4 cursor-pointer font-bold select-all hover:ring-0 focus:border-0 focus:ring-0"
+        onClick={handleCopy}
+      />
+    </div>
+  );
+};
