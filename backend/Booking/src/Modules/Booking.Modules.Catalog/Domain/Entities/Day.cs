@@ -14,7 +14,7 @@ public class Day : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
-    public int ProductId { get; private set; }
+   // public int ProductId { get; private set; }
     public string ProductSlug { get; private set; }
 
     public DayOfWeek DayOfWeek { get; private set; }
@@ -22,12 +22,14 @@ public class Day : Entity
     public bool IsActive { get; private set; } = true;
 
     public ICollection<SessionAvailability> Availabilities { get; set; } = [];
+    
+    //public Product Product { get; private set; } = default!;
 
     public static Day Create(int productId, string productSlug, DayOfWeek dayOfWeek, bool isActive = true)
     {
         return new Day
         {
-            ProductId = productId,
+            //ProductId = productId,
             ProductSlug = productSlug,
             DayOfWeek = dayOfWeek,
             IsActive = isActive,

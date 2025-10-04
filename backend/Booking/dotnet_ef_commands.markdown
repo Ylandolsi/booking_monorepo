@@ -243,4 +243,3 @@ dotnet ef migrations list --project <ModuleProject> --startup-project <ApiProjec
 
 - **Users**: `UsersDbContext`
 - **Catalog**: `CatalogDbContext`
-- **Mentorships**: `MentorshipsDbContext`

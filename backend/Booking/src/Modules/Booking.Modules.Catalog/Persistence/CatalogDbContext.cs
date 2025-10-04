@@ -14,7 +14,7 @@ public sealed class CatalogDbContext : DbContext
     // Entities
     public DbSet<Store> Stores { get; set; }
 
-    // public DbSet<Product> Products { get; set; }
+    public DbSet<Product> Products { get; set; }
     public DbSet<SessionProduct> SessionProducts { get; set; }
     public DbSet<SessionAvailability> SessionAvailabilities { get; set; }
     public DbSet<Order> Orders { get; set; }

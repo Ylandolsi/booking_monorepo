@@ -36,6 +36,8 @@ public static class CatalogEndpoints
         }
 
         public const string Arrange = $"{Base}/produtcs/arrange"; 
+        public const string Delete = $"{Base}/products/{{productSlug}}";
+        public const string TogglePublished = $"{Base}/products/toggle/{{productSlug}}";
     }
 
     public static class Orders

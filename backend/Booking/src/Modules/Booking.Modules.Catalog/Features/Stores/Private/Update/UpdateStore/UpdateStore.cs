@@ -60,13 +60,7 @@ public class UpdateStoreHandler(
                 context.Entry(store).Property(s => s.SocialLinks).IsModified = true;
             }
 
-
-            if (command.Orders is not null)
-                foreach (var product in store.Products)
-                    if (command.Orders.TryGetValue(product.ProductSlug, out var order))
-                        if (order != product.DisplayOrder && order != 0)
-                            product.UpdateDisplayOrder(order);
-
+            
             if (command?.File is not null) // only update when provided 
             {
                 var profilePictureResult = await storeService.UploadPicture(command.File, command.Slug);

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products;
 
-
 public record ArrangeProductsOrderCommand : ICommand
 {
     public Dictionary<string, int>? Orders { get; init; } = null; //  product slug is a key , order : int
@@ -23,6 +22,16 @@ public class ArrangeProductsOrderCommandHandler(
         try
         {
             logger.LogInformation("Updating product orders for user {UserId}", command.UserId);
+
+
+            // Validate command
+            var validationResult = ValidateCommand(command);
+            if (validationResult.IsFailure)
+            {
+                logger.LogWarning("Product delete validation failed for user {UserId}: {Error}",
+                    command.UserId, validationResult.Error.Description);
+                return Result.Failure(validationResult.Error);
+            }
 
             // Get existing store
             var store = await context.Stores
@@ -62,5 +71,13 @@ public class ArrangeProductsOrderCommandHandler(
             return Result.Failure(Error.Failure("ArrangeProductsOrderError",
                 "An error occurred while arranging products order."));
         }
+    }
+
+    private static Result ValidateCommand(ArrangeProductsOrderCommand command)
+    {
+        if (command.UserId <= 0)
+            return Result.Failure(Error.Problem("Arrange.Failed.InvalidUserId", "User ID must be greater than 0"));
+
+        return Result.Success();
     }
 }

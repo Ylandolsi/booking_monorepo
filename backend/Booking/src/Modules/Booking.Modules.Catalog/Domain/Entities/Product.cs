@@ -110,15 +110,9 @@ public abstract class Product : Entity
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void Publish()
+    public void TogglePublished()
     {
-        IsPublished = true;
-        UpdatedAt = DateTime.UtcNow;
-    }
-
-    public void Unpublish()
-    {
-        IsPublished = false;
+        IsPublished = !IsPublished;
         UpdatedAt = DateTime.UtcNow;
     }
 }
