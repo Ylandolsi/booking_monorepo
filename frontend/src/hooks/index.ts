@@ -6,3 +6,4 @@ export * from './use-navigation';
 export * from './use-time-filter';
 export * from './use-upload-picture';
 export * from './use-media-query';
+export * from './use-copy-to-clipboard';

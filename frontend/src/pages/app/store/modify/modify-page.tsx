@@ -14,7 +14,7 @@ import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, SocialLinksForm } from '@/pages/app/store';
 import { ErrorComponenet, Label, LoadingState, ProductCard, UploadImage } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
-import { useAppNavigation } from '@/hooks';
+import { useAppNavigation, useCopyToClipboard } from '@/hooks';
 import { SortableContext, rectSortingStrategy, useSortable, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -256,27 +256,8 @@ export function ModifyStore() {
 }
 
 const PreviewUrl = ({ store }: { store: Store }) => {
-  const [copied, setCopied] = useState(false);
+  const { handleCopy } = useCopyToClipboard();
   const link = window.location.origin + '/store/' + store.slug;
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(link);
-      toast.success('Store link copied to clipboard!');
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (e) {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea');
-      textArea.value = link;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   return (
     <div>
@@ -286,7 +267,7 @@ const PreviewUrl = ({ store }: { store: Store }) => {
         readOnly
         value={link}
         className="mt-1 mb-4 cursor-pointer font-bold select-all hover:ring-0 focus:border-0 focus:ring-0"
-        onClick={handleCopy}
+        onClick={() => handleCopy(link)}
       />
     </div>
   );

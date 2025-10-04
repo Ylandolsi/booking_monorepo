@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Copy } from 'lucide-react';
 import { useAllSessionMonthly, type DailySessions, type SessionResponse } from '@/api/stores/produtcs/sessions/private/get-all-sessions';
-import { ErrorComponenet, LoadingState } from '@/components';
-import { DeepCopy } from '@/lib';
+import { ErrorComponenet, Input, Label, LoadingState } from '@/components';
+import { DeepCopy, GenerateTimeZoneId } from '@/lib';
 
 import { Day, type DayProps } from '@/pages/app/store/products/get-all-sessions/components/day';
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 
 const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayProps['day'][] }> = ({ onHover, days }) => {
   return (
@@ -20,9 +21,12 @@ const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayP
 const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [date, setDate] = useState<Date>(new Date());
+  const { content, handleCopy } = useCopyToClipboard();
+  const [meetingLink, setMeetingLink] = useState<string>('');
   const year = date.getFullYear();
   const month = date.getMonth(); // 0-indexed (0 = January, 11 = December)
-  const { data, isLoading, error } = useAllSessionMonthly({ year: year, month: month + 1, timeZoneId: 'Africa/Tunis' });
+  const timeZoneId = GenerateTimeZoneId();
+  const { data, isLoading, error } = useAllSessionMonthly({ year: year, month: month + 1, timeZoneId: timeZoneId });
   const firstDayOfWeek = date.getDay(); // 0 (Sun) to 6 (Sat)
 
   const days = useMemo(() => {
@@ -125,7 +129,7 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                           day.sessions.map((meeting: SessionResponse, mIndex: number) => (
                             <motion.div
                               key={mIndex}
-                              className="border-b border-[#323232] p-3 last:border-b-0"
+                              className="cursor-pointer border-b border-[#323232] p-3 last:border-b-0"
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
@@ -133,7 +137,25 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                                 duration: 0.2,
                                 delay: mIndex * 0.05,
                               }}
+                              onClick={() => setMeetingLink(meeting.googleMeetLink || '')}
                             >
+                              <div className="mb-8">
+                                <Label className="block font-semibold">
+                                  Meeting Link
+                                  <div className="relative mt-2">
+                                    <Input type="text" value={meetingLink} />
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopy(meeting.googleMeetLink || '')}
+                                      aria-label="Copy meeting link"
+                                      className="absolute top-1/2 right-3 -translate-y-1/2 transform hover:cursor-pointer"
+                                    >
+                                      <Copy size={20} />
+                                    </button>
+                                    {content && <span className="text-primary absolute top-2 right-12 text-sm">Copied!</span>}
+                                  </div>
+                                </Label>
+                              </div>
                               <div className="mb-2 flex items-center justify-between">
                                 <span className="text-sm">{meeting.date}</span>
                                 <span className="text-sm">{meeting.time}</span>
