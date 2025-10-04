@@ -1,5 +1,5 @@
 import type { UseFormReturn } from 'react-hook-form';
-import { FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,11 +18,87 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
 } from '@/components/ui';
 import type { ProductFormData } from '@/pages/app/store/products';
 import { DAYS, TIME_OPTIONS } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
 
-export function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
+export function FormSession({ form }: { form: UseFormReturn<ProductFormData> }) {
+  return (
+    <div className="space-y-4">
+      {/* Duration */}
+      <div className="flex w-full flex-wrap gap-4">
+        <FormField
+          control={form.control}
+          name="durationMinutes"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
+              <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="30">30</SelectItem>
+                  {/* only 30 minutes available for now */}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Buffer Time */}
+        <FormField
+          control={form.control}
+          name="bufferTimeMinutes"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
+              <FormControl>
+                <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select duration" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="15">15</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="45">45</SelectItem>
+                    {/* only 30 minutes available for now */}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      {/* Meeting Instructions */}
+      <FormField
+        control={form.control}
+        name="meetingInstructions"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="text-foreground">Meeting Instructions</FormLabel>
+            <FormControl>
+              <Textarea placeholder="What should customers know before the meeting?" rows={3} className="resize-none" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormScheduleComponent form={form} />
+    </div>
+  );
+}
+
+function FormScheduleComponent({ form }: { form: UseFormReturn<ProductFormData> }) {
   const { schedule, actions, error } = useFormSchedule(form);
 
   return (

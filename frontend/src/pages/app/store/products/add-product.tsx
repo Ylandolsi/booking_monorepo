@@ -1,32 +1,16 @@
 import { useEffect, useState } from 'react';
 import { createProductSchema, useCreateSession, useMyProductSession, useUpdateSession, type CreateProductInput, type Picture } from '@/api/stores';
 import { SelectProductType } from '@/pages/app/store/products/select-product-type';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  ErrorComponenet,
-  LoadingState,
-  Progress,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  TabNavigation,
-} from '@/components';
+import { Card, CardContent, ErrorComponenet, LoadingState, Progress, TabNavigation } from '@/components';
 import { motion, AnimatePresence } from 'framer-motion';
-
 import { ResponsiveBuilderLayout } from '@/pages/app/store';
 import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useAppNavigation, useUploadPicture } from '@/hooks';
-import { FormScheduleComponent } from '@/pages/app/store/products/components/form-schedule';
+import { FormSession } from '@/pages/app/store/products/components/form-schedule';
 import { FormGeneral } from '@/pages/app/store/products/components/form-general';
 import { useSearch } from '@tanstack/react-router';
 import { routes } from '@/config';
@@ -197,80 +181,8 @@ export function AddProductFlow() {
 
                         {type === 'Session' ? (
                           <div className="space-y-4">
-                            {/* Duration */}
-                            <div className="flex w-full flex-wrap gap-4">
-                              <FormField
-                                control={form.control}
-                                name="durationMinutes"
-                                render={({ field }) => (
-                                  <FormItem className="flex-1">
-                                    <FormLabel className="text-foreground">Duration (minutes) *</FormLabel>
-                                    <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
-                                      <FormControl>
-                                        <SelectTrigger className="w-full">
-                                          <SelectValue placeholder="Select duration" />
-                                        </SelectTrigger>
-                                      </FormControl>
-                                      <SelectContent>
-                                        <SelectItem value="30">30</SelectItem>
-                                        {/* only 30 minutes available for now */}
-                                      </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* Buffer Time */}
-                              <FormField
-                                control={form.control}
-                                name="bufferTimeMinutes"
-                                render={({ field }) => (
-                                  <FormItem className="flex-1">
-                                    <FormLabel className="text-foreground">Buffer Time (minutes)</FormLabel>
-                                    <FormControl>
-                                      <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
-                                        <FormControl>
-                                          <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select duration" />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          <SelectItem value="15">15</SelectItem>
-                                          <SelectItem value="30">30</SelectItem>
-                                          <SelectItem value="45">45</SelectItem>
-                                          {/* only 30 minutes available for now */}
-                                        </SelectContent>
-                                      </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-
-                            {/* Meeting Instructions */}
-                            <FormField
-                              control={form.control}
-                              name="meetingInstructions"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel className="text-foreground">Meeting Instructions</FormLabel>
-                                  <FormControl>
-                                    <Textarea
-                                      placeholder="What should customers know before the meeting?"
-                                      rows={3}
-                                      className="resize-none"
-                                      {...field}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-
                             {/* Schedule Component */}
-                            <FormScheduleComponent form={form} />
+                            <FormSession form={form} />
                           </div>
                         ) : (
                           <div className="space-y-4">
