@@ -10,8 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAppNavigation, useUploadPicture } from '@/hooks';
-import { FormSession } from '@/pages/app/store/products/components/form-schedule';
-import { FormGeneral } from '@/pages/app/store/products/components/form-general';
+import { FormSession } from '@/pages/app/store/products/components/forms/form-schedule';
+import { FormGeneral } from '@/pages/app/store/products/components/forms/form-general';
 import { useSearch } from '@tanstack/react-router';
 import { routes } from '@/config';
 
@@ -180,10 +180,7 @@ export function AddProductFlow() {
                         </div>
 
                         {type === 'Session' ? (
-                          <div className="space-y-4">
-                            {/* Schedule Component */}
-                            <FormSession form={form} />
-                          </div>
+                          <FormSession form={form} />
                         ) : (
                           <div className="space-y-4">
                             {/* Delivery URL */}
