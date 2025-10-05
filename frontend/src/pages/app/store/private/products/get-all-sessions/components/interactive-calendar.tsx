@@ -1,13 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Copy } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAllSessionMonthly, type DailySessions, type SessionResponse } from '@/api/stores/produtcs/sessions/private/get-all-sessions';
-import { ErrorComponenet, Input, Label, LoadingState } from '@/components';
+import { ErrorComponenet, InputToCopy, LoadingState } from '@/components';
 import { DeepCopy, GenerateTimeZoneId } from '@/lib';
 
 import { Day, type DayProps } from '@/pages/app/store/private/products/get-all-sessions/components/day';
-import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
-import { InputToCopy } from '@/components/input-to-copy';
 
 const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayProps['day'][] }> = ({ onHover, days }) => {
   return (
@@ -121,6 +119,9 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                 className="border-border bg-card flex h-[620px] flex-col items-start justify-start overflow-hidden overflow-y-scroll rounded-xl border shadow-xl"
                 layout
               >
+                <motion.div className={`border-border w-full border-b-1 p-3`} layout>
+                  <InputToCopy label="Meeting Link" input={meetingLink} className="mb-4" />
+                </motion.div>
                 <AnimatePresence>
                   {filteredDays
                     .filter((day: DailySessions) => day.sessions !== undefined && day.sessions.length > 0)
@@ -140,7 +141,6 @@ const InteractiveCalendar = React.forwardRef<HTMLDivElement, React.HTMLAttribute
                               }}
                               onClick={() => setMeetingLink(meeting.googleMeetLink || '')}
                             >
-                              <InputToCopy label="Meeting Link" input={meetingLink} className="mb-4" />
                               <div className="mb-2 flex items-center justify-between">
                                 <span className="text-sm">{meeting.date}</span>
                                 <span className="text-sm">{meeting.time}</span>
