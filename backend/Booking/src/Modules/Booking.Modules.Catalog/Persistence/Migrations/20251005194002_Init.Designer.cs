@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Catalog.Persistence.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20251005150727_storevisits")]
-    partial class storevisits
+    [Migration("20251005194002_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -630,10 +630,12 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
 
             modelBuilder.Entity("Booking.Modules.Catalog.Domain.Entities.StoreVisit", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
+                        .HasColumnType("integer")
                         .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")

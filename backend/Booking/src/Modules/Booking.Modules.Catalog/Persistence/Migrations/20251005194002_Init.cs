@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Booking.Modules.Catalog.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitCatMod : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -46,45 +46,23 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "payments",
+                name: "store_visits",
                 schema: "catalog",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    store_id = table.Column<int>(type: "integer", nullable: false),
-                    reference = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    order_id = table.Column<int>(type: "integer", nullable: false),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
-                    price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
-                    status = table.Column<int>(type: "integer", nullable: false),
+                    store_slug = table.Column<string>(type: "text", nullable: false),
+                    product_slug = table.Column<string>(type: "text", nullable: true),
+                    user_agent = table.Column<string>(type: "text", nullable: false),
+                    ip_address = table.Column<string>(type: "text", nullable: true),
+                    referrer = table.Column<string>(type: "text", nullable: true),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_payments", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "payouts",
-                schema: "catalog",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    konnect_wallet_id = table.Column<string>(type: "text", nullable: false),
-                    wallet_id = table.Column<int>(type: "integer", nullable: false),
-                    amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    payment_ref = table.Column<string>(type: "text", nullable: false),
-                    status = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_payouts", x => x.id);
+                    table.PrimaryKey("pk_store_visits", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,8 +79,8 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     picture_main_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     picture_thumbnail_link = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                     is_published = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    step = table.Column<int>(type: "integer", nullable: false),
                     social_links = table.Column<string>(type: "jsonb", nullable: false),
+                    step = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -128,7 +106,63 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "product",
+                name: "payments",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    store_id = table.Column<int>(type: "integer", nullable: false),
+                    reference = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    order_id = table.Column<int>(type: "integer", nullable: false),
+                    product_id = table.Column<int>(type: "integer", nullable: false),
+                    price = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_payments", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_payments_stores_store_id",
+                        column: x => x.store_id,
+                        principalSchema: "catalog",
+                        principalTable: "stores",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "payouts",
+                schema: "catalog",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    store_id = table.Column<int>(type: "integer", nullable: false),
+                    konnect_wallet_id = table.Column<string>(type: "text", nullable: false),
+                    wallet_id = table.Column<int>(type: "integer", nullable: false),
+                    amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    payment_ref = table.Column<string>(type: "text", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_payouts", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_payouts_stores_store_id",
+                        column: x => x.store_id,
+                        principalSchema: "catalog",
+                        principalTable: "stores",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "products",
                 schema: "catalog",
                 columns: table => new
                 {
@@ -154,9 +188,9 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_product", x => x.id);
+                    table.PrimaryKey("PK_products", x => x.id);
                     table.ForeignKey(
-                        name: "fk_product_stores_store_id",
+                        name: "fk_products_stores_store_id",
                         column: x => x.store_id,
                         principalSchema: "catalog",
                         principalTable: "stores",
@@ -177,6 +211,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                     customer_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     customer_phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     product_id = table.Column<int>(type: "integer", nullable: false),
+                    product_slug = table.Column<string>(type: "text", nullable: false),
                     product_type = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     amount = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     amount_paid = table.Column<decimal>(type: "numeric", nullable: false),
@@ -195,10 +230,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 {
                     table.PrimaryKey("pk_orders", x => x.id);
                     table.ForeignKey(
-                        name: "fk_orders_product_product_id",
+                        name: "fk_orders_products_product_id",
                         column: x => x.product_id,
                         principalSchema: "catalog",
-                        principalTable: "product",
+                        principalTable: "products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -225,10 +260,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_session_products", x => x.id);
                     table.ForeignKey(
-                        name: "fk_session_products_product_id",
+                        name: "fk_session_products_products_id",
                         column: x => x.id,
                         principalSchema: "catalog",
-                        principalTable: "product",
+                        principalTable: "products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -266,7 +301,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    product_id = table.Column<int>(type: "integer", nullable: false),
                     product_slug = table.Column<string>(type: "text", nullable: false),
                     day_of_week = table.Column<int>(type: "integer", nullable: false),
                     is_active = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
@@ -323,25 +357,6 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_days_day_of_week",
-                schema: "catalog",
-                table: "days",
-                column: "day_of_week");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_days_is_active",
-                schema: "catalog",
-                table: "days",
-                column: "is_active");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_days_product_id_day_of_week",
-                schema: "catalog",
-                table: "days",
-                columns: new[] { "product_id", "day_of_week" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_days_session_product_id",
                 schema: "catalog",
                 table: "days",
@@ -355,49 +370,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_escrows_state",
-                schema: "catalog",
-                table: "escrows",
-                column: "state");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_orders_created_at",
-                schema: "catalog",
-                table: "orders",
-                column: "created_at");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_orders_customer_email",
-                schema: "catalog",
-                table: "orders",
-                column: "customer_email");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_orders_payment_ref",
-                schema: "catalog",
-                table: "orders",
-                column: "payment_ref",
-                unique: true,
-                filter: "payment_ref IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_orders_product_id",
                 schema: "catalog",
                 table: "orders",
                 column: "product_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_orders_scheduled_at",
-                schema: "catalog",
-                table: "orders",
-                column: "scheduled_at",
-                filter: "scheduled_at IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_orders_status",
-                schema: "catalog",
-                table: "orders",
-                column: "status");
 
             migrationBuilder.CreateIndex(
                 name: "ix_orders_store_id",
@@ -413,34 +389,22 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_payouts_status",
+                name: "ix_payments_store_id",
                 schema: "catalog",
-                table: "payouts",
-                column: "status");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_payouts_user_id",
-                schema: "catalog",
-                table: "payouts",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_product_is_published",
-                schema: "catalog",
-                table: "product",
-                column: "is_published");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_product_store_id",
-                schema: "catalog",
-                table: "product",
+                table: "payments",
                 column: "store_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_product_store_id_display_order",
+                name: "ix_payouts_store_id",
                 schema: "catalog",
-                table: "product",
-                columns: new[] { "store_id", "display_order" });
+                table: "payouts",
+                column: "store_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_products_store_id",
+                schema: "catalog",
+                table: "products",
+                column: "store_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_session_availabilities_day_id",
@@ -449,35 +413,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 column: "day_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_session_availability_product_day_active",
-                schema: "catalog",
-                table: "session_availabilities",
-                columns: new[] { "session_product_id", "day_of_week", "is_active" });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_session_availability_session_product_id",
+                name: "ix_session_availabilities_session_product_id",
                 schema: "catalog",
                 table: "session_availabilities",
                 column: "session_product_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_session_products_time_zone",
-                schema: "catalog",
-                table: "session_products",
-                column: "time_zone_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_stores_is_published",
-                schema: "catalog",
-                table: "stores",
-                column: "is_published");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_stores_slug",
-                schema: "catalog",
-                table: "stores",
-                column: "slug",
-                unique: true);
         }
 
         /// <inheritdoc />
@@ -504,6 +443,10 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 schema: "catalog");
 
             migrationBuilder.DropTable(
+                name: "store_visits",
+                schema: "catalog");
+
+            migrationBuilder.DropTable(
                 name: "wallets",
                 schema: "catalog");
 
@@ -520,7 +463,7 @@ namespace Booking.Modules.Catalog.Persistence.Migrations
                 schema: "catalog");
 
             migrationBuilder.DropTable(
-                name: "product",
+                name: "products",
                 schema: "catalog");
 
             migrationBuilder.DropTable(
