@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { queryClient } from '@/providers/react-query';
 import { router } from '@/providers/react-router';
 import { useThemeStore } from '@/stores/theme-store';
+import { ErrorBoundary } from '@/providers/error-boundary';
 
 type AppProviderProps = {
   children?: React.ReactNode;
@@ -22,18 +23,17 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   }, []);
 
   return (
-    // TODO : add React.ErrorBoundary
-    <React.Suspense fallback={<PageLoading />}>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
 
-          {/* < QueryErrorResetBoundary > // TODO : GOOGLE THIS  */}
-          {import.meta.env.DEV && <ReactQueryDevtools />}
-          <Toaster />
-          {children}
-        </QueryClientProvider>
-      </HelmetProvider>
-    </React.Suspense>
+        {/* < QueryErrorResetBoundary > // TODO : GOOGLE THIS  */}
+        {import.meta.env.DEV && <ReactQueryDevtools />}
+        <Toaster />
+        <React.Suspense fallback={<PageLoading />}>
+          <ErrorBoundary showDetails={import.meta.env.MODE === 'development'}>{children}</ErrorBoundary>
+        </React.Suspense>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 };
