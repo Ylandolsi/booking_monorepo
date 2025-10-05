@@ -76,16 +76,6 @@ body {
     background-color: transparent;
 } */
 
-::-webkit-scrollbar-thumb {
-  /* background-color: transparent; */
-  background: var(--primary);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  cursor: pointer;
-  background: var(--secondary);
-}
 :root {
   --background: oklch(0.9821 0 0);
   --foreground: oklch(0.2435 0 0);
@@ -250,6 +240,17 @@ body {
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+::-webkit-scrollbar-thumb {
+  /* background-color: transparent; */
+  background: var(--secondary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  background: var(--primary);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
