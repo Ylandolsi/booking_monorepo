@@ -88,6 +88,8 @@ ProductCard.Content = function Content({ isPopoverOpen, setIsPopoverOpen, handle
     <div className="flex flex-1 flex-col gap-3">
       <div className="flex w-full items-start justify-between gap-4">
         <ProductCard.Title />
+        <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>
+
         {edit && product.productSlug && (
           <ProductCard.EditMenu
             isPopoverOpen={isPopoverOpen}
@@ -126,8 +128,6 @@ ProductCard.EditMenu = function EditMenu({ isPopoverOpen, setIsPopoverOpen, hand
 
   return (
     <div className="flex items-center">
-      <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>
-
       <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <PopoverTrigger asChild>
           <div

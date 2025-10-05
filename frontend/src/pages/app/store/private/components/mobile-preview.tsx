@@ -3,7 +3,6 @@ import { useMyStore, type Product } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState } from '@/components';
 import { MobileContainer, ProductCard, ProductCheckout, StoreHeader } from '@/pages/app/store';
 import { GenerateIdCrypto } from '@/lib';
-import { Button } from '@/components/ui/button'; // For close button
 import { BookingPage } from '@/pages/app/store/private/products/book';
 import type { StoreFormData } from '@/pages/app';
 

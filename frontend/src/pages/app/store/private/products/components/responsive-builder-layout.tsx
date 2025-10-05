@@ -42,7 +42,7 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
                   <>
                     <StoreHeader store={store} />
                     <div className="p-6">
-                      <ProductCard product={previewData} displayMode="full" />
+                      <ProductCard product={previewData as unknown as ProductCardType} displayMode="full" />
                     </div>
                   </>
                 )}

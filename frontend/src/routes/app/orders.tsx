@@ -240,6 +240,38 @@ export default function DataTableDemo() {
   );
 }
 
+type TimeFilter = 'day' | 'week' | 'month' | 'year' | 'all';
+const dataPoints = {
+  day: 24,
+  week: 7,
+  month: 30,
+  year: 12,
+  all: 12,
+};
+
+const getFilter = (filter: TimeFilter) => {
+  const points = dataPoints[filter];
+  return points;
+};
+
+// const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
+//
+//  <div className="flex items-center gap-3">
+//             <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeFilter(value)}>
+//               <SelectTrigger className="w-[180px]">
+//                 <Calendar className="mr-2 h-4 w-4" />
+//                 <SelectValue />
+//               </SelectTrigger>
+//               <SelectContent>
+//                 <SelectItem value="day">Last 24 Hours</SelectItem>
+//                 <SelectItem value="week">Last Week</SelectItem>
+//                 <SelectItem value="month">Last Month</SelectItem>
+//                 <SelectItem value="year">Last Year</SelectItem>
+//                 <SelectItem value="all">All Time</SelectItem>
+//               </SelectContent>
+//             </Select>
+//           </div>
+
 const data: Order[] = [
   {
     id: 'm5gr84i9',
