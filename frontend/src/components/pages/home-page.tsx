@@ -8,6 +8,7 @@ import { useAuth } from '@/api/auth';
 import { useAppNavigation } from '@/hooks/use-navigation';
 import { Calendar, Video, TrendingUp, Settings, User } from 'lucide-react';
 import { GiTeacher } from 'react-icons/gi';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function HomePage() {
   const location = useLocation();
@@ -134,7 +135,13 @@ export function HomePage() {
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
-                  <User className="text-primary h-6 w-6" />
+                  <Avatar>
+                    <AvatarImage src="" />
+                    <AvatarFallback className="rounded-lg">
+                      {currentUser?.firstName ? currentUser.firstName.charAt(0).toUpperCase() : 'U'}
+                      {currentUser?.lastName ? currentUser.lastName.charAt(0).toUpperCase() : 'U'}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">
