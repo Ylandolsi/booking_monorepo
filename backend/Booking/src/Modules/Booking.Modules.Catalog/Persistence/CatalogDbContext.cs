@@ -22,6 +22,8 @@ public sealed class CatalogDbContext : DbContext
     public DbSet<Escrow> Escrows { get; set; }
     public DbSet<Payout> Payouts { get; set; }
     public DbSet<Day> Days { get; set; }
+    public DbSet<StoreVisit>  StoreVisits { get; set; }
+    // Todo add customer entity 
 
     public DbSet<BookedSession> BookedSessions { get; set; }
 

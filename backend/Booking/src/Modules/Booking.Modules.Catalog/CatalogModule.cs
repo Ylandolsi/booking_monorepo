@@ -1,7 +1,11 @@
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
+using Booking.Modules.Catalog.BackgroundJobs.Payment;
+using Booking.Modules.Catalog.BackgroundJobs.Payout;
+using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Stores;
+using Booking.Modules.Catalog.Features.Stores.StoreVisit;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -17,6 +21,8 @@ public static class CatalogModule
         return services
             .AddDatabase(configuration)
             .AddServices()
+            .AddChannels()
+            .AddBackgroundJobs()
             .AddEndpoints(AssemblyReference.Assembly);
     }
 
@@ -37,6 +43,12 @@ public static class CatalogModule
         return services;
     }
 
+    private static IServiceCollection AddChannels(this IServiceCollection services)
+    {
+        services.AddScoped<StoreVisitChannel>();
+        return services;
+    }
+
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<AwsSesEmailService>();
@@ -46,6 +58,14 @@ public static class CatalogModule
 
         // Add other services here
 
+        return services;
+    }
+
+    public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
+    {
+        /*services.AddScoped<PayoutJob>();
+        services.AddScoped<EscrowJob>();*/
+        services.AddScoped<StoreVisitBatchJob>();
         return services;
     }
 }
