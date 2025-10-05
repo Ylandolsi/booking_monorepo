@@ -99,9 +99,11 @@ export const QueryBuilders = {
     /**
      * Build query parameters for getting orders
      */
-    getOrders: (startsAt?: Date, endsAt?: Date) => ({
+    getOrders: (startsAt?: Date, endsAt?: Date, page?: number, limit?: number) => ({
       ...(startsAt && { startsAt: startsAt.toISOString() }),
       ...(endsAt && { endsAt: endsAt.toISOString() }),
+      ...(page && { page }),
+      ...(limit && { limit }),
     }),
   },
 

@@ -45,13 +45,12 @@ internal sealed class BookSessionCommandHandler(
         var sessionDateUtc = DateTime.SpecifyKind(sessionDate.Date, DateTimeKind.Utc);
 
 
-
         var sessionStartDateTimeUtc =
             TimeConvertion.ToInstant(DateOnly.FromDateTime(sessionDate.Date), startTime, command.TimeZoneId);
         var sessionEndDateTimeUtc =
             TimeConvertion.ToInstant(DateOnly.FromDateTime(sessionDate.Date), endTime, command.TimeZoneId);
 
-        
+
         if (sessionEndDateTimeUtc <= sessionStartDateTimeUtc)
         {
             logger.LogWarning("End time {EndTime} must be after start time {StartTime}", command.EndTime,
@@ -194,6 +193,7 @@ internal sealed class BookSessionCommandHandler(
 
             var order = Order.Create(
                 product.Id,
+                product.ProductSlug,
                 product.StoreId,
                 product.StoreSlug,
                 command.Email,
@@ -228,7 +228,6 @@ internal sealed class BookSessionCommandHandler(
 
                 await context.Payments.AddAsync(payment, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
-
 
 
                 // Create payment with Konnect

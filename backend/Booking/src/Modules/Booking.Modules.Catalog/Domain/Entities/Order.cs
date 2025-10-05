@@ -25,6 +25,7 @@ public class Order : Entity
     public string? CustomerPhone { get; private set; }
 
     public int ProductId { get; private set; } // FK to the Product in the Catalog module 
+    public string ProductSlug { get; private set; }
     public ProductType ProductType { get; private set; }
 
     public decimal Amount { get; private set; }
@@ -51,6 +52,7 @@ public class Order : Entity
     // Static factory method for registered users
     public static Order Create(
         int productId,
+        string productSlug,
         int storeId,
         string storeSlug,
         string customerEmail,
@@ -65,6 +67,7 @@ public class Order : Entity
     {
         return new Order
         {
+            ProductSlug = productSlug,
             ProductId = productId,
             StoreId = storeId,
             StoreSlug = storeSlug,

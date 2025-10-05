@@ -1,6 +1,7 @@
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { CatalogEndpoints, QueryBuilders } from '@/api/utils/catalog-endpoints';
 import { api, buildUrlWithParams } from '@/api/utils';
+import type { PaginatedResult } from '@/types';
 
 export interface OrderResponse {
   id: number;
@@ -24,12 +25,22 @@ export interface OrderResponse {
   updatedAt: string;
 }
 
-export const getOrders = async ({ startsAt, endsAt }: { startsAt?: Date; endsAt?: Date }): Promise<OrderResponse[]> => {
+export const getOrders = async ({
+  startsAt,
+  endsAt,
+  page,
+  limit,
+}: {
+  startsAt?: Date;
+  endsAt?: Date;
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedResult<OrderResponse>> => {
   try {
-    const queryParams = QueryBuilders.Orders.getOrders(startsAt, endsAt);
+    const queryParams = QueryBuilders.Orders.getOrders(startsAt, endsAt, page, limit);
     const urlEndpoint = buildUrlWithParams(CatalogEndpoints.Orders.GetOrders, queryParams);
 
-    const response = await api.get<OrderResponse[]>(urlEndpoint);
+    const response = await api.get<PaginatedResult<OrderResponse>>(urlEndpoint);
 
     return response;
   } catch (error) {
@@ -39,13 +50,13 @@ export const getOrders = async ({ startsAt, endsAt }: { startsAt?: Date; endsAt?
 };
 
 export function useGetOrders(
-  { startsAt, endsAt }: { startsAt?: Date; endsAt?: Date } = {},
-  overrides?: Partial<UseQueryOptions<OrderResponse[], Error>>,
-): UseQueryResult<OrderResponse[], Error> {
+  { startsAt, endsAt, page, limit }: { startsAt?: Date; endsAt?: Date; page?: number; limit?: number } = {},
+  overrides?: Partial<UseQueryOptions<PaginatedResult<OrderResponse>, Error>>,
+): UseQueryResult<PaginatedResult<OrderResponse>, Error> {
   return useQuery(
     queryOptions({
-      queryKey: ['orders', { startsAt: startsAt?.toISOString(), endsAt: endsAt?.toISOString() }],
-      queryFn: () => getOrders({ startsAt, endsAt }),
+      queryKey: ['orders', { startsAt: startsAt?.toISOString(), endsAt: endsAt?.toISOString(), page, limit }],
+      queryFn: () => getOrders({ startsAt, endsAt, page, limit }),
       ...overrides,
     }),
   );

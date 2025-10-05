@@ -1,3 +1,4 @@
+using Booking.Common;
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
@@ -16,12 +17,14 @@ internal sealed class GetOrders : IEndpoint
         app.MapGet(CatalogEndpoints.Orders.GetOrders, async (
                 [FromQuery] DateTime? startsAt,
                 [FromQuery] DateTime? endsAt,
+                [FromQuery] int? page,
+                [FromQuery] int? limit,
                 UserContext userContext,
-                IQueryHandler<GetOrdersQuery, List<OrderResponse>> handler,
+                IQueryHandler<GetOrdersQuery, PaginatedResult<OrderResponse>> handler,
                 CancellationToken cancellationToken) =>
             {
                 int userId = userContext.UserId;
-                var query = new GetOrdersQuery(userId, startsAt, endsAt);
+                var query = new GetOrdersQuery(userId, startsAt, endsAt , page, limit);
 
                 var result = await handler.Handle(query, cancellationToken);
 

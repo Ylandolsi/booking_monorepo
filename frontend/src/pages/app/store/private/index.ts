@@ -3,3 +3,4 @@ export * from './modify';
 export * from './products';
 export * from './components';
 export * from './integrations';
+export * from './orders';
