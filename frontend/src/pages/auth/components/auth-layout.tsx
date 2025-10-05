@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSearch } from '@tanstack/react-router';
-import { Logo } from '../../../components/logo';
+import { Logo } from '@/components/logo';
 import { Card, CardHeader, Link } from '@/components/ui/index';
 import { AuthGuard } from '@/components/guards';
 import { ROUTE_PATHS } from '@/config';
