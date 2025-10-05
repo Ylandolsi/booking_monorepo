@@ -9,6 +9,8 @@ import { AdminSection } from '@/components/navigation/side-bar/admin-section';
 import { LOGO_SHORT } from '@/assets';
 import { Logo } from '@/components/logo';
 import { useSideBar } from '@/stores';
+import { useEffect } from 'react';
+import { useLocation } from '@tanstack/react-router';
 
 export type Item = {
   name:
@@ -29,11 +31,11 @@ export type Item = {
 };
 
 const Sidebar = () => {
+  const location = useLocation();
   const { sidebarOpen, setSidebarOpen, itemActive, setItemActive } = useSideBar();
   const { currentUser, error, isLoading, logout } = useAuth();
   const isMobile = useIsMobile();
   const collapsed = !sidebarOpen;
-
   if (isLoading) return <PageLoading />;
   if (error || !currentUser) return <MainErrorFallback />;
 
@@ -45,6 +47,25 @@ const Sidebar = () => {
       setSidebarOpen(false);
     }
   };
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('store')) {
+      setItemActive('Edit Store');
+    } else if (path.includes('meets')) {
+      setItemActive('Meetings');
+    } else if (path.includes('statistics')) {
+      setItemActive('Statistics');
+    } else if (path.includes('payouts-requests')) {
+      setItemActive('Payouts Requests');
+    } else if (path.includes('integration')) {
+      setItemActive('Integrations');
+    } else if (path.includes('payout')) {
+      setItemActive('Payout');
+    } else {
+      setItemActive('Home');
+    }
+  }, [location.pathname]);
 
   return (
     <>
