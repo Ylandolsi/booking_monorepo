@@ -9,7 +9,7 @@ public static class CatalogEndpoints
         public const string Create = Base + "/stores";
         public const string Update = Base + "/stores";
         public const string CheckSlugAvailability = Base + "/stores/slug-availability/{slug}";
-        public const string UpdatePicture = Base + "/stores/picture";
+        //public const string UpdatePicture = Base + "/stores/picture";
         public const string GetMy = Base + "/stores/me";
 
         public const string GetPublic = Base + "/stores/{slug}";

@@ -31,7 +31,8 @@ public class StoreVisitMiddleware
             // /api/stores/my-shop/products/product-type/{{t-shirt : slug }}
 
             var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            if (segments.Length >= 3)
+            // todo : review this 
+            if (segments.Length >= 3 && segments[2] != "me" && segments[2] != "slug-availability")
             {
                 var storeSlug = segments[2];
                 string cookieName = $"store_{storeSlug}_visitor";
