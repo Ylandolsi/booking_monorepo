@@ -84,7 +84,7 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   cursor: pointer;
-  background: var(--tertiary);
+  background: var(--secondary);
 }
 :root {
   --background: oklch(0.9821 0 0);
