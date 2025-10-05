@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useMonthlyAvailability } from '@/api/stores/produtcs/sessions/public';
 import { useBookSession, type BookSessionRequestType } from '@/api/stores/produtcs/sessions/public/book/book-session-api';
 import type { DayAvailabilityType } from '@/api/stores/produtcs/sessions/public/availabilities/availability-types';
@@ -54,6 +53,7 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
 
   const monthlyAvailabilityQuery = useMonthlyAvailability(
     productSlug,
+    storeSlug,
     state.selectedDate?.getFullYear(),
     state.selectedDate ? state.selectedDate.getMonth() + 1 : undefined, // why +1 ? because getMonth() returns 0-11
     { enabled: !!productSlug && !!state.selectedDate },
@@ -147,7 +147,7 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
 
     try {
       setStep('confirm');
-      await bookSessionMutation.mutateAsync({ booking: bookingRequest, productSlug });
+      await bookSessionMutation.mutateAsync({ booking: bookingRequest, productSlug, storeSlug: storeSlug! });
       setStep('success');
     } catch (error) {
       console.error('Booking failed:', error);

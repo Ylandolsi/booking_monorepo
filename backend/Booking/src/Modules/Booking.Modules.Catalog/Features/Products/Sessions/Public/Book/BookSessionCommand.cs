@@ -4,6 +4,7 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Book;
 
 public sealed record BookSessionCommand(
     string ProductSlug,
+    string StoreSlug,
     string Title,
     string Date, // YYYY-MM-DD,
     string StartTime,

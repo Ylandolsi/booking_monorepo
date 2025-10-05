@@ -156,6 +156,8 @@ app.MapEndpoints();
 
 app.MapHub<NotificationHub>("/hubs/notifications");
 
+app.UseStoreVisitMiddleware();
+
 await app.RunAsync();
 
 

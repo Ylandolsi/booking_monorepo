@@ -6,7 +6,7 @@ namespace Booking.Modules.Catalog.Domain.Entities;
 public class StoreVisit : Entity
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public string Id { get; private set; }
+    public int Id { get; private set; }
     public string StoreSlug { get; private set; }
     public string? ProductSlug { get; private set; }
     public string UserAgent { get; private set; }

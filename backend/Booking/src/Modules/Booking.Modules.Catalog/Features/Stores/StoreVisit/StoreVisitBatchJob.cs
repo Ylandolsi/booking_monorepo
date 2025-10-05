@@ -28,7 +28,23 @@ public class StoreVisitBatchJob(
 
         try
         {
-            await foreach (var visit in storeVisitChannel.ReadAllAsync(cancellationToken))
+            var availableCount = storeVisitChannel.GetCurrentCount();
+            logger.LogInformation("Channel has {Count} visits available", availableCount);
+            
+            // If no items available, exit early
+            if (availableCount == 0)
+            {
+                logger.LogInformation("No visits to process, exiting job");
+                context?.WriteLine("No visits to process");
+                return;
+            }
+            
+            // Process only currently available items - don't wait for more
+            // Using a timeout to prevent blocking if channel is being actively written to
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(TimeSpan.FromSeconds(10)); // Max 10 seconds to drain channel
+            
+            await foreach (var visit in storeVisitChannel.ReadAllAsync(cts.Token))
             {
                 buffer.Add(visit);
 
@@ -39,6 +55,13 @@ public class StoreVisitBatchJob(
                     await dbContext.SaveChangesAsync(cancellationToken);
                     count += buffer.Count;
                     buffer.Clear();
+                }
+                
+                // Exit if we've processed all available items
+                if (buffer.Count >= availableCount)
+                {
+                    logger.LogDebug("Processed all {Count} available visits, exiting read loop", availableCount);
+                    break;
                 }
             }
 

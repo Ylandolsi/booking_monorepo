@@ -1,4 +1,4 @@
-using Booking.Common.Endpoints;
+/*using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
@@ -35,4 +35,4 @@ internal sealed class GetUserAvailabilityByDay : IEndpoint
             })
             .WithTags(Tags.Availability);
     }
-}
+}*/

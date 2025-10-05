@@ -3,7 +3,7 @@ import { productKeys } from '@/api/stores/stores-keys';
 import { api, buildUrlWithParams, CatalogEndpoints, QueryBuilders } from '@/api/utils';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
-export const getMonthlyAvailability = async (productSlug: string, year: number, month: number): Promise<MonthAvailabilityType> => {
+export const getMonthlyAvailability = async (productSlug: string, storeSlug: string, year: number, month: number): Promise<MonthAvailabilityType> => {
   if (!productSlug || !year || !month) {
     throw new Error('productSlug, year, and month are required');
   }
@@ -14,13 +14,14 @@ export const getMonthlyAvailability = async (productSlug: string, year: number, 
   // for now we will keep it simple and use the default timezone
 
   const queryParams = QueryBuilders.Products.Sessions.monthlyAvailability(year, month); // timeZoneId is optional and defaults to 'Africa/Tunis'
-  const urlEndpoint = buildUrlWithParams(CatalogEndpoints.Products.Sessions.GetMonthlyAvailability(productSlug), queryParams);
+  const urlEndpoint = buildUrlWithParams(CatalogEndpoints.Products.Sessions.GetMonthlyAvailability(productSlug, storeSlug), queryParams);
 
   return await api.get<MonthAvailabilityType>(urlEndpoint);
 };
 
 export function useMonthlyAvailability(
   productSlug?: string,
+  storeSlug?: string,
   year?: number,
   month?: number,
   overrides?: Partial<UseQueryOptions<any, Error>>,
@@ -29,8 +30,8 @@ export function useMonthlyAvailability(
     queryOptions({
       // queryKey: availabilityQueryKeys.monthlyAvailability(productSlug, year, month),
       queryKey: [productKeys.availability(productSlug!, year!, month!)],
-      queryFn: () => getMonthlyAvailability(productSlug!, year!, month!),
-      enabled: !!productSlug && !!year && !!month,
+      queryFn: () => getMonthlyAvailability(productSlug!, storeSlug!, year!, month!),
+      enabled: !!storeSlug && !!productSlug && !!year && !!month,
       ...overrides,
     }),
   );

@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.GetSessionProduct;
 
-public record GetSessionProductQuery(string ProductSlug, string TimeZoneId) : IQuery<SessionProductDetailResponse>;
+public record GetSessionProductQuery(string ProductSlug, string StoreSlug, string TimeZoneId) : IQuery<SessionProductDetailResponse>;
 
 public record SessionProductDetailResponse : ProductResponse
 {

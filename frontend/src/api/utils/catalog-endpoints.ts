@@ -23,12 +23,12 @@ export const CatalogEndpoints = {
       GetAllSessionsMonthly: () => `${BASE}/products/s`, // queryParam :string? month ,string?year , string? timeZoneId
 
       // Public endpoints
-      Get: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
-      Book: (productSlug: string) => `${BASE}/products/s/${productSlug}`,
-      GetMonthlyAvailability: (productSlug: string) => `${BASE}/products/s/${productSlug}/availability/month`, // with query params year, month timeZoneId
+      //Get: (productSlug: string, storeSlug: string) => `${BASE}/stores/${storeSlug}/products/s/${productSlug}`,
+      Book: (productSlug: string, storeSlug: string) => `${BASE}/stores/${storeSlug}/products/s/${productSlug}`,
+      GetMonthlyAvailability: (productSlug: string, storeSlug: string) => `${BASE}/stores/${storeSlug}/products/s/${productSlug}/availability/month`, // with query params year, month timeZoneId
     },
 
-    Arrange: `${BASE}/produtcs/arrange`, // Note: typo in backend endpoint
+    Arrange: `${BASE}/products/arrange`, // Note: typo in backend endpoint
     Delete: (productSlug: string) => `${BASE}/products/${productSlug}`,
     TogglePublished: (productSlug: string) => `${BASE}/products/toggle/${productSlug}`,
   },

@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Modules.Catalog.BackgroundJobs.Payment;
@@ -45,7 +46,12 @@ public static class CatalogModule
 
     private static IServiceCollection AddChannels(this IServiceCollection services)
     {
-        services.AddScoped<StoreVisitChannel>();
+        services.AddSingleton(_ => Channel.CreateBounded<StoreVisit>(new BoundedChannelOptions(1000)
+        {
+            FullMode = BoundedChannelFullMode.Wait
+        }));
+
+        services.AddSingleton<StoreVisitChannel>();
         return services;
     }
 

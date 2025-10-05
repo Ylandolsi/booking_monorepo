@@ -4,6 +4,7 @@ namespace Booking.Modules.Catalog.Features.Products.Sessions.Public.Availability
 
 public sealed record GetUserAvailabilityByMonthQuery(
     string ProductSlug,
+    string StoreSlug,
     int Year,
     int Month,
     string TimeZoneId = "Africa/Tunis",

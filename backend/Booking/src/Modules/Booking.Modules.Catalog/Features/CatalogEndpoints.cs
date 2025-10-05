@@ -27,13 +27,12 @@ public static class CatalogEndpoints
 
 
             // PUBLIC : 
-            public const string Get = $"{Base}/products/s/{{productSlug}}";
-            public const string Book = $"{Base}/products/s/{{productSlug}}";
-            public const string GetDailyAv = $"{Base}/products/s/{{productSlug}}/availability"; // Query: date
+            //public const string Get = $"{Base}/stores/{{storeSlug}}/products/s/{{productSlug}}";
+            public const string Book = $"{Base}/stores/{{storeSlug}}/products/s/{{productSlug}}";
 
             public const string
                 GetMonthlyAv =
-                    $"{Base}/products/s/{{productSlug}}/availability/month";
+                    $"{Base}/stores/{{storeSlug}}/products/s/{{productSlug}}/availability/month";
         }
 
         public const string Arrange = $"{Base}/produtcs/arrange"; 

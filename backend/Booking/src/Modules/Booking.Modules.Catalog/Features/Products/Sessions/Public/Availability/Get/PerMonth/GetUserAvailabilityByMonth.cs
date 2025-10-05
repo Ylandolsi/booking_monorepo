@@ -13,6 +13,7 @@ internal sealed class GetUserAvailabilityByMonth : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet(CatalogEndpoints.Products.Sessions.GetMonthlyAv, async (
+                string storeSlug, 
                 string productSlug,
                 [FromQuery] int year,
                 [FromQuery] int month,
@@ -24,6 +25,7 @@ internal sealed class GetUserAvailabilityByMonth : IEndpoint
             {
                 var query = new GetUserAvailabilityByMonthQuery(
                     productSlug,
+                    storeSlug,
                     year,
                     month,
                     timeZoneId == "" || timeZoneId is null ? "Africa/Tunis" : timeZoneId,

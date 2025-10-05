@@ -1,4 +1,3 @@
-import { productKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
 
@@ -23,15 +22,17 @@ export type BookSessionResponseType = {
 export const bookSession = async ({
   booking,
   productSlug,
+  storeSlug,
 }: {
   booking: BookSessionRequestType;
   productSlug: string;
+  storeSlug: string;
 }): Promise<BookSessionResponseType> => {
-  return await api.post<BookSessionResponseType>(CatalogEndpoints.Products.Sessions.Book(productSlug), booking);
+  return await api.post<BookSessionResponseType>(CatalogEndpoints.Products.Sessions.Book(productSlug, storeSlug), booking);
 };
 
 export function useBookSession() {
-  return useMutation<BookSessionResponseType, Error, { booking: BookSessionRequestType; productSlug: string }>({
+  return useMutation<BookSessionResponseType, Error, { booking: BookSessionRequestType; productSlug: string; storeSlug: string }>({
     mutationFn: bookSession,
     meta: {
       // invalidatesQuery: [bookingQueryKeys.myBookings(), WalletKeys.wallet()],

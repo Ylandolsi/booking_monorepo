@@ -133,7 +133,7 @@ public static class CatalogTestUtilities
 
     public static async Task<HttpResponseMessage> GetSessionProductRequest(HttpClient client, string productSlug)
     {
-        return await client.GetAsync(CatalogEndpoints.Products.Sessions.Get.Replace("{productSlug}", productSlug));
+        return await client.GetAsync(CatalogEndpoints.Products.Sessions.GetMy.Replace("{productSlug}", productSlug));
     }
 
     public static async Task<HttpResponseMessage> CheckSlugAvailabilityRequest(HttpClient client, string slug)
