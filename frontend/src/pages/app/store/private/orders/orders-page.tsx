@@ -14,6 +14,11 @@ import {
   TableHeader,
   TableRow,
   TableSkeleton,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui';
 import { cn } from '@/lib';
 import {
@@ -29,7 +34,7 @@ import {
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown } from 'lucide-react';
+import { ArrowUpDown, ChevronDown, Calendar } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 const columns: ColumnDef<OrderResponse>[] = [
@@ -116,15 +121,39 @@ export default function DataTableDemo() {
     pageIndex: 0,
     pageSize: 1,
   });
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
 
   const { startsAt, endsAt } = useMemo(() => {
-    // wrap in useMemo to avoid creating new dates on each render : each second ...
     const now = new Date();
+    let startDate: Date;
+
+    switch (timeFilter) {
+      case 'day':
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case 'week':
+        const dayOfWeek = now.getDay();
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
+        break;
+      case 'month':
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case 'year':
+        startDate = new Date(now.getFullYear(), 0, 1);
+        break;
+      case 'all':
+        startDate = new Date(2020, 0, 1); // Arbitrary old date for "all time"
+        break;
+      default:
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+
+    console.log(startDate);
     return {
-      startsAt: new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()),
+      startsAt: startDate,
       endsAt: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),
     };
-  }, []);
+  }, [timeFilter]);
 
   const {
     data: ordersData,
@@ -133,9 +162,7 @@ export default function DataTableDemo() {
   } = useGetOrders({
     startsAt,
     endsAt,
-    page: pagination.pageIndex + 1,
-    limit: pagination.pageSize,
-  }); // last 30 days
+  });
 
   const table = useReactTable({
     data: ordersData?.items || [],
@@ -156,12 +183,6 @@ export default function DataTableDemo() {
       rowSelection,
       pagination,
     },
-
-    manualPagination: true, //we're doing manual "server-side" pagination
-    // debugTable: true,
-    // rowCount: ordersData?.length ?? 0, //must provide total rows when doing manual pagination
-    // client-side
-    // autoResetPageIndex: false, // turn off page index reset when sorting or filtering
   });
 
   if (isLoading) {
@@ -174,13 +195,30 @@ export default function DataTableDemo() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-2 py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn('customerEmail')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('customerEmail')?.setFilterValue(event.target.value)}
-          className="max-w-sm"
-        />
+      <div className="flew-wrap flex items-center gap-2 py-4">
+        <div className="flex flex-col items-start gap-4 sm:flex-row">
+          <div className="flex items-center gap-2">
+            <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeFilter(value)}>
+              <SelectTrigger className="w-[180px]">
+                <Calendar className="mr-2 h-4 w-4" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day">Last 24 Hours</SelectItem>
+                <SelectItem value="week">Last Week</SelectItem>
+                <SelectItem value="month">Last Month</SelectItem>
+                <SelectItem value="year">Last Year</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Input
+            placeholder="Filter emails..."
+            value={(table.getColumn('customerEmail')?.getFilterValue() as string) ?? ''}
+            onChange={(event) => table.getColumn('customerEmail')?.setFilterValue(event.target.value)}
+            className="max-w-sm"
+          />
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="hover:bg-accent hover:text-accent-foreground ml-auto flex cursor-pointer items-center rounded-md border px-2 py-1.5 text-sm">
@@ -245,10 +283,10 @@ export default function DataTableDemo() {
           {table.getFilteredSelectedRowModel().rows.length} of {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
         <div className="space-x-2">
-          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!ordersData?.previousPage}>
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
             Previous
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!ordersData?.nextPage}>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
             Next
           </Button>
         </div>
@@ -258,33 +296,3 @@ export default function DataTableDemo() {
 }
 
 type TimeFilter = 'day' | 'week' | 'month' | 'year' | 'all';
-const dataPoints = {
-  day: 24,
-  week: 7,
-  month: 30,
-  year: 12,
-  all: 12,
-};
-
-const getFilter = (filter: TimeFilter) => {
-  const points = dataPoints[filter];
-  return points;
-};
-
-// const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
-//
-//  <div className="flex items-center gap-3">
-//             <Select value={timeFilter} onValueChange={(value: TimeFilter) => setTimeFilter(value)}>
-//               <SelectTrigger className="w-[180px]">
-//                 <Calendar className="mr-2 h-4 w-4" />
-//                 <SelectValue />
-//               </SelectTrigger>
-//               <SelectContent>
-//                 <SelectItem value="day">Last 24 Hours</SelectItem>
-//                 <SelectItem value="week">Last Week</SelectItem>
-//                 <SelectItem value="month">Last Month</SelectItem>
-//                 <SelectItem value="year">Last Year</SelectItem>
-//                 <SelectItem value="all">All Time</SelectItem>
-//               </SelectContent>
-//             </Select>
-//           </div>
