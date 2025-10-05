@@ -16,6 +16,7 @@ import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
+import { Route as TestTestOrdersRouteImport } from './routes/test/test-orders'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as TestAnalyticsRouteImport } from './routes/test/analytics'
@@ -28,6 +29,7 @@ import { Route as AuthEmailVerifiedRouteImport } from './routes/auth/email-verif
 import { Route as AuthEmailVerificationRouteImport } from './routes/auth/email-verification'
 import { Route as AppStatisticsRouteImport } from './routes/app/statistics'
 import { Route as AppPayoutsRouteImport } from './routes/app/payouts'
+import { Route as AppOrdersRouteImport } from './routes/app/orders'
 import { Route as AppMeetsRouteImport } from './routes/app/meets'
 import { Route as AppIntegrationRouteImport } from './routes/app/integration'
 import { Route as AppStoreIndexRouteImport } from './routes/app/store/index'
@@ -73,6 +75,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const TestTestOrdersRoute = TestTestOrdersRouteImport.update({
+  id: '/test/test-orders',
+  path: '/test/test-orders',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
@@ -133,6 +140,11 @@ const AppStatisticsRoute = AppStatisticsRouteImport.update({
 const AppPayoutsRoute = AppPayoutsRouteImport.update({
   id: '/payouts',
   path: '/payouts',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppOrdersRoute = AppOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppMeetsRoute = AppMeetsRouteImport.update({
@@ -197,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/orders': typeof AppOrdersRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
@@ -209,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/test-orders': typeof TestTestOrdersRoute
   '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
@@ -226,6 +240,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/orders': typeof AppOrdersRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
@@ -238,6 +253,7 @@ export interface FileRoutesByTo {
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/test-orders': typeof TestTestOrdersRoute
   '/app': typeof AppIndexRoute
   '/auth': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
@@ -258,6 +274,7 @@ export interface FileRoutesById {
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
   '/app/meets': typeof AppMeetsRoute
+  '/app/orders': typeof AppOrdersRoute
   '/app/payouts': typeof AppPayoutsRoute
   '/app/statistics': typeof AppStatisticsRoute
   '/auth/email-verification': typeof AuthEmailVerificationRoute
@@ -270,6 +287,7 @@ export interface FileRoutesById {
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/test-orders': typeof TestTestOrdersRoute
   '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
@@ -291,6 +309,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/integration'
     | '/app/meets'
+    | '/app/orders'
     | '/app/payouts'
     | '/app/statistics'
     | '/auth/email-verification'
@@ -303,6 +322,7 @@ export interface FileRouteTypes {
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/test-orders'
     | '/app/'
     | '/auth/'
     | '/app/admin/payout-requests'
@@ -320,6 +340,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/integration'
     | '/app/meets'
+    | '/app/orders'
     | '/app/payouts'
     | '/app/statistics'
     | '/auth/email-verification'
@@ -332,6 +353,7 @@ export interface FileRouteTypes {
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/test-orders'
     | '/app'
     | '/auth'
     | '/app/admin/payout-requests'
@@ -351,6 +373,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/app/integration'
     | '/app/meets'
+    | '/app/orders'
     | '/app/payouts'
     | '/app/statistics'
     | '/auth/email-verification'
@@ -363,6 +386,7 @@ export interface FileRouteTypes {
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/test-orders'
     | '/app/'
     | '/auth/'
     | '/app/admin/payout-requests'
@@ -385,6 +409,7 @@ export interface RootRouteChildren {
   TestAnalyticsRoute: typeof TestAnalyticsRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
+  TestTestOrdersRoute: typeof TestTestOrdersRoute
   publicStoreStoreSlugIndexRoute: typeof publicStoreStoreSlugIndexRoute
   publicStoreStoreSlugSProductSlugRoute: typeof publicStoreStoreSlugSProductSlugRoute
 }
@@ -439,6 +464,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
+    }
+    '/test/test-orders': {
+      id: '/test/test-orders'
+      path: '/test/test-orders'
+      fullPath: '/test/test-orders'
+      preLoaderRoute: typeof TestTestOrdersRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/test/img': {
       id: '/test/img'
@@ -522,6 +554,13 @@ declare module '@tanstack/react-router' {
       path: '/payouts'
       fullPath: '/app/payouts'
       preLoaderRoute: typeof AppPayoutsRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/app/orders': {
+      id: '/app/orders'
+      path: '/orders'
+      fullPath: '/app/orders'
+      preLoaderRoute: typeof AppOrdersRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/app/meets': {
@@ -614,6 +653,7 @@ const AppAdminPayoutRequestsRouteWithChildren =
 interface AppRouteRouteChildren {
   AppIntegrationRoute: typeof AppIntegrationRoute
   AppMeetsRoute: typeof AppMeetsRoute
+  AppOrdersRoute: typeof AppOrdersRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
   AppStatisticsRoute: typeof AppStatisticsRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -627,6 +667,7 @@ interface AppRouteRouteChildren {
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppIntegrationRoute: AppIntegrationRoute,
   AppMeetsRoute: AppMeetsRoute,
+  AppOrdersRoute: AppOrdersRoute,
   AppPayoutsRoute: AppPayoutsRoute,
   AppStatisticsRoute: AppStatisticsRoute,
   AppIndexRoute: AppIndexRoute,
@@ -675,6 +716,7 @@ const rootRouteChildren: RootRouteChildren = {
   TestAnalyticsRoute: TestAnalyticsRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
+  TestTestOrdersRoute: TestTestOrdersRoute,
   publicStoreStoreSlugIndexRoute: publicStoreStoreSlugIndexRoute,
   publicStoreStoreSlugSProductSlugRoute: publicStoreStoreSlugSProductSlugRoute,
 }

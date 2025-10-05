@@ -1,9 +1,8 @@
 import type { Item } from '@/components/navigation/side-bar';
 import { Badge, Button } from '@/components/ui';
 import { useAppNavigation } from '@/hooks';
-import { ChartBar, ChevronRight, Unplug } from 'lucide-react';
-import { GiStalactites } from 'react-icons/gi';
-import { MdMoney, MdPayment } from 'react-icons/md';
+import { ChartBar, ChevronRight, DollarSign, Unplug } from 'lucide-react';
+import { MdPayment } from 'react-icons/md';
 
 export function AccountSection(props: { handleItemClick: (item: Item) => void; itemActive: string; collapsed: boolean }) {
   const nav = useAppNavigation();
@@ -25,6 +24,14 @@ export function AccountSection(props: { handleItemClick: (item: Item) => void; i
       },
       name: 'Payout',
     },
+    {
+      name: 'Orders',
+      icon: <DollarSign size={20} />,
+      click: () => {
+        nav.goTo({ to: '/app/orders' });
+      },
+    },
+
     // {
     //   name: 'Notifications',
     //   icon: <Bell size={20} />,

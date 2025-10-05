@@ -36,6 +36,7 @@ export const CatalogEndpoints = {
   Orders: {
     Get: (orderId: number) => `${BASE}/orders/${orderId}`,
     GetMy: `${BASE}/orders/me`,
+    GetOrders: `${BASE}/orders`, // query params: startsAt, endsAt
   },
 
   Payouts: {
@@ -92,6 +93,16 @@ export const QueryBuilders = {
         timeZoneId,
       }),
     },
+  },
+
+  Orders: {
+    /**
+     * Build query parameters for getting orders
+     */
+    getOrders: (startsAt?: Date, endsAt?: Date) => ({
+      ...(startsAt && { startsAt: startsAt.toISOString() }),
+      ...(endsAt && { endsAt: endsAt.toISOString() }),
+    }),
   },
 
   Payouts: {

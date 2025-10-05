@@ -45,6 +45,7 @@ public static class CatalogEndpoints
     {
         public const string Get = $"{Base}" + "/orders/{orderId:int}";
         public const string GetMy = $"{Base}" + "/orders/me";
+        public const string GetOrders = $"{Base}" + "/orders"; // query params: startsAt, endsAt
     }
 
     public static class Payouts

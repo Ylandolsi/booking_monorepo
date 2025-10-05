@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Features\Orders\GetOrders\" />
         <Folder Include="Features\Payout\Admin\GetDetailed\"/>
         <Folder Include="Persistence\Migrations\" />
     </ItemGroup>

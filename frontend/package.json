@@ -40,6 +40,7 @@
     "@tanstack/react-query-devtools": "^5.81.5",
     "@tanstack/react-router": "^1.124.0",
     "@tanstack/react-router-devtools": "^1.131.22",
+    "@tanstack/react-table": "^8.21.3",
     "@tanstack/router": "^0.0.1-beta.53",
     "@tanstack/router-plugin": "^1.124.0",
     "@tigerabrodioss/eiwaal": "^0.1.1",
