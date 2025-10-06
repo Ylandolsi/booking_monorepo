@@ -112,7 +112,7 @@ const columns: ColumnDef<OrderResponse>[] = [
   //   },
 ];
 
-export default function DataTableDemo() {
+export function OrderHistory() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react';
-import { useGetStats } from '@/api/stores';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -34,109 +33,16 @@ import {
   Cell,
 } from 'recharts';
 import { Users, ShoppingCart, DollarSign, Package, Calendar, Loader2, Eye } from 'lucide-react';
+import { useStatsTransformed } from '@/pages/app/store/private/statistics/hooks';
 
 // Types
-type TimeFilter = 'day' | 'week' | 'month' | 'year' | 'all';
-
-// Helper function to calculate date range based on filter
-const getDateRange = (filter: TimeFilter): { startsAt: string; endsAt: string } => {
-  const now = new Date();
-  const endsAt = now.toISOString();
-  let startsAt: Date;
-
-  switch (filter) {
-    case 'day':
-      startsAt = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      break;
-    case 'week':
-      startsAt = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      break;
-    case 'month':
-      startsAt = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      break;
-    case 'year':
-      startsAt = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      break;
-    case 'all':
-      startsAt = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000); // Default to 1 year for 'all'
-      break;
-  }
-
-  return {
-    startsAt: startsAt.toISOString(),
-    endsAt,
-  };
-};
-
-interface Product {
-  id: string;
-  name: string;
-  sales: number;
-  revenue: number;
-  trend: number;
-  [key: string]: string | number; // Add index signature
-}
+export type TimeFilter = 'day' | 'week' | 'month' | 'year' | 'all';
 
 const COLORS = ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5'];
 
-export function AnalyticsPage() {
+export function StatisticsPage() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
-
-  // Calculate date range based on time filter
-  const dateRange = useMemo(() => getDateRange(timeFilter), [timeFilter]);
-
-  // Fetch real data from API
-  const {
-    data: statsData,
-    isLoading,
-    error,
-  } = useGetStats({
-    type: 'all',
-    startsAt: dateRange.startsAt,
-    endsAt: dateRange.endsAt,
-  });
-
-  // Transform API data to match chart format
-  const chartData = useMemo(() => {
-    if (!statsData?.chartData) return [];
-    return statsData.chartData.map((item) => ({
-      name: item.date,
-      revenue: item.revenue,
-      sales: item.sales,
-      customers: item.customers,
-      visitors: item.visitors,
-    }));
-  }, [statsData]);
-
-  const productData = useMemo(() => {
-    if (!statsData?.productData) return [];
-    return statsData.productData.map((item) => ({
-      id: item.productSlug,
-      name: item.name,
-      sales: item.sales,
-      revenue: item.revenue,
-    }));
-  }, [statsData]);
-
-  const totals = useMemo(() => {
-    if (!statsData?.totals) {
-      return {
-        revenue: 0,
-        sales: 0,
-        customers: 0,
-        visitors: 0,
-        averageRevenue: 0,
-        averageSales: 0,
-        conversionRate: '0.0',
-      };
-    }
-    return statsData.totals;
-  }, [statsData]);
-
-  const bestSellingProduct = useMemo(() => {
-    if (productData.length === 0) return null;
-    return productData.reduce((prev, current) => (prev.sales > current.sales ? prev : current));
-  }, [productData]);
+  const { statsData, chartData, productData, totals, bestSellingProduct, isLoading, error } = useStatsTransformed({ timeFilter });
 
   // Loading state
   if (isLoading) {

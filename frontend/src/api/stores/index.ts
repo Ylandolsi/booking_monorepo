@@ -4,6 +4,4 @@ export * from './types';
 export * from './stores-keys';
 export * from './get-wallet';
 export * from './orders';
-export * from './get-stats';
-export * from './statistics';
-export * from './statistics';
+export * from './stats';
