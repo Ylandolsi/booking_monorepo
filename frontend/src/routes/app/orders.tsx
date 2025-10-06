@@ -1,4 +1,4 @@
-import { OrderHistory } from '@/pages/app/store/private/orders/orders-page';
+import { OrderHistory } from '@/pages/store/private/orders/orders-page';
 import { createFileRoute } from '@tanstack/react-router';
 export const Route = createFileRoute('/app/orders')({
   component: RouteComponent,

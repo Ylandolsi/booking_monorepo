@@ -50,24 +50,6 @@ export function useAppNavigation() {
       navigate({ to: routes.to.profile.integrations() });
     },
 
-    goToSchedule: () => {
-      navigate({ to: routes.to.mentor.setSchedule() });
-    },
-
-    // Booking navigation
-    goToBookingSession: (mentorSlug: string) => {
-      navigate({ to: routes.to.booking.session(mentorSlug) });
-    },
-
-    // Mentor navigation
-    goToMentorBecome: () => {
-      navigate({ to: routes.to.mentor.become() });
-    },
-
-    goToMentorSetSchedule: () => {
-      navigate({ to: routes.to.mentor.setSchedule() });
-    },
-
     // my meets
     goToMeets: () => {
       navigate({ to: routes.to.meets.index() });

@@ -1,0 +1,19 @@
+import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
+
+import { api, CatalogEndpoints } from '@/api/utils';
+import type { PayoutType } from '@/pages/store/private/payout/types/payout';
+import { PayoutKeys } from '@/pages/store';
+
+const getHistoryPayout = async (): Promise<Array<PayoutType>> => {
+  return await api.get<Array<PayoutType>>(CatalogEndpoints.Payouts.PayoutHistory);
+};
+
+export const useHistoryPayout = (overrides?: Partial<UseQueryOptions<Array<PayoutType>, Error>>): UseQueryResult<Array<PayoutType>, Error> => {
+  const options: UseQueryOptions<Array<PayoutType>, Error> = {
+    queryKey: PayoutKeys.history(),
+    queryFn: getHistoryPayout,
+    ...overrides,
+  };
+
+  return useQuery<Array<PayoutType>, Error>(options);
+};

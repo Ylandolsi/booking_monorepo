@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { SetupStore } from '@/pages/app/store';
+import { SetupStore } from '@/pages/store';
 import { ROUTE_PATHS } from '@/config';
 
 export const Route = createFileRoute(ROUTE_PATHS.APP.STORE.SETUP_STORE)({

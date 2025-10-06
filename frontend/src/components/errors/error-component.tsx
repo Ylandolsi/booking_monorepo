@@ -77,9 +77,10 @@ export const ErrorComponenet = ({
               Dashboard
             </button>
             <button
-              onClick={() =>
-                // TODO : fix this
-                navigate.goTo(routeBuilder.profile.user('uhavetofixthisslug'))
+              onClick={
+                () =>
+                  // TODO : fix this
+                  navigate.goTo(routeBuilder.profile.user('uhavetofixthisslug')) // TODO
               }
               className="text-primary block hover:underline"
             >

@@ -18,7 +18,7 @@ public record ProductResponse
     public int DisplayOrder { get; init; }
     public bool IsPublished { get; init; }
 
-    public Picture ThumbnailPicture { get; init; }
+    public Picture? ThumbnailPicture { get; init; }
 
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
