@@ -11,7 +11,7 @@ using Booking.Common.Options;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Persistence;
- 
+
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 
@@ -207,24 +207,41 @@ public static class Infrastructure
     private static IServiceCollection AddAWS(this IServiceCollection services,
         IConfiguration configuration)
     {
-        // TODO : use environment variables or secrets manager for sensitive data
-        var awsOptions = configuration.GetSection("AWS");
-        var awsAccessKey = awsOptions["AccessKey"];
-        var awsSecretKey = awsOptions["SecretKey"];
-        var awsRegion = awsOptions["Region"];
+        // Backblaze B2 S3-compatible API configuration
+        var awsSection = configuration.GetSection("AWS");
 
-        services.AddDefaultAWSOptions(new AWSOptions
+        var accessKeyId = awsSection["AccessKeyId"];
+        var secretAccessKey = awsSection["SecretAccessKey"];
+        var serviceUrl = awsSection["ServiceURL"];
+        var region = awsSection["Region"] ?? "us-west-004";
+
+        // Configure S3 client for Backblaze B2
+        services.AddSingleton<IAmazonS3>(sp =>
         {
-            Credentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey),
-            Region = RegionEndpoint.GetBySystemName(awsRegion)
-        });
-        // have its own polling and retry policies
-        // TODO : recheck it 
-        // SES 
-        services.AddAWSService<IAmazonSimpleEmailService>();
+            var s3Config = new AmazonS3Config
+            {
+                // Backblaze B2 S3-compatible endpoint
+                ServiceURL = serviceUrl ?? "https://s3.us-west-004.backblazeb2.com",
 
-        // S3 
-        services.AddAWSService<IAmazonS3>();
+                // Set authentication region
+                AuthenticationRegion = region,
+
+                // Force path style for Backblaze compatibility
+                ForcePathStyle = true
+            };
+
+            return new AmazonS3Client(accessKeyId, secretAccessKey, s3Config);
+        });
+
+        // SES (can remain unchanged if using AWS SES, or remove if not needed)
+        var awsOptions = new AWSOptions
+        {
+            Credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey),
+            Region = RegionEndpoint.GetBySystemName(region)
+        };
+
+        services.AddDefaultAWSOptions(awsOptions);
+        services.AddAWSService<IAmazonSimpleEmailService>();
 
         return services;
     }

@@ -1,7 +1,4 @@
 ﻿using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
@@ -17,32 +14,28 @@ namespace Booking.Common.Uploads;
 public class S3ImageProcessingService
 {
     private readonly string _bucketName;
-    private readonly string? _cloudFrontKeyPairId;
-    private readonly string? _cloudFrontPrivateKey;
-    private readonly string? _cloudFrontUrl;
+    private readonly string? _publicUrlBase;
     private readonly ILogger<S3ImageProcessingService> _logger;
     private readonly IAmazonS3 _s3Client;
-    private readonly bool _useCloudFront;
+    private readonly bool _usePublicUrls;
 
     public S3ImageProcessingService(IAmazonS3 s3Client, ILogger<S3ImageProcessingService> logger, IConfiguration config)
     {
         _s3Client = s3Client;
         _logger = logger;
-        _bucketName = config["AWS:S3:BucketName"] ??
-                      throw new ArgumentNullException("AWS:S3:BucketName configuration is missing");
+        _bucketName = config["Storage:BucketName"] ??
+                      throw new InvalidOperationException("Storage:BucketName configuration is missing");
 
-        // CloudFront configuration
-        _cloudFrontUrl = config["AWS:CloudFront:Url"];
-        _cloudFrontKeyPairId = config["AWS:CloudFront:KeyPairId"];
-        _cloudFrontPrivateKey = config["AWS:CloudFront:PrivateKey"];
-        _useCloudFront = !string.IsNullOrEmpty(_cloudFrontUrl) &&
-                         !string.IsNullOrEmpty(_cloudFrontKeyPairId) &&
-                         !string.IsNullOrEmpty(_cloudFrontPrivateKey);
+        // Backblaze B2 public URL configuration
+        // Example: https://f004.backblazeb2.com/file/your-bucket-name
+        // Or custom domain: https://cdn.yourdomain.com
+        _publicUrlBase = config["Storage:PublicUrlBase"];
+        _usePublicUrls = !string.IsNullOrEmpty(_publicUrlBase);
 
-        if (_useCloudFront)
-            _logger.LogInformation("CloudFront integration enabled for domain: {CloudFrontUrl}", _cloudFrontUrl);
+        if (_usePublicUrls)
+            _logger.LogInformation("Public URL mode enabled with base: {PublicUrlBase}", _publicUrlBase);
         else
-            _logger.LogInformation("Using direct S3 presigned URLs (CloudFront not configured)");
+            _logger.LogInformation("Using presigned URLs (public URL base not configured)");
     }
 
     public async Task<ImageProcessingResult> ProcessImageAsync(IFormFile file, string fileName)
@@ -92,19 +85,16 @@ public class S3ImageProcessingService
             Key = key,
             InputStream = stream,
             ContentType = "image/jpeg",
-            CannedACL = S3CannedACL.Private, // Keep private for security
-            ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256,
+            // For Backblaze B2: Use PublicRead for public URLs, or Private for presigned URLs
+            CannedACL = _usePublicUrls ? S3CannedACL.PublicRead : S3CannedACL.Private,
 
-            // Enhanced metadata for CloudFront optimization
             Metadata =
             {
                 ["original-filename"] = fileName,
                 ["processed-date"] = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC"),
-                ["image-type"] = suffix,
-                ["cdn-optimized"] = _useCloudFront.ToString().ToLower()
+                ["image-type"] = suffix
             },
 
-            // CloudFront-friendly headers
             Headers =
             {
                 CacheControl = "public, max-age=31536000", // 1 year cache
@@ -113,7 +103,7 @@ public class S3ImageProcessingService
         };
 
         await _s3Client.PutObjectAsync(request);
-        return GetOptimizedUrl(key);
+        return GetImageUrl(key);
     }
 
     private async Task<string> UploadThumbnailToS3Async(Image image, string fileName, int size, int quality)
@@ -127,7 +117,7 @@ public class S3ImageProcessingService
                 Mode = ResizeMode.Max,
                 Sampler = KnownResamplers.Bicubic
             })
-            .GaussianBlur(0.3f)); // Reduced blur for better CDN caching
+            .GaussianBlur(0.3f));
 
         var key = $"images/{fileName}_thumb.jpg";
 
@@ -141,16 +131,14 @@ public class S3ImageProcessingService
             Key = key,
             InputStream = stream,
             ContentType = "image/jpeg",
-            CannedACL = S3CannedACL.Private,
-            ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256,
+            CannedACL = _usePublicUrls ? S3CannedACL.PublicRead : S3CannedACL.Private,
 
             Metadata =
             {
                 ["original-filename"] = fileName,
                 ["processed-date"] = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC"),
                 ["image-type"] = "thumbnail",
-                ["size"] = size.ToString(),
-                ["cdn-optimized"] = _useCloudFront.ToString().ToLower()
+                ["size"] = size.ToString()
             },
 
             Headers =
@@ -161,110 +149,39 @@ public class S3ImageProcessingService
         };
 
         await _s3Client.PutObjectAsync(request);
-        return GetOptimizedUrl(key);
+        return GetImageUrl(key);
     }
 
     /// <summary>
-    ///     Gets the optimized URL - CloudFront signed URL if available, otherwise S3 presigned URL
+    ///     Gets the image URL - public URL if configured, otherwise presigned URL
     /// </summary>
-    private string GetOptimizedUrl(string key)
+    private string GetImageUrl(string key)
     {
-        if (_useCloudFront) return GetCloudFrontSignedUrl(key);
+        if (_usePublicUrls)
+        {
+            // Backblaze B2 public URL format: https://f004.backblazeb2.com/file/bucket-name/path/to/file
+            // Or custom domain: https://cdn.yourdomain.com/path/to/file
+            return $"{_publicUrlBase!.TrimEnd('/')}/{key}";
+        }
 
-        return GetS3SignedUrl(key);
+        // Fallback to presigned URL for private buckets
+        return GetPresignedUrl(key);
     }
 
     /// <summary>
-    ///     Generate CloudFront signed URL for authenticated access with caching benefits
+    ///     Generate presigned URL for temporary authenticated access
     /// </summary>
-    private string GetCloudFrontSignedUrl(string key)
-    {
-        try
-        {
-            var resourceUrl = $"{_cloudFrontUrl!.TrimEnd('/')}/{key}";
-            var expiration = DateTimeOffset.UtcNow.AddHours(24);
-
-            // Create the policy for CloudFront signed URL
-            var policy = CreateCloudFrontPolicy(resourceUrl, expiration);
-            var signature = SignCloudFrontPolicy(policy);
-
-            var signedUrl = $"{resourceUrl}?" +
-                            $"Expires={expiration.ToUnixTimeSeconds()}&" +
-                            $"Signature={signature}&" +
-                            $"Key-Pair-Id={_cloudFrontKeyPairId}";
-
-            _logger.LogDebug("Generated CloudFront signed URL for key: {Key}", key);
-            return signedUrl;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to generate CloudFront signed URL for {Key}, falling back to S3", key);
-            return GetS3SignedUrl(key);
-        }
-    }
-
-    /// <summary>
-    ///     Fallback to S3 presigned URL
-    /// </summary>
-    private string GetS3SignedUrl(string key)
+    private string GetPresignedUrl(string key, int expirationHours = 24)
     {
         var request = new GetPreSignedUrlRequest
         {
             BucketName = _bucketName,
             Key = key,
             Verb = HttpVerb.GET,
-            Expires = DateTime.UtcNow.AddHours(24)
+            Expires = DateTime.UtcNow.AddHours(expirationHours)
         };
 
         return _s3Client.GetPreSignedURL(request);
-    }
-
-    /// <summary>
-    ///     Create CloudFront policy JSON for signed URLs
-    /// </summary>
-    private string CreateCloudFrontPolicy(string resourceUrl, DateTimeOffset expiration)
-    {
-        var policy = new
-        {
-            Statement = new[]
-            {
-                new
-                {
-                    Resource = resourceUrl,
-                    Condition = new
-                    {
-                        DateLessThan = new
-                        {
-                            AWS_EpochTime = expiration.ToUnixTimeSeconds()
-                        }
-                    }
-                }
-            }
-        };
-
-        return JsonSerializer.Serialize(policy, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = null // Keep exact property names
-        });
-    }
-
-    /// <summary>
-    ///     Sign the CloudFront policy using RSA-SHA1
-    /// </summary>
-    private string SignCloudFrontPolicy(string policy)
-    {
-        var policyBytes = Encoding.UTF8.GetBytes(policy);
-
-        using var rsa = RSA.Create();
-        rsa.ImportFromPem(_cloudFrontPrivateKey!);
-
-        var signature = rsa.SignData(policyBytes, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
-
-        // CloudFront requires base64 URL-safe encoding
-        return Convert.ToBase64String(signature)
-            .Replace('+', '-')
-            .Replace('/', '_')
-            .Replace("=", "");
     }
 
     public async Task<bool> DeleteImageAsync(string fileName)
@@ -290,47 +207,13 @@ public class S3ImageProcessingService
                     _logger.LogWarning("Failed to delete object {Key}: {Code} - {Message}",
                         error.Key, error.Code, error.Message);
 
-            // Invalidate CloudFront cache for deleted images
-            if (_useCloudFront) await InvalidateCloudFrontCache(keys);
-
+            _logger.LogInformation("Successfully deleted {Count} images for {FileName}", keys.Length, fileName);
             return true;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting images for {FileName}", fileName);
             return false;
-        }
-    }
-
-    /// <summary>
-    ///     Invalidate CloudFront cache for specific paths
-    /// </summary>
-    private async Task InvalidateCloudFrontCache(string[] keys)
-    {
-        try
-        {
-            // Note: You'll need to add Amazon.CloudFront NuGet package
-            // and inject ICloudFrontClient for cache invalidation
-            _logger.LogInformation("CloudFront cache invalidation needed for {KeyCount} objects", keys.Length);
-
-            // Implementation would go here once CloudFront client is added
-            // await _cloudFrontClient.CreateInvalidationAsync(new CreateInvalidationRequest
-            // {
-            //     DistributionId = _distributionId,
-            //     InvalidationBatch = new InvalidationBatch
-            //     {
-            //         Paths = new Paths
-            //         {
-            //             Quantity = keys.Length,
-            //             Items = keys.Select(key => $"/{key}").ToList()
-            //         },
-            //         CallerReference = Guid.NewGuid().ToString()
-            //     }
-            // });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to invalidate CloudFront cache");
         }
     }
 

@@ -1,11 +1,17 @@
 ﻿namespace Booking.Common.Uploads;
 
+/// <summary>
+///     Result of image processing with public URLs
+/// </summary>
 public class ImageProcessingResult
 {
-    public string OriginalUrl { get; set; }
+    /// <summary>
+    ///     Public or presigned URL for the original/full-size image
+    /// </summary>
+    public string OriginalUrl { get; set; } = string.Empty;
 
-    public string ThumbnailUrl { get; set; }
-    //public string LargeUrl { get; set; }
-    //public string MediumUrl { get; set; }
-    //public string SmallUrl { get; set; }
+    /// <summary>
+    ///     Public or presigned URL for the thumbnail image
+    /// </summary>
+    public string ThumbnailUrl { get; set; } = string.Empty;
 }
