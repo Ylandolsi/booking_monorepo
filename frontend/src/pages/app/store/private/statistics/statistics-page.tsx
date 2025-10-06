@@ -200,7 +200,7 @@ export function StatisticsPage() {
                 <div className="bg-muted mt-2 rounded-full">
                   <div className="bg-primary h-1 rounded-full" style={{ width: `${totals.conversionRate}%` }} />
                 </div>
-                <p className="text-muted-foreground text-xs">Conversion Rate: {totals.conversionRate}%</p>
+                <p className="text-muted-foreground mt-3 text-xs">Conversion Rate: {totals.conversionRate}%</p>
               </div>
             </div>
           </Card>

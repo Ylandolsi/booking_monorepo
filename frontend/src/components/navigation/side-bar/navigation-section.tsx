@@ -2,7 +2,7 @@ import type { Item } from '@/components/navigation/side-bar';
 import type { User } from '@/api/auth';
 import { Button } from '@/components/ui';
 import { useAppNavigation } from '@/hooks';
-import { Badge, Calendar, ChevronRight, Home, Store } from 'lucide-react';
+import { Calendar, ChevronRight, Home, Store } from 'lucide-react';
 import { routes } from '@/config';
 
 export function NavigationSection(props: { handleItemClick: (item: Item) => void; itemActive: string; collapsed: boolean; currentUser: User }) {
@@ -24,7 +24,6 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
       click: () => {
         nav.goToMeets();
       },
-      badge: '3',
     },
     // {
     //   name: 'Search',
@@ -48,17 +47,10 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
             {!props.collapsed && (
               <>
                 <span className="flex-1 font-medium">{item.name}</span>
-                {item.badge && <Badge className="h-5 px-2 text-xs">{item.badge}</Badge>}
                 <ChevronRight
                   className={`h-4 w-4 transition-transform ${props.itemActive === item.name ? 'text-primary-foreground' : 'text-accent-foreground group-hover:text-foreground'}`}
                 />
               </>
-            )}
-            {/* Badge for collapsed state */}
-            {props.collapsed && item.badge && (
-              <div className="absolute -top-1 -right-1">
-                <Badge className="flex h-4 w-4 items-center justify-center p-0 text-xs">{item.badge}</Badge>
-              </div>
             )}
           </Button>
         ))}
