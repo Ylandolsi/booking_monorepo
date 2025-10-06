@@ -119,7 +119,7 @@ export function OrderHistory() {
   const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 1,
+    pageSize: 10,
   });
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
 
