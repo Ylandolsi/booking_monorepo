@@ -76,15 +76,15 @@ export function BookingSummary({ booking, selectedDate, selectedSlot, onBookSess
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Duration:</span>
+              <span className="text-primary text-sm">Duration:</span>
               <span className="text-sm font-medium">30 minutes</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Format:</span>
+              <span className="text-primary text-sm">Format:</span>
               <span className="text-sm font-medium">Online video call</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Meeting link:</span>
+              <span className="text-primary text-sm">Meeting link:</span>
               <span className="text-sm font-medium">Provided after booking</span>
             </div>
             <div className="border-t pt-2">
