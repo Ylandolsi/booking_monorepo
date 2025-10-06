@@ -123,7 +123,7 @@ export function PayoutPage() {
       )}
 
       {/* Available Balance Card */}
-      <Card className="border-ring dark:border-ring bg-gradient-to-r from-white to-indigo-50/40 dark:from-blue-950/50 dark:to-indigo-950/50">
+      <Card className="border-ring dark:border-ring from-secondary/40 to-primary-50 bg-gradient-to-r">
         <CardHeader className="pb-3">
           <CardTitle className="gap-2text-primary flex items-center">
             <DollarSign className="h-5 w-5" />
@@ -232,7 +232,7 @@ export function PayoutPage() {
             <CardTitle className="text-2xl">$2,222.00</CardTitle>
           </CardHeader>
         </Card> */}
-        <Card className="border border-yellow-600 bg-gradient-to-r from-yellow-50 to-white">
+        <Card className="border-ring dark:border-ring from-primary-50 to-secondary/50 bg-gradient-to-r">
           <CardHeader className="pb-2">
             <CardDescription>Pending</CardDescription>
             <CardTitle className="text-2xl">${pendingBalance}</CardTitle>
