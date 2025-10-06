@@ -1,4 +1,4 @@
-import { AnalyticsPage } from '@/api/stores';
+import { StatisticsPage } from '@/pages/app/store/private/statistics';
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/app/statistics')({
@@ -6,5 +6,5 @@ export const Route = createFileRoute('/app/statistics')({
 });
 
 function RouteComponent() {
-  return <AnalyticsPage />;
+  return <StatisticsPage />;
 }
