@@ -59,11 +59,6 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasMaxLength(500)
             .IsRequired(false);
 
-        builder.Property(o => o.ScheduledAt)
-            .IsRequired(false);
-
-        builder.Property(o => o.SessionEndTime)
-            .IsRequired(false);
 
         builder.Property(o => o.TimeZoneId)
             .HasMaxLength(50)
