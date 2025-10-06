@@ -33,7 +33,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { Users, ShoppingCart, DollarSign, TrendingUp, Eye, Package, Calendar, Loader2 } from 'lucide-react';
+import { Users, ShoppingCart, DollarSign, Package, Calendar, Loader2, Eye } from 'lucide-react';
 
 // Types
 type TimeFilter = 'day' | 'week' | 'month' | 'year' | 'all';
@@ -212,110 +212,93 @@ export function AnalyticsPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
           {/* Total Customers */}
-          <Card className="transition-shadow hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-              <Users className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
+          <Card className="h-fit transition-shadow hover:shadow-lg">
             <CardContent>
-              <div className="text-2xl font-bold">{totals.customers.toLocaleString()}</div>
-              <p className="text-muted-foreground mt-1 flex items-center text-xs">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+12.5%</span>
-                <span className="ml-1">from last period</span>
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Total Visitors */}
-          <Card className="transition-shadow hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Shop Visitors</CardTitle>
-              <Eye className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totals.visitors.toLocaleString()}</div>
-              <p className="text-muted-foreground mt-1 flex items-center text-xs">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+8.2%</span>
-                <span className="ml-1">from last period</span>
-              </p>
-              <div className="bg-muted mt-2 rounded-full">
-                <div className="bg-primary h-1 rounded-full" style={{ width: `${totals.conversionRate}%` }} />
+              <div className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+                <Users className="text-muted-foreground h-4 w-4" />
               </div>
-              <p className="text-muted-foreground mt-1 text-xs">Conversion Rate: {totals.conversionRate}%</p>
+              <div className="text-2xl font-bold">{totals.customers.toLocaleString()}</div>
             </CardContent>
           </Card>
 
           {/* Total Revenue */}
-          <Card className="transition-shadow hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-              <DollarSign className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
+          <Card className="h-fit transition-shadow hover:shadow-lg">
             <CardContent>
+              <div className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <DollarSign className="text-muted-foreground h-4 w-4" />
+              </div>
               <div className="text-2xl font-bold">${totals.revenue.toLocaleString()}</div>
-              <p className="text-muted-foreground mt-1 flex items-center text-xs">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+15.3%</span>
-                <span className="ml-1">from last period</span>
-              </p>
             </CardContent>
           </Card>
 
           {/* Total Sales */}
-          <Card className="transition-shadow hover:shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
-              <ShoppingCart className="text-muted-foreground h-4 w-4" />
-            </CardHeader>
+          <Card className="h-fit transition-shadow hover:shadow-lg">
             <CardContent>
+              <div className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+                <ShoppingCart className="text-muted-foreground h-4 w-4" />
+              </div>
               <div className="text-2xl font-bold">{totals.sales.toLocaleString()}</div>
-              <p className="text-muted-foreground mt-1 flex items-center text-xs">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+9.7%</span>
-                <span className="ml-1">from last period</span>
-              </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Best Selling Product Highlight */}
-        {bestSellingProduct && (
-          <Card className="border-primary from-primary/5 to-primary/10 bg-gradient-to-r">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary rounded-lg p-3">
-                    <Package className="text-background h-6 w-6" />
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+          {/* Best Selling Product Highlight */}
+          {bestSellingProduct && (
+            <Card className="border-primary from-primary/5 to-primary/10 bg-gradient-to-r">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary rounded-lg p-3">
+                      <Package className="text-background h-6 w-6" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">Best Selling Product</CardTitle>
+                      <CardDescription className="mt-1">{bestSellingProduct.name}</CardDescription>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div>
+                    <p className="text-muted-foreground text-sm">Total Sales</p>
+                    <p className="text-2xl font-bold">{bestSellingProduct.sales.toLocaleString()}</p>
                   </div>
                   <div>
-                    <CardTitle className="text-lg">Best Selling Product</CardTitle>
-                    <CardDescription className="mt-1">{bestSellingProduct.name}</CardDescription>
+                    <p className="text-muted-foreground text-sm">Revenue Generated</p>
+                    <p className="text-2xl font-bold">${bestSellingProduct.revenue.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm">Average Price</p>
+                    <p className="text-2xl font-bold">${(bestSellingProduct.revenue / bestSellingProduct.sales).toFixed(2)}</p>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+          {/* Total Visitors */}
+          <Card className="h-full transition-shadow hover:shadow-lg">
+            <div className="flex h-full w-full flex-col justify-start px-4">
+              <div className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium">Shop Visitors</CardTitle>
+                <Eye className="text-muted-foreground h-4 w-4" />
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div>
-                  <p className="text-muted-foreground text-sm">Total Sales</p>
-                  <p className="text-2xl font-bold">{bestSellingProduct.sales.toLocaleString()}</p>
+              <div className="text-2xl font-bold">{totals.visitors.toLocaleString()}</div>
+              <div className="mt-4">
+                <div className="bg-muted mt-2 rounded-full">
+                  <div className="bg-primary h-1 rounded-full" style={{ width: `${totals.conversionRate}%` }} />
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-sm">Revenue Generated</p>
-                  <p className="text-2xl font-bold">${bestSellingProduct.revenue.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-sm">Average Price</p>
-                  <p className="text-2xl font-bold">${(bestSellingProduct.revenue / bestSellingProduct.sales).toFixed(2)}</p>
-                </div>
+                <p className="text-muted-foreground text-xs">Conversion Rate: {totals.conversionRate}%</p>
               </div>
-            </CardContent>
+            </div>
           </Card>
-        )}
+        </div>
 
         {/* Charts Section */}
         <Tabs defaultValue="revenue" className="space-y-4">
