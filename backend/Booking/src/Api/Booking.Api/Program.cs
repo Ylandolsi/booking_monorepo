@@ -104,7 +104,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     // // Drop databases
     // await usersDb.Database.EnsureDeletedAsync();
     // await catalogDb.Database.EnsureDeletedAsync();
-    // app.ApplyMigrations();
+     app.ApplyMigrations();
 
 
     // // Delete test users only

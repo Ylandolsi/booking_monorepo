@@ -4,5 +4,6 @@ import FALLBACK_PICTURE_STORE from './fallback.jpg';
 
 import LOGO_FULL from './logo_full.png';
 import LOGO_SHORT from './logo_short.png';
-
-export { LOGO_FULL, LOGO_SHORT, FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL, IPHONE_MOCKUP, FALLBACK_PICTURE_STORE };
+import appleTest from './Device=Portrait (1).png';
+import STATUS_BAR from './StatusBar.png';
+export { appleTest, LOGO_FULL, LOGO_SHORT, STATUS_BAR, FALLBACK_SESSION_PRODUCT_PICTURE_THUMBNAIL, IPHONE_MOCKUP, FALLBACK_PICTURE_STORE };

@@ -23,6 +23,8 @@ public sealed class CatalogDbContext : DbContext
     public DbSet<Payout> Payouts { get; set; }
     public DbSet<Day> Days { get; set; }
     public DbSet<StoreVisit>  StoreVisits { get; set; }
+    public DbSet<StoreDailyStats> StoreDailyStats { get; set; }
+    public DbSet<ProductDailyStats> ProductDailyStats { get; set; }
     // Todo add customer entity 
 
     public DbSet<BookedSession> BookedSessions { get; set; }

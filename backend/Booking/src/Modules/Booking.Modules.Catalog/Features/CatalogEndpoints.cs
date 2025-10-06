@@ -71,4 +71,9 @@ public static class CatalogEndpoints
         public const string GetWallet = $"{Base}/payments/wallet";
         public const string Webhook = $"{Base}/payments/webhook"; //  payment_ref=5f9498735289e405fc7c18ac
     }
+    
+    public static class Statistics
+    {
+        public const string GetStats = $"{Base}/stats"; // query params: type, startsAt, endsAt
+    }
 }

@@ -3,6 +3,7 @@ using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Modules.Catalog.BackgroundJobs.Payment;
 using Booking.Modules.Catalog.BackgroundJobs.Payout;
+using Booking.Modules.Catalog.BackgroundJobs.Statistics;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Stores;
@@ -72,6 +73,7 @@ public static class CatalogModule
         /*services.AddScoped<PayoutJob>();
         services.AddScoped<EscrowJob>();*/
         services.AddScoped<StoreVisitBatchJob>();
+        services.AddScoped<StoreStatsAggregatorJob>();
         return services;
     }
 }

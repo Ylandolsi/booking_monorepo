@@ -1,3 +1,4 @@
+using Booking.Modules.Catalog.BackgroundJobs.Statistics;
 using Booking.Modules.Catalog.Features.Stores.StoreVisit;
 using Booking.Modules.Users.BackgroundJobs.Cleanup;
 using Hangfire;
@@ -10,6 +11,7 @@ public static class RecurringJobs
     {
         UseTokenCleanup();
         UseBatchStoreVisitores();
+        UseStoreStatsAggregator();
     }
 
     public static void UseTokenCleanup()
@@ -29,6 +31,14 @@ public static class RecurringJobs
         RecurringJob.AddOrUpdate<StoreVisitBatchJob>(
             "store-batch-visits-job",
             job => job.ExecuteAsync(null), // todo : review this null context 
-            Cron.MinuteInterval(1)); // run every 1 minute
+            "*/3 * * * *"); // run every 3 minutes
+    }
+
+    public static void UseStoreStatsAggregator()
+    {
+        RecurringJob.AddOrUpdate<StoreStatsAggregatorJob>(
+            "store-stats-aggregator-job",
+            job => job.ExecuteAsync(null),
+            "*/15 * * * *"); // Run every 15 minutes
     }
 }

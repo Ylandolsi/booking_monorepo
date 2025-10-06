@@ -12,7 +12,9 @@ export function MobileContainer({ children, className }: MobileContainerProps) {
       <img src={IPHONE_MOCKUP} className="z-40"></img>
 
       <div
-        className="absolute inset-0 mx-auto mt-10 mb-10 w-[88%] overflow-x-hidden overflow-y-scroll rounded-2xl"
+        // className="absolute inset-0 mx-auto mt-10 mb-10 w-[88%] overflow-x-hidden overflow-y-scroll rounded-2xl"
+
+        className="absolute inset-0 mx-auto mt-10 mb-10 w-[90%] overflow-x-hidden overflow-y-scroll rounded-2xl"
         style={
           {
             scrollbarWidth: 'none',
@@ -22,6 +24,8 @@ export function MobileContainer({ children, className }: MobileContainerProps) {
           } as React.CSSProperties
         }
       >
+        {/* <img src={STATUS_BAR} className="fixed inset-0 top-10"></img> */}
+
         {children}
       </div>
     </div>

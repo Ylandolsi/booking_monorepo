@@ -55,6 +55,10 @@ export const CatalogEndpoints = {
     GetWallet: `${BASE}/payments/wallet`,
     Webhook: `${BASE}/payments/webhook`,
   },
+
+  Statistics: {
+    GetStats: `${BASE}/stats`,
+  },
 } as const;
 
 /**
@@ -118,5 +122,16 @@ export const QueryBuilders = {
         ...(timeZoneId && { timeZoneId }),
       }),
     },
+  },
+
+  Statistics: {
+    /**
+     * Build query parameters for getting statistics
+     */
+    getStats: (type?: 'revenue' | 'visitors' | 'customers' | 'all', startsAt?: Date, endsAt?: Date) => ({
+      ...(type && { type }),
+      ...(startsAt && { startsAt: startsAt.toISOString() }),
+      ...(endsAt && { endsAt: endsAt.toISOString() }),
+    }),
   },
 } as const;

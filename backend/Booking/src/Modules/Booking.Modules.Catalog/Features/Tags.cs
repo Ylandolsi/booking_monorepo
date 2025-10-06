@@ -11,4 +11,5 @@ public static class Tags
     public const string Admin = "Admin";
     public const string Webhook = "Webhook";
     public const string Order = "Order";
+    public const string Statistics = "Statistics";
 }
