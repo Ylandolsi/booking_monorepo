@@ -1,11 +1,10 @@
-import { Calendar, Clock, DollarSign, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, Button, DrawerDialog } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDateLong } from '@/lib';
 import { useState } from 'react';
-import type { BookingHookState, BookingSummaryType } from '@/api/stores';
+import type { BookingSummaryType } from '@/api/stores';
 import type { SessionSlotType } from '@/api/stores/produtcs/sessions/public/availabilities/shared-booking-type';
-import type { UseFormReturn } from 'react-hook-form';
 
 interface BookingSummaryProps {
   booking: BookingSummaryType | null;
@@ -115,37 +114,37 @@ export function BookingSummary({ booking, selectedDate, selectedSlot, onBookSess
             </h4>
             <div className="grid gap-4">
               <div className="flex items-center justify-between rounded-lg bg-blue-50 p-3">
-                <div className="flex items-center gap-3">
+                <div className="text-background flex items-center gap-3">
                   <Calendar className="h-4 w-4 text-blue-600" />
                   <div>
                     <div className="font-medium">Date</div>
-                    <div className="text-muted-foreground text-sm">{formatDateLong(selectedDate)}</div>
+                    <div className="text-sm">{formatDateLong(selectedDate)}</div>
                   </div>
                 </div>
               </div>
 
               <div className="flex items-center justify-between rounded-lg bg-green-50 p-3">
-                <div className="flex items-center gap-3">
+                <div className="text-background flex items-center gap-3">
                   <Clock className="h-4 w-4 text-green-600" />
                   <div>
                     <div className="font-medium">Time</div>
-                    <div className="text-muted-foreground text-sm">
+                    <div className="text-sm">
                       {formatTime(selectedSlot.startTime)} - {getEndTime(selectedSlot.startTime)}
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-background text-right">
                   <div className="font-medium">30 min</div>
-                  <div className="text-muted-foreground text-xs">duration</div>
+                  <div className="text-xs">duration</div>
                 </div>
               </div>
 
               <div className="flex items-center justify-between rounded-lg bg-purple-50 p-3">
-                <div className="flex items-center gap-3">
+                <div className="text-background flex items-center gap-3">
                   <DollarSign className="h-4 w-4 text-purple-600" />
                   <div>
                     <div className="font-medium">Price</div>
-                    <div className="text-muted-foreground text-sm">Session fee</div>
+                    <div className="text-sm">Session fee</div>
                   </div>
                 </div>
                 <div className="text-right">

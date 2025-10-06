@@ -83,8 +83,8 @@ export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect,
       </CardHeader>
       <CardContent>
         {availableSlots.length === 0 ? (
-          <div className="text-muted-foreground py-12 text-center">
-            <Clock className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+          <div className="text-foreground py-12 text-center">
+            <Clock className="mx-auto mb-4 h-16 w-16" />
             <p className="mb-2 text-lg font-medium">No available times</p>
             <p className="text-sm">
               This mentor has no available slots for the selected date.
@@ -112,18 +112,18 @@ export function TimeSlots({ selectedDate, timeSlots, selectedSlot, onSlotSelect,
                     variant={isSelected ? 'default' : 'outline'}
                     className={cn(
                       'h-auto w-full justify-between p-4 text-left transition-all duration-200',
-                      isSelected && 'bg-primary/90 hover:bg-primary text-white shadow-md',
+                      isSelected && 'bg-primary/90 hover:bg-primary text-background shadow-md',
                       !isSelected && 'hover:bg-primary/20 hover:border-primary/20 hover:shadow-sm',
                     )}
                     onClick={() => onSlotSelect(slot)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={cn('h-2 w-2 rounded-full', isSelected ? 'bg-white' : 'bg-green-500')} />
+                      <div className={cn('h-2 w-2 rounded-full', isSelected ? 'bg-background' : 'bg-green-500')} />
                       <div>
                         <div className="text-base font-semibold">
                           {startTimeFormatted} - {endTimeFormatted}
                         </div>
-                        <div className={cn('text-sm', isSelected ? 'text-blue-100' : 'text-muted-foreground')}>30 minutes session</div>
+                        <div className={cn('text-sm', isSelected ? 'text-background' : 'text-muted-foreground')}>30 minutes session</div>
                       </div>
                     </div>
                   </Button>
