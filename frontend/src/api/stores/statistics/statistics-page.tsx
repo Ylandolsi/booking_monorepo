@@ -289,7 +289,7 @@ export function AnalyticsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="bg-primary rounded-lg p-3">
-                    <Package className="h-6 w-6 text-white" />
+                    <Package className="text-background h-6 w-6" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Best Selling Product</CardTitle>
