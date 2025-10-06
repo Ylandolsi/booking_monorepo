@@ -23,7 +23,6 @@ internal sealed class BookSessionCommandHandler(
     NotificationService notificationService,
     IUnitOfWork unitOfWork,
     GoogleCalendarService googleCalendarService,
-    IValidator<BookSessionCommand> validator,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>
 {
     public async Task<Result<BookSessionRepsonse>> Handle(BookSessionCommand command,
