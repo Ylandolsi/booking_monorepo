@@ -30,7 +30,13 @@ public class CompleteWebhook(
         // TODO : optimize this and pass order rather than  orderId
 
         var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-        // TODO : send link to mentor and mentee for confirmation 
+        if (order is null)
+        {
+            logger.LogError("Failed to find order when handling payment (completeWebhook) with id: {OrderId}", orderId);
+            return;
+        }
+
+        // TODO : send link to mentor  for confirmation 
         logger.LogInformation(
             "Handling PaymentCompletedDomainEvent for order : {orderId} with price : {Price}  for customer  : {customerEmail} ",
             order.Id,
@@ -65,7 +71,7 @@ public class CompleteWebhook(
 
             // Create escrow for the full session price
             var priceAfterReducing = session.Price - session.Price * BusinessConstants.PlatformFeePercentage;
-            var escrowCreated = new Escrow(priceAfterReducing, session.Id);
+            var escrowCreated = new Escrow(priceAfterReducing, order.Id);
             await dbContext.AddAsync(escrowCreated, cancellationToken);
 
             order.MarkAsCompleted();
