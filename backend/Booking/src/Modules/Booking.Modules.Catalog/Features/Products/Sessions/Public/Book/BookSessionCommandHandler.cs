@@ -4,6 +4,7 @@ using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
 using Booking.Common.RealTime;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.BackgroundJobs.Payment;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
@@ -69,6 +70,7 @@ internal sealed class BookSessionCommandHandler(
         }
 
         var product = await context.SessionProducts
+            .Include(s => s.Store)
             .FirstOrDefaultAsync(s => s.ProductSlug == command.ProductSlug && s.IsPublished, cancellationToken);
 
         if (product == null)
@@ -152,7 +154,7 @@ internal sealed class BookSessionCommandHandler(
         try
         {
             // or popualte it from the producT ? 
-            var storeData = await context.Stores.FirstOrDefaultAsync(s => s.Id == product.StoreId, cancellationToken);
+            var storeData = product.Store;
 
             var storeOwnerData = await usersModuleApi.GetUserInfo(storeData.UserId, cancellationToken);
 
@@ -166,29 +168,8 @@ internal sealed class BookSessionCommandHandler(
             }
 
 
-            var sessionTitle = string.IsNullOrEmpty(command.Title)
-                ? $"Session : {storeOwnerData.FirstName} {storeOwnerData.LastName} & {command.Name}"
-                : command.Title;
-
-            var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
-
             // TODO : not now : add the current session booked to redis to avoid concurrency ! 
 
-            var session = BookedSession.Create(
-                product.Id,
-                product.ProductSlug,
-                product.StoreId,
-                product.StoreSlug,
-                sessionStartDateTimeUtc,
-                duration.Value,
-                totalPrice,
-                0,
-                sessionTitle,
-                sessionNote);
-
-
-            // add session to get ID
-            await context.BookedSessions.AddAsync(session, cancellationToken);
 
             var order = Order.Create(
                 product.Id,
@@ -200,13 +181,33 @@ internal sealed class BookSessionCommandHandler(
                 command.Phone,
                 totalPrice,
                 ProductType.Session,
-                session.ScheduledAt,
-                session.ScheduledAt.AddMinutes(duration.Value.Minutes),
                 command.TimeZoneId,
                 command.Note);
 
             await context.Orders.AddAsync(order, cancellationToken);
+            //   save changes : to get the id of the order 
+            // TODO : we can optimize this 
             await unitOfWork.SaveChangesAsync(cancellationToken);
+
+
+            var sessionTitle = string.IsNullOrEmpty(command.Title)
+                ? $" {BusinessConstants.PlatformName}  Session : {storeOwnerData.FirstName} {storeOwnerData.LastName} & {command.Name}"
+                : command.Title;
+
+            var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
+            
+            var session = BookedSession.Create(
+                order.Id,
+                product.Id,
+                product.ProductSlug,
+                product.StoreId,
+                product.StoreSlug,
+                sessionStartDateTimeUtc,
+                duration.Value,
+                totalPrice,
+                0,
+                sessionTitle,
+                sessionNote);
 
 
             // If there's remaining amount to pay, create payment and initiate Konnect payment
@@ -240,8 +241,8 @@ internal sealed class BookSessionCommandHandler(
 
                 if (paymentResponse.IsFailure)
                 {
-                    logger.LogError("Failed to create Konnect payment for session {SessionId}: {Error}",
-                        session.Id, paymentResponse.Error.Description);
+                    logger.LogError("Failed to create Konnect payment for session with orderId {orderId}: {Error}",
+                        order.Id, paymentResponse.Error.Description);
 
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
                     return Result.Failure<BookSessionRepsonse>(
@@ -260,7 +261,8 @@ internal sealed class BookSessionCommandHandler(
             {
                 // FREE SESSION 
                 var meetLinkResult =
-                    await CreateCalendarEventAndGetMeetLink(session, command, storeData.UserId, cancellationToken);
+                    await CreateCalendarEventAndGetMeetLink(session, command, storeData.UserId, storeOwnerData,
+                        cancellationToken);
                 var meetLink = meetLinkResult.IsSuccess
                     ? meetLinkResult.Value
                     : "Error happened while integration, could you please contact us";
@@ -275,8 +277,9 @@ internal sealed class BookSessionCommandHandler(
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             logger.LogInformation(
-                "Successfully booked session {SessionId} for mentor {ProductSlug} and User {name} on {Date} from {StartTime} to {EndTime}",
-                session.Id, product.ProductSlug, command.Name, command.Date, command.StartTime, command.EndTime);
+                "Successfully booked session  {SessionId} with orderID {OrderId} for mentor {ProductSlug} and User {name} on {Date} from {StartTime} to {EndTime}",
+                session.Id, order.Id, product.ProductSlug, command.Name, command.Date, command.StartTime,
+                command.EndTime);
 
             return Result.Success(new BookSessionRepsonse(paymentLink));
         }
@@ -297,21 +300,21 @@ internal sealed class BookSessionCommandHandler(
         BookedSession session,
         BookSessionCommand command,
         int mentorUserId,
+        UserDto storeOwnerData,
         CancellationToken cancellationToken)
     {
         try
         {
-            var storeOwnerData = await usersModuleApi.GetUserInfo(mentorUserId, cancellationToken);
-
             var sessionStartTime = session.ScheduledAt;
             var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
+            // todo : include both : is it okay ? 
             var emails = new List<string> { command.Email, storeOwnerData.GoogleEmail, storeOwnerData.Email };
             var description = string.IsNullOrEmpty(command.Note) ? session.Title : command.Note;
 
             var meetRequest = new MeetingRequest
             {
-                Title = $"Meetini Session : {command.Title} ", // todo change the name of app 
+                Title = session.Title,
                 Description = description,
                 AttendeeEmails = emails,
                 StartTime = sessionStartTime,

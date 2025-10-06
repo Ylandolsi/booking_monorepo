@@ -15,6 +15,7 @@ namespace Booking.Modules.Catalog.BackgroundJobs.Payment;
 internal static class BusinessConstants
 {
     public const decimal PlatformFeePercentage = 0.15m; // 15% platform fee
+    public const string PlatformName = "Link";
 }
 
 public class CompleteWebhook(
@@ -57,7 +58,7 @@ public class CompleteWebhook(
         if (order.ProductType == ProductType.Session)
         {
             var session
-                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.ProductId == order.ProductId, cancellationToken);
+                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.OrderId == order.Id, cancellationToken);
             if (session is null)
             {
                 logger.LogError(
@@ -70,9 +71,16 @@ public class CompleteWebhook(
 
 
             // Create escrow for the full session price
-            var priceAfterReducing = session.Price - session.Price * BusinessConstants.PlatformFeePercentage;
-            var escrowCreated = new Escrow(priceAfterReducing, order.Id);
+            var platformFee = order.AmountPaid * BusinessConstants.PlatformFeePercentage;
+            var escrowAmount = order.AmountPaid - platformFee;
+
+            logger.LogInformation(
+                "Creating escrow for order {OrderId}: Paid={Paid}, Fee={Fee}, Escrow={Escrow}",
+                order.Id, order.AmountPaid, platformFee, escrowAmount);
+
+            var escrowCreated = new Escrow(escrowAmount, order.Id);
             await dbContext.AddAsync(escrowCreated, cancellationToken);
+
 
             order.MarkAsCompleted();
 
@@ -94,7 +102,8 @@ public class CompleteWebhook(
             {
                 logger.LogError("Store not found for session {SessionId} with storeId {StoreId}", session.Id,
                     session.StoreId);
-                session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
+
+                session.Confirm("https://meet.google.com/error-happend-while-integrating-with-google-calendar-please-contact-us");
                 return;
             }
 
@@ -104,11 +113,12 @@ public class CompleteWebhook(
             var mentorData = await usersModuleApi.GetUserInfo(store.UserId, cancellationToken);
 
             var emails = new List<string> { order.CustomerEmail, mentorData.GoogleEmail, mentorData.Email };
-            var description = $"Session : {mentorData.FirstName} {mentorData.LastName} & {order.CustomerName}";
+
+            var description = string.IsNullOrEmpty(session.Note) ? session.Title : session.Note;
 
             var meetRequest = new MeetingRequest
             {
-                Title = "Meetini Session",
+                Title = session.Title,
                 Description = description,
                 AttendeeEmails = emails,
                 StartTime = sessionStartTime,

@@ -69,7 +69,7 @@ public class KonnectService(
         var response = await httpClient.PostAsJsonAsync(
             "v2/payments/init-payment",
             paymentInfo
-            //new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token
+            //new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token // todo ? 
         );
 
 

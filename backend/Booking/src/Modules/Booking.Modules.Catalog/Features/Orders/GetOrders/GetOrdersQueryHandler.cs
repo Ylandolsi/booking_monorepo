@@ -77,8 +77,6 @@ internal sealed class GetOrdersQueryHandler(
                     AmountPaid = o.AmountPaid,
                     Status = o.Status,
                     PaymentRef = o.PaymentRef,
-                    ScheduledAt = o.ScheduledAt,
-                    SessionEndTime = o.SessionEndTime,
                     TimeZoneId = o.TimeZoneId,
                     Note = o.Note,
                     CompletedAt = o.CompletedAt,

@@ -35,10 +35,6 @@ public class Order : Entity
     public string? PaymentRef { get; private set; } // From your payment provider
     public string? PaymentUrl { get; private set; } // Payment URL for checkout
 
-    // This property handles the special case for session bookings.
-    // It will be NULL for all other product types.
-    public DateTime? ScheduledAt { get; private set; }
-    public DateTime? SessionEndTime { get; private set; }
     public string? TimeZoneId { get; private set; }
     public string? Note { get; private set; }
 
@@ -61,8 +57,6 @@ public class Order : Entity
         string? customerPhone,
         decimal amount,
         ProductType productType,
-        DateTime? scheduledAt = null,
-        DateTime? sessionEndTime = null,
         string? timeZoneId = null,
         string? note = null)
     {
@@ -77,8 +71,6 @@ public class Order : Entity
             CustomerPhone = customerPhone,
             Amount = amount,
             ProductType = productType,
-            ScheduledAt = scheduledAt,
-            SessionEndTime = sessionEndTime,
             TimeZoneId = timeZoneId,
             Note = note,
             Status = OrderStatus.Pending,
@@ -90,7 +82,12 @@ public class Order : Entity
     {
         AmountPaid = amountPaid;
         UpdatedAt = DateTime.UtcNow;
-        if (amountPaid == AmountPaid) Status = OrderStatus.Paid;
+        // Check if full amount is paid
+        if (AmountPaid >= Amount)
+        {
+            Status = OrderStatus.Paid;
+        }
+
     }
 
     public void SetPaymentInfo(string paymentRef, string? paymentUrl = null)

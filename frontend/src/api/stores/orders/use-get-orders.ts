@@ -16,8 +16,6 @@ export interface OrderResponse {
   amountPaid: number;
   status: 'Pending' | 'Paid' | 'Completed' | 'Failed' | 'Cancelled';
   paymentRef?: string;
-  scheduledAt?: string;
-  sessionEndTime?: string;
   timeZoneId?: string;
   note?: string;
   completedAt?: string;

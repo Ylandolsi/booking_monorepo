@@ -26,9 +26,11 @@ public class PaymentWebhookHandler(
     public async Task<Result> Handle(WebhookCommand command, CancellationToken cancellationToken)
     {
         logger.LogInformation("Received webhook (MenteePayment) for paymentRef: {paymentRef}", command.PaymentRef);
-        var payment = await context.Payments.FirstOrDefaultAsync(
-            p => p.Reference == command.PaymentRef,
-            cancellationToken);
+
+        // Lock for update to avoid race condition 
+        var payment = await context.Payments
+            .FromSqlRaw("SELECT * FROM catalog.payments WHERE reference = {0} FOR UPDATE", command.PaymentRef)
+            .FirstOrDefaultAsync(cancellationToken);
 
 
         if (payment == null)

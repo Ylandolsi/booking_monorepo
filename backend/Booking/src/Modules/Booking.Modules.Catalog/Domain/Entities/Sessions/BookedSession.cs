@@ -14,6 +14,7 @@ public class BookedSession : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
 
+    public int OrderId { get; private set; }
     public int ProductId { get; private set; }
     public string ProductSlug { get; private set; }
     public int StoreId { get; private set; }
@@ -40,37 +41,10 @@ public class BookedSession : Entity
 
     public DateTime? CompletedAt { get; private set; }
 
-    public static BookedSession Create(
-        int productId,
-        string productSlug,
-        int storeId,
-        string storeSlug,
-        int durationMinutes,
-        decimal priceAmount,
-        DateTime scheduledAt,
-        string title,
-        string note = ""
-    )
-    {
-        var session = new BookedSession
-        {
-            ProductId = productId,
-            ProductSlug = productSlug,
-            StoreId = storeId,
-            StoreSlug = storeSlug,
-            Duration = new Duration(durationMinutes),
-            Price = priceAmount,
-            Note = note?.Trim() ?? string.Empty,
-            Status = SessionStatus.Booked,
-            CreatedAt = DateTime.UtcNow,
-            ScheduledAt = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Utc),
-            Title = title
-        };
 
-        return session;
-    }
 
     public static BookedSession Create(
+        int orderId ,
         int productId,
         string productSlug,
         int storeId,
@@ -85,6 +59,7 @@ public class BookedSession : Entity
     {
         var session = new BookedSession
         {
+            OrderId = orderId ,
             ProductId = productId,
             ProductSlug = productSlug,
             StoreId = storeId,
