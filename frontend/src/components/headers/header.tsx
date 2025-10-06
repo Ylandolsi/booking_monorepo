@@ -1,10 +1,10 @@
-import { Logo } from '@/components/logo';
 import { Button, LoadingState } from '@/components/ui';
 import { useAuth } from '@/api/auth';
 import { useSideBar } from '@/stores';
-import { CreditCard, Menu, Sidebar } from 'lucide-react';
+import { CreditCard, Sidebar } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useGetWallet } from '@/api/stores';
+import { Notification } from '@/components/notifications';
 
 function BalanceHeader() {
   const { data: walletData, isLoading } = useGetWallet();
@@ -46,6 +46,7 @@ export function Header() {
         {
           <div className="flex h-7.5 items-center gap-2">
             <BalanceHeader />
+            <Notification />
             <ThemeToggle />
             {/* // TODO change this with link of store preview */}
           </div>
