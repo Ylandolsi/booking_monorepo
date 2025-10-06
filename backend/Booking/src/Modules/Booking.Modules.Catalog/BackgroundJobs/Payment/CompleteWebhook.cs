@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Booking.Common.Contracts.Users;
+using Booking.Common.RealTime;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
@@ -22,7 +23,8 @@ public class CompleteWebhook(
     CatalogDbContext dbContext,
     ILogger<CompleteWebhook> logger,
     GoogleCalendarService googleCalendarService,
-    IUsersModuleApi usersModuleApi)
+    IUsersModuleApi usersModuleApi,
+    NotificationService notificationService)
 {
     [DisplayName("Complete Webhook Jobs messages")]
     [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
@@ -103,6 +105,16 @@ public class CompleteWebhook(
                 logger.LogError("Store not found for session {SessionId} with storeId {StoreId}", session.Id,
                     session.StoreId);
 
+                // Send admin alert for missing store
+                await notificationService.SendAdminAlertAsync(
+                    title: "Store Not Found During Session Confirmation",
+                    message: $"Session {session.Id}: Store {session.StoreId} not found in database",
+                    severity: AdminAlertSeverity.Critical,
+                    metadata: new { SessionId = session.Id, StoreId = session.StoreId, OrderId = order.Id },
+                    relatedEntityId: session.Id.ToString(),
+                    relatedEntityType: "Session",
+                    cancellationToken: cancellationToken);
+
                 session.Confirm("https://meet.google.com/error-happend-while-integrating-with-google-calendar-please-contact-us");
                 return;
             }
@@ -111,6 +123,29 @@ public class CompleteWebhook(
             var sessionEndTime = sessionStartTime.AddMinutes(session.Duration.Minutes);
 
             var mentorData = await usersModuleApi.GetUserInfo(store.UserId, cancellationToken);
+
+            // Check if mentor has Google integration
+            if (string.IsNullOrEmpty(mentorData.GoogleEmail))
+            {
+                logger.LogError(
+                    "Mentor {UserId} not integrated with Google Calendar for session {SessionId}",
+                    store.UserId, session.Id);
+
+                await notificationService.SendIntegrationFailureAlertAsync(
+                    integrationName: "Google Calendar",
+                    orderId: order.Id.ToString(),
+                    errorMessage: $"Mentor (UserId: {store.UserId}) has not connected Google Calendar",
+                    additionalData: new
+                    {
+                        SessionId = session.Id,
+                        StoreId = store.Id,
+                        MentorUserId = store.UserId,
+                        CustomerEmail = order.CustomerEmail
+                    });
+
+                session.Confirm("https://meet.google.com/mentor-not-integrated-please-contact-support");
+                return;
+            }
 
             var emails = new List<string> { order.CustomerEmail, mentorData.GoogleEmail, mentorData.Email };
 
@@ -129,9 +164,26 @@ public class CompleteWebhook(
             await googleCalendarService.InitializeAsync(store.UserId);
 
             var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
+            
             if (resEventMentor.IsFailure)
+            {
                 logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
                     session.Id, resEventMentor.Error.Description);
+
+                // Send admin alert for Google Calendar API failure
+                await notificationService.SendIntegrationFailureAlertAsync(
+                    integrationName: "Google Calendar API",
+                    orderId: order.Id.ToString(),
+                    errorMessage: resEventMentor.Error.Description,
+                    additionalData: new
+                    {
+                        SessionId = session.Id,
+                        ErrorCode = resEventMentor.Error.Code,
+                        MentorUserId = store.UserId,
+                        SessionStartTime = sessionStartTime,
+                        SessionEndTime = sessionEndTime
+                    });
+            }
 
             var meetLink = resEventMentor.IsSuccess
                 ? resEventMentor.Value.HangoutLink
@@ -143,7 +195,28 @@ public class CompleteWebhook(
         {
             logger.LogError(e, "Error occurred with Google Calendar integration for order {OrderId}: {ErrorMessage}",
                 order?.Id, e.Message);
-            session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
+
+            // Send critical admin alert for unexpected exceptions
+            await notificationService.SendAdminAlertAsync(
+                title: "Critical: Google Calendar Integration Exception",
+                message: $"Unexpected error during session confirmation for order {order?.Id}",
+                severity: AdminAlertSeverity.Critical,
+                metadata: new
+                {
+                    OrderId = order?.Id,
+                    SessionId = session?.Id,
+                    ExceptionType = e.GetType().Name,
+                    ExceptionMessage = e.Message,
+                    StackTrace = e.StackTrace
+                },
+                relatedEntityId: order?.Id.ToString(),
+                relatedEntityType: "Order",
+                cancellationToken: cancellationToken);
+
+            if (session != null)
+            {
+                session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
+            }
         }
     }
 }
