@@ -30,7 +30,7 @@ public class AdminNotification : Entity
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; private set; }
-    
+
     public string Title { get; private set; } = string.Empty;
     public string Message { get; private set; } = string.Empty;
     public AdminNotificationSeverity Severity { get; private set; }

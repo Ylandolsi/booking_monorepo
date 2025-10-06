@@ -164,7 +164,7 @@ public class CompleteWebhook(
             await googleCalendarService.InitializeAsync(store.UserId);
 
             var resEventMentor = await googleCalendarService.CreateEventWithMeetAsync(meetRequest, cancellationToken);
-            
+
             if (resEventMentor.IsFailure)
             {
                 logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",

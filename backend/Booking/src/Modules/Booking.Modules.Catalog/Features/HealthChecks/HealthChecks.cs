@@ -75,7 +75,7 @@ public class HangfireHealthCheck : IHealthCheck
         {
             var monitoringApi = JobStorage.Current.GetMonitoringApi();
             var servers = monitoringApi.Servers();
-            
+
             if (servers.Count == 0)
             {
                 _logger.LogWarning("Hangfire health check: No Hangfire servers are running");
@@ -144,7 +144,7 @@ public class GoogleCalendarHealthCheck : IHealthCheck
         {
             // This is a basic check - you might need to adjust based on your GoogleCalendarService implementation
             // For a real check, you'd want to verify API accessibility without requiring a specific user
-            
+
             var data = new Dictionary<string, object>
             {
                 { "service", "Google Calendar API" },

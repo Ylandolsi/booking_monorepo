@@ -70,7 +70,7 @@ public class NotificationHub : Hub
     public override async Task OnConnectedAsync()
     {
         var userId = Context.UserIdentifier ?? Context.User?.Identity?.Name;
-        
+
         _logger.LogInformation(
             "User {UserId} connected to notification hub with connection {ConnectionId}",
             userId ?? "Unknown", Context.ConnectionId);
@@ -81,7 +81,7 @@ public class NotificationHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var userId = Context.UserIdentifier ?? Context.User?.Identity?.Name;
-        
+
         if (exception != null)
         {
             _logger.LogWarning(exception,

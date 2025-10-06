@@ -27,6 +27,7 @@ This document describes the admin notification system and health check endpoints
 ### Components Created
 
 #### 1.1 AdminNotification Entity
+
 **Location**: `Domain/Entities/AdminNotification.cs`
 
 ```csharp
@@ -46,22 +47,27 @@ public class AdminNotification : Entity
 ```
 
 #### 1.2 Enhanced NotificationService
+
 **Location**: `Common/RealTime/NotificationService.cs`
 
 **New Methods**:
+
 - `SendAdminAlertAsync()` - Send critical alerts to admins
 - `SendIntegrationFailureAlertAsync()` - Notify about integration failures
 - `SendPaymentAnomalyAlertAsync()` - Alert about payment issues
 - `SendSessionBookingAlertAsync()` - Notify about booking problems
 
 #### 1.3 Enhanced NotificationHub
+
 **Location**: `Common/RealTime/NotificationHub.cs`
 
 **New Methods**:
+
 - `JoinAdminGroup()` - Admin users join to receive alerts (requires Admin role)
 - `LeaveAdminGroup()` - Leave admin notification group
 
 #### 1.4 Admin Notification Persistence
+
 **Location**: `Features/AdminNotifications/AdminNotificationPersistence.cs`
 
 Implements `IAdminNotificationPersistence` to save notifications to database.
@@ -76,6 +82,7 @@ Implements `IAdminNotificationPersistence` to save notifications to database.
 - `DELETE /api/admin/notifications/{id}` - Delete notification
 
 **Query Parameters**:
+
 ```
 GET /api/admin/notifications?page=1&pageSize=20&unreadOnly=true&severity=Critical
 ```
@@ -107,35 +114,35 @@ await notificationService.SendAdminAlertAsync(
 #### Frontend - SignalR Connection (JavaScript/TypeScript)
 
 ```typescript
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 // Connect to SignalR hub
 const connection = new HubConnectionBuilder()
-    .withUrl('/hubs/notifications', {
-        accessTokenFactory: () => getAuthToken()
-    })
-    .withAutomaticReconnect()
-    .build();
+  .withUrl("/hubs/notifications", {
+    accessTokenFactory: () => getAuthToken(),
+  })
+  .withAutomaticReconnect()
+  .build();
 
 // Join admin group (for admin users only)
-await connection.invoke('JoinAdminGroup');
+await connection.invoke("JoinAdminGroup");
 
 // Listen for admin alerts
-connection.on('ReceiveAdminAlert', (alert) => {
-    console.log('Admin Alert:', alert);
-    // alert structure:
-    // {
-    //   id: string,
-    //   type: "admin_alert",
-    //   title: string,
-    //   message: string,
-    //   severity: "Critical" | "Error" | "Warning" | "Info",
-    //   createdAt: Date,
-    //   metadata: object
-    // }
-    
-    // Show notification in UI
-    showAdminNotification(alert);
+connection.on("ReceiveAdminAlert", (alert) => {
+  console.log("Admin Alert:", alert);
+  // alert structure:
+  // {
+  //   id: string,
+  //   type: "admin_alert",
+  //   title: string,
+  //   message: string,
+  //   severity: "Critical" | "Error" | "Warning" | "Info",
+  //   createdAt: Date,
+  //   metadata: object
+  // }
+
+  // Show notification in UI
+  showAdminNotification(alert);
 });
 
 await connection.start();
@@ -148,37 +155,47 @@ await connection.start();
 ### Available Health Checks
 
 #### 2.1 Database Health Check
+
 **Location**: `Features/HealthChecks/HealthChecks.cs`
 
 Checks:
+
 - Database connectivity
 - Query execution
 - Returns order count as diagnostic data
 
 #### 2.2 Hangfire Health Check
+
 Checks:
+
 - Hangfire server status
 - Job statistics (enqueued, processing, failed)
 - Alerts if failed jobs > 100
 
 #### 2.3 Google Calendar Health Check
+
 Checks:
+
 - Google Calendar service configuration
 - API availability
 
 #### 2.4 Konnect Payment Health Check
+
 Checks:
+
 - Payment gateway configuration
 - HTTP client factory setup
 
 ### Health Check Endpoints
 
 #### 2.1 Comprehensive Health Check
+
 ```
 GET /health
 ```
 
 **Response**:
+
 ```json
 {
   "status": "Healthy",
@@ -214,6 +231,7 @@ GET /health
 ```
 
 #### 2.2 Liveness Check
+
 ```
 GET /health/live
 ```
@@ -221,6 +239,7 @@ GET /health/live
 Simple check if service is running (no dependencies checked).
 
 #### 2.3 Readiness Check
+
 ```
 GET /health/ready
 ```
@@ -317,66 +336,68 @@ npm install @microsoft/signalr
 
 ```typescript
 // hooks/useAdminNotifications.ts
-import { useState, useEffect } from 'react';
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { useState, useEffect } from "react";
+import { HubConnectionBuilder, HubConnection } from "@microsoft/signalr";
 
 interface AdminAlert {
-    id: string;
-    type: string;
-    title: string;
-    message: string;
-    severity: 'Info' | 'Warning' | 'Error' | 'Critical';
-    createdAt: Date;
-    metadata?: any;
+  id: string;
+  type: string;
+  title: string;
+  message: string;
+  severity: "Info" | "Warning" | "Error" | "Critical";
+  createdAt: Date;
+  metadata?: any;
 }
 
 export function useAdminNotifications() {
-    const [connection, setConnection] = useState<HubConnection | null>(null);
-    const [alerts, setAlerts] = useState<AdminAlert[]>([]);
+  const [connection, setConnection] = useState<HubConnection | null>(null);
+  const [alerts, setAlerts] = useState<AdminAlert[]>([]);
 
-    useEffect(() => {
-        const newConnection = new HubConnectionBuilder()
-            .withUrl('/hubs/notifications', {
-                accessTokenFactory: () => localStorage.getItem('authToken') || ''
-            })
-            .withAutomaticReconnect()
-            .build();
+  useEffect(() => {
+    const newConnection = new HubConnectionBuilder()
+      .withUrl("/hubs/notifications", {
+        accessTokenFactory: () => localStorage.getItem("authToken") || "",
+      })
+      .withAutomaticReconnect()
+      .build();
 
-        setConnection(newConnection);
+    setConnection(newConnection);
 
-        return () => {
-            newConnection.stop();
-        };
-    }, []);
+    return () => {
+      newConnection.stop();
+    };
+  }, []);
 
-    useEffect(() => {
-        if (connection) {
-            connection.start()
-                .then(() => {
-                    console.log('Connected to SignalR');
-                    
-                    // Join admin group
-                    connection.invoke('JoinAdminGroup')
-                        .catch(err => console.error('Failed to join admin group:', err));
+  useEffect(() => {
+    if (connection) {
+      connection
+        .start()
+        .then(() => {
+          console.log("Connected to SignalR");
 
-                    // Listen for admin alerts
-                    connection.on('ReceiveAdminAlert', (alert: AdminAlert) => {
-                        setAlerts(prev => [alert, ...prev]);
-                        
-                        // Show browser notification
-                        if (Notification.permission === 'granted') {
-                            new Notification(alert.title, {
-                                body: alert.message,
-                                icon: '/admin-alert-icon.png'
-                            });
-                        }
-                    });
-                })
-                .catch(err => console.error('SignalR Connection Error:', err));
-        }
-    }, [connection]);
+          // Join admin group
+          connection
+            .invoke("JoinAdminGroup")
+            .catch((err) => console.error("Failed to join admin group:", err));
 
-    return { alerts, connection };
+          // Listen for admin alerts
+          connection.on("ReceiveAdminAlert", (alert: AdminAlert) => {
+            setAlerts((prev) => [alert, ...prev]);
+
+            // Show browser notification
+            if (Notification.permission === "granted") {
+              new Notification(alert.title, {
+                body: alert.message,
+                icon: "/admin-alert-icon.png",
+              });
+            }
+          });
+        })
+        .catch((err) => console.error("SignalR Connection Error:", err));
+    }
+  }, [connection]);
+
+  return { alerts, connection };
 }
 ```
 
@@ -385,33 +406,34 @@ export function useAdminNotifications() {
 ```typescript
 // api/adminNotifications.ts
 export async function getAdminNotifications(params: {
-    page?: number;
-    pageSize?: number;
-    unreadOnly?: boolean;
-    severity?: string;
+  page?: number;
+  pageSize?: number;
+  unreadOnly?: boolean;
+  severity?: string;
 }) {
-    const queryParams = new URLSearchParams();
-    if (params.page) queryParams.append('page', params.page.toString());
-    if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
-    if (params.unreadOnly) queryParams.append('unreadOnly', 'true');
-    if (params.severity) queryParams.append('severity', params.severity);
+  const queryParams = new URLSearchParams();
+  if (params.page) queryParams.append("page", params.page.toString());
+  if (params.pageSize)
+    queryParams.append("pageSize", params.pageSize.toString());
+  if (params.unreadOnly) queryParams.append("unreadOnly", "true");
+  if (params.severity) queryParams.append("severity", params.severity);
 
-    const response = await fetch(`/api/admin/notifications?${queryParams}`, {
-        headers: {
-            'Authorization': `Bearer ${getToken()}`
-        }
-    });
+  const response = await fetch(`/api/admin/notifications?${queryParams}`, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 
-    return response.json();
+  return response.json();
 }
 
 export async function markNotificationRead(id: number) {
-    await fetch(`/api/admin/notifications/${id}/mark-read`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${getToken()}`
-        }
-    });
+  await fetch(`/api/admin/notifications/${id}/mark-read`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
 }
 ```
 
@@ -428,19 +450,19 @@ public async Task Should_Send_Admin_Alert_When_Google_Calendar_Fails()
 {
     // Arrange
     var notificationService = GetService<NotificationService>();
-    
+
     // Act
     await notificationService.SendIntegrationFailureAlertAsync(
         "Google Calendar",
         "123",
         "API rate limit exceeded"
     );
-    
+
     // Assert
     var notifications = await DbContext.AdminNotifications
         .Where(n => n.Type == AdminNotificationType.IntegrationFailure)
         .ToListAsync();
-    
+
     Assert.Single(notifications);
     Assert.Equal("Google Calendar Integration Failed", notifications[0].Title);
 }
@@ -514,6 +536,7 @@ GROUP BY severity;
 ### Immediate Actions Required:
 
 1. **Run Database Migration**
+
    ```bash
    dotnet ef migrations add AddAdminNotifications --context CatalogDbContext
    dotnet ef database update
@@ -524,6 +547,7 @@ GROUP BY severity;
 3. **Map Endpoints** in Program.cs
 
 4. **Test Integration**
+
    - Trigger a Google Calendar failure to test notifications
    - Access `/health` endpoint to verify health checks
 
@@ -548,11 +572,13 @@ GROUP BY severity;
 ### Common Issues:
 
 1. **SignalR Connection Fails**
+
    - Verify CORS settings include SignalR endpoint
    - Check authentication token is being sent
    - Ensure admin role claim is present
 
 2. **Health Checks Return Unhealthy**
+
    - Check database connection string
    - Verify Hangfire is running
    - Test external API connectivity
@@ -567,6 +593,7 @@ GROUP BY severity;
 ## 📞 Support
 
 For issues or questions, check:
+
 - Application logs for detailed error messages
 - Health check endpoint for system status
 - Admin notifications table for persisted alerts

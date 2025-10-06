@@ -21,7 +21,7 @@ public class GetAdminNotificationsEndpoint : IEndpoint
         {
             var query = new GetAdminNotificationsQuery(page, pageSize, unreadOnly, severity);
             var result = await handler.Handle(query, cancellationToken);
-            
+
             return result.Match(
                 value => Results.Ok(value),
                 CustomResults.Problem
@@ -44,7 +44,7 @@ public class MarkNotificationReadEndpoint : IEndpoint
         {
             var command = new MarkNotificationReadCommand(id);
             var result = await handler.Handle(command, cancellationToken);
-            
+
             return result.Match(
                 () => Results.Ok(),
                 CustomResults.Problem
@@ -66,7 +66,7 @@ public class MarkAllNotificationsReadEndpoint : IEndpoint
         {
             var command = new MarkAllNotificationsReadCommand();
             var result = await handler.Handle(command, cancellationToken);
-            
+
             return result.Match(
                 () => Results.Ok(),
                 CustomResults.Problem
@@ -89,7 +89,7 @@ public class DeleteAdminNotificationEndpoint : IEndpoint
         {
             var command = new DeleteAdminNotificationCommand(id);
             var result = await handler.Handle(command, cancellationToken);
-            
+
             return result.Match(
                 () => Results.Ok(),
                 CustomResults.Problem
