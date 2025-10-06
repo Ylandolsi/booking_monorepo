@@ -77,7 +77,7 @@ interface Product {
   [key: string]: string | number; // Add index signature
 }
 
-const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+const COLORS = ['--chart-1', '--chart-2', '--chart-3', '--chart-4', '--chart-5'];
 
 export function AnalyticsPage() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('month');
@@ -335,6 +335,7 @@ export function AnalyticsPage() {
                           borderRadius: '8px',
                         }}
                       />
+
                       <Area type="monotone" dataKey="revenue" stroke="#10b981" fillOpacity={1} fill="url(#colorRevenue)" />
                     </AreaChart>
                   </ResponsiveContainer>
@@ -352,7 +353,7 @@ export function AnalyticsPage() {
                     <PieChart>
                       <Pie data={productData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="revenue" label>
                         {productData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <Cell key={`cell-${index}`} fill={`var(${COLORS[index % COLORS.length]})`} />
                         ))}
                       </Pie>
                       <Tooltip
@@ -380,8 +381,11 @@ export function AnalyticsPage() {
                   {productData.map((product, index) => (
                     <div key={product.id} className="border-border flex items-center justify-between rounded-lg border p-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg" style={{ backgroundColor: COLORS[index] }}>
-                          <span className="font-bold text-white">{index + 1}</span>
+                        <div
+                          className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg"
+                          // style={{ backgroundColor: `var(${COLORS[index % COLORS.length]})` }}
+                        >
+                          <span className="text-primary-foreground font-bold">{index + 1}</span>
                         </div>
                         <div>
                           <p className="font-semibold">{product.name}</p>
@@ -446,7 +450,7 @@ export function AnalyticsPage() {
                           borderRadius: '8px',
                         }}
                       />
-                      <Bar dataKey="sales" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                      <Bar dataKey="sales" fill={`var(${COLORS[2]})`} radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -464,8 +468,8 @@ export function AnalyticsPage() {
                   {productData.map((product, index) => (
                     <div key={product.id} className="border-border flex items-center justify-between rounded-lg border p-4">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500">
-                          <span className="font-bold text-white">{index + 1}</span>
+                        <div className="bg-primary flex h-10 w-10 items-center justify-center rounded-lg">
+                          <span className="text-primary-foreground font-bold">{index + 1}</span>
                         </div>
                         <div>
                           <p className="font-semibold">{product.name}</p>
@@ -510,7 +514,7 @@ export function AnalyticsPage() {
                       borderRadius: '8px',
                     }}
                   />
-                  <Area type="monotone" dataKey="customers" stroke="#8b5cf6" fillOpacity={1} fill="url(#colorCustomers)" />
+                  <Area type="monotone" dataKey="customers" stroke={`var(${COLORS[4]})`} fillOpacity={1} fill="url(#colorCustomers)" />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>
@@ -536,8 +540,9 @@ export function AnalyticsPage() {
                     }}
                   />
                   <Legend />
-                  <Bar dataKey="visitors" fill="#f59e0b" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="customers" fill="#10b981" radius={[8, 8, 0, 0]} />
+
+                  <Bar dataKey="visitors" fill={`var(${COLORS[0]})`} radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="customers" fill={`var(${COLORS[1]})`} radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
