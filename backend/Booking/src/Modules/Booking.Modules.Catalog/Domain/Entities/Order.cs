@@ -43,6 +43,7 @@ public class Order : Entity
     public string? Note { get; private set; }
 
     public DateTime? CompletedAt { get; private set; }
+    public DateTime? StatsProcessedAt { get; private set; }
 
     // Navigation properties
     public Store Store { get; private set; } = null!;
@@ -116,5 +117,10 @@ public class Order : Entity
     {
         Status = OrderStatus.Cancelled;
         UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void MarkStatsProcessed()
+    {
+        StatsProcessedAt = DateTime.UtcNow;
     }
 }

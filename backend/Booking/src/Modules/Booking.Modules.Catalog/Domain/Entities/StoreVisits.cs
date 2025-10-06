@@ -12,6 +12,7 @@ public class StoreVisit : Entity
     public string UserAgent { get; private set; }
     public string? IpAddress { get; private set; }
     public string? Referrer { get; private set; }
+    public DateTime? StatsProcessedAt { get; private set; }
 
     public StoreVisit(
         string storeSlug,
@@ -25,5 +26,10 @@ public class StoreVisit : Entity
         UserAgent = userAgent;
         IpAddress = ipAddress;
         Referrer = referrer;
+    }
+
+    public void MarkStatsProcessed()
+    {
+        StatsProcessedAt = DateTime.UtcNow;
     }
 }
