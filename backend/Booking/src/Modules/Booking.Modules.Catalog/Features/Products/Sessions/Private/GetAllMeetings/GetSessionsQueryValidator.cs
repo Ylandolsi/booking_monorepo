@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Booking.Modules.Catalog.Features.Products.GetAllMeetings;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetAllMeetings;
 
 public class GetSessionsQueryValidator : AbstractValidator<GetSessionsQuery>
 {

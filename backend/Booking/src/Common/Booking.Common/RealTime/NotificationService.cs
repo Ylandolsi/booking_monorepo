@@ -80,6 +80,7 @@ public class NotificationService
                 Metadata: metadata
             );
 
+            
             // Send real-time notification to connected admins
             if (_hubContext != null)
             {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products;
+namespace Booking.Modules.Catalog.Features.Products.Arrange;
 
 public class ArrangeProductsOrderEndpoint : IEndpoint
 {

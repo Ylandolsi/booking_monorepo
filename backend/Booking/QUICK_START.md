@@ -142,6 +142,12 @@ services.AddScoped<NotificationService>(sp => {
     var logger = sp.GetRequiredService<ILogger<NotificationService>>();
     var persistence = sp.GetService<IAdminNotificationPersistence>(); // <-- Must be included
     return new NotificationService(hubContext, logger, persistence);
+
+    // Handling Optional Dependencies:
+    //  Notice persistence uses GetService<T>() (returns null if not registered),
+    //  while logger uses GetRequiredService<T>() (throws if missing).
+    //  This ensures NotificationService can be created even if IAdminNotificationPersistence isn't available
+    //  avoiding runtime errors during DI resolution.
 });
 ```
 

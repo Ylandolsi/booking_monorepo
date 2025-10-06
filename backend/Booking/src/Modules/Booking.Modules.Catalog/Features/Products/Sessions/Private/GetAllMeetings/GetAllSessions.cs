@@ -1,5 +1,3 @@
-
-
 using Booking.Common.Authentication;
 using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
@@ -9,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.Products.GetAllMeetings;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetAllMeetings;
 
 internal sealed class GetAllSessions : IEndpoint
 {

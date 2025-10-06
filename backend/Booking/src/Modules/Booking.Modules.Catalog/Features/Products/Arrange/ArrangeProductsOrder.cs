@@ -1,12 +1,11 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Catalog.Domain;
-using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products;
+namespace Booking.Modules.Catalog.Features.Products.Arrange;
 
 public record ArrangeProductsOrderCommand : ICommand
 {

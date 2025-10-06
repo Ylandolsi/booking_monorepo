@@ -8,7 +8,7 @@ using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.Features.Products.GetAllMeetings;
+namespace Booking.Modules.Catalog.Features.Products.Sessions.Private.GetAllMeetings;
 
 public sealed record GetSessionsQuery(
     int UserId,

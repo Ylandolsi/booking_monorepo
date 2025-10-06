@@ -5,6 +5,7 @@ using Booking.Modules.Catalog.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
+namespace Booking.Modules.Catalog.Features.Products.TogglePublished;
 
 public record TogglePublishedResponse(string Slug, bool IsPublished);
 public record TogglePublishedCommand(int UserId, string Slug) : ICommand<TogglePublishedResponse>;
