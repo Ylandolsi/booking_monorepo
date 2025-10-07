@@ -1,15 +1,19 @@
+### Service Registration Required:
+
 ```csharp
-// Register health checks
+// In your DI container setup (Program.cs or Module)
+
+// 1. Register health checks
 services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("database", tags: new[] { "ready" })
     .AddCheck<HangfireHealthCheck>("hangfire", tags: new[] { "ready" })
     .AddCheck<GoogleCalendarHealthCheck>("google_calendar", tags: new[] { "ready" })
     .AddCheck<KonnectPaymentHealthCheck>("konnect_payment", tags: new[] { "ready" });
 
-// Register admin notification persistence
+// 2. Register admin notification persistence
 services.AddScoped<IAdminNotificationPersistence, AdminNotificationPersistence>();
 
-// Update NotificationService registration to include persistence
+// 3. Update NotificationService to include persistence
 services.AddScoped<NotificationService>(sp =>
 {
     var hubContext = sp.GetService<IHubContext<NotificationHub>>();
@@ -18,6 +22,16 @@ services.AddScoped<NotificationService>(sp =>
     return new NotificationService(hubContext, logger, persistence);
 });
 ```
+
+---
+
+## 🎯 Final Pre-Go-Live Checklist
+
+- [ ] Set up production monitoring dashboard
+- [ ] Configure Kubernetes/Docker health probes
+- [ ] Test admin SignalR notifications
+
+---
 
 ### Admin Dashboard Example (React/TypeScript)
 
