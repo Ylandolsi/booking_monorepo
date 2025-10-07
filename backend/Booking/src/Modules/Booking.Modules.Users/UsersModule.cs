@@ -11,7 +11,7 @@ using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Google;
 using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Persistence;
- 
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -86,6 +86,18 @@ public static class UsersModule
         services.AddScoped<SendingPasswordResetToken>();
 
         return services;
+    }
+
+    public static void ConfigureBackgroundJobs()
+    {
+        RecurringJob.AddOrUpdate<TokenCleanupJob>(
+            "token-cleanup-job",
+            job => job.CleanUpAsync(null), //  // todo : review this null context 
+            Cron.Daily(1, 0), // Runs daily at 2:00 AM GMT+1 
+            new RecurringJobOptions
+            {
+                TimeZone = TimeZoneInfo.Utc // timezone = GMT (UTC)
+            });
     }
 
     public static IServiceCollection AddResielenecPipelines(this IServiceCollection services,

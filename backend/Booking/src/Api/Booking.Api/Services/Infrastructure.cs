@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using Amazon;
 using Amazon.Extensions.NETCore.Setup;
@@ -8,7 +9,9 @@ using Booking.Common;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
 using Booking.Common.Options;
+using Booking.Modules.Catalog;
 using Booking.Modules.Catalog.Features.HealthChecks;
+using Booking.Modules.Notifications;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Persistence;
@@ -25,6 +28,7 @@ public static class Infrastructure
         WebApplicationBuilder builder)
     {
         return services
+            .AddJsonConfig()
             .AddCors()
             .AddEnumToString()
             .AddOptions(configuration)
@@ -35,7 +39,9 @@ public static class Infrastructure
             .AddIdentityCore()
             .AddHealthChecks(configuration)
             .AddAuthenticationInternal(configuration)
-            .AddAuthorizationInternal();
+            .AddAuthorizationInternal()
+            .AddModules(configuration)
+            .AddAssembliesAndCommandQueryHandlerDI();
     }
     //.AddObservability(builder);
 
@@ -69,7 +75,19 @@ public static class Infrastructure
 
     }*/
 
-    public static IServiceCollection AddEnumToString(this IServiceCollection services)
+    private static IServiceCollection AddJsonConfig(this IServiceCollection services)
+    {
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            // ignore circular references in JSON serialization 
+            options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
+
+        return services;
+    }
+    
+
+    private static IServiceCollection AddEnumToString(this IServiceCollection services)
     {
         // Map enums to strings 
         services.Configure<JsonOptions>(options =>
@@ -231,6 +249,30 @@ public static class Infrastructure
 
         // S3 
         services.AddAWSService<IAmazonS3>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddModules(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddCatalogModule(configuration);
+        services.AddUsersModule(configuration);
+        services.AddNotificationsModule(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddAssembliesAndCommandQueryHandlerDI(this IServiceCollection services)
+    {
+        Assembly[] moduleApplicationAssemblies =
+        [
+            Booking.Modules.Users.AssemblyReference.Assembly,
+            Booking.Modules.Catalog.AssemblyReference.Assembly,
+            Booking.Modules.Notifications.AssemblyReference.Assembly,
+        ];
+
+
+        services.AddApplication(moduleApplicationAssemblies);
 
         return services;
     }

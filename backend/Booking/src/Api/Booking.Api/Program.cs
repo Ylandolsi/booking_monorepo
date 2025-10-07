@@ -7,20 +7,11 @@ using Booking.Common;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog;
 using Booking.Modules.Catalog.Features.HealthChecks;
-using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Users;
-using Booking.Modules.Users.Domain.Entities;
-using Booking.Modules.Users.Features.Authentication;
-using Booking.Modules.Users.Persistence;
-using Booking.Modules.Users.RecurringJobs;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Identity;
+using Booking.Modules.Notifications;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
-using AssemblyReference = Booking.Modules.Catalog.AssemblyReference;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
@@ -29,28 +20,15 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    // ignore circular references in JSON serialization 
-    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-});
 builder.Services.AddControllers();
 // builder.Services.AddAntiforgery();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
 
-Assembly[] moduleApplicationAssemblies =
-[
-    AssemblyReference.Assembly,
-    //Booking.Modules.Mentorships.AssemblyReference.Assembly,
-    Booking.Modules.Users.AssemblyReference.Assembly,
-    Booking.Modules.Catalog.AssemblyReference.Assembly,
-];
 
 
 builder.Services.AddInfrastructure(builder.Configuration, builder);
-builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
 //builder.Services.TryAddSingleton(typeof(IUserIdProvider), typeof(SignalRCustomUserIdProvider));
@@ -64,8 +42,6 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 // for each module add its own app.settings.json ..
 // builder.Configuration.AddModuleConfiguration(["users"]);
 
-builder.Services.AddCatalogModule(builder.Configuration);
-builder.Services.AddUsersModule(builder.Configuration);
 
 
 // builder.Services.AddScoped<NotificationService>();

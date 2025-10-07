@@ -11,6 +11,7 @@ using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Features.Stores.StoreVisit;
 using Booking.Modules.Catalog.Persistence;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
@@ -78,5 +79,18 @@ public static class CatalogModule
         services.AddScoped<StoreVisitBatchJob>();
         services.AddScoped<StoreStatsAggregatorJob>();
         return services;
+    }
+
+    public static void ConfigureBackgroundJobs()
+    {
+        RecurringJob.AddOrUpdate<StoreVisitBatchJob>(
+            "store-batch-visits-job",
+            job => job.ExecuteAsync(null), // todo : review this null context 
+            "*/3 * * * *"); // run every 3 minutes
+
+        RecurringJob.AddOrUpdate<StoreStatsAggregatorJob>(
+            "store-stats-aggregator-job",
+            job => job.ExecuteAsync(null),
+            "*/15 * * * *"); // Run every 15 minutes
     }
 }
