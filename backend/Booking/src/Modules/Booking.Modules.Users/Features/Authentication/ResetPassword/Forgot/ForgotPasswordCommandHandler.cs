@@ -41,12 +41,11 @@ internal sealed class ForgotPasswordCommandHandler(
             };
             var resetUrl = builder.ToString();
 
-            // ✅ Simple one-liner! Queue the email with automatic retries & background processing
             await notificationService.EnqueueEmailAsync(new SendEmailRequest
             {
                 Recipient = command.Email,
                 Subject = "Reset Your Password",
-                TemplateName = "PasswordResetEmail", // Use the embedded template
+                TemplateName = "PasswordResetEmail",
                 TemplateData = new
                 {
                     RESET_LINK = resetUrl,
@@ -54,7 +53,7 @@ internal sealed class ForgotPasswordCommandHandler(
                     SUPPORT_LINK = frontendApplicationOptions.SupportLink,
                     SECURITY_LINK = frontendApplicationOptions.SecurityLink
                 },
-                Priority = NotificationPriority.High, // High priority for password resets
+                Priority = NotificationPriority.High,
                 CorrelationId = $"pwd-reset-{user.Id}" // For tracking
             }, cancellationToken);
         }

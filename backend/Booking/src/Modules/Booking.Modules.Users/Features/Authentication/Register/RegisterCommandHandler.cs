@@ -1,13 +1,17 @@
-﻿using Booking.Common.Messaging;
+﻿using Booking.Common.Authentication;
+using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Common.SlugGenerator;
+using Booking.Modules.Notifications.Abstractions;
+using Booking.Modules.Notifications.Contracts;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Persistence;
- 
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.Features.Authentication.Register;
 
@@ -16,10 +20,14 @@ internal sealed class RegisterCommandHandler(
     UsersDbContext context,
     IUnitOfWork unitOfWork,
     SlugGenerator slugGenerator,
-    EmailVerificationSender emailVerificationSender,
+    EmailVerificationLinkFactory emailVerificationLinkFactory,
+    IOptions<FrontendApplicationOptions> frontendApplicationOptions,
+    INotificationService notificationService,
     ILogger<RegisterCommandHandler> logger)
     : ICommandHandler<RegisterCommand>
 {
+    private readonly FrontendApplicationOptions _frontendApplicationOptions = frontendApplicationOptions.Value;
+
     public async Task<Result> Handle(RegisterCommand command,
         CancellationToken cancellationToken)
     {
@@ -72,9 +80,19 @@ internal sealed class RegisterCommandHandler(
             logger.LogInformation("User registered successfully with email: {Email}", command.Email);
 
             user = (await context.Users.FirstOrDefaultAsync(u => u.Email == command.Email, cancellationToken))!;
-            await emailVerificationSender.SendVerificationEmailAsync(user);
 
-            logger.LogInformation("email verification background job triggered for user with ID: {UserId}", user.Id);
+            var emailVerificationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+            var verificationEmailLink = emailVerificationLinkFactory.Create(emailVerificationToken, user.Email!);
+
+            var emailResult = await VerificationEmailForRegistrationJob(user.Email!, verificationEmailLink, cancellationToken);
+            if (!emailResult.IsSuccess)
+            {
+                logger.LogWarning("Failed to enqueue verification email for user with email: {Email}", command.Email);
+            }
+            else
+            {
+                logger.LogInformation("Enqueued verification email for user with email: {Email}", command.Email);
+            }
 
             await unitOfWork.SaveChangesAsync(cancellationToken);
             await unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -92,5 +110,33 @@ internal sealed class RegisterCommandHandler(
 
         // TODO : in front end : 
         // Welcome! Please confirm your email to complete registration
+    }
+    public async Task<Result> VerificationEmailForRegistrationJob(string userEmail, string verificationLink, CancellationToken cancellationToken)
+    {
+        var request = new SendEmailRequest
+        {
+            Recipient = userEmail,
+            Subject = "Verify Your Email", // Will be overridden by template
+            TemplateName = "VerificationEmailForRegistration",
+            TemplateData = new
+            {
+                VERIFICATION_LINK = verificationLink,
+                APP_NAME = _frontendApplicationOptions.AppName,
+                SUPPORT_LINK = _frontendApplicationOptions.SupportLink,
+                SECURITY_LINK = _frontendApplicationOptions.SecurityLink
+            },
+            NotificationReference = $"verification-{userEmail}-{DateTime.UtcNow:yyyyMMdd}",
+            Priority = NotificationPriority.High
+        };
+
+        var result = await notificationService.EnqueueEmailAsync(request, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return Result.Failure(
+                RegisterErrors.UserRegistrationFailed("An unexpected error occurred during sending email verification when registering."));
+        }
+
+        return Result.Success();
     }
 }

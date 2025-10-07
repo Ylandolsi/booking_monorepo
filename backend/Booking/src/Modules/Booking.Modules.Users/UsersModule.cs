@@ -4,12 +4,9 @@ using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
 using Booking.Modules.Users.BackgroundJobs.Cleanup;
-using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
-using Booking.Modules.Users.BackgroundJobs.SendingVerificationEmail;
 using Booking.Modules.Users.Contracts;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Features.Authentication.Google;
-using Booking.Modules.Users.Features.Authentication.Verification;
 using Booking.Modules.Users.Persistence;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
@@ -51,7 +48,6 @@ public static class UsersModule
 
         services.AddScoped<SlugGenerator>();
 
-        services.AddScoped<EmailVerificationSender>();
         services.AddScoped<TokenHelper>();
 
         services.AddScoped<GoogleTokenService>();
@@ -81,9 +77,7 @@ public static class UsersModule
 
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
-        services.AddScoped<VerificationEmailForRegistrationJob>();
         services.AddScoped<TokenCleanupJob>();
-        services.AddScoped<SendingPasswordResetToken>();
 
         return services;
     }
