@@ -4,6 +4,20 @@ A robust, database-backed notification module implementing the **Outbox Pattern*
 
 ---
 
+## Features
+
+- ✅ **Outbox Pattern**: Transactional safety - emails are only sent if the database transaction succeeds
+- ✅ **Automatic Retries**: Exponential backoff retry mechanism (configurable, default: 3 attempts)
+- ✅ **Background Processing**: Asynchronous delivery using Hangfire
+- ✅ **Idempotency**: Deduplication via NotificationReference to prevent duplicate sends
+- ✅ **Template Engine**: Embedded HTML email templates with variable substitution
+- ✅ **Priority Support**: Critical, High, Normal, Low priority levels
+- ✅ **Scheduled Delivery**: Queue emails for future delivery
+- ✅ **Status Tracking**: Monitor notification delivery status and history
+- ✅ **AWS SES Integration**: Production-ready email delivery with Polly resilience
+
+---
+
 ## Folder Structure
 
 ```
@@ -60,6 +74,8 @@ Booking.Modules.Notifications/
 │
 └── NotificationsModule.cs                 # DI registration & configuration
 ```
+
+---
 
 ## 🚀 Usage
 
