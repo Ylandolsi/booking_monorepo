@@ -23,6 +23,14 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
+
+/* Autofill styles : remove that default blue color when input is autofilled */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important; /* custom background */
+  -webkit-text-fill-color: #000000 !important; /* custom text color */
+  transition: background-color 5000s ease-in-out 0s; /* prevent yellow flash */
+}
+
 /* @layer base {
   * {
     @apply border-border outline-ring/50;
