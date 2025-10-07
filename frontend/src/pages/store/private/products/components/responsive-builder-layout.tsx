@@ -51,20 +51,14 @@ export function ResponsiveBuilderLayout({ children, previewData, className }: Re
               <div className="mt-4 flex w-full items-center justify-center gap-2">
                 <Button
                   variant={'outline'}
-                  className={cn(
-                    'rounded-md px-3 py-1',
-                    viewType === 'overview' ? 'bg-primary text-primary-foreground hover:bg-primary/60' : 'bg-secondary text-secondary-foreground',
-                  )}
+                  className={cn('rounded-md px-3 py-1', viewType === 'overview' ? 'text-primary' : '')}
                   onClick={() => SetViewType('overview')}
                 >
                   Overview
                 </Button>
                 <Button
                   variant={'outline'}
-                  className={cn(
-                    'rounded-md px-3 py-1',
-                    viewType === 'checkout' ? 'bg-primary text-primary-foreground hover:bg-primary/60' : 'bg-secondary text-secondary-foreground',
-                  )}
+                  className={cn('rounded-md px-3 py-1', viewType === 'checkout' ? 'text-primary' : '')}
                   onClick={() => SetViewType('checkout')}
                 >
                   Checkout
