@@ -25,7 +25,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Booking.Modules.Notifications.Abstractions\Booking.Modules.Notifications.Abstractions.csproj" />
         <ProjectReference Include="..\..\Common\Booking.Common\Booking.Common.csproj" />
     </ItemGroup>
 

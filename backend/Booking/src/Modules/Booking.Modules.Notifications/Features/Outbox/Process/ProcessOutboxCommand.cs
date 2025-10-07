@@ -44,7 +44,9 @@ internal sealed class ProcessOutboxCommandHandler(
 
         // Get pending notifications ready to send
         var pendingNotifications = await dbContext.NotificationOutbox
-            .Where(n => n.IsReadyToSend())
+            .Where(n => n.Status == NotificationStatus.Pending 
+                     && n.Attempts < n.MaxAttempts 
+                     && (!n.ScheduledAt.HasValue || n.ScheduledAt.Value <= DateTime.UtcNow))
             .OrderBy(n => n.Priority) // Critical first
             .ThenBy(n => n.ScheduledAt ?? n.CreatedAt) // Oldest first
             .Take(command.BatchSize)

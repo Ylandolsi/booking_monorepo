@@ -164,6 +164,15 @@ dotnet ef migrations add FixUpdatedAt \
   --output-dir Persistence/Migrations
 ```
 
+```bash
+dotnet ef migrations add FixUpdatedAt \
+  --project src/Modules/Booking.Modules.Notifications/Booking.Modules.Notifications.csproj \
+  --startup-project src/Api/Booking.Api/Booking.Api.csproj \
+  --context NotificationsDbContext \
+  --configuration Debug \
+  --output-dir Persistence/Migrations
+```
+
 ### Alternative Migration Commands
 
 #### Sync Model and Database

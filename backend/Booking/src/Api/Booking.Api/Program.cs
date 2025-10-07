@@ -7,8 +7,13 @@ using Booking.Common;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog;
 using Booking.Modules.Catalog.Features.HealthChecks;
+using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Users;
 using Booking.Modules.Notifications;
+using Booking.Modules.Users.Domain.Entities;
+using Booking.Modules.Users.Features.Authentication;
+using Booking.Modules.Users.Persistence;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Scalar.AspNetCore;
 using Serilog;
@@ -26,8 +31,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
 
-
-
 builder.Services.AddInfrastructure(builder.Configuration, builder);
 
 
@@ -41,7 +44,6 @@ builder.Services.UseHangFire(builder.Configuration);
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 // for each module add its own app.settings.json ..
 // builder.Configuration.AddModuleConfiguration(["users"]);
-
 
 
 // builder.Services.AddScoped<NotificationService>();
@@ -75,16 +77,16 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.UseSwaggerWithUi();
 
 
-    // using var scope = app.Services.CreateScope();
-    // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    // var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
-    // var catalogDb = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
-    // var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
+    using var scope = app.Services.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+    var catalogDb = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
+    var roleService = scope.ServiceProvider.GetRequiredService<RoleService>();
 
 
-    // // Drop databases
-    // await usersDb.Database.EnsureDeletedAsync();
-    // await catalogDb.Database.EnsureDeletedAsync();
+    //Drop databases
+    await usersDb.Database.EnsureDeletedAsync();
+    await catalogDb.Database.EnsureDeletedAsync();
     app.ApplyMigrations();
 
 

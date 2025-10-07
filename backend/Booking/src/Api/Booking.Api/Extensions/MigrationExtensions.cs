@@ -1,4 +1,5 @@
 ﻿using Booking.Modules.Catalog.Persistence;
+using Booking.Modules.Notifications.Persistence;
 using Booking.Modules.Users.Persistence;
  
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ public static class MigrationExtensions
 
         ApplyMigration<UsersDbContext>(scope);
         ApplyMigration<CatalogDbContext>(scope);
+        ApplyMigration<NotificationsDbContext>(scope);
 
         //ApplyMigration<SessionsDbContext>(scope);
     }
