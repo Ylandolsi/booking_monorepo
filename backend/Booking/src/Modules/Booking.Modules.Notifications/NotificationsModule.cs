@@ -25,9 +25,18 @@ public static class NotificationsModule
     {
         return services
             .AddDatabase(configuration)
+            .AddOptions(configuration)
             .AddServices()
             .AddAdapters()
             .AddBackgroundJobs();
+    }
+
+    private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        // Configure AWS SES options
+        services.Configure<AwsSesOptions>(configuration.GetSection(AwsSesOptions.SectionKey));
+
+        return services;
     }
 
     private static IServiceCollection AddDatabase(

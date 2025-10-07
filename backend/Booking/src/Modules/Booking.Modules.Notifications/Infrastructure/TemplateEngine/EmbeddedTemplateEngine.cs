@@ -110,45 +110,71 @@ public sealed class EmbeddedTemplateEngine : ITemplateEngine
 
     /// <summary>
     /// Simple variable replacement using {{VARIABLE_NAME}} syntax
-    /// Supports nested properties using reflection
+    /// Alternative approach: Loop through data properties instead of regex matching
     /// </summary>
     private string ReplaceVariables(string template, object data)
     {
         if (string.IsNullOrEmpty(template) || data == null)
             return template;
 
-        // Match {{VARIABLE_NAME}} pattern
-        var pattern = @"\{\{([A-Z_]+)\}\}";
-        var regex = new Regex(pattern);
+        var result = template;
 
-        return regex.Replace(template, match =>
+        // Get all property/key names from the data object
+        var propertyNames = GetPropertyNames(data);
+
+        foreach (var propertyName in propertyNames)
         {
-            var variableName = match.Groups[1].Value;
-            var value = GetPropertyValue(data, variableName);
-            return value ?? match.Value; // Keep original if not found
-        });
+            var value = GetPropertyValue(data, propertyName);
+            if (value != null)
+            {
+                // Replace {{PROPERTY_NAME}} with the value
+                var placeholder = $"{{{{{propertyName}}}}}";
+                result = result.Replace(placeholder, value);
+                _logger.LogDebug("Replaced {Placeholder} with value", placeholder);
+            }
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Gets all property names from an object (supports both regular objects and dictionaries)
+    /// </summary>
+    private IEnumerable<string> GetPropertyNames(object obj)
+    {
+        if (obj == null)
+            return Enumerable.Empty<string>();
+
+        // Handle Dictionary<string, object> (deserialized JSON)
+        if (obj is Dictionary<string, object> dict)
+        {
+            return dict.Keys;
+        }
+
+        // Handle regular objects with properties
+        var type = obj.GetType();
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        return properties.Select(p => p.Name);
     }
 
     /// <summary>
     /// Gets property value from object using reflection
-    /// Supports both PascalCase and UPPER_CASE property names
+    /// Simplified for the loop-based approach
     /// </summary>
     private string? GetPropertyValue(object obj, string propertyName)
     {
         if (obj == null)
             return null;
 
-        var type = obj.GetType();
-
-        // Try exact match first
-        var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
-
-        // Try converting UPPER_CASE to PascalCase (e.g., VERIFICATION_LINK -> VerificationLink)
-        if (property == null)
+        // Handle Dictionary<string, object> (deserialized JSON)
+        if (obj is Dictionary<string, object> dict)
         {
-            var pascalCase = ConvertToPascalCase(propertyName);
-            property = type.GetProperty(pascalCase, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            return dict.TryGetValue(propertyName, out var value) ? value?.ToString() : null;
         }
+
+        // Handle regular objects with properties
+        var type = obj.GetType();
+        var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
 
         if (property != null)
         {
@@ -156,7 +182,6 @@ public sealed class EmbeddedTemplateEngine : ITemplateEngine
             return value?.ToString();
         }
 
-        _logger.LogWarning("Property '{PropertyName}' not found on type '{TypeName}'", propertyName, type.Name);
         return null;
     }
 

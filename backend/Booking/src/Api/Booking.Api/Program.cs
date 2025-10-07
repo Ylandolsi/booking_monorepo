@@ -15,6 +15,7 @@ using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -91,20 +92,20 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
 
 
     // // Delete test users only
-    // var testUsers = await userManager.Users
-    //     .ToListAsync();
+    var testUsers = await userManager.Users
+        .ToListAsync();
 
 
-    // foreach (var user in testUsers)
-    // {
-    //     await userManager.DeleteAsync(user);
-    // }
+    foreach (var user in testUsers)
+    {
+        await userManager.DeleteAsync(user);
+    }
 
-    // await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod
-    // await roleService.CreateRoleAsync("User");
+    await roleService.CreateRoleAsync("Admin"); // TODO : check if admin is created when we move to prod
+    await roleService.CreateRoleAsync("User");
 
-    // var TestProfileSeeder = new TestProfileSeeder(app.Services);
-    // await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
+    var TestProfileSeeder = new TestProfileSeeder(app.Services);
+    await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 }
 
 // Health checks are already mapped in MapHealthCheckEndpoints() below

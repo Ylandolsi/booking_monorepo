@@ -85,7 +85,7 @@ public static class Infrastructure
 
         return services;
     }
-    
+
 
     private static IServiceCollection AddEnumToString(this IServiceCollection services)
     {

@@ -2,9 +2,9 @@
 using Booking.Common.Authentication;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
+using Booking.Modules.Notifications.Abstractions;
+using Booking.Modules.Notifications.Contracts;
 using Booking.Modules.Users.Domain.Entities;
-using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,10 +12,11 @@ using Microsoft.Extensions.Options;
 namespace Booking.Modules.Users.Features.Authentication.ResetPassword.Forgot;
 
 public record ForgotPasswordCommand(string Email) : ICommand;
+
 internal sealed class ForgotPasswordCommandHandler(
     UserManager<User> userManager,
     IOptions<FrontendApplicationOptions> frontendApplicationOptions,
-    IBackgroundJobClient backgroundJobClient,
+    INotificationService notificationService,
     ILogger<ForgotPasswordCommandHandler> logger) : ICommandHandler<ForgotPasswordCommand>
 {
     private readonly FrontendApplicationOptions frontendApplicationOptions = frontendApplicationOptions.Value;
@@ -40,7 +41,22 @@ internal sealed class ForgotPasswordCommandHandler(
             };
             var resetUrl = builder.ToString();
 
-            backgroundJobClient.Enqueue<SendingPasswordResetToken>(job => job.SendAsync(command.Email, resetUrl, null));
+            // ✅ Simple one-liner! Queue the email with automatic retries & background processing
+            await notificationService.EnqueueEmailAsync(new SendEmailRequest
+            {
+                Recipient = command.Email,
+                Subject = "Reset Your Password",
+                TemplateName = "PasswordResetEmail", // Use the embedded template
+                TemplateData = new
+                {
+                    RESET_LINK = resetUrl,
+                    APP_NAME = frontendApplicationOptions.AppName,
+                    SUPPORT_LINK = frontendApplicationOptions.SupportLink,
+                    SECURITY_LINK = frontendApplicationOptions.SecurityLink
+                },
+                Priority = NotificationPriority.High, // High priority for password resets
+                CorrelationId = $"pwd-reset-{user.Id}" // For tracking
+            }, cancellationToken);
         }
 
         return Result.Success();
