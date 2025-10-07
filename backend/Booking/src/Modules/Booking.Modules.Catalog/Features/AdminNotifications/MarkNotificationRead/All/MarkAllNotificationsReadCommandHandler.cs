@@ -8,14 +8,9 @@ namespace Booking.Modules.Catalog.Features.AdminNotifications.MarkNotificationRe
 
 public record MarkAllNotificationsReadCommand : ICommand;
 
-public class MarkAllNotificationsReadCommandHandler : ICommandHandler<MarkAllNotificationsReadCommand>
+public class MarkAllNotificationsReadCommandHandler(CatalogDbContext context) : ICommandHandler<MarkAllNotificationsReadCommand>
 {
-    private readonly CatalogDbContext _context;
-
-    public MarkAllNotificationsReadCommandHandler(CatalogDbContext context)
-    {
-        _context = context;
-    }
+    private readonly CatalogDbContext _context = context;
 
     public async Task<Result> Handle(MarkAllNotificationsReadCommand command, CancellationToken cancellationToken)
     {

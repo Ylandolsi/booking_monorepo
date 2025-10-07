@@ -28,15 +28,10 @@ public record AdminNotificationDto(
     DateTime? ReadAt
 );
 
-public class GetAdminNotificationsQueryHandler
-    : IQueryHandler<GetAdminNotificationsQuery, PaginatedResult<AdminNotificationDto>>
+public class GetAdminNotificationsQueryHandler(CatalogDbContext context)
+        : IQueryHandler<GetAdminNotificationsQuery, PaginatedResult<AdminNotificationDto>>
 {
-    private readonly CatalogDbContext _context;
-
-    public GetAdminNotificationsQueryHandler(CatalogDbContext context)
-    {
-        _context = context;
-    }
+    private readonly CatalogDbContext _context = context;
 
     public async Task<Result<PaginatedResult<AdminNotificationDto>>> Handle(
         GetAdminNotificationsQuery query,

@@ -5,18 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Catalog.Features.AdminNotifications;
 
-public class AdminNotificationPersistence : IAdminNotificationPersistence
+public class AdminNotificationPersistence(
+    CatalogDbContext context,
+    ILogger<AdminNotificationPersistence> logger) : IAdminNotificationPersistence
 {
-    private readonly CatalogDbContext _context;
-    private readonly ILogger<AdminNotificationPersistence> _logger;
-
-    public AdminNotificationPersistence(
-        CatalogDbContext context,
-        ILogger<AdminNotificationPersistence> logger)
-    {
-        _context = context;
-        _logger = logger;
-    }
+    private readonly CatalogDbContext _context = context;
+    private readonly ILogger<AdminNotificationPersistence> _logger = logger;
 
     public async Task SaveNotificationAsync(
         string title,

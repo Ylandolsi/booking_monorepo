@@ -7,18 +7,11 @@ namespace Booking.Modules.Catalog.Features.AdminNotifications.Delete;
 
 public record DeleteAdminNotificationCommand(int NotificationId) : ICommand;
 
-public class DeleteAdminNotificationCommandHandler : ICommandHandler<DeleteAdminNotificationCommand>
+public class DeleteAdminNotificationCommandHandler(CatalogDbContext context) : ICommandHandler<DeleteAdminNotificationCommand>
 {
-    private readonly CatalogDbContext _context;
-
-    public DeleteAdminNotificationCommandHandler(CatalogDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Result> Handle(DeleteAdminNotificationCommand command, CancellationToken cancellationToken)
     {
-        var notification = await _context.AdminNotifications
+        var notification = await context.AdminNotifications
             .FirstOrDefaultAsync(n => n.Id == command.NotificationId, cancellationToken);
 
         if (notification == null)
@@ -28,8 +21,8 @@ public class DeleteAdminNotificationCommandHandler : ICommandHandler<DeleteAdmin
                 $"Admin notification with ID {command.NotificationId} not found"));
         }
 
-        _context.AdminNotifications.Remove(notification);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.AdminNotifications.Remove(notification);
+        await context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }
