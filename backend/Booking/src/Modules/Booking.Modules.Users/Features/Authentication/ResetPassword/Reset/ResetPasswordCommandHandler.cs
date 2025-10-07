@@ -1,50 +1,54 @@
-﻿using System.Web;
-using Booking.Common.Authentication;
-using Booking.Common.Messaging;
+﻿using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Users.BackgroundJobs.SendingPasswordResetToken;
 using Booking.Modules.Users.Domain.Entities;
-using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Booking.Modules.Users.Features.Authentication.ResetPassword.Reset;
 
+public record ResetPasswordCommand(
+    string Email,
+    string Token,
+    string Password,
+    string ConfirmPassword) : ICommand;
+
 internal sealed class ResetPasswordCommandHandler(
     UserManager<User> userManager,
-    IOptions<FrontendApplicationOptions> frontendApplicationOptions,
-    IBackgroundJobClient backgroundJobClient,
-    ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<RestPasswordCommand>
+    ILogger<ResetPasswordCommandHandler> logger) : ICommandHandler<ResetPasswordCommand>
 {
-    private readonly FrontendApplicationOptions frontendApplicationOptions = frontendApplicationOptions.Value;
-
-    public async Task<Result> Handle(RestPasswordCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Sending password reset token to {Email}", command.Email);
+        // decoded by react !
 
+
+        logger.LogInformation("Handling VerifyResetPasswordCommand for email: {Email}", command.Email);
         var user = await userManager.FindByEmailAsync(command.Email);
         if (user is null)
         {
+            // dont reveal if user exists or not
             await SimulatePasswordResetWorkAsync();
         }
         else
         {
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-
-            var builder = new UriBuilder(frontendApplicationOptions.BaseUrl)
+            if (!await userManager.IsEmailConfirmedAsync(user))
             {
-                Path = frontendApplicationOptions.PasswordReset,
-                Query = $"token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(command.Email)}"
-            };
-            var resetUrl = builder.ToString();
+                // if the email is not confirmed , confirm it before resetting password
+                var emailConfirmToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                await userManager.ConfirmEmailAsync(user, emailConfirmToken);
+            }
 
-            backgroundJobClient.Enqueue<SendingPasswordResetToken>(job => job.SendAsync(command.Email, resetUrl, null));
+            var resetPasswordResult = await userManager.ResetPasswordAsync(user!, command.Token, command.Password);
+            if (!resetPasswordResult.Succeeded)
+            {
+                logger.LogWarning("Failed to reset password for user with email {Email}. Errors: {Errors}",
+                    command.Email,
+                    string.Join(", ", resetPasswordResult.Errors.Select(e => e.Description)));
+                return Result.Failure(ResetPasswordErrors.GenericError);
+            }
         }
 
+        logger.LogInformation("Password reset successfully for user with email {Email}", command.Email);
         return Result.Success();
-        // TODO : front end display 
-        // If an account exists with this email, you'll receive a reset link"
     }
 
     private static async Task SimulatePasswordResetWorkAsync()

@@ -14,15 +14,16 @@ internal sealed class ForgotPassword : IEndpoint
     {
         app.MapPost(UsersEndpoints.ForgotPassword, async (
                 Request request,
-                ICommandHandler<RestPasswordCommand> handler,
+                ICommandHandler<ForgotPasswordCommand> handler,
                 CancellationToken cancellationToken = default) =>
             {
-                var command = new RestPasswordCommand(request.Email);
+                var command = new ForgotPasswordCommand(request.Email);
 
                 var result = await handler.Handle(command, cancellationToken);
 
-                return result.Match(() => Results.NoContent(),
-                    result => CustomResults.Problem(result));
+                return result.Match(
+                    () => Results.Ok(),
+                    CustomResults.Problem);
             })
             .WithTags(Tags.Users);
     }

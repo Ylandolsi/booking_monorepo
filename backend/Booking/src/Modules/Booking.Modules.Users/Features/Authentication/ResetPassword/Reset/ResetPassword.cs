@@ -26,8 +26,9 @@ internal sealed class ResetPassword : IEndpoint
 
                 var result = await handler.Handle(command, cancellationToken);
 
-                return result.Match(() => Results.NoContent(),
-                    result => CustomResults.Problem(result));
+                return result.Match(
+                    () => Results.Ok(),
+                    CustomResults.Problem);
             })
             .WithTags(Tags.Users);
     }
