@@ -125,7 +125,7 @@ internal sealed class RegisterCommandHandler(
                 SUPPORT_LINK = _frontendApplicationOptions.SupportLink,
                 SECURITY_LINK = _frontendApplicationOptions.SecurityLink
             },
-            NotificationReference = $"verification-{userEmail}-{DateTime.UtcNow:yyyyMMdd}",
+            //NotificationReference = $"verification-{userEmail}-{DateTime.UtcNow:yyyyMMdd}",
             Priority = NotificationPriority.High
         };
 

@@ -1,6 +1,7 @@
 # Booking.Modules.Notifications
 
-A robust, database-backed notification module implementing the **Outbox Pattern** for transactional email delivery with automatic retry logic and background processing.
+A robust, database-backed notification module implementing the **Outbox Pattern** for transactional email delivery with
+automatic retry logic and background processing.
 
 ---
 
@@ -99,7 +100,7 @@ public class UserService
         // Save user to database
         await _dbContext.Users.AddAsync(user);
 
-        // Queue verification email (within same transaction)
+        // Queue verification email (usingTempalte)
         var emailRequest = new SendEmailRequest
         {
             Recipient = user.Email,
@@ -112,7 +113,19 @@ public class UserService
                 SUPPORT_LINK = "https://app.com/support",
                 SECURITY_LINK = "https://app.com/security"
             },
-            NotificationReference = $"verification-{user.Email}",
+            NotificationReference = $"verification-{user.Email}", // to ensure idempotency (unqiue)
+            CorrelationId = $"pwd-reset-{user.Id}" // For tracking
+            Priority = NotificationPriority.High
+        };
+        
+        // usin raw html body 
+        var emailRequest = new SendEmailRequest
+        {
+            Recipient = user.Email,
+            Subject = "Welcome! Verify your email",
+            HtmlBody = "...."
+            NotificationReference = $"verification-{user.Email}", // to ensure idempotency (unqiue)
+            CorrelationId = $"pwd-reset-{user.Id}" // For tracking
             Priority = NotificationPriority.High
         };
 
@@ -172,17 +185,17 @@ Subject: Verify Your Email Address
 
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1>Welcome to {{APP_NAME}}!</h1>
-    <p>Please verify your email address by clicking the button below:</p>
-    <a
-      href="{{VERIFICATION_LINK}}"
-      style="background:#4CAF50;color:white;padding:12px 24px;"
-    >
-      Verify Email
-    </a>
-    <p>Need help? <a href="{{SUPPORT_LINK}}">Contact Support</a></p>
-  </body>
+<body>
+<h1>Welcome to {{APP_NAME}}!</h1>
+<p>Please verify your email address by clicking the button below:</p>
+<a
+        href="{{VERIFICATION_LINK}}"
+        style="background:#4CAF50;color:white;padding:12px 24px;"
+>
+    Verify Email
+</a>
+<p>Need help? <a href="{{SUPPORT_LINK}}">Contact Support</a></p>
+</body>
 </html>
 ```
 
@@ -244,7 +257,7 @@ Configured in `NotificationsModule.ConfigureBackgroundJobs()`:
 Failed notifications are automatically retried with exponential backoff:
 
 | Attempt | Delay     |
-| ------- | --------- |
+|---------|-----------|
 | 1       | Immediate |
 | 2       | 1 minute  |
 | 3       | 2 minutes |

@@ -37,15 +37,53 @@ public class NotificationService : INotificationService
 
     /// <summary>
     /// Enqueues an email notification for asynchronous delivery (recommended approach)
+    /// Supports both template-based and raw HTML emails
     /// </summary>
     public async Task<SendNotificationResult> EnqueueEmailAsync(
         SendEmailRequest request,
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation(
-            "Enqueuing email to {Recipient} with template {TemplateName}",
-            request.Recipient,
-            request.TemplateName);
+            "Enqueuing email to {Recipient}",
+            request.Recipient);
+
+        // Validate that either template or raw HTML is provided
+        if (!string.IsNullOrWhiteSpace(request.TemplateName))
+        {
+            // Template-based email validation
+            if (!_templateEngine.TemplateExists(request.TemplateName))
+            {
+                var error = $"Template '{request.TemplateName}' not found";
+                _logger.LogError(error);
+                return SendNotificationResult.Failed(error);
+            }
+
+            _logger.LogInformation(
+                "Enqueuing template-based email to {Recipient} using template {TemplateName}",
+                request.Recipient,
+                request.TemplateName);
+        }
+        else if (!string.IsNullOrWhiteSpace(request.HtmlBody))
+        {
+            // Raw HTML email validation
+            if (string.IsNullOrWhiteSpace(request.Subject))
+            {
+                var error = "Subject is required for raw HTML emails";
+                _logger.LogError(error);
+                return SendNotificationResult.Failed(error);
+            }
+
+            _logger.LogInformation(
+                "Enqueuing raw HTML email to {Recipient} with subject '{Subject}'",
+                request.Recipient,
+                request.Subject);
+        }
+        else
+        {
+            var error = "Either TemplateName or HtmlBody must be provided";
+            _logger.LogError(error);
+            return SendNotificationResult.Failed(error);
+        }
 
         var command = new EnqueueNotificationCommand(request);
         var result = await _enqueueHandler.Handle(command, cancellationToken);

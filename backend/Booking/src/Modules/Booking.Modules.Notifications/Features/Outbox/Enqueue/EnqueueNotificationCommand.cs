@@ -27,9 +27,9 @@ internal sealed class EnqueueNotificationCommandValidator : AbstractValidator<En
             .NotEmpty().WithMessage("Recipient email is required")
             .EmailAddress().WithMessage("Recipient must be a valid email address");
 
-        RuleFor(x => x.Request.TemplateName)
-            .NotEmpty().WithMessage("Template name is required")
-            .MaximumLength(100).WithMessage("Template name cannot exceed 100 characters");
+        RuleFor(x => x.Request)
+            .Must(x => x.TemplateName != null || x.HtmlBody != null)
+            .WithMessage("Template Or Html Body are Required");
 
         RuleFor(x => x.Request.NotificationReference)
             .MaximumLength(255).WithMessage("Notification reference cannot exceed 255 characters");
@@ -69,10 +69,25 @@ internal sealed class EnqueueNotificationCommandHandler(
             }
         }
 
-        // Serialize template data to JSON
-        string payload = request.TemplateData != null
-            ? JsonConvert.SerializeObject(request.TemplateData)
-            : "{}";
+        // Prepare payload based on email type
+        string payload;
+        if (!string.IsNullOrWhiteSpace(request.TemplateName))
+        {
+            // Template-based email: store template data
+            payload = request.TemplateData != null
+                ? JsonConvert.SerializeObject(request.TemplateData)
+                : "{}";
+        }
+        else
+        {
+            // Raw HTML email: store HTML and text content
+            var rawEmailData = new
+            {
+                HtmlBody = request.HtmlBody,
+                TextBody = request.TextBody
+            };
+            payload = JsonConvert.SerializeObject(rawEmailData);
+        }
 
         // Create notification outbox entity
         var notification = new NotificationOutbox(

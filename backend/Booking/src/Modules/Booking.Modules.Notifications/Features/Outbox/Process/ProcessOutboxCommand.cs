@@ -25,6 +25,14 @@ public sealed record ProcessOutboxResult(
     int SkippedCount
 );
 
+/// <summary>
+/// Data structure for raw HTML email content stored in payload
+/// </summary>
+internal sealed record RawEmailData(
+    string? HtmlBody,
+    string? TextBody
+);
+
 internal sealed class ProcessOutboxCommandHandler(
     NotificationsDbContext dbContext,
     IUnitOfWork unitOfWork,
@@ -136,62 +144,87 @@ internal sealed class ProcessOutboxCommandHandler(
             }
 
             // Check if template exists
-            if (string.IsNullOrWhiteSpace(notification.TemplateName))
-            {
-                notification.RecordFailedAttempt("Template name is missing");
-                await unitOfWork.SaveChangesAsync(cancellationToken);
+            // Handle template-based vs raw HTML emails
+            string emailSubject;
+            string htmlBody;
+            string? textBody = null;
 
-                return Result.Failure(Error.Problem(
-                    "Notification.MissingTemplate",
-                    "Template name is required"));
+            if (!string.IsNullOrWhiteSpace(notification.TemplateName))
+            {
+                // Template-based email
+                if (!templateEngine.TemplateExists(notification.TemplateName))
+                {
+                    notification.RecordFailedAttempt($"Template '{notification.TemplateName}' not found");
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    return Result.Failure(Error.NotFound(
+                        "Notification.TemplateNotFound",
+                        $"Template '{notification.TemplateName}' not found"));
+                }
+
+                // Deserialize template data
+                object? templateData = null;
+                if (!string.IsNullOrWhiteSpace(notification.Payload) && notification.Payload != "{}")
+                {
+                    try
+                    {
+                        templateData = JsonConvert.DeserializeObject<Dictionary<string, object>>(notification.Payload);
+                    }
+                    catch (JsonException ex)
+                    {
+                        logger.LogWarning(
+                            ex,
+                            "Failed to deserialize payload for notification {NotificationId}. Using empty data.",
+                            notification.Id);
+
+                        templateData = new Dictionary<string, object>();
+                    }
+                }
+
+                // Render template
+                var (subject, body) = await templateEngine.RenderAsync(
+                    notification.TemplateName,
+                    templateData,
+                    cancellationToken);
+
+                // Use subject from template if notification subject is not set
+                emailSubject = string.IsNullOrWhiteSpace(notification.Subject)
+                    ? subject
+                    : notification.Subject;
+                htmlBody = body;
             }
-
-            if (!templateEngine.TemplateExists(notification.TemplateName))
+            else
             {
-                notification.RecordFailedAttempt($"Template '{notification.TemplateName}' not found");
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-
-                return Result.Failure(Error.NotFound(
-                    "Notification.TemplateNotFound",
-                    $"Template '{notification.TemplateName}' not found"));
-            }
-
-            // Deserialize template data
-            object? templateData = null;
-            if (!string.IsNullOrWhiteSpace(notification.Payload) && notification.Payload != "{}")
-            {
+                // Raw HTML email
                 try
                 {
-                    templateData = JsonConvert.DeserializeObject<Dictionary<string, object>>(notification.Payload);
+                    var rawEmailData = JsonConvert.DeserializeObject<RawEmailData>(notification.Payload);
+                    emailSubject = notification.Subject ?? "No Subject";
+                    htmlBody = rawEmailData?.HtmlBody ?? "";
+                    textBody = rawEmailData?.TextBody;
                 }
                 catch (JsonException ex)
                 {
                     logger.LogWarning(
                         ex,
-                        "Failed to deserialize payload for notification {NotificationId}. Using empty data.",
+                        "Failed to deserialize raw email payload for notification {NotificationId}",
                         notification.Id);
 
-                    templateData = new Dictionary<string, object>();
+                    notification.RecordFailedAttempt("Invalid raw email payload format");
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    return Result.Failure(Error.Problem(
+                        "Notification.InvalidPayload",
+                        "Raw email payload is not in the expected format"));
                 }
             }
-
-            // Render template
-            var (subject, htmlBody) = await templateEngine.RenderAsync(
-                notification.TemplateName,
-                templateData,
-                cancellationToken);
-
-            // Use subject from template if notification subject is not set
-            var emailSubject = string.IsNullOrWhiteSpace(notification.Subject)
-                ? subject
-                : notification.Subject;
 
             // Send email
             var sendResult = await emailSender.SendAsync(
                 recipient: notification.Recipient,
                 subject: emailSubject,
                 htmlBody: htmlBody,
-                textBody: null,
+                textBody: textBody,
                 cancellationToken: cancellationToken);
 
             if (sendResult.IsSuccess)

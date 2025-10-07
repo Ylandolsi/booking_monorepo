@@ -48,12 +48,12 @@ internal sealed class ReSendVerificationCommandHandler(
             var emailVerificationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
             var verificationEmailLink = emailVerificationLinkFactory.Create(emailVerificationToken, user.Email!);
             //await emailVerificationSender.SendVerificationEmailAsync(user);
-            var result = await ResendVerificationEmailForRegistration(user.Email, verificationEmailLink, cancellationToken);
+            var result =
+                await ResendVerificationEmailForRegistration(user.Email, verificationEmailLink, cancellationToken);
             if (result.IsFailure)
             {
                 logger.LogError("Failed to enqueue verification email for user {Email}", user.Email);
                 return Result.Failure(VerifyEmailErrors.SendingEmailFailed);
-
             }
         }
         catch (Exception ex)
@@ -80,7 +80,7 @@ internal sealed class ReSendVerificationCommandHandler(
                 SUPPORT_LINK = _frontendApplicationOptions.SupportLink,
                 SECURITY_LINK = _frontendApplicationOptions.SecurityLink
             },
-            NotificationReference = $"resend-verification-{userEmail}-{DateTime.UtcNow:yyyyMMdd}",
+            //NotificationReference = $"resend-verification-{userEmail}-{DateTime.UtcNow:yyyyMMdd}",
             Priority = NotificationPriority.High
         };
 
