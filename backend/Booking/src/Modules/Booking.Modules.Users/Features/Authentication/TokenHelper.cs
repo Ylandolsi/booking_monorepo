@@ -1,7 +1,9 @@
 ﻿using Booking.Common;
+using Booking.Common.Options;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Persistence;
+using Booking.Modules.Users.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -9,9 +11,9 @@ using Microsoft.Extensions.Options;
 namespace Booking.Modules.Users.Features.Authentication;
 
 public class TokenHelper(
-    TokenProvider tokenProvider,
+    TokenProviderService tokenProviderService,
     UsersDbContext context,
-    TokenWriterCookies tokenWriterCookies,
+    TokenWriterCookiesService tokenWriterCookiesService,
     IOptions<JwtOptions> jwtOptions,
     ILogger<TokenHelper> logger)
 {
@@ -22,14 +24,14 @@ public class TokenHelper(
         string? currentUserAgent,
         CancellationToken cancellationToken)
     {
-        var accessToken = tokenProvider.GenerateJwtToken(user);
+        var accessToken = tokenProviderService.GenerateJwtToken(user);
         if (string.IsNullOrEmpty(accessToken))
         {
             logger.LogError("Failed to generate access token for user with email: {Email}", user.Email);
             return Result.Failure<string>(TokenGenerationError.TokenGenerationFailed);
         }
 
-        var refreshToken = tokenProvider.GenerateRefreshToken();
+        var refreshToken = tokenProviderService.GenerateRefreshToken();
         if (string.IsNullOrEmpty(refreshToken))
         {
             logger.LogError("Failed to generate refresh token for user with email: {Email}", user.Email);
@@ -59,8 +61,8 @@ public class TokenHelper(
 
         logger.LogInformation("Refresh token generated and saved.", user.Email);
 
-        tokenWriterCookies.WriteRefreshTokenAsHttpOnlyCookie(refreshToken);
-        tokenWriterCookies.WriteAccessTokenAsHttpOnlyCookie(accessToken);
+        tokenWriterCookiesService.WriteRefreshTokenAsHttpOnlyCookie(refreshToken);
+        tokenWriterCookiesService.WriteAccessTokenAsHttpOnlyCookie(accessToken);
 
 
         return Result.Success();

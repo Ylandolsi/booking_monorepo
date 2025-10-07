@@ -2,6 +2,7 @@
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Booking.Modules.Users.Persistence;
+using Booking.Modules.Users.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ namespace Booking.Modules.Users.Features.Authentication.Logout;
 internal sealed class LogoutCommandHandler(
     UsersDbContext context,
     UserContext userContext,
-    TokenWriterCookies tokenWriterCookies,
+    TokenWriterCookiesService tokenWriterCookiesService,
     ILogger<LogoutCommandHandler> logger) : ICommandHandler<LogoutCommand, bool>
 {
     public async Task<Result<bool>> Handle(LogoutCommand query, CancellationToken cancellationToken)
@@ -24,8 +25,8 @@ internal sealed class LogoutCommandHandler(
 
         logger.LogInformation("Logging out user ID: {UserId}", query.UserId);
 
-        tokenWriterCookies.ClearRefreshTokenCookie();
-        tokenWriterCookies.ClearAccessTokenCookie();
+        tokenWriterCookiesService.ClearRefreshTokenCookie();
+        tokenWriterCookiesService.ClearAccessTokenCookie();
         logger.LogInformation("Cleared tokens cookie for user ID: {UserId}", query.UserId);
 
         // revoke it in the database 

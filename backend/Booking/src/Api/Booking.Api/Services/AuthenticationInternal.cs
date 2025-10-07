@@ -3,6 +3,7 @@ using System.Web;
 using Booking.Common.Authentication;
 using Booking.Common.Options;
 using Booking.Modules.Users;
+using Booking.Modules.Users.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -107,8 +108,8 @@ public static class AuthenticationExtensions
 
         services.AddHttpContextAccessor();
         services.AddScoped<UserContext>();
-        services.AddSingleton<TokenProvider>();
-        services.AddSingleton<TokenWriterCookies>();
+        services.AddSingleton<TokenProviderService>();
+        services.AddSingleton<TokenWriterCookiesService>();
         services.AddSingleton<EmailVerificationLinkFactory>();
 
         return services;

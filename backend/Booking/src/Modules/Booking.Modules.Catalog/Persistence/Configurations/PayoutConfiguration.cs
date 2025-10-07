@@ -1,8 +1,8 @@
-
-
 using Booking.Modules.Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Booking.Modules.Catalog.Persistence.Configurations;
 
 internal sealed class PayoutConfiguration : IEntityTypeConfiguration<Payout>
 {
@@ -29,6 +29,6 @@ internal sealed class PayoutConfiguration : IEntityTypeConfiguration<Payout>
             .WithMany(s => s.Payouts)
             .HasForeignKey(p => p.StoreId);
         /*builder.HasIndex(p => p.UserId);
-        builder.HasIndex(p => p.Status);*/
+    builder.HasIndex(p => p.Status);*/
     }
 }

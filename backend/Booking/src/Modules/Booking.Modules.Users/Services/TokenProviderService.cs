@@ -1,14 +1,15 @@
 ﻿using System.Security.Claims;
 using System.Security.Cryptography;
 using Booking.Common.Authentication;
+using Booking.Common.Options;
 using Booking.Modules.Users.Domain.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Booking.Modules.Users;
+namespace Booking.Modules.Users.Services;
 
-public sealed class TokenProvider(IOptions<JwtOptions> jwtOptions)
+public sealed class TokenProviderService(IOptions<JwtOptions> jwtOptions)
 {
     private readonly AccessOptions _jwtOptions = jwtOptions.Value.AccessToken;
 

@@ -1,9 +1,11 @@
 using Booking.Common.Messaging;
+using Booking.Common.Options;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Utils;
 using Booking.Modules.Users.Persistence;
+using Booking.Modules.Users.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -14,8 +16,8 @@ namespace Booking.Modules.Users.Features.Authentication.Login;
 public sealed class LoginCommandHandler(
     UsersDbContext context,
     UserManager<User> userManager,
-    TokenProvider tokenProvider,
-    TokenWriterCookies tokenWriterCookies,
+    TokenProviderService tokenProviderService,
+    TokenWriterCookiesService tokenWriterCookiesService,
     IHttpContextAccessor httpContextAccessor,
     IOptions<JwtOptions> jwtOptions,
     TokenHelper tokenHelper,

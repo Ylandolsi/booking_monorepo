@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Booking.Common.Options;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Booking.Modules.Users;
+namespace Booking.Modules.Users.Services;
 
-public class TokenWriterCookies(
+public class TokenWriterCookiesService(
     IHttpContextAccessor httpContextAccessor,
     IWebHostEnvironment webHostEnvironment,
     IOptions<JwtOptions> jwtOptions,
-    ILogger<TokenWriterCookies> logger)
+    ILogger<TokenWriterCookiesService> logger)
 {
     private readonly AccessOptions _jwtOptions = jwtOptions.Value.AccessToken;
 

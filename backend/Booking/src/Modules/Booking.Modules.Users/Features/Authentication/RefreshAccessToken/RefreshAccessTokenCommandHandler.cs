@@ -1,8 +1,9 @@
 using Booking.Common.Messaging;
+using Booking.Common.Options;
 using Booking.Common.Results;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Persistence;
- 
+using Booking.Modules.Users.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,10 @@ namespace Booking.Modules.Users.Features.Authentication.RefreshAccessToken;
 
 public sealed class RefreshAccessTokenCommandHandler(
     UsersDbContext applicationDbContext,
-    TokenProvider tokenProvider,
+    TokenProviderService tokenProviderService,
     UserManager<User> userManager,
     TokenHelper tokenHelper,
-    TokenWriterCookies tokenWriterCookies,
+    TokenWriterCookiesService tokenWriterCookiesService,
     IHttpContextAccessor httpContextAccessor,
     ILogger<RefreshAccessTokenCommandHandler> logger,
     IOptions<JwtOptions> jwtOptions) : ICommandHandler<RefreshAccessTokenCommand>

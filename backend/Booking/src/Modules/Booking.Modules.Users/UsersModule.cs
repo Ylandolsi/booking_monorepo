@@ -28,7 +28,6 @@ public static class UsersModule
         return services
             .AddServices()
             .ExposeApiForModules()
-            // .AddAWS(configuration)
             .AddDatabase(configuration)
             .AddBackgroundJobs()
             .AddResielenecPipelines(configuration)
