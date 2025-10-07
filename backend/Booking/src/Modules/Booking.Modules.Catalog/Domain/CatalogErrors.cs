@@ -158,6 +158,9 @@ public static class CatalogErrors
         public static readonly Error PaymentLinkCreationFailed = Error.Failure(
             "Payout.PaymentLinkCreationFailed",
             "Failed to create payment link for payout.");
+
+        public static readonly Error PayoutFailed =
+            Error.Failure("Payout.Failed", "Failed to handle the request payout");
     }
 
     public static class Payment
