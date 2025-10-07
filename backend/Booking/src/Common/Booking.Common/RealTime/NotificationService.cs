@@ -8,8 +8,8 @@ public interface IAdminNotificationPersistence
     Task SaveNotificationAsync(
         string title,
         string message,
-        string severity,
-        string type,
+        AdminAlertSeverity severity,
+        AdminAlertType type,
         string? relatedEntityId = null,
         string? relatedEntityType = null,
         string? metadata = null,
@@ -63,6 +63,7 @@ public class NotificationService
         string title,
         string message,
         AdminAlertSeverity severity = AdminAlertSeverity.Error,
+        AdminAlertType type = AdminAlertType.SystemError,
         object? metadata = null,
         string? relatedEntityId = null,
         string? relatedEntityType = null,
@@ -72,7 +73,7 @@ public class NotificationService
         {
             var alert = new AdminAlertDto(
                 Id: Guid.NewGuid().ToString(),
-                Type: "admin_alert",
+                Type: type.ToString(),
                 Title: title,
                 Message: message,
                 Severity: severity.ToString(),
@@ -80,7 +81,7 @@ public class NotificationService
                 Metadata: metadata
             );
 
-            
+
             // Send real-time notification to connected admins
             if (_hubContext != null)
             {
@@ -88,8 +89,8 @@ public class NotificationService
                     .SendAsync("ReceiveAdminAlert", alert, cancellationToken);
 
                 _logger.LogInformation(
-                    "Admin alert sent: {Title} - Severity: {Severity}",
-                    title, severity);
+                    "Admin alert sent: {Title} - Type: {Type} - Severity: {Severity}",
+                    title, type, severity);
             }
             else
             {
@@ -102,8 +103,8 @@ public class NotificationService
                 await _adminNotificationPersistence.SaveNotificationAsync(
                     title,
                     message,
-                    severity.ToString(),
-                    "admin_alert",
+                    severity,
+                    type,
                     relatedEntityId,
                     relatedEntityType,
                     metadata != null ? System.Text.Json.JsonSerializer.Serialize(metadata) : null,
@@ -138,58 +139,10 @@ public class NotificationService
             title: $"{integrationName} Integration Failed",
             message: $"Order {orderId}: {errorMessage}",
             severity: AdminAlertSeverity.Critical,
-            metadata: metadata
-        );
-    }
-
-    /// <summary>
-    /// Sends a payment anomaly alert to admins
-    /// </summary>
-    public async Task SendPaymentAnomalyAlertAsync(
-        string orderId,
-        string paymentRef,
-        string issue,
-        object? metadata = null)
-    {
-        var alertMetadata = new
-        {
-            OrderId = orderId,
-            PaymentRef = paymentRef,
-            Issue = issue,
-            Metadata = metadata,
-            Timestamp = DateTime.UtcNow
-        };
-
-        await SendAdminAlertAsync(
-            title: "Payment Anomaly Detected",
-            message: $"Payment {paymentRef} for order {orderId}: {issue}",
-            severity: AdminAlertSeverity.Warning,
-            metadata: alertMetadata
-        );
-    }
-
-    /// <summary>
-    /// Sends a session booking alert to admins
-    /// </summary>
-    public async Task SendSessionBookingAlertAsync(
-        string sessionId,
-        string issue,
-        AdminAlertSeverity severity = AdminAlertSeverity.Warning,
-        object? metadata = null)
-    {
-        var alertMetadata = new
-        {
-            SessionId = sessionId,
-            Issue = issue,
-            Metadata = metadata,
-            Timestamp = DateTime.UtcNow
-        };
-
-        await SendAdminAlertAsync(
-            title: "Session Booking Issue",
-            message: $"Session {sessionId}: {issue}",
-            severity: severity,
-            metadata: alertMetadata
+            type: AdminAlertType.IntegrationFailure,
+            metadata: metadata,
+            relatedEntityId: orderId,
+            relatedEntityType: "Order"
         );
     }
 }
@@ -219,4 +172,14 @@ public enum AdminAlertSeverity
     Warning,
     Error,
     Critical
+}
+
+public enum AdminAlertType
+{
+    IntegrationFailure,
+    PaymentAnomaly,
+    SessionBookingIssue,
+    SystemError,
+    HealthCheckFailure,
+    Other
 }

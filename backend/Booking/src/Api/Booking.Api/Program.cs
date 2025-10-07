@@ -6,16 +6,17 @@ using Booking.Api.Services;
 using Booking.Common;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog;
+using Booking.Modules.Catalog.Features.HealthChecks;
 using Booking.Modules.Catalog.Persistence;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Features.Authentication;
 using Booking.Modules.Users.Persistence;
- 
 using Booking.Modules.Users.RecurringJobs;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
@@ -52,13 +53,8 @@ builder.Services.AddInfrastructure(builder.Configuration, builder);
 builder.Services.AddApplication(moduleApplicationAssemblies);
 
 
-
-
 //builder.Services.TryAddSingleton(typeof(IUserIdProvider), typeof(SignalRCustomUserIdProvider));
 builder.Services.AddSignalR();
-
-
-builder.Services.AddScoped<NotificationService>();
 
 
 builder.Services.UseHangFire(builder.Configuration);
@@ -71,6 +67,17 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddUsersModule(builder.Configuration);
 
+
+// builder.Services.AddScoped<NotificationService>();
+
+builder.Services.AddScoped<NotificationService>(sp =>
+{
+    var hubContext = sp.GetService<IHubContext<NotificationHub>>();
+    var logger = sp.GetRequiredService<ILogger<NotificationService>>();
+    var persistence = sp.GetService<IAdminNotificationPersistence>();
+    return new NotificationService(hubContext, logger, persistence);
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
 
@@ -78,7 +85,6 @@ builder.Services.AddSingleton<TestProfileSeeder>();
 /*
 builder.Services.AddHostedService<SeedHostedService>();
 */
-
 
 
 var app = builder.Build();
@@ -91,9 +97,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     app.MapOpenApi();
     app.MapScalarApiReference(opt => { opt.WithTitle("Booking API"); });
     app.UseSwaggerWithUi();
-    
-    
-    
+
+
     // using var scope = app.Services.CreateScope();
     // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
     // var usersDb = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
@@ -104,7 +109,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     // // Drop databases
     // await usersDb.Database.EnsureDeletedAsync();
     // await catalogDb.Database.EnsureDeletedAsync();
-     app.ApplyMigrations();
+    app.ApplyMigrations();
 
 
     // // Delete test users only
@@ -124,10 +129,8 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
     // await TestProfileSeeder.SeedComprehensiveUserProfilesAsync();
 }
 
-app.MapHealthChecks("health", new HealthCheckOptions
-{
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
+// Health checks are already mapped in MapHealthCheckEndpoints() below
+// Removed duplicate: app.MapHealthChecks("health", ...) 
 
 app.UseStaticFiles(); // Serves files from wwwroot by default : http://localhost:5000/logo.png.
 app.UseGlobalExceptionHandler();
@@ -153,6 +156,7 @@ app.UseHangfireDashboard();
 RecurringJobs.AddRecurringJobs();
 app.MapControllers();
 app.MapEndpoints();
+app.MapHealthCheckEndpoints();
 
 app.MapHub<NotificationHub>("/hubs/notifications");
 

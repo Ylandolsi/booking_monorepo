@@ -51,10 +51,10 @@ public class AdminNotification : Entity
 
 public enum AdminNotificationSeverity
 {
-    Info = 0,
-    Warning = 1,
-    Error = 2,
-    Critical = 3
+    Info,
+    Warning,
+    Error,
+    Critical
 }
 
 public enum AdminNotificationType

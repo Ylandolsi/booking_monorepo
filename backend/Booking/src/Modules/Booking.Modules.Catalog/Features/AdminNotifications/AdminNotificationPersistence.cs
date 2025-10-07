@@ -15,8 +15,8 @@ public class AdminNotificationPersistence(
     public async Task SaveNotificationAsync(
         string title,
         string message,
-        string severity,
-        string type,
+        AdminAlertSeverity severity,
+        AdminAlertType type,
         string? relatedEntityId = null,
         string? relatedEntityType = null,
         string? metadata = null,
@@ -24,14 +24,25 @@ public class AdminNotificationPersistence(
     {
         try
         {
-            var notificationSeverity = Enum.Parse<AdminNotificationSeverity>(severity, true);
-            var notificationType = type.ToLower() switch
+            // Map from AdminAlertSeverity (Common) to AdminNotificationSeverity (Domain)
+            var notificationSeverity = severity switch
             {
-                "integration_failure" => AdminNotificationType.IntegrationFailure,
-                "payment_anomaly" => AdminNotificationType.PaymentAnomaly,
-                "session_booking_issue" => AdminNotificationType.SessionBookingIssue,
-                "health_check_failure" => AdminNotificationType.HealthCheckFailure,
-                "system_error" => AdminNotificationType.SystemError,
+                AdminAlertSeverity.Info => AdminNotificationSeverity.Info,
+                AdminAlertSeverity.Warning => AdminNotificationSeverity.Warning,
+                AdminAlertSeverity.Error => AdminNotificationSeverity.Error,
+                AdminAlertSeverity.Critical => AdminNotificationSeverity.Critical,
+                _ => AdminNotificationSeverity.Info
+            };
+
+            // Map from AdminAlertType (Common) to AdminNotificationType (Domain)
+            var notificationType = type switch
+            {
+                AdminAlertType.IntegrationFailure => AdminNotificationType.IntegrationFailure,
+                AdminAlertType.PaymentAnomaly => AdminNotificationType.PaymentAnomaly,
+                AdminAlertType.SessionBookingIssue => AdminNotificationType.SessionBookingIssue,
+                AdminAlertType.SystemError => AdminNotificationType.SystemError,
+                AdminAlertType.HealthCheckFailure => AdminNotificationType.HealthCheckFailure,
+                AdminAlertType.Other => AdminNotificationType.Other,
                 _ => AdminNotificationType.Other
             };
 
@@ -49,8 +60,8 @@ public class AdminNotificationPersistence(
             await _context.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(
-                "Admin notification persisted: {Title} - Severity: {Severity}",
-                title, severity);
+                "Admin notification persisted: {Title} - Type: {Type} - Severity: {Severity}",
+                title, type, severity);
         }
         catch (Exception ex)
         {

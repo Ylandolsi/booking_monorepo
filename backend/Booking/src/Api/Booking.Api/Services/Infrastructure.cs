@@ -8,10 +8,10 @@ using Booking.Common;
 using Booking.Common.Authentication;
 using Booking.Common.Email;
 using Booking.Common.Options;
+using Booking.Modules.Catalog.Features.HealthChecks;
 using Booking.Modules.Users;
 using Booking.Modules.Users.Domain.Entities;
 using Booking.Modules.Users.Persistence;
- 
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 
@@ -94,7 +94,7 @@ public static class Infrastructure
                 client.BaseAddress = new Uri(konnectOptions.ApiUrl);
                 client.DefaultRequestHeaders.Add("x-api-key", konnectOptions.ApiKey);
                 client.Timeout = TimeSpan.FromSeconds(300);
-                /* Enable this for prod 
+                /* Enable this for prod
                 client.Timeout = TimeSpan.FromSeconds(konnectOptions.PaymentLifespan);
             */
             })
@@ -184,9 +184,15 @@ public static class Infrastructure
             // Consider logging this or throwing a more specific exception
             throw new InvalidOperationException("Database connection string is not configured.");
 
-        services
-            .AddHealthChecks()
-            .AddNpgSql(connectionString);
+        // services
+        //     .AddHealthChecks()
+        //     .AddNpgSql(connectionString);
+
+        services.AddHealthChecks()
+            .AddCheck<DatabaseHealthCheck>("database", tags: new[] { "ready" })
+            .AddCheck<HangfireHealthCheck>("hangfire", tags: new[] { "ready" })
+            .AddCheck<GoogleCalendarHealthCheck>("google_calendar", tags: new[] { "ready" })
+            .AddCheck<KonnectPaymentHealthCheck>("konnect_payment", tags: new[] { "ready" });
 
         return services;
     }

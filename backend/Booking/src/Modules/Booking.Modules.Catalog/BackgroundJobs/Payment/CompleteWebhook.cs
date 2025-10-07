@@ -110,6 +110,7 @@ public class CompleteWebhook(
                     title: "Store Not Found During Session Confirmation",
                     message: $"Session {session.Id}: Store {session.StoreId} not found in database",
                     severity: AdminAlertSeverity.Critical,
+                    type: AdminAlertType.SystemError,
                     metadata: new { SessionId = session.Id, StoreId = session.StoreId, OrderId = order.Id },
                     relatedEntityId: session.Id.ToString(),
                     relatedEntityType: "Session",
@@ -201,6 +202,7 @@ public class CompleteWebhook(
                 title: "Critical: Google Calendar Integration Exception",
                 message: $"Unexpected error during session confirmation for order {order?.Id}",
                 severity: AdminAlertSeverity.Critical,
+                type: AdminAlertType.IntegrationFailure,
                 metadata: new
                 {
                     OrderId = order?.Id,

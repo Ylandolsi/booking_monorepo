@@ -17,7 +17,68 @@ public static class HealthCheckEndpoint
         //         - **Predicate * *: None specified(defaults to all checks).
         //         -**Response * *: Detailed JSON including overall status, individual check results(name, status, description, duration, data, exception), total duration, and timestamp.
         //         - **Use Case * *: Comprehensive health assessment to verify the application and its dependencies are functioning.
+        /*
+            **Response**:
 
+                {
+                    "status": "Healthy",
+                    "checks": [
+                        {
+                        "name": "database",
+                        "status": "Healthy",
+                        "description": "Database is healthy",
+                        "duration": 443.8027,
+                        "data": {
+                            "database": "CatalogDb",
+                            "status": "Connected",
+                            "orderCount": 4,
+                            "checkedAt": "2025-10-07T06:12:52.563422Z"
+                        },
+                        "exception": null
+                        },
+                        {
+                        "name": "hangfire",
+                        "status": "Healthy",
+                        "description": "Hangfire is healthy",
+                        "duration": 72.5509,
+                        "data": {
+                            "serverCount": 2,
+                            "enqueuedJobs": 0,
+                            "processingJobs": 0,
+                            "failedJobs": 0,
+                            "checkedAt": "2025-10-07T06:12:52.1935426Z"
+                        },
+                        "exception": null
+                        },
+                        {
+                        "name": "google_calendar",
+                        "status": "Healthy",
+                        "description": "Google Calendar service is configured",
+                        "duration": 6.8339,
+                        "data": {
+                            "service": "Google Calendar API",
+                            "status": "Available",
+                            "checkedAt": "2025-10-07T06:12:52.127771Z"
+                        },
+                        "exception": null
+                        },
+                        {
+                        "name": "konnect_payment",
+                        "status": "Healthy",
+                        "description": "Konnect payment gateway is configured",
+                        "duration": 6.7048,
+                        "data": {
+                            "service": "Konnect Payment Gateway",
+                            "status": "Configured",
+                            "checkedAt": "2025-10-07T06:12:52.1274623Z"
+                        },
+                        "exception": null
+                        }
+                    ],
+                    "totalDuration": 505.6779,
+                    "timestamp": "2025-10-07T06:12:52.5880833Z"
+            ```
+            */
 
         // Basic health check endpoint
         app.MapHealthChecks("/health", new HealthCheckOptions
