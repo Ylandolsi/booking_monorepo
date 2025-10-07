@@ -112,10 +112,11 @@ public class NotificationService : INotificationService
 
                     return SendNotificationResult.Sent(Guid.Empty, DateTime.UtcNow);
                 }
+
                 _logger.LogError(
-                        "Failed to send email to {Recipient}: {Error}",
-                        request.Recipient,
-                        templateResult.ErrorMessage);
+                    "Failed to send email to {Recipient}: {Error}",
+                    request.Recipient,
+                    templateResult.ErrorMessage);
 
                 return SendNotificationResult.Failed(templateResult.ErrorMessage ?? "Unknown error");
             }
