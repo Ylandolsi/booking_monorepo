@@ -195,7 +195,7 @@ internal sealed class BookSessionCommandHandler(
                 : command.Title;
 
             var sessionNote = string.IsNullOrEmpty(command.Note) ? sessionTitle : command.Note;
-            
+
             var session = BookedSession.Create(
                 order.Id,
                 product.Id,
@@ -208,6 +208,7 @@ internal sealed class BookSessionCommandHandler(
                 sessionTitle,
                 sessionNote);
 
+            await context.BookedSessions.AddAsync(session, cancellationToken);
 
             // If there's remaining amount to pay, create payment and initiate Konnect payment
             if (totalPrice > 0)
@@ -226,7 +227,7 @@ internal sealed class BookSessionCommandHandler(
 
 
                 await context.Payments.AddAsync(payment, cancellationToken);
-                await context.SaveChangesAsync(cancellationToken);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
 
 
                 // Create payment with Konnect
@@ -269,10 +270,12 @@ internal sealed class BookSessionCommandHandler(
                 session.Confirm(meetLink);
                 order.MarkAsCompleted();
 
+                // notify user here : (store owner)
+
                 logger.LogInformation("Free session {SessionId} confirmed with meeting link", session.Id);
             }
 
-            await context.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             await unitOfWork.CommitTransactionAsync(cancellationToken);
             logger.LogInformation(

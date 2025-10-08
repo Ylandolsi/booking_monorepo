@@ -6,6 +6,8 @@ using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Persistence;
+using Booking.Modules.Notifications.Abstractions;
+using Booking.Modules.Notifications.Contracts;
 using Hangfire;
 using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +26,8 @@ public class CompleteWebhook(
     ILogger<CompleteWebhook> logger,
     GoogleCalendarService googleCalendarService,
     IUsersModuleApi usersModuleApi,
-    NotificationService notificationService)
+    NotificationService notificationService,
+    INotificationService newNotificationService)
 {
     [DisplayName("Complete Webhook Jobs messages")]
     [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
@@ -88,6 +91,9 @@ public class CompleteWebhook(
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
+            // Send order completion notification to customer
+            // await SendOrderCompletionNotificationAsync(order, cancellationToken);
+
             logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
                 order.Id);
         }
@@ -99,14 +105,15 @@ public class CompleteWebhook(
     {
         try
         {
+
             var store = await dbContext.Stores.FirstOrDefaultAsync(s => s.Id == session.StoreId, cancellationToken);
             if (store == null)
             {
                 logger.LogError("Store not found for session {SessionId} with storeId {StoreId}", session.Id,
                     session.StoreId);
 
-                // Send admin alert for missing store
-                await notificationService.SendAdminAlertAsync(
+                // Send admin alert for missing store via unified notification module
+                await SendAdminAlertViaNotificationsModuleAsync(
                     title: "Store Not Found During Session Confirmation",
                     message: $"Session {session.Id}: Store {session.StoreId} not found in database",
                     severity: AdminAlertSeverity.Critical,
@@ -116,7 +123,8 @@ public class CompleteWebhook(
                     relatedEntityType: "Session",
                     cancellationToken: cancellationToken);
 
-                session.Confirm("https://meet.google.com/error-happend-while-integrating-with-google-calendar-please-contact-us");
+                session.Confirm(
+                    "https://meet.google.com/error-happend-while-integrating-with-google-calendar-please-contact-us");
                 return;
             }
 
@@ -132,17 +140,23 @@ public class CompleteWebhook(
                     "Mentor {UserId} not integrated with Google Calendar for session {SessionId}",
                     store.UserId, session.Id);
 
-                await notificationService.SendIntegrationFailureAlertAsync(
-                    integrationName: "Google Calendar",
-                    orderId: order.Id.ToString(),
-                    errorMessage: $"Mentor (UserId: {store.UserId}) has not connected Google Calendar",
-                    additionalData: new
+
+
+                await SendAdminAlertViaNotificationsModuleAsync(
+                    title: "Google Calendar Integration Missing",
+                    message: $"Mentor {store.UserId} has not connected Google Calendar for session {session.Id}",
+                    severity: AdminAlertSeverity.Warning,
+                    type: AdminAlertType.IntegrationFailure,
+                    metadata: new
                     {
                         SessionId = session.Id,
                         StoreId = store.Id,
                         MentorUserId = store.UserId,
                         CustomerEmail = order.CustomerEmail
-                    });
+                    },
+                    relatedEntityId: session.Id.ToString(),
+                    relatedEntityType: "Session",
+                    cancellationToken: cancellationToken);
 
                 session.Confirm("https://meet.google.com/mentor-not-integrated-please-contact-support");
                 return;
@@ -171,19 +185,24 @@ public class CompleteWebhook(
                 logger.LogError("Failed to create Google Calendar event for session {SessionId}: {Error}",
                     session.Id, resEventMentor.Error.Description);
 
-                // Send admin alert for Google Calendar API failure
-                await notificationService.SendIntegrationFailureAlertAsync(
-                    integrationName: "Google Calendar API",
-                    orderId: order.Id.ToString(),
-                    errorMessage: resEventMentor.Error.Description,
-                    additionalData: new
+                // // Send admin alert for Google Calendar API failure
+                await SendAdminAlertViaNotificationsModuleAsync(
+                    title: "Google Calendar Integration Failure",
+                    message:
+                    $"Failed to create calendar event for session {session.Id}: {resEventMentor.Error.Description}",
+                    severity: AdminAlertSeverity.Error,
+                    type: AdminAlertType.IntegrationFailure,
+                    metadata: new
                     {
                         SessionId = session.Id,
                         ErrorCode = resEventMentor.Error.Code,
                         MentorUserId = store.UserId,
                         SessionStartTime = sessionStartTime,
                         SessionEndTime = sessionEndTime
-                    });
+                    },
+                    relatedEntityId: session.Id.ToString(),
+                    relatedEntityType: "Session",
+                    cancellationToken: cancellationToken);
             }
 
             var meetLink = resEventMentor.IsSuccess
@@ -197,8 +216,8 @@ public class CompleteWebhook(
             logger.LogError(e, "Error occurred with Google Calendar integration for order {OrderId}: {ErrorMessage}",
                 order?.Id, e.Message);
 
-            // Send critical admin alert for unexpected exceptions
-            await notificationService.SendAdminAlertAsync(
+            // Send critical admin alert for unexpected exceptions via unified notification module
+            await SendAdminAlertViaNotificationsModuleAsync(
                 title: "Critical: Google Calendar Integration Exception",
                 message: $"Unexpected error during session confirmation for order {order?.Id}",
                 severity: AdminAlertSeverity.Critical,
@@ -219,6 +238,113 @@ public class CompleteWebhook(
             {
                 session.Confirm("https://meet.google.com/error-happened-could-you-please-contact-us");
             }
+        }
+    }
+
+    /// <summary>
+    /// Sends an order completion notification to the customer using the new notification system
+    /// </summary>
+    private async Task SendOrderCompletionNotificationAsync(Order order, CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Create notification request for customer
+            var notificationRequest = new SendNotificationRequest
+            {
+                Recipient = order.CustomerEmail,
+                Subject = $"Order #{order.Id} Completed Successfully",
+                Message = order.ProductType == ProductType.Session
+                    ? $"Your booking session has been confirmed! We'll send you the meeting details soon."
+                    : $"Your order has been completed successfully.",
+                Type = NotificationType.Booking,
+                Severity = NotificationSeverity.Info,
+                Channels = new[] { NotificationChannel.InApp },
+                CorrelationId = $"order-completion-{order.Id}",
+                RelatedEntityId = order.Id.ToString(),
+                RelatedEntityType = "Order",
+                TemplateData = new Dictionary<string, object>
+                {
+                    ["OrderId"] = order.Id,
+                    ["CustomerName"] = order.CustomerName,
+                    ["ProductType"] = order.ProductType.ToString(),
+                    ["Amount"] = order.Amount,
+                    ["CompletedAt"] = order.CompletedAt ?? DateTime.UtcNow
+                }
+            };
+
+            var result = await newNotificationService.EnqueueMultiChannelNotificationAsync(
+                notificationRequest, cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                logger.LogInformation(
+                    "Order completion notification queued successfully for order {OrderId}, customer {CustomerEmail}",
+                    order.Id, order.CustomerEmail);
+            }
+            else
+            {
+                logger.LogWarning(
+                    "Failed to queue order completion notification for order {OrderId}: {Error}",
+                    order.Id, result.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex,
+                "Unexpected error sending order completion notification for order {OrderId}",
+                order.Id);
+        }
+    }
+
+    private async Task SendAdminAlertViaNotificationsModuleAsync(
+        string title,
+        string message,
+        AdminAlertSeverity severity,
+        AdminAlertType type,
+        object? metadata = null,
+        string? relatedEntityId = null,
+        string? relatedEntityType = null,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var notificationRequest = new SendNotificationRequest
+            {
+                Recipient = "admins",
+                Subject = title,
+                Message = message,
+                Type = NotificationType.Administrative,
+                Severity = severity switch
+                {
+                    AdminAlertSeverity.Info => NotificationSeverity.Info,
+                    AdminAlertSeverity.Warning => NotificationSeverity.Warning,
+                    AdminAlertSeverity.Error => NotificationSeverity.Error,
+                    AdminAlertSeverity.Critical => NotificationSeverity.Critical,
+                    _ => NotificationSeverity.Info
+                },
+                Channels = new[] { NotificationChannel.InApp },
+                RelatedEntityId = relatedEntityId,
+                RelatedEntityType = relatedEntityType,
+                Metadata = metadata != null ? System.Text.Json.JsonSerializer.Serialize(metadata) : null,
+                CorrelationId = $"admin-alert-{Guid.NewGuid()}"
+            };
+
+            var result =
+                await newNotificationService.EnqueueMultiChannelNotificationAsync(notificationRequest,
+                    cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                logger.LogInformation("Admin alert queued: {Title}", title);
+            }
+            else
+            {
+                logger.LogWarning("Failed to queue admin alert {Title}: {Error}", title, result.ErrorMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to send admin alert via notifications module: {Title}", title);
         }
     }
 }
