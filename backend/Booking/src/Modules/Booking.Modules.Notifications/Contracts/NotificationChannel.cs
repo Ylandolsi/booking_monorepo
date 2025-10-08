@@ -21,7 +21,12 @@ public enum NotificationChannel
     Push = 3,
 
     /// <summary>
-    /// In-app notification
+    /// In-app notification (persistent storage for dashboards)
     /// </summary>
-    InApp = 4
+    InApp = 4,
+
+    /// <summary>
+    /// SignalR real-time notification (includes admin alerts via groups)
+    /// </summary>
+    SignalR = 5
 }

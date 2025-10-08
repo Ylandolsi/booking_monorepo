@@ -18,6 +18,8 @@ public class NotificationService : INotificationService
     private readonly ICommandHandler<EnqueueNotificationCommand, Guid> _enqueueHandler;
     private readonly ITemplateEngine _templateEngine;
     private readonly IEmailSender _emailSender;
+    private readonly ISignalRSender _signalRSender;
+    private readonly IInAppSender _inAppSender;
     private readonly NotificationsDbContext _dbContext;
     private readonly ILogger<NotificationService> _logger;
 
@@ -25,12 +27,16 @@ public class NotificationService : INotificationService
         ICommandHandler<EnqueueNotificationCommand, Guid> enqueueHandler,
         ITemplateEngine templateEngine,
         IEmailSender emailSender,
+        ISignalRSender signalRSender,
+        IInAppSender inAppSender,
         NotificationsDbContext dbContext,
         ILogger<NotificationService> logger)
     {
         _enqueueHandler = enqueueHandler;
         _templateEngine = templateEngine;
         _emailSender = emailSender;
+        _signalRSender = signalRSender;
+        _inAppSender = inAppSender;
         _dbContext = dbContext;
         _logger = logger;
     }
@@ -276,5 +282,104 @@ public class NotificationService : INotificationService
         _logger.LogInformation("Notification {NotificationId} cancelled successfully", notificationId);
 
         return true;
+    }
+
+
+
+    /// <summary>
+    /// Enqueues a multi-channel notification for background delivery
+    /// </summary>
+    public async Task<SendNotificationResult> EnqueueMultiChannelNotificationAsync(
+        SendNotificationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Enqueuing multi-channel notification to {Recipient} via channels: {Channels}",
+            request.Recipient, string.Join(", ", request.Channels));
+
+        var results = new List<SendNotificationResult>();
+
+        // Queue notifications for each channel that supports queuing
+        foreach (var channel in request.Channels)
+        {
+            try
+            {
+                switch (channel)
+                {
+                    case NotificationChannel.Email:
+                        // Email supports queuing via existing mechanism
+                        var emailRequest = request.ToEmailRequest();
+                        var emailResult = await EnqueueEmailAsync(emailRequest, cancellationToken);
+                        results.Add(emailResult);
+                        break;
+
+                    case NotificationChannel.SignalR:
+                        // SignalR is real-time, send immediately
+                        var signalRResult = await SendSignalRChannelAsync(request, cancellationToken);
+                        results.Add(signalRResult.IsSuccess
+                            ? SendNotificationResult.Sent(Guid.NewGuid(), DateTime.UtcNow)
+                            : SendNotificationResult.Failed(signalRResult.ErrorMessage ?? "SignalR failed"));
+                        break;
+
+                    case NotificationChannel.InApp:
+                        // InApp notifications are saved immediately
+                        var inAppResult = await SendInAppChannelAsync(request, cancellationToken);
+                        results.Add(inAppResult.IsSuccess
+                            ? SendNotificationResult.Sent(Guid.NewGuid(), DateTime.UtcNow)
+                            : SendNotificationResult.Failed(inAppResult.ErrorMessage ?? "InApp failed"));
+                        break;
+
+                    default:
+                        _logger.LogWarning("Unsupported channel for queuing: {Channel}", channel);
+                        results.Add(SendNotificationResult.Failed($"Unsupported channel: {channel}"));
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to queue notification for {Channel}", channel);
+                results.Add(SendNotificationResult.Failed($"{channel}: {ex.Message}"));
+            }
+        }
+
+        // Return the first successful result or combined error
+        var successful = results.FirstOrDefault(r => r.IsSuccess);
+        if (successful != null)
+        {
+            _logger.LogInformation("Multi-channel notification enqueued successfully");
+            return successful;
+        }
+
+        var allErrors = string.Join("; ", results.Select(r => r.ErrorMessage ?? "Unknown error"));
+        _logger.LogError("Failed to enqueue multi-channel notification: {Errors}", allErrors);
+        return SendNotificationResult.Failed($"All channels failed: {allErrors}");
+    }
+
+    private async Task<SignalRSendResult> SendSignalRChannelAsync(
+        SendNotificationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var signalRRequest = request.ToSignalRRequest();
+        return await _signalRSender.SendAsync(signalRRequest, cancellationToken);
+    }
+
+    private async Task<InAppSendResult> SendInAppChannelAsync(
+        SendNotificationRequest request,
+        CancellationToken cancellationToken)
+    {
+        var inAppRequest = request.ToInAppRequest();
+        return await _inAppSender.SaveNotificationAsync(inAppRequest, cancellationToken);
+    }
+
+    /// <summary>
+    /// Sends a SignalR real-time notification directly
+    /// </summary>
+    public async Task<SignalRSendResult> SendSignalRNotificationAsync(
+        SignalRSendRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Sending direct SignalR notification to {Target}",
+            !string.IsNullOrEmpty(request.UserSlug) ? $"user {request.UserSlug}" : $"group {request.GroupName}");
+
+        return await _signalRSender.SendAsync(request, cancellationToken);
     }
 }

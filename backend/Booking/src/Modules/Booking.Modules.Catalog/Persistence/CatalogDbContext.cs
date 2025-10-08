@@ -1,5 +1,6 @@
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Domain.Entities.Sessions;
+using Booking.Modules.Catalog.Domain.Entities.Products;
+using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 

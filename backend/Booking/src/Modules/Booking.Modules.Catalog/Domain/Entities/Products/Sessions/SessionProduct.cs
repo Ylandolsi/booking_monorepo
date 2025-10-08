@@ -1,6 +1,6 @@
 using Booking.Modules.Catalog.Domain.ValueObjects;
 
-namespace Booking.Modules.Catalog.Domain.Entities.Sessions;
+namespace Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 
 public class SessionProduct : Product
 {

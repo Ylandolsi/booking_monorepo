@@ -160,9 +160,11 @@ public sealed class NotificationOutbox : Entity
         Attempts++;
         LastAttemptAt = DateTime.UtcNow;
         LastError = errorMessage;
+        Status = NotificationStatus.Pending; // Remain pending for retries
 
         if (Attempts >= MaxAttempts)
         {
+            // Exceeded max attempts, mark as failed
             Status = NotificationStatus.Failed;
         }
     }

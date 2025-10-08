@@ -33,6 +33,7 @@
     <ItemGroup>
         <Folder Include="Features\Orders\GetOrders\" />
         <Folder Include="Features\Payout\Admin\GetDetailed\"/>
+        <Folder Include="Features\Products\RedirectLink\" />
         <Folder Include="Features\Products\Sessions\Public\_depricated\" />
         <Folder Include="Persistence\Migrations\" />
     </ItemGroup>

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Booking.Common.Contracts.Users;
 using Booking.Common.RealTime;
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Domain.Entities.Sessions;
+using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Persistence;

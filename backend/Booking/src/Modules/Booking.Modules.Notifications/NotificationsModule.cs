@@ -5,6 +5,8 @@ using Booking.Modules.Notifications.BackgroundJobs.OutboxProcessor;
 using Booking.Modules.Notifications.Features.Outbox.Enqueue;
 using Booking.Modules.Notifications.Features.Outbox.Process;
 using Booking.Modules.Notifications.Infrastructure.Adapters.AwsSes;
+using Booking.Modules.Notifications.Infrastructure.Adapters.SignalR;
+using Booking.Modules.Notifications.Infrastructure.Adapters.InApp;
 using Booking.Modules.Notifications.Infrastructure.TemplateEngine;
 using Booking.Modules.Notifications.Persistence;
 using Booking.Modules.Notifications.Services;
@@ -14,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 
 namespace Booking.Modules.Notifications;
 
@@ -28,7 +31,24 @@ public static class NotificationsModule
             .AddOptions(configuration)
             .AddServices()
             .AddAdapters()
+            .AddSignalR()
             .AddBackgroundJobs();
+    }
+
+    /// <summary>
+    /// Adds SignalR configuration for real-time notifications
+    /// </summary>
+    private static IServiceCollection AddSignalR(this IServiceCollection services)
+    {
+        services.AddSignalR(options =>
+        {
+            // Configure SignalR options as needed
+            options.EnableDetailedErrors = true; // Set to false in production
+            options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+        });
+
+        return services;
     }
 
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
@@ -88,6 +108,12 @@ public static class NotificationsModule
         // Register IEmailSender with AWS SES as the default implementation
         services.AddScoped<IEmailSender, AwsSesEmailSender>();
 
+        // Register SignalR notification sender
+        services.AddScoped<ISignalRSender, SignalRSender>();
+
+        // Register In-App notification sender
+        services.AddScoped<IInAppSender, InAppSender>();
+
         return services;
     }
 
@@ -117,5 +143,24 @@ public static class NotificationsModule
             "cleanup-old-notifications",
             job => job.CleanupAsync(30, default), // 30 days retention
             "0 2 * * *"); // Daily at 2:00 AM
+    }
+
+    /// <summary>
+    /// Configures SignalR hub endpoints for real-time notifications
+    /// Call this in your application's Configure method
+    /// </summary>
+    /// <param name="app">The application builder</param>
+    /// <returns>The application builder for chaining</returns>
+    public static IApplicationBuilder UseNotificationsSignalR(this IApplicationBuilder app)
+    {
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            // Map the notifications hub endpoint
+            endpoints.MapHub<NotificationHub>("/api/notifications/hub");
+        });
+
+        return app;
     }
 }

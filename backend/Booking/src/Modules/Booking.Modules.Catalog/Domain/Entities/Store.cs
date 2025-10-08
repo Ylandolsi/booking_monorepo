@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Booking.Common.Domain.Entity;
 using Booking.Common.Results;
+using Booking.Modules.Catalog.Domain.Entities.Products;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 
 namespace Booking.Modules.Catalog.Domain.Entities;

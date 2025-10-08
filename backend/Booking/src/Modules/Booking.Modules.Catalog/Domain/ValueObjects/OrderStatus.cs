@@ -13,7 +13,6 @@ public enum OrderStatus
 public enum ProductType
 {
     Session,
-    Course,
     DigitalProduct,
-    Physical
+    RedirectLink,
 }

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using Booking.Modules.Catalog.Domain.Entities.Sessions;
+using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Booking.Modules.Catalog.Features;
 using Booking.Modules.Catalog.Persistence;
 using IntegrationsTests.Abstractions;

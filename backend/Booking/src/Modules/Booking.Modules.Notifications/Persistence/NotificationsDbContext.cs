@@ -11,6 +11,7 @@ public sealed class NotificationsDbContext : DbContext
     }
 
     public DbSet<NotificationOutbox> NotificationOutbox { get; set; } = null!;
+    public DbSet<InAppNotificationEntity> InAppNotifications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
