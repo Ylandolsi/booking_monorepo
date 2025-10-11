@@ -16,7 +16,7 @@ export const useResetPassword = ({ onSuccess }: { onSuccess?: () => void } = {})
     },
     onError: (error) => {
       console.error('Reset password failed:', error);
-      toast.error('Failed to reset password. Please try again.');
+      // toast.error('Failed to reset password. Please try again.');
     },
   });
 };

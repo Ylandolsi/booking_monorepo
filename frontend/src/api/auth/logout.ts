@@ -24,7 +24,7 @@ export const useLogout = ({
     },
     onError: (error) => {
       console.error('Logout failed:', error);
-      toast.error('Logout failed. Please try again.');
+      // toast.error('Logout failed. Please try again.');
     },
   });
 };
