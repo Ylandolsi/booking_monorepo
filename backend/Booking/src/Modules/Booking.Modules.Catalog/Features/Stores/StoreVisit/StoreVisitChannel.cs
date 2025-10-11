@@ -29,7 +29,11 @@ public class StoreVisitChannel
         }
         else
         {
-            _logger.LogWarning("Channel is full, dropping store visit for store: {StoreSlug}", visit.StoreSlug);
+            _logger.LogWarning(
+            "Channel is full (capacity: {Capacity}), dropping store visit for store: {StoreSlug}. " +
+            "Consider increasing channel capacity or processing frequency.",
+            1000, // Or get from config
+            visit.StoreSlug);
         }
     }
 
