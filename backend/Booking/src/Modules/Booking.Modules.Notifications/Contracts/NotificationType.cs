@@ -39,5 +39,10 @@ public enum NotificationType
     /// <summary>
     /// Administrative notifications for staff/admin users
     /// </summary>
-    Administrative = 7
+    Administrative = 7,
+
+    /// <summary>
+    /// Integration failures 
+    /// </summary>
+    Integration = 8
 }

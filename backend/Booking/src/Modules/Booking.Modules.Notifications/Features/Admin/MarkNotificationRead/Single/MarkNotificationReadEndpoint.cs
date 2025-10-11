@@ -5,18 +5,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.AdminNotifications.Delete;
+namespace Booking.Modules.Notifications.Features.Admin.MarkNotificationRead.Single;
 
-public class DeleteAdminNotificationEndpoint : IEndpoint
+public class MarkNotificationReadEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/api/admin/notifications/{id}", async (
-                int id,
-                ICommandHandler<DeleteAdminNotificationCommand> handler,
+        app.MapPost(NotificationsEndpoints.Admin.markSignleRead, async (
+                int notificationId,
+                ICommandHandler<MarkNotificationReadCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new DeleteAdminNotificationCommand(id);
+                var command = new MarkNotificationReadCommand(notificationId);
                 var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
@@ -26,7 +26,6 @@ public class DeleteAdminNotificationEndpoint : IEndpoint
             })
             .WithTags("Admin Notifications")
             .RequireAuthorization(policy => policy.RequireRole("Admin"))
-            .Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            .Produces(StatusCodes.Status200OK);
     }
 }

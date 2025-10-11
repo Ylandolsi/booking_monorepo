@@ -1,9 +1,7 @@
-using Booking.Common.Messaging;
+/*using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Persistence;
-using Microsoft.EntityFrameworkCore;
 
-namespace Booking.Modules.Catalog.Features.AdminNotifications.Delete;
+namespace Booking.Modules.Notifications.Features.Delete;
 
 public record DeleteAdminNotificationCommand(int NotificationId) : ICommand;
 
@@ -26,4 +24,4 @@ public class DeleteAdminNotificationCommandHandler(CatalogDbContext context) : I
 
         return Result.Success();
     }
-}
+}*/

@@ -49,14 +49,6 @@ builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 // builder.Services.AddScoped<NotificationService>();
 
-builder.Services.AddScoped<NotificationService>(sp =>
-{
-    var hubContext = sp.GetService<IHubContext<NotificationHub>>();
-    var logger = sp.GetRequiredService<ILogger<NotificationService>>();
-    var persistence = sp.GetService<IAdminNotificationPersistence>();
-    return new NotificationService(hubContext, logger, persistence);
-});
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocumentation();
 

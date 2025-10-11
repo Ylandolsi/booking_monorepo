@@ -1,21 +1,22 @@
-using Booking.Common.Endpoints;
+/*using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.AdminNotifications.MarkNotificationRead.All;
+namespace Booking.Modules.Notifications.Features.Delete;
 
-public class MarkAllNotificationsReadEndpoint : IEndpoint
+public class DeleteAdminNotificationEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/admin/notifications/mark-all-read", async (
-                ICommandHandler<MarkAllNotificationsReadCommand> handler,
+        app.MapDelete("/api/admin/notifications/{id}", async (
+                int id,
+                ICommandHandler<DeleteAdminNotificationCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new MarkAllNotificationsReadCommand();
+                var command = new DeleteAdminNotificationCommand(id);
                 var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
@@ -25,6 +26,7 @@ public class MarkAllNotificationsReadEndpoint : IEndpoint
             })
             .WithTags("Admin Notifications")
             .RequireAuthorization(policy => policy.RequireRole("Admin"))
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
     }
-}
+}*/

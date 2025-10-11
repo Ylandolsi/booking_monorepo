@@ -1,5 +1,4 @@
 using Booking.Common.Contracts.Users;
-using Booking.Common.Email;
 using Booking.Common.Endpoints;
 using Booking.Common.SlugGenerator;
 using Booking.Common.Uploads;
@@ -41,8 +40,6 @@ public static class UsersModule
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<RoleService>();
-        services.AddScoped<AwsSesEmailService>();
-        services.AddSingleton<EmailTemplateProvider>();
         // AWS UPLOAD
         services.AddScoped<S3ImageProcessingService>();
 

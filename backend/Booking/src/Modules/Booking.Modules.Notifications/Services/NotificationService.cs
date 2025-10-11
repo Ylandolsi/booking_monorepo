@@ -10,16 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Booking.Modules.Notifications.Services;
 
-/// <summary>
-/// High-level notification service implementation
-/// </summary>
 public class NotificationService : INotificationService
 {
     private readonly ICommandHandler<EnqueueNotificationCommand, Guid> _enqueueHandler;
     private readonly ITemplateEngine _templateEngine;
     private readonly IEmailSender _emailSender;
     private readonly ISignalRSender _signalRSender;
-    private readonly IInAppSender _inAppSender;
+        private readonly IInAppSender _inAppSender;
     private readonly NotificationsDbContext _dbContext;
     private readonly ILogger<NotificationService> _logger;
 
@@ -367,7 +364,7 @@ public class NotificationService : INotificationService
         CancellationToken cancellationToken)
     {
         var inAppRequest = request.ToInAppRequest();
-        return await _inAppSender.SaveNotificationAsync(inAppRequest, cancellationToken);
+            return await _inAppSender.SaveNotificationAsync(inAppRequest, cancellationToken);
     }
 
     /// <summary>

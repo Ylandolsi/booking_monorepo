@@ -1,11 +1,11 @@
+using System.Data.Entity;
 using Booking.Common;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Persistence;
-using Microsoft.EntityFrameworkCore;
+using Booking.Modules.Notifications.Contracts;
+using Booking.Modules.Notifications.Persistence;
 
-namespace Booking.Modules.Catalog.Features.AdminNotifications.Get;
+namespace Booking.Modules.Notifications.Features.Admin.Get;
 
 public record GetAdminNotificationsQuery(
     int Page = 1,
@@ -28,16 +28,14 @@ public record AdminNotificationDto(
     DateTime? ReadAt
 );
 
-public class GetAdminNotificationsQueryHandler(CatalogDbContext context)
-        : IQueryHandler<GetAdminNotificationsQuery, PaginatedResult<AdminNotificationDto>>
+public class GetAdminNotificationsQueryHandler(NotificationsDbContext context)
+    : IQueryHandler<GetAdminNotificationsQuery, PaginatedResult<AdminNotificationDto>>
 {
-    private readonly CatalogDbContext _context = context;
-
     public async Task<Result<PaginatedResult<AdminNotificationDto>>> Handle(
         GetAdminNotificationsQuery query,
         CancellationToken cancellationToken)
     {
-        var notificationsQuery = _context.AdminNotifications.AsQueryable();
+        var notificationsQuery = context.InAppNotifications.Where(n => n.RecipientId == "admins");
 
         // Apply filters
         if (query.UnreadOnly.HasValue && query.UnreadOnly.Value)
@@ -47,7 +45,7 @@ public class GetAdminNotificationsQueryHandler(CatalogDbContext context)
 
         if (!string.IsNullOrEmpty(query.Severity))
         {
-            if (Enum.TryParse<AdminNotificationSeverity>(query.Severity, true, out var severity))
+            if (Enum.TryParse<NotificationSeverity>(query.Severity, true, out var severity))
             {
                 notificationsQuery = notificationsQuery.Where(n => n.Severity == severity);
             }

@@ -26,7 +26,6 @@ public class CompleteWebhook(
     ILogger<CompleteWebhook> logger,
     GoogleCalendarService googleCalendarService,
     IUsersModuleApi usersModuleApi,
-    NotificationService notificationService,
     INotificationService newNotificationService)
 {
     [DisplayName("Complete Webhook Jobs messages")]
@@ -105,7 +104,6 @@ public class CompleteWebhook(
     {
         try
         {
-
             var store = await dbContext.Stores.FirstOrDefaultAsync(s => s.Id == session.StoreId, cancellationToken);
             if (store == null)
             {
@@ -116,8 +114,8 @@ public class CompleteWebhook(
                 await SendAdminAlertViaNotificationsModuleAsync(
                     title: "Store Not Found During Session Confirmation",
                     message: $"Session {session.Id}: Store {session.StoreId} not found in database",
-                    severity: AdminAlertSeverity.Critical,
-                    type: AdminAlertType.SystemError,
+                    severity: NotificationSeverity.Critical,
+                    type: NotificationType.System,
                     metadata: new { SessionId = session.Id, StoreId = session.StoreId, OrderId = order.Id },
                     relatedEntityId: session.Id.ToString(),
                     relatedEntityType: "Session",
@@ -141,12 +139,11 @@ public class CompleteWebhook(
                     store.UserId, session.Id);
 
 
-
                 await SendAdminAlertViaNotificationsModuleAsync(
                     title: "Google Calendar Integration Missing",
                     message: $"Mentor {store.UserId} has not connected Google Calendar for session {session.Id}",
-                    severity: AdminAlertSeverity.Warning,
-                    type: AdminAlertType.IntegrationFailure,
+                    severity: NotificationSeverity.Warning,
+                    type: NotificationType.Integration,
                     metadata: new
                     {
                         SessionId = session.Id,
@@ -190,8 +187,8 @@ public class CompleteWebhook(
                     title: "Google Calendar Integration Failure",
                     message:
                     $"Failed to create calendar event for session {session.Id}: {resEventMentor.Error.Description}",
-                    severity: AdminAlertSeverity.Error,
-                    type: AdminAlertType.IntegrationFailure,
+                    severity: NotificationSeverity.Error,
+                    type : NotificationType.Integration,
                     metadata: new
                     {
                         SessionId = session.Id,
@@ -220,8 +217,8 @@ public class CompleteWebhook(
             await SendAdminAlertViaNotificationsModuleAsync(
                 title: "Critical: Google Calendar Integration Exception",
                 message: $"Unexpected error during session confirmation for order {order?.Id}",
-                severity: AdminAlertSeverity.Critical,
-                type: AdminAlertType.IntegrationFailure,
+                severity: NotificationSeverity.Critical,
+                type : NotificationType.System,
                 metadata: new
                 {
                     OrderId = order?.Id,
@@ -246,6 +243,7 @@ public class CompleteWebhook(
     /// </summary>
     private async Task SendOrderCompletionNotificationAsync(Order order, CancellationToken cancellationToken)
     {
+        // Todo : 
         try
         {
             // Create notification request for customer
@@ -262,14 +260,6 @@ public class CompleteWebhook(
                 CorrelationId = $"order-completion-{order.Id}",
                 RelatedEntityId = order.Id.ToString(),
                 RelatedEntityType = "Order",
-                TemplateData = new Dictionary<string, object>
-                {
-                    ["OrderId"] = order.Id,
-                    ["CustomerName"] = order.CustomerName,
-                    ["ProductType"] = order.ProductType.ToString(),
-                    ["Amount"] = order.Amount,
-                    ["CompletedAt"] = order.CompletedAt ?? DateTime.UtcNow
-                }
             };
 
             var result = await newNotificationService.EnqueueMultiChannelNotificationAsync(
@@ -299,8 +289,8 @@ public class CompleteWebhook(
     private async Task SendAdminAlertViaNotificationsModuleAsync(
         string title,
         string message,
-        AdminAlertSeverity severity,
-        AdminAlertType type,
+        NotificationSeverity severity,
+        NotificationType? type,
         object? metadata = null,
         string? relatedEntityId = null,
         string? relatedEntityType = null,
@@ -313,15 +303,8 @@ public class CompleteWebhook(
                 Recipient = "admins",
                 Subject = title,
                 Message = message,
-                Type = NotificationType.Administrative,
-                Severity = severity switch
-                {
-                    AdminAlertSeverity.Info => NotificationSeverity.Info,
-                    AdminAlertSeverity.Warning => NotificationSeverity.Warning,
-                    AdminAlertSeverity.Error => NotificationSeverity.Error,
-                    AdminAlertSeverity.Critical => NotificationSeverity.Critical,
-                    _ => NotificationSeverity.Info
-                },
+                Type = type ?? NotificationType.Administrative,
+                Severity = severity,
                 Channels = new[] { NotificationChannel.InApp },
                 RelatedEntityId = relatedEntityId,
                 RelatedEntityType = relatedEntityType,

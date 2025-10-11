@@ -17,7 +17,6 @@ public record WebhookCommand(string PaymentRef) : ICommand;
 public class PaymentWebhookHandler(
     CatalogDbContext context,
     KonnectService konnectService,
-    NotificationService notificationService,
     IBackgroundJobClient backgroundJobClient,
     IUsersModuleApi usersModuleApi,
     ILogger<PaymentWebhookHandler> logger) : ICommandHandler<WebhookCommand>

@@ -7,7 +7,6 @@ using Amazon.S3;
 using Amazon.SimpleEmail;
 using Booking.Common;
 using Booking.Common.Authentication;
-using Booking.Common.Email;
 using Booking.Common.Options;
 using Booking.Modules.Catalog;
 using Booking.Modules.Catalog.Features.HealthChecks;
@@ -219,7 +218,6 @@ public static class Infrastructure
     {
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.JwtOptionsKey));
         services.Configure<GoogleOAuthOptions>(configuration.GetSection(GoogleOAuthOptions.GoogleOptionsKey));
-        services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.EmailOptionsKey));
         services.Configure<FrontendApplicationOptions>(
             configuration.GetSection(FrontendApplicationOptions.FrontEndOptionsKey));
         services.Configure<KonnectOptions>(configuration.GetSection(KonnectOptions.OptionsKey));

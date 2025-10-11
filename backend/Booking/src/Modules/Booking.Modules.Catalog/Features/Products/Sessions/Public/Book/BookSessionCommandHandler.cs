@@ -21,7 +21,6 @@ internal sealed class BookSessionCommandHandler(
     CatalogDbContext context,
     KonnectService konnectService,
     IUsersModuleApi usersModuleApi,
-    NotificationService notificationService,
     IUnitOfWork unitOfWork,
     GoogleCalendarService googleCalendarService,
     ILogger<BookSessionCommandHandler> logger) : ICommandHandler<BookSessionCommand, BookSessionRepsonse>

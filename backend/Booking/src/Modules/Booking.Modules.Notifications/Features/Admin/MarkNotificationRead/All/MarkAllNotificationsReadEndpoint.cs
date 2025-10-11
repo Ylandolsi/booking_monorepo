@@ -5,18 +5,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Catalog.Features.AdminNotifications.MarkNotificationRead.Single;
+namespace Booking.Modules.Notifications.Features.Admin.MarkNotificationRead.All;
 
-public class MarkNotificationReadEndpoint : IEndpoint
+public class MarkAllNotificationsReadEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/admin/notifications/{id}/mark-read", async (
-                int id,
-                ICommandHandler<MarkNotificationReadCommand> handler,
+        app.MapPost(NotificationsEndpoints.Admin.markAllRead, async (
+                ICommandHandler<MarkAllNotificationsReadCommand> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new MarkNotificationReadCommand(id);
+                var command = new MarkAllNotificationsReadCommand();
                 var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(

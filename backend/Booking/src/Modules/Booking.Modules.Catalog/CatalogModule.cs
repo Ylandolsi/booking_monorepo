@@ -1,12 +1,7 @@
 using System.Threading.Channels;
-using Booking.Common.Email;
 using Booking.Common.Endpoints;
-using Booking.Common.RealTime;
-using Booking.Modules.Catalog.BackgroundJobs.Payment;
-using Booking.Modules.Catalog.BackgroundJobs.Payout;
 using Booking.Modules.Catalog.BackgroundJobs.Statistics;
 using Booking.Modules.Catalog.Domain.Entities;
-using Booking.Modules.Catalog.Features.AdminNotifications;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
 using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Features.Stores.StoreVisit;
@@ -61,12 +56,9 @@ public static class CatalogModule
 
     private static IServiceCollection AddServices(this IServiceCollection services)
     {
-        services.AddScoped<AwsSesEmailService>();
-        services.AddSingleton<EmailTemplateProvider>();
         services.AddScoped<GoogleCalendarService>();
         services.AddScoped<StoreService>();
 
-        services.AddScoped<IAdminNotificationPersistence, AdminNotificationPersistence>();
         // Add other services here
 
         return services;
