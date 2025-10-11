@@ -1,2 +1,0 @@
-cron job that transfer money from escrow to mentor wallet after session being completed after 24 hours 
-cron job that loop over the payouts that are approved and not completed ( being approved for more than 30 minuts )
