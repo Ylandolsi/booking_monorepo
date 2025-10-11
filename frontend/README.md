@@ -628,6 +628,25 @@ export const createSession = async ({ data }: { data: CreateProductInput }) => {
   // Implementation here
 };
 
+// or : this type of options ovveride :
+export function useMarkAllNotificationsRead(options?: UseMutationOptions<void, Error, void>) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: markAllNotificationsRead,
+
+    meta: {
+      invalidatesQuery: notificationKeys.allAdmin,
+      successMessage: 'Notification marked as read successfully!',
+      successAction: (data, variables, context) => {
+        queryClient.setQueryData(notificationKeys.unReadCount(), () => 0);
+        options?.onSuccess?.(data, variables, context);
+        return;
+      },
+    },
+    ...options,
+  });
+}
+
 export const useCreateSession = (options?: { onSuccess?: (data: PatchPostSessionResponse) => void; onError?: (error: Error) => void }) => {
   return useMutation<PatchPostSessionResponse, Error, { data: CreateProductInput }>({
     mutationFn: createSession,
