@@ -12,10 +12,18 @@ export interface Product {
   displayOrder: number;
   isPublished: boolean;
   thumbnailPicture?: Picture;
+  productStyle: ProductStyle;
   preview?: Picture;
   createdAt: string;
   updatedAt?: string;
 }
+
+export const ProductStyle = {
+  Full: 'Full',
+  Minimal: 'Minimal',
+  Compact: 'Compact',
+} as const;
+export type ProductStyle = (typeof ProductStyle)[keyof typeof ProductStyle];
 
 export const ProductType = {
   Session: 'Session',

@@ -75,6 +75,7 @@ public class CreateSessionProductHandler(
                 store.Id,
                 store.Slug,
                 command.Title,
+                command.ProductStyle,
                 command.Subtitle,
                 command.Description,
                 command.ClickToPay,

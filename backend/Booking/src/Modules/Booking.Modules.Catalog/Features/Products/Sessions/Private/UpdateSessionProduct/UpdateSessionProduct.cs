@@ -76,7 +76,12 @@ public class UpdateSessionProductHandler(
             }
 
             // Update basic info
-            sessionProduct.UpdateBasicInfo(command.Title, command.Price, command.Subtitle, command.Description);
+            sessionProduct.UpdateBasicInfo(
+                command.Title,
+                command.Price,
+                command.ProductStyle,
+                command.Subtitle,
+                command.Description);
 
             // Update session details
             sessionProduct.UpdateSessionDetails(

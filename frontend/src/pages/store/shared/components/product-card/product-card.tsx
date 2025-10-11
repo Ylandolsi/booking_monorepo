@@ -7,7 +7,7 @@ import { ProductCardProvider, useProductCardContext } from './context';
 import { useProductCard } from './use-product-card';
 import type { ProductCardProps } from './types';
 
-export function ProductCard({ product, onClick, className, displayMode = 'full', edit = false, onActionClick, setProducts }: ProductCardProps) {
+export function ProductCard({ product, onClick, className, displayMode = 'Full', edit = false, onActionClick, setProducts }: ProductCardProps) {
   const cardHook = useProductCard({ product, edit, setProducts });
 
   return (
@@ -20,7 +20,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
           onClick && 'cursor-pointer',
           className,
           edit && 'relative',
-          displayMode === 'minimal' && 'p-3',
+          displayMode === 'Minimal' && 'p-3',
         )}
         ref={cardHook.setNodeRef}
         style={cardHook.style}
@@ -29,7 +29,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
         {edit && <ProductCard.DragHandle dragHandleProps={cardHook.dragHandleProps} />}
 
         <div className="flex h-full w-full flex-col gap-4">
-          {displayMode === 'compact' && (
+          {displayMode === 'Compact' && (
             <>
               <div className="flex w-full gap-4">
                 <ProductCard.Image />
@@ -43,7 +43,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
               <ProductCard.Footer />
             </>
           )}
-          {displayMode === 'full' && (
+          {displayMode === 'Full' && (
             <>
               <ProductCard.Image />
               <ProductCard.Content
@@ -55,7 +55,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'full',
               <ProductCard.Footer />
             </>
           )}
-          {displayMode === 'minimal' && (
+          {displayMode === 'Minimal' && (
             <div className="flex w-full items-center gap-4">
               <ProductCard.Image />
               <ProductCard.Content
@@ -96,7 +96,7 @@ ProductCard.Image = function Image() {
     <div
       className={cn(
         'mx-auto rounded-lg transition-all',
-        displayMode === 'compact' || displayMode === 'minimal' ? 'flex h-14 w-14 items-center justify-center' : 'h-full w-full',
+        displayMode === 'Compact' || displayMode === 'Minimal' ? 'flex h-14 w-14 items-center justify-center' : 'h-full w-full',
       )}
     >
       <img
@@ -104,9 +104,9 @@ ProductCard.Image = function Image() {
         alt={product.title}
         className={cn(
           'transition-transform duration-300 group-hover/card:scale-105',
-          displayMode === 'compact' || displayMode === 'minimal'
+          displayMode === 'Compact' || displayMode === 'Minimal'
             ? 'min-h-full min-w-full rounded-2xl object-cover object-center'
-            : 'h-full w-full rounded-lg object-cover',
+            : 'h-full w-full rounded-lg',
         )}
       />
     </div>
@@ -128,7 +128,7 @@ ProductCard.Content = function Content({ isPopoverOpen, setIsPopoverOpen, handle
     <div className="flex flex-1 flex-col gap-3">
       <div className="flex w-full items-start justify-between gap-4">
         <ProductCard.Title />
-        {displayMode !== 'minimal' && <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>}
+        {displayMode !== 'Minimal' && <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>}
 
         {edit && product.productSlug && (
           <ProductCard.EditMenu
@@ -150,7 +150,7 @@ ProductCard.Title = function Title() {
   return (
     <div className="min-w-0 flex-1 text-left">
       <h3 className="text-foreground mb-1 line-clamp-2 text-base leading-tight font-semibold break-words">{product.title}</h3>
-      {displayMode !== 'minimal' && (
+      {displayMode !== 'Minimal' && (
         <>{product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed break-all">{product.subtitle}</p>}</>
       )}
     </div>

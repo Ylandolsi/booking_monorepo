@@ -104,7 +104,10 @@ public class GetSessionProductHandler(
                 DayAvailabilities = dayAvailabilities,
                 ClickToPay = sessionProduct.ClickToPay,
                 CreatedAt = sessionProduct.CreatedAt,
-                UpdatedAt = sessionProduct.UpdatedAt
+                UpdatedAt = sessionProduct.UpdatedAt,
+                ProductStyle = sessionProduct.ProductStyle,
+                ProductType = sessionProduct.ProductType,
+                DisplayOrder = sessionProduct.DisplayOrder,
             };
 
             return Result.Success(response);

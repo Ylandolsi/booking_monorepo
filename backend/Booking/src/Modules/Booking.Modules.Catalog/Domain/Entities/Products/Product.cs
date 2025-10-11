@@ -18,6 +18,7 @@ public abstract class Product : Entity
         string clickToPay,
         decimal price,
         ProductType productType,
+        ProductStyle productStyle = ProductStyle.Full,
         string? subtitle = null,
         string? description = null)
     {
@@ -50,6 +51,7 @@ public abstract class Product : Entity
     public string? Subtitle { get; protected set; }
     public string? Description { get; protected set; }
     public ProductType ProductType { get; protected set; }
+    public ProductStyle ProductStyle { get; protected set; }
     public decimal Price { get; protected set; }
     public string ClickToPay { get; protected set; }
 
@@ -67,7 +69,11 @@ public abstract class Product : Entity
 
     // TODO  : generate a unique ProductSlug 
 
-    public virtual void UpdateBasicInfo(string title, decimal price, string? subtitle = null,
+    public virtual void UpdateBasicInfo(
+        string title,
+        decimal price,
+        ProductStyle productStyle = ProductStyle.Full,
+        string? subtitle = null,
         string? description = null)
     {
         if (string.IsNullOrWhiteSpace(title))
@@ -80,6 +86,7 @@ public abstract class Product : Entity
         Subtitle = subtitle?.Trim();
         Description = description?.Trim();
         Price = price;
+        ProductStyle = productStyle;
         UpdatedAt = DateTime.UtcNow;
     }
 
@@ -115,4 +122,11 @@ public abstract class Product : Entity
         IsPublished = !IsPublished;
         UpdatedAt = DateTime.UtcNow;
     }
+}
+
+public enum ProductStyle
+{
+    Full,
+    Minimal,
+    Compact,
 }

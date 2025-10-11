@@ -56,6 +56,7 @@ public class GetMyStoreHandler(
                     DisplayOrder = product.DisplayOrder,
                     IsPublished = product.IsPublished, //  only retrieve published 
                     ThumbnailPicture = product.ThumbnailPicture,
+                    ProductStyle = product.ProductStyle,
                     UpdatedAt = product.UpdatedAt,
                     CreatedAt = product.CreatedAt
                 };
@@ -64,7 +65,7 @@ public class GetMyStoreHandler(
 
             // sort via display order
             mappedStoreProducts = mappedStoreProducts.OrderBy(p => p.DisplayOrder).ToList();
-            
+
             var mappedResult = new GetStoreResponse
             {
                 Slug = store.Slug,

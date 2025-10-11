@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Booking.Common.Messaging;
+using Booking.Modules.Catalog.Domain.Entities.Products;
 using Booking.Modules.Catalog.Features.Products.Shared;
 using Microsoft.AspNetCore.Http;
 
@@ -25,6 +26,7 @@ public record PatchPostSessionProductRequest
     public string Description { get; init; } = "";
     public IFormFile? PreviewImage { get; init; }
     public IFormFile? ThumbnailImage { get; init; }
+    public ProductStyle ProductStyle { get; init; }
     public required string ClickToPay { get; init; }
     public required decimal Price { get; init; }
     public int DurationMinutes { get; init; }

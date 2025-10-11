@@ -15,13 +15,22 @@ public class SessionProduct : Product
         string title,
         string clickToPay,
         decimal price,
+        ProductStyle productStyle,
         string? subtitle,
         string? description,
         string? meetingInstructions,
         Duration? durationTime,
         Duration? bufferTime,
-        string timeZoneId) : base(productSlug, storeId, storeSlug, title, clickToPay, price,
-        ProductType.Session, subtitle,
+        string timeZoneId) : base(
+        productSlug,
+        storeId,
+        storeSlug,
+        title,
+        clickToPay,
+        price,
+        ProductType.Session,
+        productStyle,
+        subtitle,
         description)
     {
         MeetingInstructions = meetingInstructions?.Trim();
@@ -49,6 +58,7 @@ public class SessionProduct : Product
         int storeId,
         string storeSlug,
         string title,
+        ProductStyle productStyle,
         string subtitle,
         string description,
         string clickToPay,
@@ -65,6 +75,7 @@ public class SessionProduct : Product
             title,
             clickToPay,
             price,
+            productStyle,
             subtitle,
             description,
             meetingInstructions,
@@ -117,10 +128,14 @@ public class SessionProduct : Product
         UpdatedAt = DateTime.UtcNow;
     }*/
 
-    public override void UpdateBasicInfo(string title, decimal price, string? subtitle = null,
+    public override void UpdateBasicInfo(
+        string title, 
+        decimal price,
+        ProductStyle productStyle,
+        string? subtitle = null,
         string? description = null)
     {
-        base.UpdateBasicInfo(title, price, subtitle, description);
+        base.UpdateBasicInfo(title, price, productStyle , subtitle, description);
         // Any session-specific logic for basic info updates can go here
     }
 }

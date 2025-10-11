@@ -69,7 +69,8 @@ public class GetStoreHandler(CatalogDbContext dbContext, ILogger<GetStoreHandler
                 Price = product.Price,
                 DisplayOrder = product.DisplayOrder,
                 ThumbnailPicture = product.ThumbnailPicture ?? null, // todo handle this
-                IsPublished = product.IsPublished
+                ProductStyle = product.ProductStyle,
+                IsPublished = product.IsPublished,
             };
             mappedStoreProducts.Add(mappedProduct);
         }

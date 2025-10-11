@@ -1,3 +1,4 @@
+using Booking.Modules.Catalog.Domain.Entities.Products;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 
 namespace Booking.Modules.Catalog.Features.Stores.Shared;
@@ -13,6 +14,7 @@ public record ProductResponse
     public string? Subtitle { get; init; }
     public string? Description { get; init; }
     public ProductType ProductType { get; init; }
+    public ProductStyle ProductStyle { get; init; }
     public decimal Price { get; init; }
     public string ClickToPay { get; init; }
     public int DisplayOrder { get; init; }

@@ -1,7 +1,7 @@
-import type { Product } from '@/api/stores';
+import type { Product, ProductStyle } from '@/api/stores';
 import type { Dispatch, SetStateAction } from 'react';
 
-export type DisplayMode = 'full' | 'compact' | 'minimal';
+// export type DisplayMode = 'full' | 'compact' | 'minimal';
 
 export type ProductCardType = Pick<
   Product,
@@ -11,7 +11,7 @@ export type ProductCardType = Pick<
 export interface ProductCardProps {
   product: ProductCardType;
   onClick?: () => void;
-  displayMode?: DisplayMode;
+  displayMode?: ProductStyle;
   className?: string;
   edit?: boolean;
   onActionClick?: () => void;

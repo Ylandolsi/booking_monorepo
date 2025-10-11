@@ -12,6 +12,7 @@ public class RedirectLinkProduct : Product
         string clickToPay,
         decimal price,
         string link,
+        ProductStyle productStyle,
         string? subtitle,
         string? description) : base(
         productSlug,
@@ -21,6 +22,7 @@ public class RedirectLinkProduct : Product
         clickToPay,
         price,
         ProductType.RedirectLink,
+        productStyle,
         subtitle,
         description)
     {
@@ -33,6 +35,7 @@ public class RedirectLinkProduct : Product
         string storeSlug,
         string link,
         string title,
+        ProductStyle productStyle,
         string subtitle,
         string description,
         string clickToPay,
@@ -46,6 +49,7 @@ public class RedirectLinkProduct : Product
             clickToPay,
             price,
             link,
+            productStyle,
             subtitle,
             description);
         return redirectLinkProduct;

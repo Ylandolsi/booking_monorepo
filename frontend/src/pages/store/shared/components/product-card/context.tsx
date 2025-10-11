@@ -1,10 +1,11 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import type { DisplayMode, ProductCardType } from './types';
+import type { ProductCardType } from './types';
+import type { ProductStyle } from '@/api/stores';
 
 interface ProductCardContextValue {
   product: ProductCardType;
   edit: boolean;
-  displayMode: DisplayMode;
+  displayMode: ProductStyle;
   onActionClick?: () => void;
 }
 
