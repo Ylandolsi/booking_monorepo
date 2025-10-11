@@ -42,8 +42,6 @@ export const ROUTE_PATHS = {
         INDEX: '/app/store/product', // add product flow : select type -> details -> specific fields
       },
 
-      INFO_EDIT: '/app/store/edit', // store header info edit page
-      CREATE_STORE: '/app/store/create', // create store flow
       SETUP_STORE: '/app/store/setup', // initial setup wizard after creating store
       //DASHBOARD: '/app/store/dashboard', // manage products, orders, settings
 
@@ -142,8 +140,6 @@ export const routeBuilder = {
     productEdit: (params: { type?: ProductType; productSlug: string }) => {
       return buildUrlWithParams(ROUTE_PATHS.APP.STORE.PRODUCT.INDEX, params);
     },
-    editStoreInfo: () => ROUTE_PATHS.APP.STORE.INFO_EDIT,
-    createStore: () => ROUTE_PATHS.APP.STORE.CREATE_STORE,
     setupStore: () => ROUTE_PATHS.APP.STORE.SETUP_STORE,
 
     // public store preview
@@ -181,7 +177,7 @@ export const routeBuilder = {
 
   // Utility routes
   unauthorized: () => ROUTE_PATHS.UNAUTHORIZED,
-  home: () => ROUTE_PATHS.ROOT,
+  home: () => ROUTE_PATHS.APP.STORE.INDEX,
 };
 
 // Route navigation helpers

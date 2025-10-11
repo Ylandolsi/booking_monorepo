@@ -15,7 +15,6 @@ import { Route as AuthRouteRouteImport } from './routes/auth/route'
 import { Route as AppRouteRouteImport } from './routes/app/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
-import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestTestOrdersRouteImport } from './routes/test/test-orders'
 import { Route as TestSimpleLoadingDemoRouteImport } from './routes/test/simple-loading-demo'
 import { Route as TestImgRouteImport } from './routes/test/img'
@@ -70,11 +69,6 @@ const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthRouteRoute,
-} as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRouteRoute,
 } as any)
 const TestTestOrdersRoute = TestTestOrdersRouteImport.update({
   id: '/test/test-orders',
@@ -222,7 +216,6 @@ export interface FileRoutesByFullPath {
   '/test/img': typeof TestImgRoute
   '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
-  '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -235,6 +228,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/home': typeof HomeRoute
   '/unauthorized': typeof UnauthorizedRoute
   '/app/integration': typeof AppIntegrationRoute
@@ -253,7 +247,6 @@ export interface FileRoutesByTo {
   '/test/img': typeof TestImgRoute
   '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
-  '/app': typeof AppIndexRoute
   '/auth': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -287,7 +280,6 @@ export interface FileRoutesById {
   '/test/img': typeof TestImgRoute
   '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
-  '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
   '/app/admin/payout-requests': typeof AppAdminPayoutRequestsRouteWithChildren
   '/app/store/checkout': typeof AppStoreCheckoutRoute
@@ -322,7 +314,6 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/simple-loading-demo'
     | '/test/test-orders'
-    | '/app/'
     | '/auth/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -335,6 +326,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
     | '/home'
     | '/unauthorized'
     | '/app/integration'
@@ -353,7 +345,6 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/simple-loading-demo'
     | '/test/test-orders'
-    | '/app'
     | '/auth'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -386,7 +377,6 @@ export interface FileRouteTypes {
     | '/test/img'
     | '/test/simple-loading-demo'
     | '/test/test-orders'
-    | '/app/'
     | '/auth/'
     | '/app/admin/payout-requests'
     | '/app/store/checkout'
@@ -456,13 +446,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/'
       preLoaderRoute: typeof AuthIndexRouteImport
       parentRoute: typeof AuthRouteRoute
-    }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRouteRoute
     }
     '/test/test-orders': {
       id: '/test/test-orders'
@@ -655,7 +638,6 @@ interface AppRouteRouteChildren {
   AppOrdersRoute: typeof AppOrdersRoute
   AppPayoutsRoute: typeof AppPayoutsRoute
   AppStatisticsRoute: typeof AppStatisticsRoute
-  AppIndexRoute: typeof AppIndexRoute
   AppAdminPayoutRequestsRoute: typeof AppAdminPayoutRequestsRouteWithChildren
   AppStoreCheckoutRoute: typeof AppStoreCheckoutRoute
   AppStoreProductRoute: typeof AppStoreProductRoute
@@ -669,7 +651,6 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppOrdersRoute: AppOrdersRoute,
   AppPayoutsRoute: AppPayoutsRoute,
   AppStatisticsRoute: AppStatisticsRoute,
-  AppIndexRoute: AppIndexRoute,
   AppAdminPayoutRequestsRoute: AppAdminPayoutRequestsRouteWithChildren,
   AppStoreCheckoutRoute: AppStoreCheckoutRoute,
   AppStoreProductRoute: AppStoreProductRoute,

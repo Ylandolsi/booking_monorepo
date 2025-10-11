@@ -9,11 +9,6 @@ export function NavigationSection(props: { handleItemClick: (item: Item) => void
   const nav = useAppNavigation();
   const navigationItems: Item[] = [
     {
-      name: 'Home',
-      icon: <Home size={20} />,
-      click: () => nav.goToApp(),
-    },
-    {
       name: 'Edit Store',
       icon: <Store size={20} />,
       click: () => nav.goTo({ to: routes.to.store.index() + '/' }),

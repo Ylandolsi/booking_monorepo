@@ -1,4 +1,4 @@
-import { ROUTE_PATHS } from '@/config';
+import { ROUTE_PATHS, routes } from '@/config';
 import { LoginForm } from '@/pages/auth/components';
 import { useAppNavigation } from '@/hooks';
 import { getRouteApi } from '@tanstack/react-router';
@@ -12,7 +12,7 @@ export function LoginPage() {
     <LoginForm
       onSuccess={() => {
         if (redirectTo) navigate.goTo({ to: redirectTo, replace: true });
-        else navigate.goToApp();
+        else navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
       }}
     />
   );

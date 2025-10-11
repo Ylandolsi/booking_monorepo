@@ -39,7 +39,7 @@ export function useAppNavigation() {
 
     // App navigation
     goToApp: () => {
-      navigate({ to: routes.to.app.root() });
+      navigate({ to: routes.to.store.index() + '/' });
     },
 
     goToPayout: () => {
