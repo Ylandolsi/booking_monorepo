@@ -47,7 +47,7 @@ export function ModifyStore() {
 
   if (isLoading) return <LoadingState type="dots" />;
   if (error || !store) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
-  // const watchedValues = form.watch();
+  const watchedValues = form.watch();
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-12 px-4 py-8 lg:flex-row lg:items-start lg:px-6">
