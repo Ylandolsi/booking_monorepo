@@ -18,10 +18,8 @@ export function useDeepCompareEffect(effect: EffectCallback, dependencies: Depen
 // const [filters, setFilters] = useState({ category: 'books', price: 20 });
 
 // useDeepCompareEffect(() => {
-//   logger.info('Filters changed:', filters);
 
 //   // ✅ cleanup function example
 //   return () => {
-//     logger.info('Cleanup before filters change');
 //   };
 // }, [filters]);

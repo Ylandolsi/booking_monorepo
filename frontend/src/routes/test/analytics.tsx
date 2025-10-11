@@ -113,8 +113,6 @@ function AnalyticsPage() {
 
   const chartData = useMemo(() => generateMockData(timeFilter), [timeFilter]);
   const productData = useMemo(() => generateProductData(), []);
-  logger.info('chartData:', chartData);
-  logger.info('productData:', productData);
   // Calculate totals
   const totals = useMemo(() => {
     const total = chartData.reduce(
@@ -134,8 +132,6 @@ function AnalyticsPage() {
       conversionRate: ((total.customers / total.visitors) * 100).toFixed(1),
     };
   }, [chartData]);
-
-  logger.info('totals:', totals);
 
   const bestSellingProduct = productData.reduce((prev, current) => (prev.sales > current.sales ? prev : current));
 

@@ -79,7 +79,6 @@ export function AdminPayoutRequestDetailsPage() {
   const handleApprove = async () => {
     try {
       const result = await approvePayoutMutation.mutateAsync(payoutRequest.id);
-      logger.info('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       // The query will be invalidated automatically and page will reflect changes
     } catch (error) {

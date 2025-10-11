@@ -5,7 +5,6 @@ import type { ProductStyle } from '@/api/stores';
 interface ProductCardContextValue {
   product: ProductCardType;
   edit: boolean;
-  displayMode: ProductStyle;
   onActionClick?: () => void;
 }
 

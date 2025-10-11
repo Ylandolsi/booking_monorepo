@@ -17,7 +17,6 @@ export const PublicStorePreview = () => {
   if (!store) return <ErrorComponenet message="Store not found." title="Store Error" />;
 
   const handleProductClick = (product: Product) => {
-    logger.info('Product clicked:', product);
     if (product.productType !== 'Session') return; // only session products for now
     navigate.goTo({ to: routes.to.store.publicSessionProduct({ storeSlug: store.slug, productSlug: product.productSlug }) });
   };

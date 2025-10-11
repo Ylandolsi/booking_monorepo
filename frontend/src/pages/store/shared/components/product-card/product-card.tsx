@@ -7,11 +7,11 @@ import { ProductCardProvider, useProductCardContext } from './context';
 import { useProductCard } from './use-product-card';
 import type { ProductCardProps } from './types';
 
-export function ProductCard({ product, onClick, className, displayMode = 'Full', edit = false, onActionClick, setProducts }: ProductCardProps) {
+export function ProductCard({ product, onClick, className, edit = false, onActionClick, setProducts }: ProductCardProps) {
   const cardHook = useProductCard({ product, edit, setProducts });
 
   return (
-    <ProductCardProvider product={product} edit={edit} displayMode={displayMode} onActionClick={onActionClick}>
+    <ProductCardProvider product={product} edit={edit} onActionClick={onActionClick}>
       <div
         className={cn(
           'group/card bg-card/50 w-full rounded-xl border p-5 shadow-sm backdrop-blur-sm',
@@ -20,7 +20,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'Full',
           onClick && 'cursor-pointer',
           className,
           edit && 'relative',
-          displayMode === 'Minimal' && 'p-3',
+          product.productStyle === 'Minimal' && 'p-3',
         )}
         ref={cardHook.setNodeRef}
         style={cardHook.style}
@@ -29,7 +29,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'Full',
         {edit && <ProductCard.DragHandle dragHandleProps={cardHook.dragHandleProps} />}
 
         <div className="flex h-full w-full flex-col gap-4">
-          {displayMode === 'Compact' && (
+          {product.productStyle === 'Compact' && (
             <>
               <div className="flex w-full gap-4">
                 <ProductCard.Image />
@@ -43,7 +43,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'Full',
               <ProductCard.Footer />
             </>
           )}
-          {displayMode === 'Full' && (
+          {product.productStyle === 'Full' && (
             <>
               <ProductCard.Image />
               <ProductCard.Content
@@ -55,7 +55,7 @@ export function ProductCard({ product, onClick, className, displayMode = 'Full',
               <ProductCard.Footer />
             </>
           )}
-          {displayMode === 'Minimal' && (
+          {product.productStyle === 'Minimal' && (
             <div className="flex w-full items-center gap-4">
               <ProductCard.Image />
               <ProductCard.Content
@@ -86,7 +86,7 @@ ProductCard.DragHandle = function DragHandle({ dragHandleProps }: { dragHandlePr
 
 // Image Section
 ProductCard.Image = function Image() {
-  const { product, displayMode } = useProductCardContext();
+  const { product } = useProductCardContext();
 
   if (!product.thumbnailPicture?.mainLink) {
     return null;
@@ -96,7 +96,7 @@ ProductCard.Image = function Image() {
     <div
       className={cn(
         'mx-auto rounded-lg transition-all',
-        displayMode === 'Compact' || displayMode === 'Minimal' ? 'flex h-14 w-14 items-center justify-center' : 'h-full w-full',
+        product.productStyle === 'Compact' || product.productStyle === 'Minimal' ? 'flex h-14 w-14 items-center justify-center' : 'h-full w-full',
       )}
     >
       <img
@@ -104,7 +104,7 @@ ProductCard.Image = function Image() {
         alt={product.title}
         className={cn(
           'transition-transform duration-300 group-hover/card:scale-105',
-          displayMode === 'Compact' || displayMode === 'Minimal'
+          product.productStyle === 'Compact' || product.productStyle === 'Minimal'
             ? 'min-h-full min-w-full rounded-2xl object-cover object-center'
             : 'h-full w-full rounded-lg',
         )}
@@ -122,13 +122,13 @@ interface ContentProps {
 }
 
 ProductCard.Content = function Content({ isPopoverOpen, setIsPopoverOpen, handleTogglePublished, handleDeleteProduct }: ContentProps) {
-  const { product, edit, displayMode } = useProductCardContext();
+  const { product, edit } = useProductCardContext();
 
   return (
     <div className="flex flex-1 flex-col gap-3">
       <div className="flex w-full items-start justify-between gap-4">
         <ProductCard.Title />
-        {displayMode !== 'Minimal' && <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>}
+        {product.productStyle !== 'Minimal' && <div className="text-primary text-xl font-bold tracking-tight">${product.price}</div>}
 
         {edit && product.productSlug && (
           <ProductCard.EditMenu
@@ -145,12 +145,12 @@ ProductCard.Content = function Content({ isPopoverOpen, setIsPopoverOpen, handle
 
 // Title and Subtitle
 ProductCard.Title = function Title() {
-  const { product, displayMode } = useProductCardContext();
+  const { product } = useProductCardContext();
 
   return (
     <div className="min-w-0 flex-1 text-left">
       <h3 className="text-foreground mb-1 line-clamp-2 text-base leading-tight font-semibold break-words">{product.title}</h3>
-      {displayMode !== 'Minimal' && (
+      {product.productStyle !== 'Minimal' && (
         <>{product.subtitle && <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed break-all">{product.subtitle}</p>}</>
       )}
     </div>

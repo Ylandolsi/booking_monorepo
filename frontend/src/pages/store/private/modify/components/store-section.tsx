@@ -18,7 +18,6 @@ export const StoreSection = ({ form, handleCloseDialog }: { form: ReturnType<typ
   const navigate = useAppNavigation();
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
-      logger.info('Submitting store data:', data);
       // todo : handle this api
       await updateStoreMutation.mutateAsync(data);
 

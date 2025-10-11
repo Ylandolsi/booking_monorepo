@@ -38,7 +38,8 @@ public class UpdateSessionProductEndpoint : IEndpoint
                     BufferTimeMinutes = request.BufferTimeMinutes,
                     DayAvailabilitiesJson = request.DayAvailabilitiesJson,
                     MeetingInstructions = request.MeetingInstructions,
-                    ProductSlug = productSlug
+                    ProductStyle = request.ProductStyle,
+                    ProductSlug = productSlug,
                 };
 
                 var result = await handler.Handle(command, cancellationToken);

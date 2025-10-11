@@ -6,7 +6,7 @@ export default function fetcher(f: () => Promise<any>, key: unknown) {
     const start = performance.now();
     const r = await f();
     const end = performance.now();
-    logger.info(`${JSON.stringify(key)}: ${end - start}ms`);
+    console.log(`${JSON.stringify(key)}: ${end - start}ms`);
     return r;
   };
 }

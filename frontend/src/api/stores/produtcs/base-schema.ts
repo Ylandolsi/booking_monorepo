@@ -7,4 +7,5 @@ export const createProductBaseSchema = z.object({
   price: z.number().min(0, 'Price cannot be negative'),
   clickToPay: z.string().min(1, 'Button text is required'),
   thumbnailImage: z.instanceof(File).optional(),
+  productStyle: z.enum(['Full', 'Compact', 'Minimal']).optional().default('Full'),
 });

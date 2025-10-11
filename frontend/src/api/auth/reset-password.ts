@@ -11,7 +11,6 @@ export const useResetPassword = ({ onSuccess }: { onSuccess?: () => void } = {})
   return useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
-      logger.info('password reset successfully');
       onSuccess?.();
       toast.success('Password reset successfully. Please login with your new password.');
     },

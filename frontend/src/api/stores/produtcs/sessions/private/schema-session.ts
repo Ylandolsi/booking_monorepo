@@ -43,6 +43,7 @@ export const patchPostSessionSchemaToFormData = (data: CreateSessionProductReque
     clickToPay: data.clickToPay,
     dayAvailabilitiesJson: data.dayAvailabilities,
     productType: data.productType,
+    productStyle: data.productStyle || 'Full',
   });
 
   return formData;

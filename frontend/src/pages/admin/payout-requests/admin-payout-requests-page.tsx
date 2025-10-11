@@ -127,7 +127,6 @@ export function AdminPayoutRequestsPage() {
 
     try {
       const result = await approvePayoutMutation.mutateAsync(selectedRequest.id);
-      logger.info('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
       // The query will be invalidated automatically via meta.invalidatesQuery

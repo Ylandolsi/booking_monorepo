@@ -75,7 +75,6 @@ export function PayoutPage() {
   if (error || walletData == null) {
     return <ErrorComponenet message="Failed to load wallet" title="Failed to load wallet" />;
   }
-  logger.info(historyPayout, errorHistory);
   if (errorHistory) {
     return <ErrorComponenet message="Failed to load payout history" title="Failed to load payout history" />;
   }

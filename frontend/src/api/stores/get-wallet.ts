@@ -7,7 +7,6 @@ async function getWallet(): Promise<Wallet> {
     const res = await api.get<Wallet>(CatalogEndpoints.Payment.GetWallet);
     return res;
   } catch (err) {
-    logger.info('Failed to fetch wallet');
     throw err;
   }
 }

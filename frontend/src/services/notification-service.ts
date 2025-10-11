@@ -49,7 +49,6 @@ class SignalRService {
 
         // Handle reconnection event
         this.connection.onreconnected((connectionId?: string) => {
-          logger.info('SignalR Reconnected:', connectionId);
           // Rejoin user group after reconnection
           if (this.connection) {
             this.connection.invoke('JoinUserGroup', userId).catch(console.error);
@@ -57,7 +56,6 @@ class SignalRService {
         });
 
         await this.connection.start();
-        logger.info('SignalR Connected successfully');
 
         // Join user notification group
         await this.connection.invoke('JoinUserGroup', userId);
@@ -146,7 +144,6 @@ class SignalRService {
 
         // Stop the connection
         await this.connection.stop();
-        logger.info('SignalR Disconnected');
 
         // Clear resources
         this.connection = null;

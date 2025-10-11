@@ -1,5 +1,13 @@
 import { useEffect, useState } from 'react';
-import { createProductSchema, useCreateSession, useMyProductSession, useUpdateSession, type CreateProductInput, type Picture } from '@/api/stores';
+import {
+  createProductSchema,
+  ProductStyle,
+  useCreateSession,
+  useMyProductSession,
+  useUpdateSession,
+  type CreateProductInput,
+  type Picture,
+} from '@/api/stores';
 import { SelectProductType } from '@/pages/store/private/products/select-product-type-page';
 import { Card, CardContent, ErrorComponenet, LoadingState, Progress, TabNavigation } from '@/components';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,7 +57,7 @@ export function AddProductFlow() {
       deliveryUrl: '',
       previewImage: undefined,
       dayAvailabilities: [],
-
+      productStyle: ProductStyle.Full,
       // UI
       thumbnailPicture: undefined,
     },
@@ -72,7 +80,6 @@ export function AddProductFlow() {
 
   const onSubmit = async (data: CreateProductInput) => {
     try {
-      logger.info('submitting', data);
       if (productSlug) {
         // update
         await updateProductMutation.mutateAsync({ productSlug: productSlug, data });
@@ -175,7 +182,7 @@ export function AddProductFlow() {
             ]}
             activeTab={activeTab}
             onTabChange={(tabId) => setActiveTab(tabId as 'general' | 'details')}
-            className=""
+            className="flex-wrap"
           />
         </div>
 

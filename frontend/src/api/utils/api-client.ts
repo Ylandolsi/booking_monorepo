@@ -35,6 +35,12 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
     ...headers,
   };
   const requestBody = isFormData ? body : body ? JSON.stringify(body) : undefined;
+  if (requestBody instanceof FormData) {
+    for (const pair of requestBody.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+  }
+
   const response = await fetch(fullUrl, {
     method,
     headers: fetchHeaders,

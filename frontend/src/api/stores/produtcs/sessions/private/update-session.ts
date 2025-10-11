@@ -7,7 +7,6 @@ import type {
 import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints, validateFile } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
-import { logger } from '@/lib';
 
 export const updateSession = async ({ data, productSlug }: { data: CreateProductInput; productSlug: string }): Promise<PatchPostSessionResponse> => {
   if (data.thumbnailImage) {
@@ -26,7 +25,6 @@ export const updateSession = async ({ data, productSlug }: { data: CreateProduct
 
     return response;
   } catch (error) {
-    logger.error('Error updating session:', error);
     throw error;
   }
 };

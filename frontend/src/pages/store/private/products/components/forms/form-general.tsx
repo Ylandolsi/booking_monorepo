@@ -1,10 +1,10 @@
-import type { CreateSessionProductRequest, ProductType } from '@/api/stores/produtcs';
+import { ProductStyle, type CreateSessionProductRequest, type ProductType } from '@/api/stores/produtcs';
 import type { UseFormReturn } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input, UploadImage } from '@/components';
 import type { ProductFormData, TabsType } from '@/pages/store/private/products/add-product-page';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
 import { useUploadPicture } from '@/hooks';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -16,6 +16,7 @@ import { COVER_IMAGE } from '@/pages/store/shared';
 
 // ThumbnailImage : file uploaded
 // ThumbnailPicture : object with mainLink and thumbnailLink
+
 export function FormGeneral({
   form,
   type,
@@ -142,33 +143,9 @@ export function FormGeneral({
           </FormItem>
         )}
       />
+      {/* Product Style */}
+      <ProductStyleField form={form} />
       {/* Thumbnail Image */}
-      {/* <div className="space-y-2">
-        <FormLabel className="text-foreground">Cover Image</FormLabel>
-        <div className="flex items-start space-x-4">
-          <div className="bg-muted border-border flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border">
-            {uiPicture ? (
-              <LazyImage
-                src={uiPicture.mainLink || ''}
-                alt="Cover preview"
-                className="h-full w-full object-cover"
-                placeholder={uiPicture.thumbnailLink || ''}
-              />
-            ) : (
-              <span className="text-muted-foreground text-center text-xs">No image</span>
-            )}
-          </div>
-          <div className="flex-1">
-            <Button
-              type="button"
-              onClick={() => openDialog()}
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 inline-flex items-center rounded-lg px-4 py-2 transition-colors"
-            >
-              Choose Image
-            </Button>
-          </div>
-        </div>
-      </div> */}
       <UploadImage description="Thumbnail Image (Optional)" />
       <div className="flex items-center justify-center">
         <div className={cn(`w-${COVER_IMAGE.width} h-${COVER_IMAGE.height}`)}>
@@ -219,5 +196,45 @@ export function FormGeneral({
         </Button>
       </div>
     </>
+  );
+}
+
+function ProductStyleField({ form }: { form: UseFormReturn<ProductFormData> }) {
+  const [productStyle, setProductStyle] = useState<ProductStyle>(form.getValues('productStyle') || ProductStyle.Full);
+  return (
+    <div className="space-y-4">
+      <h2 className="text-foreground mb-2 text-xl font-semibold">Pick a style </h2>
+      <p className="text-muted-foreground">Choose the style for your product</p>
+      <div className="flex flex-wrap gap-2">
+        {Object.values(ProductStyle).map((style) => (
+          <div
+            key={style}
+            className={cn('cursor-pointer rounded border p-4', productStyle === style ? 'border-primary' : 'border-muted hover:border-foreground')}
+            onClick={() => {
+              setProductStyle(style);
+              form.setValue('productStyle', style);
+            }}
+          >
+            {/* <img
+              src={`/assets/product-styles/${style.toLowerCase()}.png`}
+              alt={style}
+              className={cn('h-40 w-60 object-cover', productStyle === style ? '' : 'opacity-50')}
+            /> */}
+            <div className="mt-2 text-center">
+              <span className="text-foreground">{style}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <FormField
+        control={form.control}
+        name="productStyle"
+        render={({ field }) => (
+          <FormItem>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 }

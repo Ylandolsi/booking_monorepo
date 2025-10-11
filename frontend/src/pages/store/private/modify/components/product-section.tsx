@@ -41,8 +41,6 @@ export const ProductSection = ({
     setOrderChanged(false);
   }, [products, store.products]);
 
-  logger.info('products :', products);
-
   const handleProductRearrange = async () => {
     if (!orderChanged) return;
     try {
