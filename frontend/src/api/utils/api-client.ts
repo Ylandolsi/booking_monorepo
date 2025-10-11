@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from '@/config/env';
-import { RefreshAccessToken } from '@/api/utils/auth-endpoints';
 import { toast } from 'sonner';
+import { AuthEndpoints } from './auth-endpoints';
 
 export type RequestOptions = {
   method?: string;
@@ -49,7 +49,7 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
     // try to refresh the token
 
     try {
-      const refreshResponse = await fetch(`${env.API_URL}/${RefreshAccessToken}`, {
+      const refreshResponse = await fetch(`${env.API_URL}/${AuthEndpoints.Tokens.RefreshAccessToken}`, {
         method: 'POST',
         credentials: 'include',
       });

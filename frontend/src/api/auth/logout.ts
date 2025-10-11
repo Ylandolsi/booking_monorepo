@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/api/utils';
-import * as Endpoints from '@/api/utils/auth-endpoints';
 import { authQueryKeys } from '@/api/auth';
+import { AuthEndpoints } from '../utils/auth-endpoints';
 
-const logout = async (): Promise<void> => await api.post(Endpoints.Logout);
+const logout = async (): Promise<void> => await api.post(AuthEndpoints.Logout);
 
 export const useLogout = ({
   onSuccess,

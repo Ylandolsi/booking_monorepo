@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import { api } from '@/api/utils';
-import * as Endpoints from '@/api/utils/auth-endpoints';
 import type { ForgotPasswordInput } from '@/pages/auth';
 import { authQueryKeys } from '@/api/auth';
+import { AuthEndpoints } from '../utils/auth-endpoints';
 
 // Forgot Password
 const forgotPassword = async (data: ForgotPasswordInput): Promise<void> => {
-  const response = await api.post<void>(Endpoints.ResetPasswordSendToken, data);
+  const response = await api.post<void>(AuthEndpoints.Local.ForgotPassword, data);
   return response;
 };
 

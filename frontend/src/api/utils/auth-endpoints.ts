@@ -1,35 +1,30 @@
-const GoogleLogin = 'users/login/google';
-const GoogleLoginCallback = 'users/login/google/callback';
-// Authentication and Authorization
-const Login = 'users/login';
-const Register = 'users/register';
-const RefreshAccessToken = 'users/refresh-token';
-const VerifyEmail = 'users/verify-email';
-const ResendVerificationEmail = 'users/resend-verification-email';
-const Logout = 'users/logout';
-const ChangePassword = 'users/change-password';
+const BASE = 'users';
 
-const ForgotPassword = 'users/forgot-password';
-const ResetPasword = 'users/reset-password';
-
-const IntegrateKonnectWallet = 'users/integrate/konnect';
-
-const GetUser = 'users/{userSlug}';
-const GetCurrentUser = 'users/me';
-
-export {
-  GoogleLogin,
-  GoogleLoginCallback,
-  Login,
-  Register,
-  RefreshAccessToken,
-  VerifyEmail,
-  ResendVerificationEmail,
-  Logout,
-  ChangePassword,
-  ForgotPassword as ResetPasswordSendToken,
-  ResetPasword as ResetPasswordVerify,
-  GetCurrentUser,
-  GetUser,
-  IntegrateKonnectWallet,
-};
+export const AuthEndpoints = {
+  Google: {
+    Login: `${BASE}/login/google`,
+    Callback: `${BASE}/login/google/callback`,
+  },
+  Local: {
+    Login: `${BASE}/login`,
+    Register: `${BASE}/register`,
+    ForgotPassword: `${BASE}/forgot-password`,
+    ResetPassword: `${BASE}/reset-password`,
+  },
+  User: {
+    Current: `${BASE}/me`,
+    BySlug: (userSlug: string) => `${BASE}/${userSlug}`,
+    IntegrateKonnectWallet: `${BASE}/integrate/konnect`,
+  },
+  Tokens: {
+    RefreshAccessToken: `${BASE}/refresh-token`,
+  },
+  Email: {
+    Verify: `${BASE}/verify-email`,
+    ResendVerification: `${BASE}/resend-verification-email`,
+  },
+  Password: {
+    Change: `${BASE}/change-password`,
+  },
+  Logout: `${BASE}/logout`,
+} as const;

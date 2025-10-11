@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { api } from '@/api/utils';
-import * as Endpoints from '@/api/utils/auth-endpoints';
 import type { ResetPasswordInput } from '@/pages/auth';
+import { AuthEndpoints } from '../utils/auth-endpoints';
 
-const resetPassword = async (data: ResetPasswordInput): Promise<void> => await api.post<void>(Endpoints.ResetPasswordVerify, data);
+const resetPassword = async (data: ResetPasswordInput): Promise<void> => await api.post<void>(AuthEndpoints.Local.ResetPassword, data);
 
 export const useResetPassword = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   return useMutation({

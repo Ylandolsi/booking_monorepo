@@ -1,9 +1,10 @@
 import { useQuery, queryOptions } from '@tanstack/react-query';
 import { api, Endpoints } from '@/api/utils';
 import { authQueryKeys } from '@/api/auth';
+import { AuthEndpoints } from '../utils/auth-endpoints';
 
 export const getCurrentUser = async (): Promise<User> => {
-  const response = await api.get<User>(Endpoints.GetCurrentUser);
+  const response = await api.get<User>(AuthEndpoints.User.Current);
   return response;
 };
 

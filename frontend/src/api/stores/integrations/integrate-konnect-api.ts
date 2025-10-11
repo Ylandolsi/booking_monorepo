@@ -1,10 +1,10 @@
 import { api } from '@/api/utils';
-import { IntegrateKonnectWallet } from '@/api/utils/auth-endpoints';
 import { useMutation } from '@tanstack/react-query';
 import { authQueryKeys } from '@/api/auth';
+import { AuthEndpoints } from '@/api/utils/auth-endpoints';
 
 const integateWithKonnect = async (walledId: string): Promise<void> => {
-  await api.post(IntegrateKonnectWallet, {
+  await api.post(AuthEndpoints.User.IntegrateKonnectWallet, {
     konnectWalletId: walledId,
   });
 };
