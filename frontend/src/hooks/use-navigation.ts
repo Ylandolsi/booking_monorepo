@@ -79,12 +79,12 @@ export function useAppNavigation() {
     },
 
     goToHome: () => {
-      navigate({ to: routes.to.home() });
+      navigate({ to: routes.to.home() + '/' });
     },
 
     goToSupport: () => {
       // TODO : fix this
-      navigate({ to: routes.to.home() });
+      navigate({ to: routes.to.home() + '/' });
     },
     // Generic navigation with replace option
     navigateToRoute: (routePath: string, options?: { replace?: boolean }) => {
