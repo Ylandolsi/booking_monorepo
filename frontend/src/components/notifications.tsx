@@ -1,8 +1,19 @@
+import {
+  useGetAdminNotifications,
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+  type AdminNotificationDto,
+  type GetAdminNotificationsQuery,
+} from '@/api/notifications/admin';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Bell } from 'lucide-react';
 import { useState } from 'react';
+import { LoadingState } from './ui';
+import { ErrorComponenet } from './errors';
+import { useGetAdminUnreadNotificationsCount } from '@/api/notifications/admin/get-admin-unread-count';
+import { formatDate } from '@/lib';
 
 const initialNotifications = [
   {
@@ -70,21 +81,25 @@ function Dot({ className }: { className?: string }) {
 }
 
 export function Notification() {
-  const [notifications, setNotifications] = useState(initialNotifications);
-  const unreadCount = notifications.filter((n) => n.unread).length;
-
-  const handleMarkAllAsRead = () => {
-    setNotifications(
-      notifications.map((notification) => ({
-        ...notification,
-        unread: false,
-      })),
-    );
+  const [queryNotifications, setQueryNotifications] = useState<GetAdminNotificationsQuery>({ page: 1, pageSize: 10, unreadOnly: false });
+  const { data: notifications, isLoading, isError } = useGetAdminNotifications(queryNotifications);
+  const { data: unreadCount, isLoading: isLoadingUnreadCount, isError: isErrorUnread } = useGetAdminUnreadNotificationsCount();
+  const markAllAsReadMutation = useMarkAllNotificationsRead();
+  const markSingleAsReadMutation = useMarkNotificationRead();
+  const handleMarkAllAsRead = async () => {
+    await markAllAsReadMutation.mutateAsync();
   };
 
-  const handleNotificationClick = (id: number) => {
-    setNotifications(notifications.map((notification) => (notification.id === id ? { ...notification, unread: false } : notification)));
+  const handleNotificationClick = async (notification: AdminNotificationDto) => {
+    await markSingleAsReadMutation.mutateAsync(notification.id);
   };
+
+  if (isLoading || isLoadingUnreadCount) {
+    return <LoadingState type="dots" />;
+  }
+  if (isError || !notifications || isErrorUnread || unreadCount === undefined) {
+    return null;
+  }
 
   return (
     <Popover>
@@ -106,21 +121,18 @@ export function Notification() {
           )}
         </div>
         <div role="separator" aria-orientation="horizontal" className="bg-border -mx-1 my-1 h-px"></div>
-        {notifications.map((notification) => (
+        {notifications.items.map((notification) => (
           <div key={notification.id} className="hover:bg-accent rounded-md px-3 py-2 text-sm transition-colors">
-            <div className="relative flex items-start gap-3 pe-3">
-              <img className="size-9 rounded-md" src={notification.image} width={32} height={32} alt={notification.user} />
+            <div className="relative flex flex-col items-start gap-3">
+              {/* <img className="size-9 rounded-md" src={notification.image} width={32} height={32} alt={notification.user} /> */}
               <div className="flex-1 space-y-1">
-                <button
-                  className="text-foreground/80 text-left after:absolute after:inset-0"
-                  onClick={() => handleNotificationClick(notification.id)}
-                >
-                  <span className="text-foreground font-medium hover:underline">{notification.user}</span> {notification.action}{' '}
-                  <span className="text-foreground font-medium hover:underline">{notification.target}</span>.
+                <div className="">{notification.title} : </div>
+                <button className="text-foreground/80 text-left after:absolute after:inset-0" onClick={() => handleNotificationClick(notification)}>
+                  <span className="text-foreground font-medium hover:underline">{notification.message}</span>
                 </button>
-                <div className="text-muted-foreground text-xs">{notification.timestamp}</div>
+                <div className="text-muted-foreground text-xs">{formatDate(notification.createdAt)}</div>
               </div>
-              {notification.unread && (
+              {notification.isRead && (
                 <div className="absolute end-0 self-center">
                   <Dot />
                 </div>

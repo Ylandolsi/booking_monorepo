@@ -5,21 +5,21 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace Booking.Modules.Notifications.Features.Admin.MarkNotificationRead.All;
+namespace Booking.Modules.Notifications.Features.Admin.GetUnreadCount;
 
-public class MarkAllNotificationsReadEndpoint : IEndpoint
+public class GetUnreadCountEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost(NotificationsEndpoints.Admin.markAllRead, async (
-                ICommandHandler<MarkAllNotificationsReadCommand> handler,
+        app.MapGet(NotificationsEndpoints.Admin.getUnreadCount, async (
+                IQueryHandler<GetUnreadCountQuery, UnreadCountResponse> handler,
                 CancellationToken cancellationToken) =>
             {
-                var command = new MarkAllNotificationsReadCommand();
+                var command = new GetUnreadCountQuery();
                 var result = await handler.Handle(command, cancellationToken);
 
                 return result.Match(
-                    () => Results.Ok(),
+                    Results.Ok,
                     CustomResults.Problem
                 );
             })

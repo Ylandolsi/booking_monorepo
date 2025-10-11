@@ -46,7 +46,7 @@ export function Header() {
         {
           <div className="flex h-7.5 items-center gap-2">
             <BalanceHeader />
-            <Notification />
+            {currentUser.roles.includes('Admin') && <Notification />}
             <ThemeToggle />
             {/* // TODO change this with link of store preview */}
           </div>

@@ -1,3 +1,4 @@
+
 export type PaginatedResult<T> = {
   items: T[];
   pageNumber: number;
@@ -8,11 +9,15 @@ export type PaginatedResult<T> = {
   previousPage: boolean;
 };
 
-export const paginatedResultSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
-  z.object({
-    items: z.array(itemSchema),
-    page: z.number(),
-    pageSize: z.number(),
-    totalCount: z.number(),
-    totalPages: z.number(),
-  });
+// export const paginatedResultSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+//   z.object({
+//     items: z.array(itemSchema),
+//     page: z.number(),
+//     pageSize: z.number(),
+//     totalCount: z.number(),
+//     totalPages: z.number(),
+//   });
+
+//   const paginatedAdminNotificationsSchema = paginatedResultSchema(adminNotificationDtoSchema);
+  
+// how to use it for parsing : paginatedAdminNotificationsSchema.parse(data)

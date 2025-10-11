@@ -1,3 +1,4 @@
+using Booking.Common.Endpoints;
 using Booking.Common.Messaging;
 using Booking.Modules.Notifications.Abstractions;
 using Booking.Modules.Notifications.BackgroundJobs.Cleanup;
@@ -32,7 +33,9 @@ public static class NotificationsModule
             .AddServices()
             .AddAdapters()
             .AddSignalR()
-            .AddBackgroundJobs();
+            .AddBackgroundJobs()
+            .AddEndpoints(AssemblyReference.Assembly);
+
     }
 
     /// <summary>

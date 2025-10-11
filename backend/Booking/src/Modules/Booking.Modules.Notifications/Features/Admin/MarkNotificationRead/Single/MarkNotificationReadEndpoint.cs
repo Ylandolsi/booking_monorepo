@@ -24,8 +24,8 @@ public class MarkNotificationReadEndpoint : IEndpoint
                     CustomResults.Problem
                 );
             })
-            .WithTags("Admin Notifications")
-            .RequireAuthorization(policy => policy.RequireRole("Admin"))
+            .RequireAuthorization()
+            .RequireAuthorization("Admin")
             .Produces(StatusCodes.Status200OK);
     }
 }

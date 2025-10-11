@@ -12,6 +12,7 @@ public class GetAdminNotificationsEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
+        
         app.MapGet(NotificationsEndpoints.Admin.get, async (
                 int page,
                 int pageSize,
@@ -29,7 +30,8 @@ public class GetAdminNotificationsEndpoint : IEndpoint
                 );
             })
             .WithTags("Admin Notifications")
-            .RequireAuthorization(policy => policy.RequireRole("Admin"))
+            .RequireAuthorization()
+            .RequireAuthorization("Admin")
             .Produces<PaginatedResult<AdminNotificationDto>>(StatusCodes.Status200OK);
     }
 }

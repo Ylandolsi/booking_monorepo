@@ -1,9 +1,10 @@
-using System.Data.Entity;
 using Booking.Common;
 using Booking.Common.Messaging;
 using Booking.Common.Results;
+using Booking.Modules.Notifications.Abstractions;
 using Booking.Modules.Notifications.Contracts;
 using Booking.Modules.Notifications.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Booking.Modules.Notifications.Features.Admin.Get;
 
@@ -28,14 +29,15 @@ public record AdminNotificationDto(
     DateTime? ReadAt
 );
 
-public class GetAdminNotificationsQueryHandler(NotificationsDbContext context)
+public class GetAdminNotificationsQueryHandler(NotificationsDbContext context, IInAppSender inAppSender)
     : IQueryHandler<GetAdminNotificationsQuery, PaginatedResult<AdminNotificationDto>>
 {
     public async Task<Result<PaginatedResult<AdminNotificationDto>>> Handle(
         GetAdminNotificationsQuery query,
         CancellationToken cancellationToken)
     {
-        var notificationsQuery = context.InAppNotifications.Where(n => n.RecipientId == "admins");
+        var notificationsQuery = context.InAppNotifications.AsQueryable()
+                                .Where(n => n.RecipientId == "admins");
 
         // Apply filters
         if (query.UnreadOnly.HasValue && query.UnreadOnly.Value)
@@ -51,28 +53,29 @@ public class GetAdminNotificationsQueryHandler(NotificationsDbContext context)
             }
         }
 
-        // Get total count
-        var totalCount = await notificationsQuery.CountAsync(cancellationToken);
 
-        // Apply pagination
-        var notifications = await notificationsQuery
+        var notificationsEntities = await notificationsQuery
             .OrderByDescending(n => n.CreatedAt)
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
-            .Select(n => new AdminNotificationDto(
-                n.Id,
-                n.Title,
-                n.Message,
-                n.Severity.ToString(),
-                n.Type.ToString(),
-                n.RelatedEntityId,
-                n.RelatedEntityType,
-                n.Metadata,
-                n.IsRead,
-                n.CreatedAt,
-                n.ReadAt
-            ))
             .ToListAsync(cancellationToken);
+
+        var notifications = notificationsEntities.Select(n => new AdminNotificationDto(
+            n.Id,
+            n.Title,
+            n.Message,
+            n.Severity.ToString(),
+            n.Type.ToString(),
+            n.RelatedEntityId,
+            n.RelatedEntityType,
+            n.Metadata,
+            n.IsRead,
+            n.CreatedAt,
+            n.ReadAt
+        )).ToList();
+
+        // Get total count
+        var totalCount = context.InAppNotifications.Count();
 
 
         var response =

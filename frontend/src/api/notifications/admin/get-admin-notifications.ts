@@ -1,17 +1,16 @@
 import { queryOptions, useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { api } from '@/api/utils';
 import { NotificationEndpoints } from '@/api/utils/notifications-endpoints';
-import { adminNotificationDtoSchema, type AdminNotificationDto, type GetAdminNotificationsQuery } from './types';
-import { paginatedResultSchema, type PaginatedResult } from '@/types/paginated-result';
+import { type AdminNotificationDto, type GetAdminNotificationsQuery } from './types';
+import { type PaginatedResult } from '@/types/paginated-result';
 import { notificationKeys } from '@/api/notifications/notifications-keys';
 
-const paginatedAdminNotificationsSchema = paginatedResultSchema(adminNotificationDtoSchema);
 
 export const getAdminNotifications = async (query: GetAdminNotificationsQuery): Promise<PaginatedResult<AdminNotificationDto>> => {
-  const response = await api.get(NotificationEndpoints.Admin.Get, {
+  const response = await api.get<PaginatedResult<AdminNotificationDto>>(NotificationEndpoints.Admin.Get, {
     params: query,
   });
-  return paginatedAdminNotificationsSchema.parse(response);
+  return response;
 };
 
 export function useGetAdminNotifications(
