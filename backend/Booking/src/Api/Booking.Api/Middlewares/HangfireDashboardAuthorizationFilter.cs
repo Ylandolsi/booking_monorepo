@@ -14,7 +14,7 @@ public class HangfireDashboardAuthorizationFilter(IApplicationBuilder app) : IDa
 
         if (httpContext.User is { Identity.IsAuthenticated: false }) return false;
 
-        var scope = app.ApplicationServices.CreateScope();
+        using var scope = app.ApplicationServices.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         // TODO : or we can replace this by checking the claims of user 
         var userId = httpContext.User.GetUserId() ??
