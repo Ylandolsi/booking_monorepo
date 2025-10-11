@@ -17,6 +17,7 @@ internal sealed class GetStatsQueryHandler(
         {
             // Get user's store
             var store = await db.Stores
+                .AsNoTracking()
                 .Where(s => s.UserId == query.UserId)
                 .Select(s => new { s.Id, s.Slug })
                 .FirstOrDefaultAsync(cancellationToken);
@@ -36,6 +37,7 @@ internal sealed class GetStatsQueryHandler(
 
             // Fetch daily stats for the date range
             var dailyStats = await db.StoreDailyStats
+                .AsNoTracking()
                 .Where(s => s.StoreId == store.Id && s.Date >= startsAt && s.Date <= endsAt)
                 .OrderBy(s => s.Date)
                 .Select(s => new
@@ -59,6 +61,7 @@ internal sealed class GetStatsQueryHandler(
 
             // Fetch product stats for the date range
             var productStats = await db.ProductDailyStats
+                .AsNoTracking()
                 .Where(p => p.StoreId == store.Id && p.Date >= startsAt && p.Date <= endsAt)
                 .GroupBy(p => new { p.ProductId, p.ProductSlug })
                 .Select(g => new
@@ -74,6 +77,7 @@ internal sealed class GetStatsQueryHandler(
             // Get product names
             var productIds = productStats.Select(p => p.ProductSlug).ToList();
             var products = await db.Products
+                .AsNoTracking()
                 .Where(p => productIds.Contains(p.ProductSlug))
                 .Select(p => new { p.ProductSlug, p.Title })
                 .ToDictionaryAsync(p => p.ProductSlug, p => p.Title, cancellationToken); // slug (key)-> title
