@@ -1,4 +1,4 @@
-import { queryOptions, useQuery, useMutation, useQueryClient, type UseQueryOptions, type UseMutationOptions } from '@tanstack/react-query';
+import { queryOptions, useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { api } from '@/api/utils';
 import { NotificationEndpoints } from '@/api/utils/notifications-endpoints';
 import { adminNotificationDtoSchema, type AdminNotificationDto, type GetAdminNotificationsQuery } from './types';
