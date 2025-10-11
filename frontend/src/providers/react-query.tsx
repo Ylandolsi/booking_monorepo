@@ -10,8 +10,8 @@ declare module '@tanstack/react-query' {
       successMessage?: string;
       errorMessage?: string;
 
-      successAction?: (data: any) => void;
-      errorAction?: (data: any) => void;
+      successAction?: (data: any, variables: any, context: unknown) => void;
+      errorAction?: (data: any, variables: any, context: unknown) => void;
     };
   }
 }
@@ -36,7 +36,7 @@ export const queryClient = new QueryClient({
         toast.success(mutation.meta.successMessage);
       }
       if (mutation.meta?.successAction) {
-        mutation.meta.successAction(data);
+        mutation.meta.successAction(data, _variables, _context);
       }
 
       if (mutation.meta?.invalidatesQuery) {
@@ -52,7 +52,7 @@ export const queryClient = new QueryClient({
         toast.error(mutation.meta.errorMessage);
       }
       if (mutation.meta?.errorAction) {
-        mutation.meta.errorAction(error);
+        mutation.meta.errorAction(error, _variables, _context);
       }
     },
     // onSettled: (_data, _error, _variables, _context, mutation) => {

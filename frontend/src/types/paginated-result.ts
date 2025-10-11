@@ -7,3 +7,12 @@ export type PaginatedResult<T> = {
   nextPage: boolean;
   previousPage: boolean;
 };
+
+export const paginatedResultSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+  z.object({
+    items: z.array(itemSchema),
+    page: z.number(),
+    pageSize: z.number(),
+    totalCount: z.number(),
+    totalPages: z.number(),
+  });
