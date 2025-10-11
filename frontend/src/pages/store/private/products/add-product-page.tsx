@@ -18,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAppNavigation, useUploadPicture } from '@/hooks';
-import { FormSession } from '@/pages/store/private/products/components/forms/form-schedule';
+import { FormSession } from '@/pages/store/private/products/sessions/components/form-schedule';
 import { FormGeneral } from '@/pages/store/private/products/components/forms/form-general';
 import { useSearch } from '@tanstack/react-router';
 import { routes } from '@/config';

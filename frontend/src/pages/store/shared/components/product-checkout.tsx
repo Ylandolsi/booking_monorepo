@@ -4,7 +4,7 @@ import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
 import { SanitizeHtml } from '@/lib';
 import { cn } from '@/lib/cn';
-import { BookingPage } from '@/pages/store/private/products/book';
+import { BookingPage } from '@/pages/store/private/products/sessions';
 import { useParams } from '@tanstack/react-router';
 import { Upload, X } from 'lucide-react';
 

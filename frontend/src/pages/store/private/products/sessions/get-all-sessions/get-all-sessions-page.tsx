@@ -1,4 +1,4 @@
-import InteractiveCalendar from '@/pages/store/private/products/get-all-sessions/components/interactive-calendar';
+import InteractiveCalendar from '@/pages/store/private/products/sessions/get-all-sessions/components/interactive-calendar';
 
 export const SessionBookedCalendar = () => {
   return (

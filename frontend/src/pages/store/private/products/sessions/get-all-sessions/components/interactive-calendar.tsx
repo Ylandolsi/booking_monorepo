@@ -5,7 +5,7 @@ import { useAllSessionMonthly, type DailySessions, type SessionResponse } from '
 import { ErrorComponenet, InputToCopy, LoadingState } from '@/components';
 import { DeepCopy, GenerateTimeZoneId } from '@/lib';
 
-import { Day, type DayProps } from '@/pages/store/private/products/get-all-sessions/components/day';
+import { Day, type DayProps } from '@/pages/store/private/products/sessions/get-all-sessions/components/day';
 
 const CalendarGrid: React.FC<{ onHover: (day: number | null) => void; days: DayProps['day'][] }> = ({ onHover, days }) => {
   return (

@@ -3,7 +3,7 @@ import { useMyStore, type Product } from '@/api/stores';
 import { DrawerDialog, ErrorComponenet, LoadingState } from '@/components';
 import { MobileContainer, ProductCard, ProductCheckout, StoreHeader, type StoreFormData } from '@/pages/store';
 import { GenerateIdCrypto } from '@/lib';
-import { BookingPage } from '@/pages/store/private/products/book';
+import { BookingPage } from '@/pages/store/private/products/sessions';
 
 // New component for product details modal
 const ProductDetailsModal = ({ product, storeSlug, isOpen, onClose }: { product: any; storeSlug: string; isOpen: boolean; onClose: () => void }) => {

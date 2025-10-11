@@ -1,2 +1,2 @@
 export * from './form-general';
-export * from './form-schedule';
+export * from '../../sessions/components/form-schedule';
