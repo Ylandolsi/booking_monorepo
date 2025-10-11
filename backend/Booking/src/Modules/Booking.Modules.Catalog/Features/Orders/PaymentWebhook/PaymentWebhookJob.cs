@@ -1,6 +1,6 @@
 using System.ComponentModel;
+using Booking.Common;
 using Booking.Common.Contracts.Users;
-using Booking.Common.RealTime;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
@@ -13,7 +13,7 @@ using Hangfire.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Booking.Modules.Catalog.BackgroundJobs.Payment;
+namespace Booking.Modules.Catalog.Features.Orders.PaymentWebhook;
 
 internal static class BusinessConstants
 {
@@ -21,85 +21,153 @@ internal static class BusinessConstants
     public const string PlatformName = "Link";
 }
 
-public class CompleteWebhook(
+public class PaymentWebhookJob(
     CatalogDbContext dbContext,
-    ILogger<CompleteWebhook> logger,
+    KonnectService konnectService,
+    ILogger<PaymentWebhookJob> logger,
     GoogleCalendarService googleCalendarService,
     IUsersModuleApi usersModuleApi,
     INotificationService newNotificationService)
 {
     [DisplayName("Complete Webhook Jobs messages")]
     [AutomaticRetry(Attempts = 3, OnAttemptsExceeded = AttemptsExceededAction.Delete)]
-    public async Task SendAsync(int orderId, PerformContext? context)
+    public async Task SendAsync(string paymentRef, PerformContext? context)
     {
-        // TODO : optimize this and pass order rather than  orderId
-
-        var order = await dbContext.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
-        if (order is null)
-        {
-            logger.LogError("Failed to find order when handling payment (completeWebhook) with id: {OrderId}", orderId);
-            return;
-        }
-
-        // TODO : send link to mentor  for confirmation 
-        logger.LogInformation(
-            "Handling PaymentCompletedDomainEvent for order : {orderId} with price : {Price}  for customer  : {customerEmail} ",
-            order.Id,
-            order.Amount,
-            order.CustomerEmail
-        );
+        logger.LogInformation("Received webhook (MenteePayment) for paymentRef: {paymentRef}", paymentRef);
 
         var cancellationToken = context?.CancellationToken.ShutdownToken ?? CancellationToken.None;
 
-
-        // Only proceed if session is not already confirmed
-        if (order.Status == OrderStatus.Completed)
+        try
         {
-            logger.LogWarning("Order {OrderId} is already completed, skipping webhook processing", order.Id);
-            return;
-        }
+            // Lock for update to avoid race condition 
+            var payment = await dbContext.Payments
+                .FromSqlRaw("SELECT * FROM catalog.payments WHERE reference = {0} FOR UPDATE", paymentRef)
+                .FirstOrDefaultAsync(cancellationToken);
 
-        if (order.ProductType == ProductType.Session)
-        {
-            var session
-                = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.OrderId == order.Id, cancellationToken);
-            if (session is null)
+
+            if (payment == null)
             {
-                logger.LogError(
-                    "Failed to find session when handling payment (completeWebhook) for order with id: {OrderId}",
-                    orderId);
+                logger.LogError("Payment with ref {Ref} doesnt exists in the db", paymentRef);
                 return;
             }
 
-            await CreateMeetAndConfirmSession(session, order, cancellationToken);
+            if (payment.Status == PaymentStatus.Completed)
+            {
+                logger.LogError("Payment with ref {Ref} already completed", paymentRef);
+                throw new Exception($"Payment with ref {paymentRef} already completed");
+            }
 
 
-            // Create escrow for the full session price
-            var platformFee = order.AmountPaid * BusinessConstants.PlatformFeePercentage;
-            var escrowAmount = order.AmountPaid - platformFee;
+            var paymentDetails = await konnectService.GetPaymentDetails(paymentRef);
 
-            logger.LogInformation(
-                "Creating escrow for order {OrderId}: Paid={Paid}, Fee={Fee}, Escrow={Escrow}",
-                order.Id, order.AmountPaid, platformFee, escrowAmount);
-
-            var escrowCreated = new Escrow(escrowAmount, order.Id);
-            await dbContext.AddAsync(escrowCreated, cancellationToken);
+            if (paymentDetails.IsFailure)
+            {
+                logger.LogError(paymentDetails.Error.Description);
+                throw new Exception(paymentDetails.Error.Description);
+            }
 
 
-            order.MarkAsCompleted();
+            var order = await dbContext.Orders.FirstOrDefaultAsync(
+                s => s.Id == payment.OrderId,
+                cancellationToken);
+
+            if (order == null)
+            {
+                logger.LogError($"Session doesn't exist for the payment ref {paymentRef}");
+                throw new Exception($"Session doesn't exist for the payment ref {paymentRef}");
+            }
+
+            if (order.Amount != payment.Price)
+            {
+                logger.LogError("Price Paid is not equal to the order price  :  payment ref {Ref}", paymentRef);
+                throw new Exception($"Price Paid is not equal to the order price  :  payment ref {paymentRef}");
+            }
+
+            order.SetAmountPaid(payment.Price);
+            payment.SetComplete(order.Amount);
+
 
             await dbContext.SaveChangesAsync(cancellationToken);
 
-            // Send order completion notification to customer
-            // await SendOrderCompletionNotificationAsync(order, cancellationToken);
 
-            logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
-                order.Id);
+            // TODO debug response of webhook konnect 
+            // Find the successful transaction to get the amount with fees
+            /*let amountWithFees;
+            if (response.data.payment.transactions && response.data.payment.transactions.length > 0) {
+                const successfulTransaction = response.data.payment.transactions.find(
+                    (transaction: any) => transaction.status === "success"
+                    );
+                if (successfulTransaction) {
+                    amountWithFees = successfulTransaction.amount;
+                }
+            }#
+    */
+            var orderId = order.Id;
+
+
+            // TODO : send link to mentor  for confirmation 
+            logger.LogInformation(
+                "Handling PaymentCompletedDomainEvent for order : {orderId} with price : {Price}  for customer  : {customerEmail} ",
+                order.Id,
+                order.Amount,
+                order.CustomerEmail
+            );
+
+
+            // Only proceed if session is not already confirmed
+            if (order.Status == OrderStatus.Completed)
+            {
+                logger.LogWarning("Order {OrderId} is already completed, skipping webhook processing", order.Id);
+                return;
+            }
+
+            if (order.ProductType == ProductType.Session)
+            {
+                var session
+                    = await dbContext.BookedSessions.FirstOrDefaultAsync(s => s.OrderId == order.Id, cancellationToken);
+                if (session is null)
+                {
+                    logger.LogError(
+                        "Failed to find session when handling payment (completeWebhook) for order with id: {OrderId}",
+                        orderId);
+                    return;
+                }
+
+                await CreateMeetAndConfirmSession(session, order, cancellationToken);
+
+
+                // Create escrow for the full session price
+                var platformFee = order.AmountPaid * BusinessConstants.PlatformFeePercentage;
+                var escrowAmount = order.AmountPaid - platformFee;
+
+                logger.LogInformation(
+                    "Creating escrow for order {OrderId}: Paid={Paid}, Fee={Fee}, Escrow={Escrow}",
+                    order.Id, order.AmountPaid, platformFee, escrowAmount);
+
+                var escrowCreated = new Escrow(escrowAmount, order.Id);
+                await dbContext.AddAsync(escrowCreated, cancellationToken);
+
+
+                order.MarkAsCompleted();
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                // Send order completion notification to customer
+                // await SendOrderCompletionNotificationAsync(order, cancellationToken);
+
+                logger.LogInformation("Order {OrderID} confirmed with meeting link and escrow created",
+                    order.Id);
+            }
+        }
+        catch (Exception err)
+        {
+            logger.LogError($"Payment Webhook failed with payment Reference = {paymentRef}", err.Message);
+            throw err;
         }
     }
 
 
-    public async Task CreateMeetAndConfirmSession(BookedSession session, Order order,
+    private async Task CreateMeetAndConfirmSession(BookedSession session, Order order,
         CancellationToken cancellationToken)
     {
         try
@@ -188,7 +256,7 @@ public class CompleteWebhook(
                     message:
                     $"Failed to create calendar event for session {session.Id}: {resEventMentor.Error.Description}",
                     severity: NotificationSeverity.Error,
-                    type : NotificationType.Integration,
+                    type: NotificationType.Integration,
                     metadata: new
                     {
                         SessionId = session.Id,
@@ -218,7 +286,7 @@ public class CompleteWebhook(
                 title: "Critical: Google Calendar Integration Exception",
                 message: $"Unexpected error during session confirmation for order {order?.Id}",
                 severity: NotificationSeverity.Critical,
-                type : NotificationType.System,
+                type: NotificationType.System,
                 metadata: new
                 {
                     OrderId = order?.Id,

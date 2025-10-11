@@ -2,16 +2,14 @@ using System.Globalization;
 using Booking.Common;
 using Booking.Common.Contracts.Users;
 using Booking.Common.Messaging;
-using Booking.Common.RealTime;
 using Booking.Common.Results;
-using Booking.Modules.Catalog.BackgroundJobs.Payment;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Domain.Entities.Products.Sessions;
 using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
+using Booking.Modules.Catalog.Features.Orders.PaymentWebhook;
 using Booking.Modules.Catalog.Features.Utils;
 using Booking.Modules.Catalog.Persistence;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -375,49 +373,4 @@ internal sealed class BookSessionCommandHandler(
 
         return Result.Success((sessionDate, startTime, endTime));
     }
-
-    /*private async Task SendNotificationsToUsers(Session session, string menteeSlug)
-    {
-        try
-        {
-            // Notification for mentee
-            var menteeNotification = new NotificationDto(
-                Id: Guid.NewGuid().ToString(),
-                Type: "session_confirmed",
-                Title: "Session Confirmed! 🎉",
-                Message: $"Your mentorship session has been confirmed and paid. You'll receive the meeting link soon.",
-                CreatedAt: DateTime.UtcNow
-            );
-            // TODO : needs to be cached
-
-            await notificationService.SendNotificationAsync(menteeSlug, menteeNotification);
-
-
-            /*
-                // Notification for mentor
-                var mentorNotification = new NotificationDto(
-                    Id: Guid.NewGuid().ToString(),
-                    Type: "session_booked",
-                    Title: "New Session Booked! 📅",
-                    Message: $"A new mentorship session has been booked and confirmed. Check your calendar for details.",
-                    CreatedAt: DateTime.UtcNow,
-                    Data: new
-                    {
-                        SessionId = session.Id,
-                        SessionDate = session.Date,
-                        SessionTime = session.StartTime,
-                        Action = "view_session"
-                    }
-                );
-
-                await notificationService.SendNotificationAsync(session.ProductSlug, mentorNotification);
-            #1#
-
-            logger.LogInformation("Real-time notifications sent for session {SessionId}", session.Id);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to send real-time notifications for session {SessionId}", session.Id);
-        }
-    }*/
 }

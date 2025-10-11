@@ -1,5 +1,5 @@
 using Booking.Common.Endpoints;
-using Booking.Common.Messaging;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +13,11 @@ public class PaymentWebhookEndpoint : IEndpoint
     {
         app.MapGet(CatalogEndpoints.Payment.Webhook, async (
                 [FromQuery] string payment_ref,
-                ICommandHandler<WebhookCommand> handler,
+                IBackgroundJobClient backgroundJobClient,
                 CancellationToken cancellationToken) =>
             {
-                var command = new WebhookCommand(payment_ref);
-                await handler.Handle(command, cancellationToken);
+                backgroundJobClient.Enqueue<PaymentWebhookJob>(job =>
+                    job.SendAsync(payment_ref, null));
 
                 return Results.Ok();
             })
@@ -27,12 +27,4 @@ public class PaymentWebhookEndpoint : IEndpoint
             .WithDescription("Handle payment status updates from payment provider")
             .AllowAnonymous();
     }
-
-    public record WebhookRequest(
-        string PaymentReference,
-        string Status,
-        decimal? Amount = null,
-        string? Currency = null,
-        Dictionary<string, object>? AdditionalData = null
-    );
 }
