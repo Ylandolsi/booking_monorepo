@@ -39,18 +39,14 @@ public class EscrowJob
 
         foreach (var escrow in escrows)
         {
-            if (escrow.Order.CompletedAt is not null)
-            {
-                // TODO , use release  AT
-                if (DateTime.UtcNow >= escrow.Order.CompletedAt.Value.ToUniversalTime().AddDays(1))
-                {
-                    // handle the escrow
-                    var selletWallet = await _context.Wallets.Where(w => w.StoreId == escrow.Order.StoreId)
-                        .FirstOrDefaultAsync(cancellationToken);
-                    selletWallet?.UpdateBalance(escrow.Price);
-                    escrow.Realese();
-                }
-            }
+            if (escrow.Order.CompletedAt is null) continue;
+            if (DateTime.UtcNow < escrow.Order.CompletedAt.Value.ToUniversalTime().AddDays(1)) continue;
+
+            // handle the escrow
+            var selletWallet = await _context.Wallets.Where(w => w.StoreId == escrow.Order.StoreId)
+                .FirstOrDefaultAsync(cancellationToken);
+            selletWallet?.UpdateBalance(escrow.Price);
+            escrow.Realese();
         }
 
         await _context.SaveChangesAsync(cancellationToken);
