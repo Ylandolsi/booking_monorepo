@@ -23,12 +23,12 @@ import { useAuth } from '@/api/auth';
 import { signalRService, type NotificationSignalR } from '@/services/notification-service'; // Assuming this is the correct import path; adjust if needed
 import { toast } from 'sonner';
 import { BookingSummary, TimeSlots } from '@/pages/store/private/products/book';
-import { useBooking } from '@/api/stores/produtcs';
+import { useBooking, type Product } from '@/api/stores/produtcs';
 import { useParams } from '@tanstack/react-router';
 import { useIsMobile } from '@/hooks/use-media-query';
 import { logger } from '@/lib';
 
-export function BookingPage({ product }: { product: { price: number } }) {
+export function BookingPage({ product }: { product: Pick<Product, 'price'> }) {
   const nav = useAppNavigation();
   const isMobile = useIsMobile();
   const { currentUser } = useAuth();

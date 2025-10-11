@@ -34,7 +34,7 @@ export const bookingHookStateSchema = z.object({
 
 export type BookingHookState = z.infer<typeof bookingHookStateSchema>;
 
-export function useBooking({ productSlug, storeSlug, product }: { productSlug?: string; storeSlug?: string; product: Product }) {
+export function useBooking({ productSlug, storeSlug, product }: { productSlug?: string; storeSlug?: string; product: Pick<Product, 'price'> }) {
   const form = useForm<BookingHookState>({
     resolver: zodResolver(bookingHookStateSchema),
     defaultValues: {
@@ -157,7 +157,6 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
   });
 
   const bookingSummary = createBookingSummary();
-  logger.info(state.selectedDate);
 
   return {
     // Form instance
