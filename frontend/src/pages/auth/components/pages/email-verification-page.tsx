@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CardContent, CardDescription, CardFooter, Link, Spinner } from '@/components/ui';
+import { Button, CardContent, CardDescription, CardFooter, Link, Spinner } from '@/components/ui';
 import { verifyEmail } from '@/api/auth';
 
 type EmailVerificationPageProps = {
@@ -79,6 +79,10 @@ export const EmailVerificationPage = ({ onSuccess, token, email }: EmailVerifica
           </button>
         )}
       </CardFooter>
+
+      {/* <div className="flex w-full items-center justify-center">
+        <Button className="w-fit">Resend Verification Email</Button>
+      </div> */}
 
       <Link className="text-primary mt-2 flex justify-center hover:underline" href="/auth/login">
         Back to login
