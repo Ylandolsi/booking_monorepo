@@ -162,7 +162,7 @@ public class PaymentWebhookJob(
         catch (Exception err)
         {
             logger.LogError($"Payment Webhook failed with payment Reference = {paymentRef}", err.Message);
-            throw err;
+            throw;
         }
     }
 

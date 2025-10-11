@@ -77,7 +77,7 @@ public class PayoutWebhookJob(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to handle payout webhook");
-            throw ex; // for retrying
+            throw; // for retrying
         }
     }
 }
