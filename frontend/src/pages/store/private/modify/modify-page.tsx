@@ -2,17 +2,16 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import 'react-image-crop/dist/ReactCrop.css';
-import { patchPostStoreSchema, useMyStore, type PatchPostStoreRequest, type Picture, type Product, type Store } from '@/api/stores';
+import { patchPostStoreSchema, storeKeys, useMyStore, type PatchPostStoreRequest, type Picture, type Product, type Store } from '@/api/stores';
 import { useUploadPicture } from '@/hooks/use-upload-picture';
 import { MobilePreview, ProductSection, StoreSection } from '@/pages/store';
-import { ErrorComponenet, LoadingState } from '@/components';
 import { UploadPictureDialog } from '@/components/ui/upload-picture-dialog';
-import { InputToCopy } from '@/components/input-to-copy';
+import { ErrorComponenet, InputToCopy, LoadingState } from '@/components';
 
 export type StoreFormData = PatchPostStoreRequest & { picture?: Picture };
 
 export function ModifyStore() {
-  const { data: store, isLoading, isError } = useMyStore();
+  const { data: store, isLoading, error } = useMyStore();
   const { croppedImageUrl, setAspectRatio, handleCloseDialog } = useUploadPicture();
   const [products, setProducts] = useState<Product[]>(store?.products || []);
 
@@ -46,11 +45,9 @@ export function ModifyStore() {
     }
   }, [croppedImageUrl, form]);
 
-  if (isLoading) return <LoadingState type="spinner" />;
-
-  if (!store || isError) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
-
-  const watchedValues = form.watch();
+  if (isLoading) return <LoadingState type="dots" />;
+  if (error || !store) return <ErrorComponenet message="Failed to load store data." title="Store Error" />;
+  // const watchedValues = form.watch();
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-around gap-12 px-4 py-8 lg:flex-row lg:items-start lg:px-6">

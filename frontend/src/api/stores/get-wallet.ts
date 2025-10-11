@@ -2,8 +2,13 @@ import { api, CatalogEndpoints } from '@/api/utils';
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 
 async function getWallet(): Promise<Wallet> {
-  const res = await api.get<Wallet>(CatalogEndpoints.Payment.GetWallet);
-  return res;
+  try {
+    const res = await api.get<Wallet>(CatalogEndpoints.Payment.GetWallet);
+    return res;
+  } catch (err) {
+    console.log('Failed to fetch wallet');
+    throw err;
+  }
 }
 
 export const WalletKeys = {

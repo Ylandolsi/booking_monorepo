@@ -18,16 +18,17 @@ export const StoreGuard = ({ children }: StoreGuardProps) => {
 
   const isOnSetupPage = location.pathname.startsWith(routes.to.store.setupStore());
   const isUserAdmin = currentUser?.roles?.includes('Admin');
+
+  if (isUserAdmin) {
+    return <>{children}</>;
+  }
+
   if (isStoreLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <LoadingState type="spinner" size="lg" />
       </div>
     );
-  }
-
-  if (isUserAdmin) {
-    return <>{children}</>;
   }
 
   if (!store || storeError) {

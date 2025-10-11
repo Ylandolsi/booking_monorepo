@@ -17,10 +17,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthIndexRouteImport } from './routes/auth/index'
 import { Route as AppIndexRouteImport } from './routes/app/index'
 import { Route as TestTestOrdersRouteImport } from './routes/test/test-orders'
+import { Route as TestSimpleLoadingDemoRouteImport } from './routes/test/simple-loading-demo'
 import { Route as TestImgRouteImport } from './routes/test/img'
 import { Route as TestDashboardRouteImport } from './routes/test/dashboard'
 import { Route as TestAnalyticsRouteImport } from './routes/test/analytics'
-import { Route as ErrorExpSimpleLoadingDemoRouteImport } from './routes/error-exp/simple-loading-demo'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -81,6 +81,11 @@ const TestTestOrdersRoute = TestTestOrdersRouteImport.update({
   path: '/test/test-orders',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TestSimpleLoadingDemoRoute = TestSimpleLoadingDemoRouteImport.update({
+  id: '/test/simple-loading-demo',
+  path: '/test/simple-loading-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestImgRoute = TestImgRouteImport.update({
   id: '/test/img',
   path: '/test/img',
@@ -96,12 +101,6 @@ const TestAnalyticsRoute = TestAnalyticsRouteImport.update({
   path: '/test/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ErrorExpSimpleLoadingDemoRoute =
-  ErrorExpSimpleLoadingDemoRouteImport.update({
-    id: '/error-exp/simple-loading-demo',
-    path: '/error-exp/simple-loading-demo',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -218,10 +217,10 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
   '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
@@ -249,10 +248,10 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
   '/app': typeof AppIndexRoute
   '/auth': typeof AuthIndexRoute
@@ -283,10 +282,10 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
-  '/error-exp/simple-loading-demo': typeof ErrorExpSimpleLoadingDemoRoute
   '/test/analytics': typeof TestAnalyticsRoute
   '/test/dashboard': typeof TestDashboardRoute
   '/test/img': typeof TestImgRoute
+  '/test/simple-loading-demo': typeof TestSimpleLoadingDemoRoute
   '/test/test-orders': typeof TestTestOrdersRoute
   '/app/': typeof AppIndexRoute
   '/auth/': typeof AuthIndexRoute
@@ -318,10 +317,10 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/simple-loading-demo'
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/simple-loading-demo'
     | '/test/test-orders'
     | '/app/'
     | '/auth/'
@@ -349,10 +348,10 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/simple-loading-demo'
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/simple-loading-demo'
     | '/test/test-orders'
     | '/app'
     | '/auth'
@@ -382,10 +381,10 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
-    | '/error-exp/simple-loading-demo'
     | '/test/analytics'
     | '/test/dashboard'
     | '/test/img'
+    | '/test/simple-loading-demo'
     | '/test/test-orders'
     | '/app/'
     | '/auth/'
@@ -405,10 +404,10 @@ export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
   HomeRoute: typeof HomeRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
-  ErrorExpSimpleLoadingDemoRoute: typeof ErrorExpSimpleLoadingDemoRoute
   TestAnalyticsRoute: typeof TestAnalyticsRoute
   TestDashboardRoute: typeof TestDashboardRoute
   TestImgRoute: typeof TestImgRoute
+  TestSimpleLoadingDemoRoute: typeof TestSimpleLoadingDemoRoute
   TestTestOrdersRoute: typeof TestTestOrdersRoute
   publicStoreStoreSlugIndexRoute: typeof publicStoreStoreSlugIndexRoute
   publicStoreStoreSlugSProductSlugRoute: typeof publicStoreStoreSlugSProductSlugRoute
@@ -472,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestTestOrdersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/test/simple-loading-demo': {
+      id: '/test/simple-loading-demo'
+      path: '/test/simple-loading-demo'
+      fullPath: '/test/simple-loading-demo'
+      preLoaderRoute: typeof TestSimpleLoadingDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test/img': {
       id: '/test/img'
       path: '/test/img'
@@ -491,13 +497,6 @@ declare module '@tanstack/react-router' {
       path: '/test/analytics'
       fullPath: '/test/analytics'
       preLoaderRoute: typeof TestAnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/error-exp/simple-loading-demo': {
-      id: '/error-exp/simple-loading-demo'
-      path: '/error-exp/simple-loading-demo'
-      fullPath: '/error-exp/simple-loading-demo'
-      preLoaderRoute: typeof ErrorExpSimpleLoadingDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
@@ -712,10 +711,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
   HomeRoute: HomeRoute,
   UnauthorizedRoute: UnauthorizedRoute,
-  ErrorExpSimpleLoadingDemoRoute: ErrorExpSimpleLoadingDemoRoute,
   TestAnalyticsRoute: TestAnalyticsRoute,
   TestDashboardRoute: TestDashboardRoute,
   TestImgRoute: TestImgRoute,
+  TestSimpleLoadingDemoRoute: TestSimpleLoadingDemoRoute,
   TestTestOrdersRoute: TestTestOrdersRoute,
   publicStoreStoreSlugIndexRoute: publicStoreStoreSlugIndexRoute,
   publicStoreStoreSlugSProductSlugRoute: publicStoreStoreSlugSProductSlugRoute,
