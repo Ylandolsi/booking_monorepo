@@ -28,7 +28,7 @@ public static class Infrastructure
     {
         return services
             .AddJsonConfig()
-            .AddCors()
+            .AddCors(configuration)
             .AddEnumToString()
             .AddOptions(configuration)
             .AddServices(configuration)
@@ -124,25 +124,29 @@ public static class Infrastructure
         return services;
     }
 
-    private static IServiceCollection AddCors(this IServiceCollection services)
+    private static IServiceCollection AddCors(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddCors(options =>
         {
             options.AddPolicy("DefaultCors", builder =>
             {
-                builder.WithOrigins("http://localhost:3000",
-                        "http://localhost:3001",
-                        "http://localhost:5000")
+                var corsOptions = configuration.GetSection("Cors");
+                var allowedOrigins = corsOptions["AllowedOrigins"].Split(',') ?? [];
+
+
+                if (allowedOrigins.Length == 0)
+                {
+                    throw new InvalidOperationException(
+                        "CORS allowed origins are not configured. " +
+                        "Set 'Cors:AllowedOrigins' in configuration.");
+                }
+
+                builder.WithOrigins(allowedOrigins)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
                     .SetPreflightMaxAge(TimeSpan.FromMinutes(10));
-                // TODO 
-                // For production 
-                // .WithOrigins("https://yourproductiondomain.com")
-
-                // If you need to expose custom headers
-                // .WithExposedHeaders("access_token", "refresh_token");
+                //.WithExposedHeaders("access_token", "refresh_token");
             });
         });
         return services;
@@ -216,6 +220,7 @@ public static class Infrastructure
 
     private static IServiceCollection AddOptions(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<CorsOptions>(configuration.GetSection(CorsOptions.CorsOptionsKey));
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.JwtOptionsKey));
         services.Configure<GoogleOAuthOptions>(configuration.GetSection(GoogleOAuthOptions.GoogleOptionsKey));
         services.Configure<FrontendApplicationOptions>(
