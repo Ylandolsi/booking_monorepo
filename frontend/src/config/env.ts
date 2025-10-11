@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { logger } from '@/lib';
 
 const createEnv = () => {
   const EnvSchema = z.object({
@@ -17,29 +18,44 @@ const createEnv = () => {
   const parsedEnv = EnvSchema.safeParse(envVars);
 
   if (!parsedEnv.success) {
-    // In production, this should fail fast
     const errorMessage = `❌ Invalid environment configuration:\n${Object.entries(parsedEnv.error.flatten().fieldErrors)
       .map(([key, errors]) => `  - ${key}: ${errors?.join(', ')}`)
       .join('\n')}`;
 
-    console.error(errorMessage);
-
-    // Fail fast in production
-    if (import.meta.env.PROD) {
-      throw new Error('Invalid environment configuration. Check console for details.');
+    // Only log in development
+    if (import.meta.env.DEV) {
+      logger.error(errorMessage);
+      logger.error('Received values:', envVars);
     }
 
-    // In development, show warning but use defaults
-    console.warn('Using fallback environment variables for development');
+    // In production, fail fast with user-friendly error
+    if (import.meta.env.PROD) {
+      document.body.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: system-ui; background: #fee; color: #c00; padding: 20px;">
+          <div style="max-width: 600px; text-align: center;">
+            <h1>Configuration Error</h1>
+            <p>The application is not properly configured. Please contact support.</p>
+          </div>
+        </div>
+      `;
+      throw new Error('Invalid environment configuration');
+    }
+
+    // In development, use fallbacks with warning
+    logger.warn('⚠️ Using fallback environment variables for development');
     return {
       API_URL: 'http://localhost:5000',
       APP_URL: 'http://localhost:3000',
       VITE_ENVIRONMENT: 'development' as const,
     };
   }
-  console.log('✅ Environment configuration is valid.');
 
-  return parsedEnv.data ?? {};
+  // Only log success in development
+  if (import.meta.env.DEV) {
+    logger.info('✅ Environment configuration is valid');
+  }
+
+  return parsedEnv.data;
 };
 
 export const env = createEnv();

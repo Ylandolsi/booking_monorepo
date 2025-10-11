@@ -2,13 +2,14 @@ import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } fro
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api } from '@/api/utils';
 import { type CreateSessionProductRequest } from '@/api/stores';
+import { logger } from '@/lib';
 
 export const getMyProductSession = async (slug: string): Promise<CreateSessionProductRequest> => {
   try {
     const response = await api.get<CreateSessionProductRequest>(CatalogEndpoints.Products.Sessions.GetMy(slug));
     return response;
   } catch (error) {
-    console.error('Error fetching my store:', error);
+    logger.error('Error fetching my store:', error);
     throw error;
   }
 };

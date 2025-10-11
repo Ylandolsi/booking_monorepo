@@ -36,6 +36,7 @@ import {
   Cell,
 } from 'recharts';
 import { Users, ShoppingCart, DollarSign, TrendingUp, TrendingDown, Eye, Package, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { logger } from '@/lib';
 
 export const Route = createFileRoute(ROUTE_PATHS.TEST.ANALYTICS)({
   component: RouteComponent,
@@ -112,8 +113,8 @@ function AnalyticsPage() {
 
   const chartData = useMemo(() => generateMockData(timeFilter), [timeFilter]);
   const productData = useMemo(() => generateProductData(), []);
-  console.log('chartData:', chartData);
-  console.log('productData:', productData);
+  logger.info('chartData:', chartData);
+  logger.info('productData:', productData);
   // Calculate totals
   const totals = useMemo(() => {
     const total = chartData.reduce(
@@ -134,7 +135,7 @@ function AnalyticsPage() {
     };
   }, [chartData]);
 
-  console.log('totals:', totals);
+  logger.info('totals:', totals);
 
   const bestSellingProduct = productData.reduce((prev, current) => (prev.sales > current.sales ? prev : current));
 

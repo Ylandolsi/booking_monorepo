@@ -28,6 +28,7 @@ import { useUser } from '@/api/auth';
 import { useAppNavigation } from '@/hooks';
 import { useGetWallet } from '@/api/stores';
 import type { PayoutStatus } from '@/pages/store/private/payout/types/index';
+import { logger } from '@/lib';
 
 export function PayoutPage() {
   const [isPayoutDialogOpen, setIsPayoutDialogOpen] = useState(false);
@@ -74,7 +75,7 @@ export function PayoutPage() {
   if (error || walletData == null) {
     return <ErrorComponenet message="Failed to load wallet" title="Failed to load wallet" />;
   }
-  console.log(historyPayout, errorHistory);
+  logger.info(historyPayout, errorHistory);
   if (errorHistory) {
     return <ErrorComponenet message="Failed to load payout history" title="Failed to load payout history" />;
   }
@@ -96,7 +97,7 @@ export function PayoutPage() {
         setPayoutSuccess(false);
       }, 5000);
     } catch (error) {
-      console.error('Payout request failed:', error);
+      logger.error('Payout request failed:', error);
     }
   };
   return (

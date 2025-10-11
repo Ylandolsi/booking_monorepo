@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { logger } from '@/lib';
 
 export const sessionSlotSchema = z.object({
   startTime: z.string(), // 16:00
@@ -150,13 +151,13 @@ export function useBooking({ productSlug, storeSlug, product }: { productSlug?: 
       await bookSessionMutation.mutateAsync({ booking: bookingRequest, productSlug, storeSlug: storeSlug! });
       setStep('success');
     } catch (error) {
-      console.error('Booking failed:', error);
+      logger.error('Booking failed:', error);
       setStep('error');
     }
   });
 
   const bookingSummary = createBookingSummary();
-  console.log(state.selectedDate);
+  logger.info(state.selectedDate);
 
   return {
     // Form instance

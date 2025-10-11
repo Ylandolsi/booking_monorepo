@@ -18,6 +18,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { ThemeToggle, UploadImage } from '@/components';
 import { useAuth } from '@/api/auth';
 import { SocialLinksForm, type StoreFormData } from '@/pages/store';
+import { logger } from '@/lib';
 
 // TODO : handle when the cropped image is not saved it should be showed on the phone mock
 export const SetupStore = () => {
@@ -78,7 +79,7 @@ export const SetupStore = () => {
       await createStoreMutation.mutateAsync(data);
       navigate({ to: ROUTE_PATHS.APP.INDEX });
     } catch (error) {
-      console.error('Failed to create store:', error);
+      logger.error('Failed to create store:', error);
     }
   };
 

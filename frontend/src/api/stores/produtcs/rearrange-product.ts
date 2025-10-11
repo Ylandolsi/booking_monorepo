@@ -1,6 +1,7 @@
 import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
+import { logger } from '@/lib';
 
 /**
  * Rearrange products order
@@ -19,7 +20,7 @@ export const rearrangeProducts = async ({ orders }: RearrangeProductsInput) => {
 
     return response;
   } catch (error) {
-    console.error('Error rearranging products:', error);
+    logger.error('Error rearranging products:', error);
     throw error;
   }
 };

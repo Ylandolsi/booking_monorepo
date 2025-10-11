@@ -15,6 +15,7 @@ import { FormGeneral } from '@/pages/store/private/products/components/forms/for
 import { useSearch } from '@tanstack/react-router';
 import { routes } from '@/config';
 import { useAuth } from '@/api/auth';
+import { logger } from '@/lib';
 
 export type TabsType = 'general' | 'details';
 
@@ -71,7 +72,7 @@ export function AddProductFlow() {
 
   const onSubmit = async (data: CreateProductInput) => {
     try {
-      console.log('submitting', data);
+      logger.info('submitting', data);
       if (productSlug) {
         // update
         await updateProductMutation.mutateAsync({ productSlug: productSlug, data });
@@ -85,9 +86,9 @@ export function AddProductFlow() {
     } catch (error) {
       if (productSlug) {
         // specific error handling for update
-        console.error('Failed to update product:', error);
+        logger.error('Failed to update product:', error);
       } else {
-        console.error('Failed to create product:', error);
+        logger.error('Failed to create product:', error);
       }
     }
   };

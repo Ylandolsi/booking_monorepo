@@ -1,6 +1,7 @@
 import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
+import { logger } from '@/lib';
 
 /**
  * Delete a product by slug
@@ -13,7 +14,7 @@ export const deleteProduct = async ({ productSlug }: { productSlug: string }) =>
 
     return response;
   } catch (error) {
-    console.error('Error deleting product:', error);
+    logger.error('Error deleting product:', error);
     throw error;
   }
 };

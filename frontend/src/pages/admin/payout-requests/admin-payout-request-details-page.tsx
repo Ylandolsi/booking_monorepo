@@ -6,6 +6,7 @@ import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin } from './api';
 import { formatDate } from '@/lib';
 import { mapPayoutStatus, type PayoutStatus } from './types/admin-payout';
+import { logger } from '@/lib';
 
 export function AdminPayoutRequestDetailsPage() {
   const navigate = useNavigate();
@@ -78,11 +79,11 @@ export function AdminPayoutRequestDetailsPage() {
   const handleApprove = async () => {
     try {
       const result = await approvePayoutMutation.mutateAsync(payoutRequest.id);
-      console.log('Payout approved, PayUrl:', result.payUrl);
+      logger.info('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       // The query will be invalidated automatically and page will reflect changes
     } catch (error) {
-      console.error('Error approving request:', error);
+      logger.error('Error approving request:', error);
     }
   };
 
@@ -92,7 +93,7 @@ export function AdminPayoutRequestDetailsPage() {
       setIsRejectDialogOpen(false);
       // The query will be invalidated automatically and page will reflect changes
     } catch (error) {
-      console.error('Error rejecting request:', error);
+      logger.error('Error rejecting request:', error);
     }
   };
 

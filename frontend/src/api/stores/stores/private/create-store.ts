@@ -3,6 +3,7 @@ import { patchPostStoreSchemaToFormData, type PatchPostStoreRequest, type PatchP
 import { api, validateFile } from '@/api/utils';
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { useMutation } from '@tanstack/react-query';
+import { logger } from '@/lib';
 
 export const createStore = async (data: PatchPostStoreRequest): Promise<PatchPostStoreResponse> => {
   if (data.file) {
@@ -21,7 +22,7 @@ export const createStore = async (data: PatchPostStoreRequest): Promise<PatchPos
 
     return response;
   } catch (error) {
-    console.error('Error creating store:', error);
+    logger.error('Error creating store:', error);
     throw error;
   }
 };

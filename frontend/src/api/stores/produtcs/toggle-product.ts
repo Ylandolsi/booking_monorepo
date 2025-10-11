@@ -1,6 +1,7 @@
 import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
+import { logger } from '@/lib';
 
 /**
  * Toggle product published status
@@ -18,7 +19,7 @@ export const toggleProduct = async ({ productSlug }: { productSlug: string }) =>
 
     return response;
   } catch (error) {
-    console.error('Error toggling product published status:', error);
+    logger.error('Error toggling product published status:', error);
     throw error;
   }
 };

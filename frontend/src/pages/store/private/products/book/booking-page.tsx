@@ -26,6 +26,7 @@ import { BookingSummary, TimeSlots } from '@/pages/store/private/products/book';
 import { useBooking } from '@/api/stores/produtcs';
 import { useParams } from '@tanstack/react-router';
 import { useIsMobile } from '@/hooks/use-media-query';
+import { logger } from '@/lib';
 
 export function BookingPage({ product }: { product: { price: number } }) {
   const nav = useAppNavigation();
@@ -74,7 +75,7 @@ export function BookingPage({ product }: { product: { price: number } }) {
     if (currentUser != null) {
       // needs to be auth
       // Start connection
-      signalRService.startConnection(currentUser.slug).catch((error) => console.error('Failed to establish SignalR connection:', error));
+      signalRService.startConnection(currentUser.slug).catch((error) => logger.error('Failed to establish SignalR connection:', error));
 
       // Register callback
       signalRService.addCallback('session_confirmed', sessionConfirmedMentee);
@@ -82,7 +83,7 @@ export function BookingPage({ product }: { product: { price: number } }) {
       // Cleanup on unmount
       return () => {
         signalRService.removeCallback('session_confirmed', sessionConfirmedMentee);
-        signalRService.stopConnection(currentUser.slug).catch((error) => console.error('Error stopping SignalR connection:', error));
+        signalRService.stopConnection(currentUser.slug).catch((error) => logger.error('Error stopping SignalR connection:', error));
       };
     }
   }, [currentUser]);

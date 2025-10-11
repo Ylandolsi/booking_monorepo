@@ -5,6 +5,7 @@ import { routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
 import { GenerateIdCrypto } from '@/lib';
 import { useParams } from '@tanstack/react-router';
+import { logger } from '@/lib';
 
 export const PublicStorePreview = () => {
   const navigate = useAppNavigation();
@@ -16,7 +17,7 @@ export const PublicStorePreview = () => {
   if (!store) return <ErrorComponenet message="Store not found." title="Store Error" />;
 
   const handleProductClick = (product: Product) => {
-    console.log('Product clicked:', product);
+    logger.info('Product clicked:', product);
     if (product.productType !== 'Session') return; // only session products for now
     navigate.goTo({ to: routes.to.store.publicSessionProduct({ storeSlug: store.slug, productSlug: product.productSlug }) });
   };

@@ -1,11 +1,12 @@
-// this is not being used currently 
+// this is not being used currently
+import { logger } from '@/lib';
 
 export default function fetcher(f: () => Promise<any>, key: unknown) {
   return async () => {
     const start = performance.now();
     const r = await f();
     const end = performance.now();
-    console.log(`${JSON.stringify(key)}: ${end - start}ms`);
+    logger.info(`${JSON.stringify(key)}: ${end - start}ms`);
     return r;
   };
 }

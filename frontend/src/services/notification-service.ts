@@ -1,5 +1,6 @@
 import { env } from '@/config/env';
 import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { logger } from '@/lib';
 
 export type NotificationSignalR = {
   id: string;
@@ -48,7 +49,7 @@ class SignalRService {
 
         // Handle reconnection event
         this.connection.onreconnected((connectionId?: string) => {
-          console.log('SignalR Reconnected:', connectionId);
+          logger.info('SignalR Reconnected:', connectionId);
           // Rejoin user group after reconnection
           if (this.connection) {
             this.connection.invoke('JoinUserGroup', userId).catch(console.error);
@@ -56,13 +57,13 @@ class SignalRService {
         });
 
         await this.connection.start();
-        console.log('SignalR Connected successfully');
+        logger.info('SignalR Connected successfully');
 
         // Join user notification group
         await this.connection.invoke('JoinUserGroup', userId);
         resolve();
       } catch (error) {
-        console.error('SignalR Connection Error:', error);
+        logger.error('SignalR Connection Error:', error);
         this.connection = null;
         reject(error);
       } finally {
@@ -117,7 +118,7 @@ class SignalRService {
       try {
         callback(data);
       } catch (error) {
-        console.error(`Error in SignalR ${event} callback:`, error);
+        logger.error(`Error in SignalR ${event} callback:`, error);
       }
     });
   }
@@ -145,12 +146,12 @@ class SignalRService {
 
         // Stop the connection
         await this.connection.stop();
-        console.log('SignalR Disconnected');
+        logger.info('SignalR Disconnected');
 
         // Clear resources
         this.connection = null;
       } catch (error) {
-        console.error('Error disconnecting SignalR:', error);
+        logger.error('Error disconnecting SignalR:', error);
         throw error; // Rethrow to allow caller to handle
       }
     }

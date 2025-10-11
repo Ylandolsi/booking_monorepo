@@ -1,5 +1,6 @@
 import { ErrorComponenet } from '@/components';
 import { Component, type ReactNode, type ErrorInfo } from 'react';
+import { logger } from '@/lib';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -28,7 +29,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
-    console.error('Error caught by boundary:', error, errorInfo);
+    logger.error('Error caught by boundary:', error, errorInfo);
     // todo : we can send the error to a tracking service like Sentry here
   }
 

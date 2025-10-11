@@ -36,6 +36,7 @@ import {
 } from '@tanstack/react-table';
 import { ArrowUpDown, ChevronDown, Calendar } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { logger } from '@/lib';
 
 const columns: ColumnDef<OrderResponse>[] = [
   {
@@ -148,7 +149,7 @@ export function OrderHistory() {
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     }
 
-    console.log(startDate);
+    logger.info(startDate);
     return {
       startsAt: startDate,
       endsAt: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999),

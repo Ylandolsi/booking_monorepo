@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { centerCrop, makeAspectCrop, type PixelCrop } from 'react-image-crop';
+import { logger } from '@/lib';
 
 type UploadImageState = {
   // Dialog state
@@ -105,7 +106,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
       const croppedImageUrl = await getCroppedImg(imgRef.current, cropData);
       set({ croppedImageUrl });
     } catch (error) {
-      console.error('Error cropping image:', error);
+      logger.error('Error cropping image:', error);
     }
   },
 
@@ -127,7 +128,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
   getCroppedFile: async () => {
     const { croppedImageUrl } = get();
     if (!croppedImageUrl) {
-      console.error('No cropped image to upload');
+      logger.error('No cropped image to upload');
       return;
     }
 
@@ -199,7 +200,7 @@ const getCroppedImg = (image: HTMLImageElement, cropData: PixelCrop): Promise<st
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          console.error('Canvas is empty');
+          logger.error('Canvas is empty');
           return;
         }
         resolve(URL.createObjectURL(blob));

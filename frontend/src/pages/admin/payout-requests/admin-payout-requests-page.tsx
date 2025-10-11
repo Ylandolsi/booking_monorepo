@@ -28,6 +28,7 @@ import { ApprovePayoutDialog, RejectPayoutDialog } from './components';
 import { useGetAllPayoutsAdmin, useApprovePayoutAdmin, useRejectPayoutAdmin, type AdminPayoutResponse } from './api';
 import { type PayoutStatus, type TimeFilter, mapPayoutStatus } from './types/admin-payout';
 import { formatDate } from '@/lib';
+import { logger } from '@/lib';
 
 export function AdminPayoutRequestsPage() {
   const nav = useAppNavigation();
@@ -126,12 +127,12 @@ export function AdminPayoutRequestsPage() {
 
     try {
       const result = await approvePayoutMutation.mutateAsync(selectedRequest.id);
-      console.log('Payout approved, PayUrl:', result.payUrl);
+      logger.info('Payout approved, PayUrl:', result.payUrl);
       setIsApproveDialogOpen(false);
       setSelectedRequest(null);
       // The query will be invalidated automatically via meta.invalidatesQuery
     } catch (error) {
-      console.error('Error approving request:', error);
+      logger.error('Error approving request:', error);
     }
   };
 
@@ -144,7 +145,7 @@ export function AdminPayoutRequestsPage() {
       setSelectedRequest(null);
       // The query will be invalidated automatically via meta.invalidatesQuery
     } catch (error) {
-      console.error('Error rejecting request:', error);
+      logger.error('Error rejecting request:', error);
     }
   };
 

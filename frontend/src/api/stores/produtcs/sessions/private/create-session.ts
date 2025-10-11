@@ -7,6 +7,7 @@ import type {
 import { storeKeys } from '@/api/stores/stores-keys';
 import { api, CatalogEndpoints, validateFile } from '@/api/utils';
 import { useMutation } from '@tanstack/react-query';
+import { logger } from '@/lib';
 
 export const createSession = async ({ data }: { data: CreateProductInput }) => {
   if (data.thumbnailImage) {
@@ -25,7 +26,7 @@ export const createSession = async ({ data }: { data: CreateProductInput }) => {
 
     return response;
   } catch (error) {
-    console.error('Error creating session:', error);
+    logger.error('Error creating session:', error);
     throw error;
   }
 };

@@ -2,6 +2,7 @@ import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } fro
 import { CatalogEndpoints, QueryBuilders } from '@/api/utils/catalog-endpoints';
 import { api, buildUrlWithParams } from '@/api/utils';
 import type { PaginatedResult } from '@/types';
+import { logger } from '@/lib';
 
 export interface OrderResponse {
   id: number;
@@ -42,7 +43,7 @@ export const getOrders = async ({
 
     return response;
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    logger.error('Error fetching orders:', error);
     throw error;
   }
 };

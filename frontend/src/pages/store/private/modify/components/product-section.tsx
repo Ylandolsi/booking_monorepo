@@ -10,6 +10,7 @@ import { useAppNavigation, useDeepCompareEffect } from '@/hooks';
 import { SortableContext, rectSortingStrategy, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { DndContext, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { GenerateIdCrypto } from '@/lib';
+import { logger } from '@/lib';
 
 export const ProductSection = ({
   products,
@@ -40,7 +41,7 @@ export const ProductSection = ({
     setOrderChanged(false);
   }, [products, store.products]);
 
-  console.log('products :', products);
+  logger.info('products :', products);
 
   const handleProductRearrange = async () => {
     if (!orderChanged) return;
@@ -53,7 +54,7 @@ export const ProductSection = ({
       await rearrangeProductsMutation.mutateAsync({ orders: mappedSlugs });
       setOrderChanged(false);
     } catch (error) {
-      console.error('Failed to rearrange products:', error);
+      logger.error('Failed to rearrange products:', error);
     }
   };
   function handleProductEdit(product: Product): void {

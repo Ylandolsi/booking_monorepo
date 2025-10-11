@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import { authQueryKeys } from '@/api/auth';
 import { AuthEndpoints } from '../utils/auth-endpoints';
+import { logger } from '@/lib';
 
 const logout = async (): Promise<void> => await api.post(AuthEndpoints.Logout);
 
@@ -23,7 +24,7 @@ export const useLogout = ({
       onSuccess?.();
     },
     onError: (error) => {
-      console.error('Logout failed:', error);
+      logger.error('Logout failed:', error);
       // toast.error('Logout failed. Please try again.');
     },
   });

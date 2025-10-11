@@ -2,13 +2,14 @@ import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } fro
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api } from '@/api/utils';
 import type { Store } from '@/api/stores';
+import { logger } from '@/lib';
 
 export const GetPublicStore = async ({ storeSlug }: { storeSlug: string }): Promise<Store> => {
   try {
     const response = await api.get<Store>(CatalogEndpoints.Stores.GetPublic(storeSlug));
     return response;
   } catch (error) {
-    console.error(`Error fetching store with slug ${storeSlug}:`, error);
+    logger.error(`Error fetching store with slug ${storeSlug}:`, error);
     throw error;
   }
 };

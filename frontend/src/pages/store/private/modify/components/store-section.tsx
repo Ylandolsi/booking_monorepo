@@ -11,13 +11,14 @@ import { useUpdateStore, type PatchPostStoreRequest } from '@/api/stores';
 import { SocialLinksForm, type StoreFormData } from '@/pages/store';
 import { UploadImage } from '@/components';
 import { useAppNavigation } from '@/hooks';
+import { logger } from '@/lib';
 
 export const StoreSection = ({ form, handleCloseDialog }: { form: ReturnType<typeof useForm<StoreFormData>>; handleCloseDialog: () => void }) => {
   const updateStoreMutation = useUpdateStore();
   const navigate = useAppNavigation();
   const onSubmit = async (data: PatchPostStoreRequest) => {
     try {
-      console.log('Submitting store data:', data);
+      logger.info('Submitting store data:', data);
       // todo : handle this api
       await updateStoreMutation.mutateAsync(data);
 
@@ -26,7 +27,7 @@ export const StoreSection = ({ form, handleCloseDialog }: { form: ReturnType<typ
 
       navigate.goTo({ to: routes.to.store.index() + '/' });
     } catch (error) {
-      console.error('Failed to update store:', error);
+      logger.error('Failed to update store:', error);
     }
   };
 

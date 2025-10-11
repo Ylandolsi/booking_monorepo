@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import { type LoginInput } from '@/pages/auth';
 import { AuthEndpoints } from '../utils/auth-endpoints';
+import { logger } from '@/lib';
 
 export const loginWithEmailAndPassword = async (data: LoginInput): Promise<User> => {
   const response = await api.post<User>(AuthEndpoints.Local.Login, data);
@@ -26,7 +27,7 @@ export const useLogin = ({
       onSuccess?.(data);
     },
     onError: (error) => {
-      console.error('Login failed:', error);
+      logger.error('Login failed:', error);
       toast.error('Login failed. Please check your credentials.');
       onError?.(error);
     },

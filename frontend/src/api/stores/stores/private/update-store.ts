@@ -3,6 +3,7 @@ import { storeKeys, STORE_QUERY_KEY } from '../../stores-keys';
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api, validateFile } from '@/api/utils';
 import { patchPostStoreSchemaToFormData, type PatchPostStoreRequest, type PatchPostStoreResponse } from '@/api/stores/stores/private/store-schema';
+import { logger } from '@/lib';
 
 export const updateStore = async (data: PatchPostStoreRequest): Promise<PatchPostStoreResponse> => {
   if (data.file) {
@@ -21,7 +22,7 @@ export const updateStore = async (data: PatchPostStoreRequest): Promise<PatchPos
 
     return response;
   } catch (error) {
-    console.error('Error updating store:', error);
+    logger.error('Error updating store:', error);
     throw error;
   }
 };

@@ -2,13 +2,14 @@ import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } fro
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api } from '@/api/utils';
 import { storeKeys, type Store } from '@/api/stores';
+import { logger } from '@/lib';
 
 export const getMyStore = async (): Promise<Store> => {
   try {
     const response = await api.get<Store>(CatalogEndpoints.Stores.GetMy);
     return response;
   } catch (error) {
-    console.error('Error fetching my store:', error);
+    logger.error('Error fetching my store:', error);
     throw error;
   }
 };

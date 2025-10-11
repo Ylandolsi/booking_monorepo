@@ -2,6 +2,7 @@
 import { env } from '@/config/env';
 import { toast } from 'sonner';
 import { AuthEndpoints } from './auth-endpoints';
+import { logger } from '@/lib';
 
 export type RequestOptions = {
   method?: string;
@@ -59,7 +60,7 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
         return fetchApi<T>(url, { ...options, refreshed: true });
       }
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      logger.error('Token refresh failed:', error);
     }
     // If the token refresh fails, redirect to login
     window.location.href = '/auth/login?redirectTo=' + encodeURIComponent(window.location.pathname + window.location.search);
@@ -103,7 +104,7 @@ async function fetchApi<T>(url: string, options: RequestOptions = {}): Promise<T
         //     }
         // ],
         if (data.error) {
-          console.error('Validation errors:', data.error);
+          logger.error('Validation errors:', data.error);
           data.error.forEach((err) => {
             message += `\n- ${err.description}`;
           });

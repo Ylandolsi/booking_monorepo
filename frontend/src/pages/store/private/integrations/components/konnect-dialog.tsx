@@ -3,6 +3,7 @@ import { Button, DrawerDialog, Input, Label } from '@/components';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
+import { logger } from '@/lib';
 
 export function KonnectIntegrationDialog({
   setKonnectDialogOpen,
@@ -36,7 +37,7 @@ export function KonnectIntegrationDialog({
       setKonnectDialogOpen(false); // Close dialog on success
     } catch (error) {
       // Error is already handled by the mutation's meta.errorMessage
-      console.error('Integration failed:', error);
+      logger.error('Integration failed:', error);
     }
   };
 

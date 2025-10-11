@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { api } from '@/api/utils';
 import type { RegisterInput } from '@/pages/auth';
 import { AuthEndpoints } from '../utils/auth-endpoints';
+import { logger } from '@/lib';
 
 const registerUser = async (data: RegisterInput): Promise<void> => await api.post(AuthEndpoints.Local.Register, data);
 
@@ -18,7 +19,7 @@ export const useRegister = ({
       onSuccess?.();
     },
     onError: (error) => {
-      console.error('Registration failed:', error);
+      logger.error('Registration failed:', error);
       // toast.error('Registration failed. Please try again.');
     },
   });

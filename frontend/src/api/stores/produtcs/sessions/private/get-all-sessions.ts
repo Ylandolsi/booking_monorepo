@@ -1,6 +1,7 @@
 import { queryOptions, useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { CatalogEndpoints } from '@/api/utils/catalog-endpoints';
 import { api, buildUrlWithParams } from '@/api/utils';
+import { logger } from '@/lib';
 
 export const getAllSessionMonthly = async ({
   year,
@@ -20,7 +21,7 @@ export const getAllSessionMonthly = async ({
 
     return response;
   } catch (error) {
-    console.error('Error fetching sessions:', error);
+    logger.error('Error fetching sessions:', error);
     throw error;
   }
 };
