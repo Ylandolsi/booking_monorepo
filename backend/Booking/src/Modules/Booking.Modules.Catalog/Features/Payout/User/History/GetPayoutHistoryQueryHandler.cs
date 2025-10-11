@@ -32,6 +32,7 @@ public class GetPayoutHistoryQueryHandler(
 
         // Retrieve payout history for the store
         var payouts = await dbContext.Payouts
+            .AsNoTracking()
             .Where(p => p.StoreId == store.Id)
             .OrderByDescending(p => p.CreatedAt)
             .Select(p => new PayoutResponse
