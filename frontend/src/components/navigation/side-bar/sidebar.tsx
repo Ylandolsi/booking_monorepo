@@ -23,7 +23,8 @@ export type Item = {
     | 'Integrations'
     | 'Payout'
     | 'Statistics'
-    | 'Payouts Requests';
+    | 'Payouts Requests'
+    | 'Orders';
 
   icon: JSX.Element;
   click: () => void;
@@ -50,20 +51,30 @@ const Sidebar = () => {
 
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes('store')) {
-      setItemActive('Edit Store');
-    } else if (path.includes('meets')) {
-      setItemActive('Meetings');
-    } else if (path.includes('statistics')) {
-      setItemActive('Statistics');
-    } else if (path.includes('payouts-requests')) {
-      setItemActive('Payouts Requests');
-    } else if (path.includes('integration')) {
-      setItemActive('Integrations');
-    } else if (path.includes('payout')) {
-      setItemActive('Payout');
-    } else {
-      setItemActive('Home');
+    switch (true) {
+      case path.includes('store'):
+        setItemActive('Edit Store');
+        break;
+      case path.includes('meets'):
+        setItemActive('Meetings');
+        break;
+      case path.includes('statistics'):
+        setItemActive('Statistics');
+        break;
+      case path.includes('payouts-requests'):
+        setItemActive('Payouts Requests');
+        break;
+      case path.includes('integration'):
+        setItemActive('Integrations');
+        break;
+      case path.includes('payout'):
+        setItemActive('Payout');
+        break;
+      case path.includes('orders'):
+        setItemActive('Orders');
+        break;
+      default:
+        setItemActive('Home');
     }
   }, [location.pathname]);
 
