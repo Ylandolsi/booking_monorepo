@@ -29,7 +29,6 @@ export const SelectProductType = ({ className }: SelectProductTypeProps) => {
   const navigate = useAppNavigation();
 
   const onSelect = (type: ProductType) => {
-    // TODO : fix this with react tanstack router best practice
     navigate.goTo({ to: routes.to.store.productAdd({ type }), replace: true });
   };
 

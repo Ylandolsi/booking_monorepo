@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui';
 import { Home, ArrowLeft } from 'lucide-react';
 import { AlertCircle, XCircle, CheckCircle, AlertTriangle, Info } from 'lucide-react';
-import { routeBuilder } from '@/config';
+import { routeBuilder, routes } from '@/config';
 import { useAppNavigation } from '@/hooks';
 
 interface ErrorComponenetProps {
@@ -80,7 +80,7 @@ export const ErrorComponenet = ({
               onClick={
                 () =>
                   // TODO : fix this
-                  navigate.goTo(routeBuilder.profile.user('uhavetofixthisslug')) // TODO
+                  navigate.goTo({ to: routes.to.app.root() }) // TODO
               }
               className="text-primary block hover:underline"
             >

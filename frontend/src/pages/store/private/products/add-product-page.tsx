@@ -14,6 +14,7 @@ import { FormSession } from '@/pages/store/private/products/components/forms/for
 import { FormGeneral } from '@/pages/store/private/products/components/forms/form-general';
 import { useSearch } from '@tanstack/react-router';
 import { routes } from '@/config';
+import { useAuth } from '@/api/auth';
 
 export type TabsType = 'general' | 'details';
 
@@ -26,6 +27,7 @@ export function AddProductFlow() {
   const createProductMutation = useCreateSession();
   const updateProductMutation = useUpdateSession();
   const { handleCloseDialog } = useUploadPicture();
+  const { currentUser, isLoading: isAuthLoading } = useAuth();
 
   const { data: editProductData, isLoading: isEditLoading } = useMyProductSession(productSlug, { enabled: !!productSlug });
 
@@ -93,7 +95,7 @@ export function AddProductFlow() {
     navigate.goTo({ to: routes.to.store.index() + '/', replace: true });
   };
 
-  if (isEditLoading) {
+  if (isEditLoading || createProductMutation.isPending || updateProductMutation.isPending || isAuthLoading) {
     return <LoadingState type="spinner" />;
   }
   if (productSlug && !editProductData && !isEditLoading) {
@@ -112,6 +114,23 @@ export function AddProductFlow() {
         <SelectProductType />
       </div>
     );
+  }
+
+  if (type == 'Session') {
+    // we should check if the user is integrated with calendar or not
+    if (!currentUser?.integratedWithGoogle) {
+      return (
+        <div className="flex h-full flex-col items-center justify-center p-4">
+          <h2 className="text-foreground mb-2 text-xl font-semibold">Calendar Integration Required</h2>
+          <p className="text-accent-foreground mb-4 text-center">
+            To create a booking service, please integrate your calendar in your account settings.
+          </p>
+          <Button onClick={() => navigate.goTo({ to: routes.to.integrations() })} className="py-3">
+            Go to Account Settings
+          </Button>
+        </div>
+      );
+    }
   }
   const currentStep = activeTab === 'general' ? 1 : 2;
   const totalSteps = 2;

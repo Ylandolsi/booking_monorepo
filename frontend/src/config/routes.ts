@@ -52,10 +52,8 @@ export const ROUTE_PATHS = {
       PUBLIC_SESSION_PRODUCT: '/store/$storeSlug/s/$productSlug',
     },
 
-    // Profile routes
-    PROFILE: {
-      INTEGRATIONS: `/app/integration`,
-    },
+    // Integrations routes
+    INTEGRATIONS: `/app/integration`,
 
     // meets
     MEETS: {
@@ -158,9 +156,7 @@ export const routeBuilder = {
     index: () => ROUTE_PATHS.APP.MEETS.INDEX,
   },
 
-  profile: {
-    integrations: () => ROUTE_PATHS.APP.PROFILE.INTEGRATIONS,
-  },
+  integrations: () => ROUTE_PATHS.APP.INTEGRATIONS,
 
   payment: {
     payout: () => ROUTE_PATHS.APP.PAYMENT.PAYOUT,

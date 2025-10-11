@@ -47,7 +47,7 @@ export function useAppNavigation() {
     },
 
     goToIntegrations: () => {
-      navigate({ to: routes.to.profile.integrations() });
+      navigate({ to: routes.to.integrations() });
     },
 
     // my meets
