@@ -1,7 +1,7 @@
 import type { Product } from '@/api/stores';
 import type { Dispatch, SetStateAction } from 'react';
 
-export type DisplayMode = 'full' | 'compact';
+export type DisplayMode = 'full' | 'compact' | 'minimal';
 
 export type ProductCardType = Pick<
   Product,

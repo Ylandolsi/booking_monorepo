@@ -1,10 +1,10 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import type { ProductCardType } from './types';
+import type { DisplayMode, ProductCardType } from './types';
 
 interface ProductCardContextValue {
   product: ProductCardType;
   edit: boolean;
-  displayMode: 'full' | 'compact';
+  displayMode: DisplayMode;
   onActionClick?: () => void;
 }
 
