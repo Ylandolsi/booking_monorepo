@@ -10,6 +10,7 @@ import { queryClient } from '@/providers/react-query';
 import { router } from '@/providers/react-router';
 import { useThemeStore } from '@/stores/theme-store';
 import { ErrorBoundary } from '@/providers/error-boundary';
+import { useTheme } from '@/hooks';
 
 type AppProviderProps = {
   children?: React.ReactNode;
@@ -17,10 +18,7 @@ type AppProviderProps = {
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   // Set initial theme on app load
-  useEffect(() => {
-    const { theme } = useThemeStore.getState();
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, []);
+  const { theme } = useTheme();
 
   return (
     <HelmetProvider>

@@ -24,8 +24,8 @@ const createEnv = () => {
 
     // Only log in development
     if (import.meta.env.DEV) {
-      logger.error(errorMessage);
-      logger.error('Received values:', envVars);
+      console.error(errorMessage);
+      console.error('Received values:', envVars);
     }
 
     // In production, fail fast with user-friendly error
@@ -42,7 +42,7 @@ const createEnv = () => {
     }
 
     // In development, use fallbacks with warning
-    logger.warn('⚠️ Using fallback environment variables for development');
+    console.warn('⚠️ Using fallback environment variables for development');
     return {
       API_URL: 'http://localhost:5000',
       APP_URL: 'http://localhost:3000',
@@ -52,7 +52,7 @@ const createEnv = () => {
 
   // Only log success in development
   if (import.meta.env.DEV) {
-    logger.info('✅ Environment configuration is valid');
+    console.info('✅ Environment configuration is valid');
   }
 
   return parsedEnv.data;
