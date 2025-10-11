@@ -1,5 +1,6 @@
-/*using System.ComponentModel;
+using System.ComponentModel;
 using Booking.Modules.Catalog.Domain.Entities;
+using Booking.Modules.Catalog.Domain.ValueObjects;
 using Booking.Modules.Catalog.Persistence;
 using Hangfire;
 using Hangfire.Console;
@@ -32,24 +33,27 @@ public class EscrowJob
         var utcNow = DateTime.UtcNow;
 
         var escrows = await _context.Escrows
-            .Where(e => e.State == EscrowState.Held)
+            .Include(e => e.Order)
+            .Where(e => e.State == EscrowState.Held && e.Order.CompletedAt != null && e.Order.CompletedAt < utcNow)
             .ToListAsync(cancellationToken);
 
         foreach (var escrow in escrows)
         {
-            // TODO , use release  AT
-            if (DateTime.UtcNow >= escrow.Session.ScheduledAt.ToUniversalTime().AddDays(1))
+            if (escrow.Order.CompletedAt is not null)
             {
-                // handle the escrow
-                var mentorWallet = await _context.Wallets.Where(w => w.UserId == escrow.Session.MentorId)
-                    .FirstOrDefaultAsync(cancellationToken);
-                mentorWallet?.UpdateBalance(escrow.Price);
-                escrow.Realese();
+                // TODO , use release  AT
+                if (DateTime.UtcNow >= escrow.Order.CompletedAt.Value.ToUniversalTime().AddDays(1))
+                {
+                    // handle the escrow
+                    var selletWallet = await _context.Wallets.Where(w => w.StoreId == escrow.Order.StoreId)
+                        .FirstOrDefaultAsync(cancellationToken);
+                    selletWallet?.UpdateBalance(escrow.Price);
+                    escrow.Realese();
+                }
             }
         }
 
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Hangfire Job: Escrow payment job finished.");
     }
-}*/
-
+}
