@@ -90,15 +90,16 @@ public class StoreStatsAggregatorJob(
 
                 logger.LogDebug("Processing batch of {Count} visit groups", storeVisits.Count);
 
+                var storeSlugs = storeVisits.Select(v => v.StoreSlug).Distinct().ToList();
+
+                var stores = await db.Stores
+                    .Where(s => storeSlugs.Contains(s.Slug))
+                    .Select(s => new { s.Id, s.Slug })
+                    .ToDictionaryAsync(s => s.Slug, cancellationToken);
+
                 foreach (var visit in storeVisits)
                 {
-                    // Get the store ID from the slug
-                    var store = await db.Stores
-                        .Where(s => s.Slug == visit.StoreSlug)
-                        .Select(s => new { s.Id, s.Slug })
-                        .FirstOrDefaultAsync(cancellationToken);
-
-                    if (store == null)
+                    if (!stores.TryGetValue(visit.StoreSlug, out var store))
                     {
                         logger.LogWarning("Store not found for slug: {StoreSlug}", visit.StoreSlug);
                         continue;
@@ -176,7 +177,7 @@ public class StoreStatsAggregatorJob(
                 // Get completed orders (limited batch) - will be used for both store and product stats
                 var ordersQuery = await db.Orders
                     .Where(o => o.StatsProcessedAt == null &&
-                               o.Status == OrderStatus.Completed)
+                                o.Status == OrderStatus.Completed)
                     .Take(BatchSize)
                     .ToListAsync(cancellationToken);
 
@@ -187,7 +188,8 @@ public class StoreStatsAggregatorJob(
                     break;
                 }
 
-                logger.LogDebug("Processing batch of {Count} orders for both store and product stats", ordersQuery.Count);
+                logger.LogDebug("Processing batch of {Count} orders for both store and product stats",
+                    ordersQuery.Count);
 
                 // === 1. Aggregate Store-level stats ===
                 var storeStats = ordersQuery
@@ -205,7 +207,8 @@ public class StoreStatsAggregatorJob(
                 foreach (var storeStat in storeStats)
                 {
                     var stat = await db.StoreDailyStats
-                        .FirstOrDefaultAsync(s => s.StoreId == storeStat.StoreId && s.Date == now.Date, cancellationToken);
+                        .FirstOrDefaultAsync(s => s.StoreId == storeStat.StoreId && s.Date == now.Date,
+                            cancellationToken);
 
                     if (stat == null)
                     {
@@ -224,7 +227,8 @@ public class StoreStatsAggregatorJob(
                     else
                     {
                         stat.UpdateStats(storeStat.Revenue, storeStat.SalesCount, storeStat.UniqueCustomers);
-                        logger.LogDebug("Updated daily stats for store {StoreSlug}, added revenue {Revenue}, {SalesCount} sales",
+                        logger.LogDebug(
+                            "Updated daily stats for store {StoreSlug}, added revenue {Revenue}, {SalesCount} sales",
                             storeStat.StoreSlug, storeStat.Revenue, storeStat.SalesCount);
                     }
                 }
@@ -295,6 +299,7 @@ public class StoreStatsAggregatorJob(
             }
         }
 
-        logger.LogInformation("Orders and product stats aggregation completed. Total orders processed: {TotalProcessed}", totalProcessed);
+        logger.LogInformation(
+            "Orders and product stats aggregation completed. Total orders processed: {TotalProcessed}", totalProcessed);
     }
 }
