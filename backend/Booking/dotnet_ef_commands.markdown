@@ -252,3 +252,15 @@ dotnet ef migrations list --project <ModuleProject> --startup-project <ApiProjec
 
 - **Users**: `UsersDbContext`
 - **Catalog**: `CatalogDbContext`
+
+⚠️ 5. Potential EF tracking issue if job runs long
+
+If this runs for many batches, the EF context will track all modified entities since the context lives for the entire job.
+
+✅ You can detach entities after saving:
+
+await \_context.SaveChangesAsync(cancellationToken);
+foreach (var payout in expiredPayouts)
+\_context.Entry(payout).State = EntityState.Detached;
+
+Or create a new DbContext instance per batch.

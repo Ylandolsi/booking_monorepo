@@ -1,10 +1,3 @@
-- update store info similat to create form
-- create / update product
-- drag and drop
-- user overview and book
-- maybe add statistic
-- adjust booking ...
-
 - [ ] Review of toast- especially failures
 - [ ] review keys of tanstack
 - [ ] replace all list ids with generated cyrpto ids
@@ -98,18 +91,6 @@ export default {
 
 - read more about select and network mode
   fetcher :
-
-```ts
-export default function fetcher(f: () => Promise<any>, key: unknown) {
-  return async () => {
-    const start = performance.now();
-    const r = await f();
-    const end = performance.now();
-    console.log(`${JSON.stringify(key)}: ${end - start}ms`);
-    return r;
-  };
-}
-```
 
 ### document query selectors :
 
