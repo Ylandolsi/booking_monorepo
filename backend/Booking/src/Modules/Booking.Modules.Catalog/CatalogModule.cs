@@ -1,8 +1,12 @@
 using System.Threading.Channels;
 using Booking.Common.Endpoints;
+using Booking.Modules.Catalog.BackgroundJobs.Escrow;
+using Booking.Modules.Catalog.BackgroundJobs.Payout;
 using Booking.Modules.Catalog.BackgroundJobs.Statistics;
 using Booking.Modules.Catalog.Domain.Entities;
 using Booking.Modules.Catalog.Features.Integrations.GoogleCalendar;
+using Booking.Modules.Catalog.Features.Orders.PaymentWebhook;
+using Booking.Modules.Catalog.Features.Payout.Admin.Approve.Webhook;
 using Booking.Modules.Catalog.Features.Stores;
 using Booking.Modules.Catalog.Features.Stores.StoreVisit;
 using Booking.Modules.Catalog.Persistence;
@@ -66,8 +70,10 @@ public static class CatalogModule
 
     public static IServiceCollection AddBackgroundJobs(this IServiceCollection services)
     {
-        /*services.AddScoped<PayoutJob>();
-        services.AddScoped<EscrowJob>();*/
+        services.AddScoped<PayoutJob>();
+        services.AddScoped<EscrowJob>();
+        services.AddScoped<PayoutWebhookJob>();
+        services.AddScoped<PaymentWebhookJob>();
         services.AddScoped<StoreVisitBatchJob>();
         services.AddScoped<StoreStatsAggregatorJob>();
         return services;
