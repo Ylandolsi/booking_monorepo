@@ -16,7 +16,7 @@ export function useMyStore(overrides?: Partial<UseQueryOptions<any, Error>>): Us
   return useQuery(
     queryOptions({
       // TODO : handle this queryKey: storeKeys.myStore(),
-      queryKey: [storeKeys.all],
+      queryKey: storeKeys.all,
       queryFn: () => getMyStore(),
       ...overrides,
     }),

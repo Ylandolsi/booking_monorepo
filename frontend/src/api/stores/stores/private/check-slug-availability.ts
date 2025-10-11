@@ -24,7 +24,7 @@ export function useCheckSlugAvailability(slug: string, enabled = true) {
     queryFn: () => checkSlugAvailability(slug),
     enabled: enabled && !!slug,
     staleTime: 0, // Always fetch fresh data
-
+    // todo :
     //    staleTime: 30000, // 30 seconds
     retry: false, // Don't retry slug availability checks
   });
