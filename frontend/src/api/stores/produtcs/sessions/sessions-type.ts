@@ -15,15 +15,3 @@ export interface SessionAvailability {
   startTime: string;
   endTime: string;
 }
-
-// export interface AvailabilityRange {
-//   id?: number | null;
-//   startTime: string; // Format: "HH:mm"
-//   endTime: string; // Format: "HH:mm"
-// }
-
-// export interface DayAvailability {
-//   dayOfWeek: number;
-//   isActive: boolean;
-//   availabilityRanges: AvailabilityRange[];
-// }
